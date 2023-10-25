@@ -1,0 +1,8 @@
+
+citEntry(entry = "Manual",
+author = "The authors...",
+title = "GraphSpace: A lightweight package for generating ggplot2 graphics for igraph.",
+year = "2023",
+note = "R package",
+textVersion = "The authors... GraphSpace: A lightweight package for generating ggplot2 graphics for igraph. R package, 2023."
+)
