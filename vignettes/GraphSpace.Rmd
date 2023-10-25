@@ -3,7 +3,7 @@ title: "*GraphSpace*: A lightweight package for representing large *igraph* obje
 author: "The authors..."
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "<p>*GraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within a spatial map. *GraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
+abstract: "<p>*GraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *GraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
 package: "`r BiocStyle::pkg_ver('GraphSpace')`"
 output: 
   BiocStyle::html_document:
