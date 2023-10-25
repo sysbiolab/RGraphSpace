@@ -1,6 +1,6 @@
 Package: GraphSpace
 Type: Package
-Title: A lightweight package for generating ggplot2 graphics for igraph
+Title: A lightweight package for representing large igraph objects in a normalized coordinate system
 Version: 0.99.0
 Authors@R: 
     c(person("Vinicius", "Chagas", role = "ctr"),

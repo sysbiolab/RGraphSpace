@@ -1,8 +1,8 @@
 
 citEntry(entry = "Manual",
 author = "The authors...",
-title = "GraphSpace: A lightweight package for generating ggplot2 graphics for igraph.",
+title = "GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system.",
 year = "2023",
 note = "R package",
-textVersion = "The authors... GraphSpace: A lightweight package for generating ggplot2 graphics for igraph. R package, 2023."
+textVersion = "The authors... GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package, 2023."
 )
