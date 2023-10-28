@@ -6,10 +6,10 @@
 \alias{getGraphSpace}
 \title{Accessors for fetching slots from a GraphSpace object}
 \usage{
-\S4method{getGraphSpace}{GraphSpace}(grs, what = "summary")
+\S4method{getGraphSpace}{GraphSpace}(gs, what = "summary")
 }
 \arguments{
-\item{grs}{A preprocessed \linkS4class{GraphSpace} class object}
+\item{gs}{A preprocessed \linkS4class{GraphSpace} class object}
 
 \item{what}{A single character value specifying which information should 
 be retrieved from the slots.
@@ -28,9 +28,9 @@ individual slots available in a GraphSpace object.
 data('gtoy1', package = 'GraphSpace')
 
 # Create a new GraphSpace object
-grs <- GraphSpace(gtoy1)
+gs <- GraphSpace(gtoy1)
 
-# Get the 'summary' slot in grs
-getGraphSpace(grs, what = 'summary')
+# Get the 'summary' slot in gs
+getGraphSpace(gs, what = 'summary')
 
 }

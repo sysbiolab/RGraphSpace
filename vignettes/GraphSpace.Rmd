@@ -65,18 +65,12 @@ V(gtoy1)$name <- paste0("n", 1:5)
 
 ```{r Toy igraph - 2, eval=TRUE, message=FALSE, out.width="40%"}
 # Plot the 'gtoy1' using standard R graphics
-plot(gtoy1)
+plot.igraph(gtoy1)
 ```
 
-```{r Toy igraph - 3, eval=TRUE, message=FALSE}
-# Creating a 'GraphSpace' for 'gtoy1'
-grs <- GraphSpace(gtoy1)
-grs
-```
-
-```{r Toy igraph - 4, eval=TRUE, message=FALSE, out.width="70%"}
-# Main 'GraphSpace' plotting call
-plotGraphSpace(grs, marks = TRUE)
+```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="70%"}
+# Plot the 'gtoy1' using GraphSpace
+plotGraphSpace(gtoy1, marks = TRUE)
 ```
 
 Next, we will demonstrate all vertex and edge attributes that can be passed to *GraphSpace* objecs.
@@ -149,13 +143,11 @@ E(gtoy1)$arrowType <- 1
 # edge's orientation in the edge list
 ```
 
-## A shortcut for *GraphSpace*
-
-A shortcut function for plotting *igraph* objects with *GraphSpace*:
+... and now plot the updated *igraph* object with *GraphSpace*:
  
 ```{r A shortcut for GraphSpace, eval=TRUE, message=FALSE, out.width="70%"}
-# A shortcut for 'GraphSpace' plotting calls
-igraphSpace(gtoy1, marks = "n1", mark.color = "white")
+# Plot the updated 'gtoy1' using GraphSpace
+plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 ```
 
 # Citation

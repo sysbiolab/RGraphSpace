@@ -30,7 +30,7 @@ GraphSpace-class objects.
 # Load a demo igraph
 data('gtoy1', package = 'GraphSpace')
 
-grs <- GraphSpace(gtoy1)
+gs <- GraphSpace(gtoy1)
 
 }
 \seealso{

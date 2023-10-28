@@ -3,7 +3,6 @@
 export(GraphSpace)
 exportClasses(GraphSpace)
 exportMethods(getGraphSpace)
-exportMethods(igraphSpace)
 exportMethods(plotGraphSpace)
 import(igraph)
 import(methods)

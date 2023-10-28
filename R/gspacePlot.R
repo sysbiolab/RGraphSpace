@@ -1,54 +1,38 @@
 
 #-------------------------------------------------------------------------------
-#' @title Plotting igraph objects with GraphSpace
-#'
-#' @description \code{igraphSpace} is a wrapper function for 
-#' GraphSpace plotting calls
-#' 
-#' @param g An \code{igraph} object. It must include \code{x}, \code{y}, 
-#' and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).
 #' @param ... Additional arguments passed to the 
 #' \code{\link{plotGraphSpace}} function.
 #' @param layout an optional numeric matrix with two columns for \code{x} 
 #' and \code{y} coordinates.
 #' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
 #' the outer margins as a fraction of the graph space.
-#' @return A ggplot-class object.
-#' @author Sysbiolab.
-#' @seealso \code{\link{plotGraphSpace}}
-#' @examples
-#' # Load a demo igraph
-#' data('gtoy1', package = 'GraphSpace')
-#' 
-#' # Generate a ggplot for the gtoy1 igraph
-#' igraphSpace(gtoy1)
-#'
 #' @import methods
 #' @docType methods
-#' @rdname igraphSpace-methods
-#' @aliases igraphSpace
+#' @rdname plotGraphSpace-methods
+#' @aliases plotGraphSpace
 #' @export
 #'
-setMethod("igraphSpace", "igraph", 
-    function(g, ..., layout = NULL, mar = 0.075) {
-        grs <- GraphSpace(g, layout, mar, verbose=FALSE)
-        gg <- plotGraphSpace(grs, ...=...)
+setMethod("plotGraphSpace", "igraph", 
+    function(gs, ..., layout = NULL, mar = 0.075) {
+        gs <- GraphSpace(gs, layout, mar, verbose=FALSE)
+        gg <- plotGraphSpace(gs, ...=...)
         return(gg)
     }
 )
 
-
 #-------------------------------------------------------------------------------
-#' @title Plotting graphs with the GraphSpace package
+#' @title Plotting igraph objects with the GraphSpace package
 #'
 #' @description \code{plotGraphSpace} is a wrapper function to 
-#' create dedicated ggplot graphics for GraphSpace-class objects.
+#' create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
 #'
-#' @param grs A \linkS4class{GraphSpace} class object.
+#' @param gs Either an \code{igraph} or \linkS4class{GraphSpace} class object.
+#' If \code{gs} is an \code{igraph}, then it must include \code{x}, \code{y}, 
+#' and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).
 #' @param xlab The title for the 'x' axis of a 2D-image space.
 #' @param ylab The title for the 'y' axis of a 2D-image space.
 #' @param font.size A single numeric value passed to ggplot themes.
-#' @param theme.name Name of a custom GraphSpace theme. These themes 
+#' @param theme Name of a custom GraphSpace theme. These themes 
 #' (from 'th1' to 'th3') consist mainly of preconfigured ggplot settings, 
 #' which the user can subsequently fine-tune within the resulting 
 #' ggplot object.
@@ -64,9 +48,14 @@ setMethod("igraphSpace", "igraph",
 #' # Load a demo igraph
 #' data('gtoy1', package = 'GraphSpace')
 #' 
-#' grs <- GraphSpace(gtoy1)
+#' # Generate a ggplot for gtoy1
+#' plotGraphSpace(gtoy1)
 #' 
-#' plotGraphSpace(grs)
+#' # Create a GraphSpace object
+#' gs <- GraphSpace(gtoy1)
+#' 
+#' # Generate a ggplot for gs
+#' plotGraphSpace(gs)
 #' 
 #' @import methods
 #' @importFrom ggplot2 geom_point geom_segment aes Geom .pt .stroke
@@ -81,27 +70,27 @@ setMethod("igraphSpace", "igraph",
 #' @export
 #'
 setMethod("plotGraphSpace", "GraphSpace", 
-    function(grs, xlab = "Graph coordinates 1", ylab = "Graph coordinates 2",
-        font.size = 1, theme.name = c("th1", "th2", "th3"),
+    function(gs, xlab = "Graph coordinates 1", ylab = "Graph coordinates 2",
+        font.size = 1, theme = c("th1", "th2", "th3"),
         bg.color = "grey95", marks = FALSE, mark.size = 3, 
         mark.color = "grey20") {
-        #--- validate the grs object and args
+        #--- validate the gs object and args
         .validate.args("singleString", "xlab", xlab)
         .validate.args("singleString", "ylab", ylab)
         .validate.args("singleNumber", "font.size", font.size)
-        theme.name <- match.arg(theme.name)
+        theme <- match.arg(theme)
         .validate.colors("singleColor", "bg.color", bg.color)
         .validate.plot.args("marks", marks)
         .validate.args("numeric_vec","mark.size", mark.size)
         .validate.colors("singleColor","mark.color", mark.color)
-        #--- get slots from grs
-        nodes <- getGraphSpace(grs, "nodes")
-        edges <- getGraphSpace(grs, "edges")
-        pars <- getGraphSpace(grs, "pars")
+        #--- get slots from gs
+        nodes <- getGraphSpace(gs, "nodes")
+        edges <- getGraphSpace(gs, "edges")
+        pars <- getGraphSpace(gs, "pars")
         #--- get edge coordinates
         edges <- .get.exy(nodes, edges)
         #--- set theme pars
-        cl <- .set.theme.bks(theme.name)
+        cl <- .set.theme.bks(theme)
         #--- get ggplot object
         ggp <- .get.graph(nodes, edges, xlab, ylab, cl)
         if(pars$is.directed){
@@ -117,7 +106,7 @@ setMethod("plotGraphSpace", "GraphSpace",
                 mark.size)
         }
         #--- apply custom theme
-        ggp <- .custom.themes(ggp, theme.name, 
+        ggp <- .custom.themes(ggp, theme, 
             font.size=font.size, bg.color=bg.color)
         return(ggp)
     }
@@ -325,12 +314,12 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
 }
 
 #-------------------------------------------------------------------------------
-.custom.themes <- function(gg, theme.name, font.size, bg.color) {
+.custom.themes <- function(gg, theme, font.size, bg.color) {
     et1 <- ggplot2::element_text(size = 14 * font.size)
     et2 <- ggplot2::element_text(size = 12 * font.size)
-    if (theme.name == "th3") {
+    if (theme == "th3") {
         gg <- .custom.th3(gg, font.size, bg.color)
-    } else if (theme.name == "th2") {
+    } else if (theme == "th2") {
         gg <- .custom.th2(gg, font.size, bg.color)
     } else {
         gg <- .custom.th1(gg, font.size, bg.color)
@@ -381,13 +370,13 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
         panel.background = element_rect(fill = bg.color))
     return(gg)
 }
-.set.theme.bks <- function(theme.name, cl=list()){
-    if (theme.name %in% c("th3")) {
+.set.theme.bks <- function(theme, cl=list()){
+    if (theme %in% c("th3")) {
         cl$axis.ticks <- c(0.25, 0.5, 0.75)
         cl$xylim <- c(-0.01, 1.01)
         cl$x.position <- "top"
         cl$justify <- "centre"
-    } else if (theme.name %in% c("th2")) {
+    } else if (theme %in% c("th2")) {
         cl$axis.ticks <- seq(0.1, 0.9, 0.2)
         cl$xylim <- c(-0.01, 1.01)
         cl$x.position <- "bottom"

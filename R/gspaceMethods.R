@@ -20,7 +20,7 @@
 #' # Load a demo igraph
 #' data('gtoy1', package = 'GraphSpace')
 #'
-#' grs <- GraphSpace(gtoy1)
+#' gs <- GraphSpace(gtoy1)
 #' 
 #' @importFrom igraph degree vcount ecount which_mutual
 #' @importFrom igraph as_edgelist as_adjacency_matrix is.simple 
@@ -44,8 +44,8 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075,
     #--- validate the igraph object
     if(verbose) message("Validating the 'igraph' object...")
     g <- .validate.igraph(g, layout)
-    grs <- .buildGraphSpace(g, mar, verbose)
-    return(grs)
+    gs <- .buildGraphSpace(g, mar, verbose)
+    return(gs)
 }
 
 #-------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075,
 #' @description \code{getGraphSpace} retrives information from
 #' individual slots available in a GraphSpace object.
 #'
-#' @param grs A preprocessed \linkS4class{GraphSpace} class object
+#' @param gs A preprocessed \linkS4class{GraphSpace} class object
 #' @param what A single character value specifying which information should 
 #' be retrieved from the slots.
 #' Options: 'graph','gxy','gxyz','pars','misc','status','summits',
@@ -65,34 +65,34 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075,
 #' data('gtoy1', package = 'GraphSpace')
 #'
 #' # Create a new GraphSpace object
-#' grs <- GraphSpace(gtoy1)
+#' gs <- GraphSpace(gtoy1)
 #'
-#' # Get the 'summary' slot in grs
-#' getGraphSpace(grs, what = 'summary')
+#' # Get the 'summary' slot in gs
+#' getGraphSpace(gs, what = 'summary')
 #'
 #' @import methods
 #' @docType methods
 #' @rdname getGraphSpace-methods
 #' @aliases getGraphSpace
 #' @export
-setMethod("getGraphSpace", "GraphSpace", function(grs, what = "summary") {
+setMethod("getGraphSpace", "GraphSpace", function(gs, what = "summary") {
     opts <- c("nodes", "edges", "graph","pars", "misc", "summary")
     if (!what %in% opts) {
         opts <- paste0(opts, collapse = ", ")
         stop("'what' must be one of:\n", opts, call. = FALSE)
     }
     if (what == "nodes") {
-        obj <- grs@nodes
+        obj <- gs@nodes
     } else if (what == "edges") {
-        obj <- grs@edges
+        obj <- gs@edges
     } else if (what == "graph") {
-        obj <- grs@graph
+        obj <- gs@graph
     } else if (what == "pars") {
-        obj <- grs@pars
+        obj <- gs@pars
     } else if (what == "misc") {
-        obj <- grs@misc
+        obj <- gs@misc
     } else {
-        obj <- summary(grs@graph)
+        obj <- summary(gs@graph)
     }
     return(obj)
 })

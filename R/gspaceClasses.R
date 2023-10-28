@@ -1,4 +1,3 @@
-#' @import igraph
 setOldClass("igraph")
 
 #' @title GraphSpace: An S4 class for PathwaySpace graphics
@@ -15,6 +14,7 @@ setOldClass("igraph")
 #' @return An S4 class object.
 #' @section Constructor:
 #' see \code{\link{GraphSpace}} constructor.
+#' @import igraph
 #' @exportClass GraphSpace
 #'
 ## Class GraphSpace
