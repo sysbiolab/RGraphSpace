@@ -42,11 +42,121 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075,
         stop("'mar' should be in [0,1]", call. = FALSE)
     }
     #--- validate the igraph object
-    if(verbose) message("Validating the 'igraph' object...")
-    g <- .validate.igraph(g, layout)
+    g <- .validate.igraph(g, layout, verbose)
     gs <- .buildGraphSpace(g, mar, verbose)
     return(gs)
 }
+
+#-------------------------------------------------------------------------------
+#' @title Plotting igraph objects with the GraphSpace package
+#'
+#' @description \code{plotGraphSpace} is a wrapper function to 
+#' create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
+#'
+#' @param gs Either an \code{igraph} or \linkS4class{GraphSpace} class object.
+#' If \code{gs} is an \code{igraph}, then it must include \code{x}, \code{y}, 
+#' and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).
+#' @param xlab The title for the 'x' axis of a 2D-image space.
+#' @param ylab The title for the 'y' axis of a 2D-image space.
+#' @param font.size A single numeric value passed to ggplot themes.
+#' @param theme Name of a custom GraphSpace theme. These themes 
+#' (from 'th1' to 'th3') consist mainly of preconfigured ggplot settings, 
+#' which the user can subsequently fine-tune within the resulting 
+#' ggplot object.
+#' @param bg.color A single color for background.
+#' @param marks A logical value indicating whether to add 'marks' to vertex 
+#' positions. Alternatively, this could be a vector listing vertex names.
+#' @param mark.size A font size argument passed to \code{\link{geom_text}}.
+#' @param mark.color A color passed to \code{\link{geom_text}}.
+#' @return A ggplot-class object.
+#' @author Sysbiolab.
+#' @seealso \code{\link{GraphSpace}}
+#' @examples
+#' # Load a demo igraph
+#' data('gtoy1', package = 'GraphSpace')
+#' 
+#' # Generate a ggplot for gtoy1
+#' plotGraphSpace(gtoy1)
+#' 
+#' # Create a GraphSpace object
+#' gs <- GraphSpace(gtoy1)
+#' 
+#' # Generate a ggplot for gs
+#' plotGraphSpace(gs)
+#' 
+#' @import methods
+#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt
+#' @importFrom ggplot2 element_rect margin element_blank layer
+#' @importFrom ggplot2 element_line element_text ggproto
+#' @importFrom grDevices col2rgb
+#' @importFrom grid gpar arrow unit pointsGrob
+#' @importFrom scales alpha
+#' @docType methods
+#' @rdname plotGraphSpace-methods
+#' @aliases plotGraphSpace
+#' @export
+#'
+setMethod("plotGraphSpace", "GraphSpace", 
+    function(gs, xlab = "Graph coordinates 1", ylab = "Graph coordinates 2",
+        font.size = 1, theme = c("th1", "th2", "th3"),
+        bg.color = "grey95", marks = FALSE, mark.size = 3, 
+        mark.color = "grey20") {
+        #--- validate the gs object and args
+        .validate.args("singleString", "xlab", xlab)
+        .validate.args("singleString", "ylab", ylab)
+        .validate.args("singleNumber", "font.size", font.size)
+        theme <- match.arg(theme)
+        .validate.colors("singleColor", "bg.color", bg.color)
+        .validate.plot.args("marks", marks)
+        .validate.args("numeric_vec","mark.size", mark.size)
+        .validate.colors("singleColor","mark.color", mark.color)
+        #--- get slots from gs
+        nodes <- getGraphSpace(gs, "nodes")
+        edges <- getGraphSpace(gs, "edges")
+        pars <- getGraphSpace(gs, "pars")
+        #--- get edge coordinates
+        edges <- .get.exy(nodes, edges)
+        #--- nodeSize is a '%' of plot space
+        nodes$nodeSize <- nodes$nodeSize/100
+        #--- set theme pars
+        cl <- .set.theme.bks(theme)
+        #--- get ggplot object
+        ggp <- .set.gspace(nodes, edges, xlab, ylab, cl)
+        if(nrow(nodes)>0) ggp <- .add.graph(ggp, nodes, edges)
+        #--- add marks if available
+        bl <- (is.logical(marks) && marks) || is.character(marks)
+        if (bl && nrow(nodes)>0) {
+            if(is.logical(marks)) marks <- rownames(nodes)
+            ggp <- .add.node.marks(ggp, nodes, marks, mark.color, 
+                mark.size)
+        }
+        #--- apply custom theme
+        ggp <- .custom.themes(ggp, theme, 
+            font.size=font.size, bg.color=bg.color)
+        return(ggp)
+    }
+)
+
+#-------------------------------------------------------------------------------
+#' @param ... Additional arguments passed to the 
+#' \code{\link{plotGraphSpace}} function.
+#' @param layout an optional numeric matrix with two columns for \code{x} 
+#' and \code{y} coordinates.
+#' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
+#' the outer margins as a fraction of the graph space.
+#' @import methods
+#' @docType methods
+#' @rdname plotGraphSpace-methods
+#' @aliases plotGraphSpace
+#' @export
+#'
+setMethod("plotGraphSpace", "igraph", 
+    function(gs, ..., layout = NULL, mar = 0.075) {
+        gs <- GraphSpace(gs, layout, mar, verbose=FALSE)
+        gg <- plotGraphSpace(gs, ...=...)
+        return(gg)
+    }
+)
 
 #-------------------------------------------------------------------------------
 #' @title Accessors for fetching slots from a GraphSpace object

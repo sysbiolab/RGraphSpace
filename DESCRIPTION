@@ -9,20 +9,21 @@ Authors@R:
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
 Depends: R(>= 4.2), methods, igraph, ggplot2
-Imports: scales, grid
+Imports: grDevices, scales, grid
 Suggests: knitr, rmarkdown, RUnit, BiocGenerics, BiocStyle, PathwaySpace, RedeR
-Description: GraphSpace is an R package that integrates igraph and ggplot2 graphics within spatial maps. GraphSpace implements new geometric objects using ggplot2 protypes, customized for representing large igraph objects in a normalized coordinate system.
+Description: GraphSpace is an R package that integrates igraph and ggplot2 graphics within spatial maps. GraphSpace implements new geometric objects using ggplot2 protypes, customized for representing large igraph objects in a normalized coordinate system. By scaling shapes and graph elements, GraphSpace can provide a framework for layered visualizations.
 License: Artistic-2.0
-biocViews: GraphAndNetwork, Network, NetworkEnrichment
+biocViews: GraphAndNetwork, Network, NetworkEnrichment, Spatial
 VignetteBuilder: knitr
 URL: https://github.com/sysbiolab/GraphSpace
 Collate:
     gspaceChecks.R
+    gspaceValidation.R
     gspaceSupplements.R
     gspaceMisc.R
+    gspacePlots.R
     gspaceClasses.R
     gspaceGenerics.R
     gspaceMethods.R
-    gspacePlot.R
 Encoding: UTF-8
 RoxygenNote: 7.2.3

@@ -1,6 +1,6 @@
 ---
 title: "*GraphSpace*: A lightweight package for representing large *igraph* objects in a normalized coordinate system."
-author: "The authors..."
+author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
 abstract: "<p>*GraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *GraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Overview
 
-*GraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], which are scaled to fit within a standard unit space, making it easier to display different graphs side by side. *GraphSpace* implements new geometric objects using *ggplot2* protypes [@Wickham2016], taking into account the size of the input graph. By scaling shapes and graph elements, *GraphSpace* can provide a framework for layered visualizations, ensuring proper alignment within a spatial map. *GraphSpace*'s use of *ggplot2* allows for extensive customization of aesthetics and visual style, such as colors, shapes, and line types.
+*GraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], which are scaled to fit within a standard unit space, making it easier to display different graphs side by side. *GraphSpace* implements new geometric objects using *ggplot2* protypes [@Wickham2016], taking into account relative sizes and positions of the input graph. By scaling graph elements, *GraphSpace* can provide a framework for layered visualizations, ensuring proper alignment within a spatial map. *GraphSpace*'s use of *ggplot2* allows for extensive customization of aesthetics and visual style, such as colors, shapes, and line types.
 
 # Quick start
 
@@ -36,8 +36,6 @@ library(igraph)
 library(ggplot2)
 library(GraphSpace)
 ```
-
-## Creating a toy *igraph* object
 
 ```{r Toy igraph - 1, eval=TRUE, message=FALSE, results=FALSE}
 # Make a 'toy' igraph with 5 nodes and 4 edges
@@ -65,19 +63,19 @@ V(gtoy1)$name <- paste0("n", 1:5)
 
 ```{r Toy igraph - 2, eval=TRUE, message=FALSE, out.width="40%"}
 # Plot the 'gtoy1' using standard R graphics
-plot.igraph(gtoy1)
+plot(gtoy1)
 ```
 
-```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="70%"}
+```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="60%"}
 # Plot the 'gtoy1' using GraphSpace
 plotGraphSpace(gtoy1, marks = TRUE)
 ```
 
-Next, we will demonstrate all vertex and edge attributes that can be passed to *GraphSpace* objecs.
+# *GraphSpace* attributes
 
-## Setting *GraphSpace* attributes
+Next, we will demonstrate all vertex and edge attributes that can be passed to *GraphSpace* methods.
 
-Node attributes in directed and undirected graphs...
+## Vertex attributes
 
 ```{r Node attributes, eval=TRUE, message=FALSE}
 # Node size (numeric in (0, 100), as '%' of the plot space)
@@ -105,7 +103,9 @@ V(gtoy1)$nodeLabelSize <- 12
 V(gtoy1)$nodeLabelColor <- "grey40"
 ```
 
-Edge attributes in directed and undirected graphs...
+## Edge line attributes
+
+Given a list of edges, *GraphSpace* represents only one edge for each pair of connected vertices. If there are multiple edges connecting the same vertex pairs, it will display the line attributes of the first edge in the list.
 
 ```{r Edge attributes - 1, eval=TRUE, message=FALSE}
 # Edge width (as in 'lwd' standard graphics; see 'help(gpar)')
@@ -116,22 +116,22 @@ E(gtoy1)$edgeLineColor <- c("red","green","blue","black")
 
 # Edge type (as in 'lty' standard graphics; see 'help(gpar)')
 E(gtoy1)$edgeLineType <- c("solid", "dotted", "dashed", "2121")
-
-# Arrowhead length (as in 'lwd' standard graphics; see 'help(gpar)')
-E(gtoy1)$arrowLength <- 1 
 ```
 
-Arrowhead type in directed graphs. By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
+## Arrowhead attributes
+
+Arrowhead in directed graphs. By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
 
 ```{r Edge attributes - 2, eval=TRUE, message=FALSE}
 # Arrowhead types in directed graphs (integer code or character)
 ## 0 = "---", 1 = "-->", -1 = "--|"
 E(gtoy1)$arrowType <- 1
-# Note: in directed graphs, edge's orientation is defined by 
-# the edge list's left-to-right orientation (e.g. 'A -> B')
+
+# Arrowhead length (as in 'lwd' standard graphics; see 'help(gpar)')
+E(gtoy1)$arrowLength <- 1
 ```
 
-Arrowhead type in undirected graphs. By default, no arrow will be drawn in undirected graphs.
+Arrowhead in undirected graphs. By default, no arrow will be drawn in undirected graphs.
 
 ```{r Edge attributes - 3, eval=TRUE, message=FALSE}
 # Arrowhead types in undirected graphs (integer or character code)
@@ -139,13 +139,16 @@ Arrowhead type in undirected graphs. By default, no arrow will be drawn in undir
 ##  1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->",
 ## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|", 
 E(gtoy1)$arrowType <- 1
-# Note: in undirected graphs, this attribute overrides 
+# Note: in undirected graphs, this attribute overrides the 
 # edge's orientation in the edge list
+
+# Arrowhead length (as in 'lwd' standard graphics; see 'help(gpar)')
+E(gtoy1)$arrowLength <- 1
 ```
 
 ... and now plot the updated *igraph* object with *GraphSpace*:
  
-```{r A shortcut for GraphSpace, eval=TRUE, message=FALSE, out.width="70%"}
+```{r A shortcut for GraphSpace, eval=TRUE, message=FALSE, out.width="60%"}
 # Plot the updated 'gtoy1' using GraphSpace
 plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 ```
@@ -153,6 +156,8 @@ plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 # Citation
 
 If you use *GraphSpace*, please cite:
+
+* Sysbiolab Team. "GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system." R package, 2023.
 
 * Castro MA, Wang X, Fletcher MN, Meyer KB, Markowetz F (2012). "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations." *Genome Biology*, 13(4), R29. 
 https://bioconductor.org/packages/RedeR/

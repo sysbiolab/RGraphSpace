@@ -1,130 +1,44 @@
 
-#-------------------------------------------------------------------------------
-#' @param ... Additional arguments passed to the 
-#' \code{\link{plotGraphSpace}} function.
-#' @param layout an optional numeric matrix with two columns for \code{x} 
-#' and \code{y} coordinates.
-#' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
-#' the outer margins as a fraction of the graph space.
-#' @import methods
-#' @docType methods
-#' @rdname plotGraphSpace-methods
-#' @aliases plotGraphSpace
-#' @export
-#'
-setMethod("plotGraphSpace", "igraph", 
-    function(gs, ..., layout = NULL, mar = 0.075) {
-        gs <- GraphSpace(gs, layout, mar, verbose=FALSE)
-        gg <- plotGraphSpace(gs, ...=...)
-        return(gg)
+################################################################################
+### ggplot2 protypes for GraphSpace-class methods
+################################################################################
+GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
+    required_aes = c("x", "y", "size"),
+    default_aes = aes(shape = 21, size = grid::unit(0.1, "npc"), 
+        fill = "grey90", colour = "grey20", stroke = 1, alpha = NA),
+    draw_panel = function(data, panel_scales, coord) {
+        coords <- coord$transform(data, panel_scales)
+        grid::pointsGrob(
+            x = coords$x,
+            y = coords$y,
+            pch = coords$shape,
+            # for pch in 0:25, size is about 75% of the
+            # character height (see 'points()' graphics)
+            size = coords$size * 1.25,
+            default.units = "npc",
+            gp = grid::gpar(
+                fill = scales::alpha(coords$fill, coords$alpha), 
+                col = scales::alpha(coords$colour, coords$alpha),
+                lwd = coords$stroke
+            )
+        )
     }
 )
-
-#-------------------------------------------------------------------------------
-#' @title Plotting igraph objects with the GraphSpace package
-#'
-#' @description \code{plotGraphSpace} is a wrapper function to 
-#' create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
-#'
-#' @param gs Either an \code{igraph} or \linkS4class{GraphSpace} class object.
-#' If \code{gs} is an \code{igraph}, then it must include \code{x}, \code{y}, 
-#' and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).
-#' @param xlab The title for the 'x' axis of a 2D-image space.
-#' @param ylab The title for the 'y' axis of a 2D-image space.
-#' @param font.size A single numeric value passed to ggplot themes.
-#' @param theme Name of a custom GraphSpace theme. These themes 
-#' (from 'th1' to 'th3') consist mainly of preconfigured ggplot settings, 
-#' which the user can subsequently fine-tune within the resulting 
-#' ggplot object.
-#' @param bg.color A single color for background.
-#' @param marks A logical value indicating whether to add 'marks' to vertex 
-#' positions. Alternatively, this could be a vector listing vertex names.
-#' @param mark.size A font size argument passed to \code{\link{geom_text}}.
-#' @param mark.color A color passed to \code{\link{geom_text}}.
-#' @return A ggplot-class object.
-#' @author Sysbiolab.
-#' @seealso \code{\link{GraphSpace}}
-#' @examples
-#' # Load a demo igraph
-#' data('gtoy1', package = 'GraphSpace')
-#' 
-#' # Generate a ggplot for gtoy1
-#' plotGraphSpace(gtoy1)
-#' 
-#' # Create a GraphSpace object
-#' gs <- GraphSpace(gtoy1)
-#' 
-#' # Generate a ggplot for gs
-#' plotGraphSpace(gs)
-#' 
-#' @import methods
-#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt .stroke
-#' @importFrom ggplot2 element_rect margin element_blank layer
-#' @importFrom ggplot2 element_line element_text ggproto
-#' @importFrom grDevices col2rgb
-#' @importFrom grid gpar arrow unit pointsGrob polygonGrob
-#' @importFrom scales alpha
-#' @docType methods
-#' @rdname plotGraphSpace-methods
-#' @aliases plotGraphSpace
-#' @export
-#'
-setMethod("plotGraphSpace", "GraphSpace", 
-    function(gs, xlab = "Graph coordinates 1", ylab = "Graph coordinates 2",
-        font.size = 1, theme = c("th1", "th2", "th3"),
-        bg.color = "grey95", marks = FALSE, mark.size = 3, 
-        mark.color = "grey20") {
-        #--- validate the gs object and args
-        .validate.args("singleString", "xlab", xlab)
-        .validate.args("singleString", "ylab", ylab)
-        .validate.args("singleNumber", "font.size", font.size)
-        theme <- match.arg(theme)
-        .validate.colors("singleColor", "bg.color", bg.color)
-        .validate.plot.args("marks", marks)
-        .validate.args("numeric_vec","mark.size", mark.size)
-        .validate.colors("singleColor","mark.color", mark.color)
-        #--- get slots from gs
-        nodes <- getGraphSpace(gs, "nodes")
-        edges <- getGraphSpace(gs, "edges")
-        pars <- getGraphSpace(gs, "pars")
-        #--- get edge coordinates
-        edges <- .get.exy(nodes, edges)
-        #--- set theme pars
-        cl <- .set.theme.bks(theme)
-        #--- get ggplot object
-        ggp <- .get.graph(nodes, edges, xlab, ylab, cl)
-        if(pars$is.directed){
-            ggp <- .set.dir.graph(ggp, nodes, edges)
-        } else {
-            ggp <- .set.und.graph(ggp, nodes, edges)
-        }
-        #--- add marks if available
-        bl <- is.logical(marks) && marks
-        if (bl || is.character(marks)) {
-            if(bl) marks <- rownames(nodes)
-            ggp <- .add.node.marks(ggp, nodes, marks, mark.color, 
-                mark.size)
-        }
-        #--- apply custom theme
-        ggp <- .custom.themes(ggp, theme, 
-            font.size=font.size, bg.color=bg.color)
-        return(ggp)
-    }
-)
-
-#-------------------------------------------------------------------------------
-.get.exy <- function(gxy, edges){
-    exy <- data.frame(
-        x1 = gxy[edges$vertex1,"X"], 
-        x2 = gxy[edges$vertex2,"X"], 
-        y1 = gxy[edges$vertex1,"Y"], 
-        y2 = gxy[edges$vertex2,"Y"])
-    edges <- cbind(edges, exy)
-    return(edges)
+.geom_nodespace <- function(mapping = NULL, data = NULL, 
+    stat = "identity", position = "identity", na.rm = TRUE, 
+    show.legend = FALSE, inherit.aes = TRUE, ...) {
+    ggplot2::layer(
+        geom = GeomNodeSpace, mapping = mapping,  
+        data = data, stat = stat, position = position, 
+        show.legend = show.legend, inherit.aes = inherit.aes,
+        params = list(na.rm = na.rm, ...)
+    )
 }
 
-#-------------------------------------------------------------------------------
-.get.graph <- function(nodes, edges, xlab, ylab, cl){
+################################################################################
+### ggplot2 calls for GraphSpace-class methods
+################################################################################
+.set.gspace <- function(nodes, edges, xlab, ylab, cl){
     X <- Y <- NULL
     ggp <- ggplot2::ggplot(nodes, ggplot2::aes(X, Y)) +
         ggplot2::scale_x_continuous(name = xlab, breaks = cl$axis.ticks,
@@ -138,24 +52,13 @@ setMethod("plotGraphSpace", "GraphSpace",
 }
 
 #-------------------------------------------------------------------------------
-.set.und.graph <- function(ggp, nodes, edges){
+.add.graph <- function(ggp, nodes, edges){
     edges <- .offset.edges(nodes, edges)
     ggp <- .add.segments(ggp, edges)
     ggp <- .add.arrows(ggp, edges)
     ggp <- .add.nodes(ggp, nodes)
     return(ggp)
 }
-
-#-------------------------------------------------------------------------------
-.set.dir.graph <- function(ggp, nodes, edges){
-    edges <- .offset.edges(nodes, edges)
-    ggp <- .add.segments(ggp, edges)
-    ggp <- .add.arrows(ggp, edges)
-    ggp <- .add.nodes(ggp, nodes)
-    return(ggp)
-}
-
-#-------------------------------------------------------------------------------
 .add.nodes <- function(ggp, nodes){
     ggp <- ggp + .geom_nodespace(size = grid::unit(nodes$nodeSize, "npc"), 
         fill = nodes$nodeColor, colour=nodes$nodeLineColor, 
@@ -239,40 +142,6 @@ setMethod("plotGraphSpace", "GraphSpace",
         type = "open", ends = "first",
         length = grid::unit(edges$arrowLength_1 * ggplot2::.pt, "mm"))
     return(list(exy=exy, arrow=arrow))
-}
-
-#-------------------------------------------------------------------------------
-GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
-    required_aes = c("x", "y", "size"),
-    default_aes = aes(shape = 21, size = grid::unit(0.1, "npc"), 
-        fill = "grey90", colour = "grey20", stroke = 1, alpha = NA),
-    draw_panel = function(data, panel_scales, coord) {
-        coords <- coord$transform(data, panel_scales)
-        grid::pointsGrob(
-            x = coords$x,
-            y = coords$y,
-            pch = coords$shape,
-            # for pch in 0:25, size is about 75% of the
-            # character height (see 'points()' graphics)
-            size = coords$size * 1.25,
-            default.units = "npc",
-            gp = grid::gpar(
-                fill = scales::alpha(coords$fill, coords$alpha), 
-                col = scales::alpha(coords$colour, coords$alpha),
-                lwd = coords$stroke
-            )
-        )
-    }
-)
-.geom_nodespace <- function(mapping = NULL, data = NULL, 
-    stat = "identity", position = "identity", na.rm = TRUE, 
-    show.legend = FALSE, inherit.aes = TRUE, ...) {
-    ggplot2::layer(
-        geom = GeomNodeSpace, mapping = mapping,  
-        data = data, stat = stat, position = position, 
-        show.legend = show.legend, inherit.aes = inherit.aes,
-        params = list(na.rm = na.rm, ...)
-    )
 }
 
 #-------------------------------------------------------------------------------

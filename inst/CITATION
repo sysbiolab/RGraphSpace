@@ -1,8 +1,23 @@
 
 citEntry(entry = "Manual",
-author = "The authors...",
+author = "Sysbiolab Team",
 title = "GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system.",
 year = "2023",
 note = "R package",
-textVersion = "The authors... GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package, 2023."
+textVersion = "Sysbiolab Team. GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package, 2023."
+)
+
+citEntry(entry = "Article",
+author = "Mauro AA Castro, Xin Wang, Michael NC Fletcher, Kerstin B Meyer and Florian Markowetz",
+title = "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations.",
+journal = "Genome Biology",
+year = "2012",
+volume = "13",
+pages = "R29",
+number = "4",
+doi = "10.1186/gb-2012-13-4-r29",
+textVersion = paste("Castro MAA, Wang X, Fletcher MNC, Meyer KB, Markowetz F.", 
+"RedeR: R/Bioconductor package for representing modular structures,",
+"nested networks and multiple levels of hierarchical associations.",
+"Genome Biology 13:R29, 2012.", sep=" ")
 )
