@@ -92,6 +92,7 @@
       g <- igraph::delete_vertex_attr(g, name=at)
     }
   }
+  g <- .transform.nodeshape(g)
   return(g)
 }
 
@@ -154,7 +155,7 @@
   if(!is.null(atts$nodeLabelSize)){
     .validate.args("numeric_vec", "nodeLabelSize", atts$nodeLabelSize)
     if(min(atts$nodeLabelSize)<0){
-      stop("'nodeLabelSize' should be a vector of numeric values >=0.")
+      stop("'nodeLabelSize' should be a vector of numeric values >=0")
     }
   }
   if(!is.null(atts$nodeLabelColor)){
@@ -163,14 +164,11 @@
   if(!is.null(atts$nodeSize)){
     .validate.args("numeric_vec", "nodeSize", atts$nodeSize)
     if(max(atts$nodeSize)>100 || min(atts$nodeSize)<0){
-      stop("'nodeSize' should be a vector of numeric values in [0, 100].")
+      stop("'nodeSize' should be a vector of numeric values in [0, 100]")
     }
   }
   if(!is.null(atts$nodeShape)){
-    .validate.args("integer_vec", "nodeShape", atts$nodeShape)
-    if(max(atts$nodeShape)>25 || min(atts$nodeShape)<1){
-      stop("'nodeShape' should be a vector of integer values in [0, 25].")
-    }
+    .validate.args("allCharacterOrInteger", "nodeShape", atts$nodeShape)
   }
   if(!is.null(atts$nodeColor)){
     .validate.colors("allColors", "nodeColor", atts$nodeColor) 
@@ -178,7 +176,7 @@
   if(!is.null(atts$nodeLineWidth)){
     .validate.args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)
     if(min(atts$nodeLineWidth)<0){
-      stop("'nodeLineWidth' should be a vector of numeric values >=0.")
+      stop("'nodeLineWidth' should be a vector of numeric values >=0")
     }
   }
   if(!is.null(atts$nodeLineColor)){
@@ -190,7 +188,7 @@
   if(!is.null(atts$edgeLineWidth)){
     .validate.args("numeric_vec", "edgeLineWidth", atts$edgeLineWidth)
     if(min(atts$edgeLineWidth)<0){
-      stop("'edgeLineWidth' should be a vector of numeric values >=0.")
+      stop("'edgeLineWidth' should be a vector of numeric values >=0")
     }
   }
   if(!is.null(atts$edgeLineColor)){
@@ -203,7 +201,7 @@
   if(!is.null(atts$arrowLength)){
     .validate.args("numeric_vec", "arrowLength", atts$arrowLength)
     if(min(atts$arrowLength)<0){
-      stop("'arrowLength' should be a vector of numeric values >=0.")
+      stop("'arrowLength' should be a vector of numeric values >=0")
     }
   }
   if(!is.null(atts$arrowType)){
@@ -279,22 +277,54 @@
     return(atypes)
   }
 }
+
 #-------------------------------------------------------------------------------
 .transform.linetype <- function(g){
   if(ecount(g)>0 && "edgeLineType" %in% names(edge_attr(g))){
-    if(.all_integerValues(E(g)$edgeLineType)){
-      lty <- E(g)$edgeLineType
-      ltypes <- .get.linetype()
+    lty <- E(g)$edgeLineType
+    if(.all_integerValues(lty)){
+      ltypes <- .linetype.table()
       lty[!lty%in%ltypes] <- 1
       lty <- ltypes[match(lty,ltypes)]
-      E(g)$edgeLineType <- names(lty)
+      lty <- names(lty)
+    } else {
+      lty <- tolower(lty)
+      lty[grep("solid", lty)] <- "solid"
+      lty[grep("dotted", lty)] <- "dotted"
+      lty[grep("dashed", lty)] <- "dashed"
+      lty[grep("long", lty)] <- "longdash"
+      lty[grep("two", lty)] <- "twodash"
     }
+    E(g)$edgeLineType <- lty
   }
   return(g)
 }
-.get.linetype <- function(){
+.linetype.table <- function(){
   atp <- c('blank'=0, 'solid'=1, 'dashed'=2, 'dotted'=3,
     'dotdash'=4, 'longdash'=5, 'twodash'=6)
+}
+
+#-------------------------------------------------------------------------------
+.transform.nodeshape <- function(g){
+  if(vcount(g)>0 && "nodeShape" %in% names(vertex_attr(g))){
+    vshapes <- V(g)$nodeShape
+    if (.all_integerValues(vshapes)) {
+      vshapes[vshapes > 25] <- 21
+      vshapes[vshapes < 0] <- 1
+    } else {
+      vshapes <- tolower(vshapes)
+      pch <- rep(21,length(vshapes))
+      pch[grep("circle", vshapes)] <- 21
+      pch[grep("ellipse", vshapes)] <- 21
+      pch[grep("square", vshapes)] <- 22
+      pch[grep("diamond", vshapes)] <- 23
+      pch[grep("triangle", vshapes)] <- 24
+      pch[grep("rectangle", vshapes)] <-22
+      vshapes <- pch
+    }
+    V(g)$nodeShape <- vshapes
+  }
+  return(g)
 }
 
 ################################################################################
@@ -407,3 +437,4 @@
   atts <- atts[,c("vertex1", "vertex2", a_names)]
   return(atts)
 }
+

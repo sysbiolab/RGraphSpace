@@ -122,13 +122,15 @@ setMethod("plotGraphSpace", "GraphSpace",
         cl <- .set.theme.bks(theme)
         #--- get ggplot object
         ggp <- .set.gspace(nodes, edges, xlab, ylab, cl)
-        if(nrow(nodes)>0) ggp <- .add.graph(ggp, nodes, edges)
-        #--- add marks if available
-        bl <- (is.logical(marks) && marks) || is.character(marks)
-        if (bl && nrow(nodes)>0) {
-            if(is.logical(marks)) marks <- rownames(nodes)
-            ggp <- .add.node.marks(ggp, nodes, marks, mark.color, 
-                mark.size)
+        if(nrow(nodes)>0){
+            ggp <- .add.graph(ggp, nodes, edges)
+            #--- add marks if available
+            bl1 <- (is.logical(marks) && marks) 
+            bl2 <- (is.character(marks) && sum(marks%in%rownames(nodes))>0)
+            if(bl1 || bl2){
+                ggp <- .add.node.marks(ggp, nodes, marks,
+                    mark.color, mark.size)
+            }
         }
         #--- apply custom theme
         ggp <- .custom.themes(ggp, theme, 

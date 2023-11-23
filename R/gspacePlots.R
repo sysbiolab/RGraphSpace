@@ -145,12 +145,8 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
 }
 
 #-------------------------------------------------------------------------------
-.add.node.marks <- function(ggp, nodes, marks, mark.color, 
-    mark.size) {
-    gxy <- nodes
-    if (is.null(names(marks))) names(marks) <- marks
-    names(marks) <- ifelse(names(marks) == "", marks, names(marks))
-    marks <- marks[marks %in% rownames(gxy)]
+.add.node.marks <- function(ggp, nodes, marks, mark.color, mark.size) {
+    marks <- .set.labmarks(nodes, marks)
     if (length(mark.color) > 1) {
         if (is.null(names(mark.color))) {
             stop("'mark.color' should be named for this call!", call. = FALSE)
@@ -171,15 +167,31 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
         }
         mark.size <- mark.size[marks]
     }
-    gxy$mark.color <- mark.color
-    gxy$mark.size <- mark.size
-    gxy <- gxy[marks, , drop = FALSE]
-    gxy$ID <- names(marks); ID <- NULL
+    nodes$mark.color <- mark.color
+    nodes$mark.size <- mark.size
+    nodes <- nodes[marks, , drop = FALSE]
+    nodes$ID <- names(marks); ID <- NULL
     ggp <- ggp + ggplot2::geom_text(mapping = aes(label = ID), 
-        data = gxy, fontface = "bold",
+        data = nodes, fontface = "bold",
         size = mark.size, colour = mark.color, 
         vjust="center", hjust="center")
     return(ggp)
+}
+.set.labmarks <- function(nodes, marks){
+    nodelabs <- nodes[,c("name","nodeLabel")]
+    if(is.logical(marks)){
+        marks <- rownames(nodelabs)
+    } else {
+        marks <- marks[marks %in% rownames(nodelabs)]
+        nodelabs <- nodelabs[marks, ]
+    }
+    if (is.null(names(marks))){
+        names(marks) <- marks
+        idx <- !is.na(nodelabs$nodeLabel)
+        names(marks)[idx] <- nodelabs$nodeLabel[idx]
+    }
+    names(marks) <- ifelse(names(marks) == "", marks, names(marks))
+    return(marks)
 }
 
 #-------------------------------------------------------------------------------

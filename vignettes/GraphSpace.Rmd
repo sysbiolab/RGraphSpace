@@ -71,6 +71,7 @@ plot(gtoy1)
 plotGraphSpace(gtoy1, marks = TRUE)
 ```
 
+
 # *GraphSpace* attributes
 
 Next, we will demonstrate all vertex and edge attributes that can be passed to *GraphSpace* methods.
@@ -94,7 +95,7 @@ V(gtoy1)$nodeLineWidth <- 1
 V(gtoy1)$nodeLineColor <- "grey20"
 
 # Node labels ('NA' will omit labels)
-V(gtoy1)$nodeLabel <- c("Node1", "Node2", "Node3", "Node4", NA)
+V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
 
 # Node label size (in pts)
 V(gtoy1)$nodeLabelSize <- 12
@@ -152,6 +153,36 @@ E(gtoy1)$arrowLength <- 1
 # Plot the updated 'gtoy1' using GraphSpace
 plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 ```
+
+
+# Interactive layout
+
+```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
+# Load RedeR, a graph package for interactive visualization
+library(RedeR)
+startRedeR()
+resetRedeR()
+
+# Send 'gtoy1' to the RedeR interface
+addGraphToRedeR(gtoy1, unit="npc")
+relaxRedeR()
+
+# Fetch the graph with a fresh layout
+gtoy2 <- getGraphFromRedeR(unit="npc")
+
+# Check the round trip...
+plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
+
+## Note: for the round trip, shapes and line types are 
+## partially compatible between the tools.
+
+# ...alternatively, just update the graph layout
+gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
+
+# ...check the updated layout
+plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
+```
+
 
 # Citation
 
