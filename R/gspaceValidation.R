@@ -1,6 +1,6 @@
 
 ################################################################################
-### Default GraphSpace attributes
+### Default RGraphSpace attributes
 ################################################################################
 .get.required.vatt <- function(){
   atts <- list("x" = 0, "y" = 0, "name" = NA)
@@ -25,7 +25,7 @@
 }
 
 ################################################################################
-### Validate igraph for GraphSpace
+### Validate igraph for RGraphSpace
 ################################################################################
 .validate.igraph <- function(g, layout, verbose = TRUE) {
   if(verbose) message("Validating the 'igraph' object...")

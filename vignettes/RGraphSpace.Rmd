@@ -1,10 +1,10 @@
 ---
-title: "*GraphSpace*: A lightweight package for representing large *igraph* objects in a normalized coordinate system."
+title: "*RGraphSpace*: A lightweight package for representing large *igraph* objects in a normalized coordinate system."
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "<p>*GraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *GraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
-package: "`r BiocStyle::pkg_ver('GraphSpace')`"
+abstract: "<p>*RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
+package: "`r BiocStyle::pkg_ver('RGraphSpace')`"
 output: 
   BiocStyle::html_document:
     self_contained: yes
@@ -13,7 +13,7 @@ output:
     toc_depth: 2
     css: custom.css
 vignette: >
-  %\VignetteIndexEntry{"GraphSpace: ggplot2 graphics for PathwaySpace."}
+  %\VignetteIndexEntry{"RGraphSpace: ggplot2 graphics for PathwaySpace."}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,17 +24,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Overview
 
-*GraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], which are scaled to fit within a standard unit space, making it easier to display different graphs side by side. *GraphSpace* implements new geometric objects using *ggplot2* protypes [@Wickham2016], taking into account relative sizes and positions of the input graph. By scaling graph elements, *GraphSpace* can provide a framework for layered visualizations, ensuring proper alignment within a spatial map. *GraphSpace*'s use of *ggplot2* allows for extensive customization of aesthetics and visual style, such as colors, shapes, and line types.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], which are scaled to fit within a standard unit space, making it easier to display different graphs side by side. *RGraphSpace* implements new geometric objects using *ggplot2* protypes [@Wickham2016], taking into account relative sizes and positions of the input graph. By scaling graph elements, *RGraphSpace* can provide a framework for layered visualizations, ensuring proper alignment within a spatial map. *RGraphSpace*'s use of *ggplot2* allows for extensive customization of aesthetics and visual style, such as colors, shapes, and line types.
 
 # Quick start
 
-This section will create a toy *igraph* object to demonstrate the *GraphSpace* workflow. The graph layout is configured manually to ensure that users can easily view all the relevant arguments needed to prepare the input data for the *GraphSpace* package. We will use the igraph's `make_star()` function to create a simple star-like graph and then the `V()` and `E()` functions are used to set attributes for vertices and edges, respectively. The *GraphSpace* package will require that all vertices have `x`, `y`, and `name` attributes.
+This section will create a toy *igraph* object to demonstrate the *RGraphSpace* workflow. The graph layout is configured manually to ensure that users can easily view all the relevant arguments needed to prepare the input data for the *RGraphSpace* package. We will use the igraph's `make_star()` function to create a simple star-like graph and then the `V()` and `E()` functions are used to set attributes for vertices and edges, respectively. The *RGraphSpace* package will require that all vertices have `x`, `y`, and `name` attributes.
 
 ```{r Load packages for quick start, eval=TRUE, message=FALSE}
 #--- Load required packages
 library(igraph)
 library(ggplot2)
-library(GraphSpace)
+library(RGraphSpace)
 ```
 
 ```{r Toy igraph - 1, eval=TRUE, message=FALSE, results=FALSE}
@@ -67,14 +67,14 @@ plot(gtoy1)
 ```
 
 ```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="60%"}
-# Plot the 'gtoy1' using GraphSpace
+# Plot the 'gtoy1' using RGraphSpace
 plotGraphSpace(gtoy1, marks = TRUE)
 ```
 
 
-# *GraphSpace* attributes
+# *RGraphSpace* attributes
 
-Next, we will demonstrate all vertex and edge attributes that can be passed to *GraphSpace* methods.
+Next, we will demonstrate all vertex and edge attributes that can be passed to *RGraphSpace* methods.
 
 ## Vertex attributes
 
@@ -106,7 +106,7 @@ V(gtoy1)$nodeLabelColor <- "grey40"
 
 ## Edge line attributes
 
-Given a list of edges, *GraphSpace* represents only one edge for each pair of connected vertices. If there are multiple edges connecting the same vertex pairs, it will display the line attributes of the first edge in the list.
+Given a list of edges, *RGraphSpace* represents only one edge for each pair of connected vertices. If there are multiple edges connecting the same vertex pairs, it will display the line attributes of the first edge in the list.
 
 ```{r Edge attributes - 1, eval=TRUE, message=FALSE}
 # Edge width (as in 'lwd' standard graphics; see 'help(gpar)')
@@ -147,10 +147,10 @@ E(gtoy1)$arrowType <- 1
 E(gtoy1)$arrowLength <- 1
 ```
 
-... and now plot the updated *igraph* object with *GraphSpace*:
+... and now plot the updated *igraph* object with *RGraphSpace*:
  
-```{r A shortcut for GraphSpace, eval=TRUE, message=FALSE, out.width="60%"}
-# Plot the updated 'gtoy1' using GraphSpace
+```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE, out.width="60%"}
+# Plot the updated 'gtoy1' using RGraphSpace
 plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 ```
 
@@ -186,9 +186,9 @@ plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
 
 # Citation
 
-If you use *GraphSpace*, please cite:
+If you use *RGraphSpace*, please cite:
 
-* Sysbiolab Team. "GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system." R package, 2023.
+* Sysbiolab Team. "RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system." R package, 2023.
 
 * Castro MA, Wang X, Fletcher MN, Meyer KB, Markowetz F (2012). "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations." *Genome Biology*, 13(4), R29. 
 https://bioconductor.org/packages/RedeR/

@@ -28,7 +28,7 @@ GraphSpace-class objects.
 }
 \examples{
 # Load a demo igraph
-data('gtoy1', package = 'GraphSpace')
+data('gtoy1', package = 'RGraphSpace')
 
 gs <- GraphSpace(gtoy1)
 

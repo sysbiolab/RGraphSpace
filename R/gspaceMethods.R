@@ -18,7 +18,7 @@
 #' @seealso \code{\link{plotGraphSpace}}
 #' @examples
 #' # Load a demo igraph
-#' data('gtoy1', package = 'GraphSpace')
+#' data('gtoy1', package = 'RGraphSpace')
 #'
 #' gs <- GraphSpace(gtoy1)
 #' 
@@ -48,7 +48,7 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075,
 }
 
 #-------------------------------------------------------------------------------
-#' @title Plotting igraph objects with the GraphSpace package
+#' @title Plotting igraph objects with RGraphSpace package
 #'
 #' @description \code{plotGraphSpace} is a wrapper function to 
 #' create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
@@ -59,7 +59,7 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075,
 #' @param xlab The title for the 'x' axis of a 2D-image space.
 #' @param ylab The title for the 'y' axis of a 2D-image space.
 #' @param font.size A single numeric value passed to ggplot themes.
-#' @param theme Name of a custom GraphSpace theme. These themes 
+#' @param theme Name of a custom RGraphSpace theme. These themes 
 #' (from 'th1' to 'th3') consist mainly of preconfigured ggplot settings, 
 #' which the user can subsequently fine-tune within the resulting 
 #' ggplot object.
@@ -73,7 +73,7 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075,
 #' @seealso \code{\link{GraphSpace}}
 #' @examples
 #' # Load a demo igraph
-#' data('gtoy1', package = 'GraphSpace')
+#' data('gtoy1', package = 'RGraphSpace')
 #' 
 #' # Generate a ggplot for gtoy1
 #' plotGraphSpace(gtoy1)
@@ -174,7 +174,7 @@ setMethod("plotGraphSpace", "igraph",
 #' @return Content from slots in the \linkS4class{GraphSpace} object.
 #' @examples
 #' # Load a demo igraph
-#' data('gtoy1', package = 'GraphSpace')
+#' data('gtoy1', package = 'RGraphSpace')
 #'
 #' # Create a new GraphSpace object
 #' gs <- GraphSpace(gtoy1)

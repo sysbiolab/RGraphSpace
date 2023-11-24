@@ -1,6 +1,6 @@
-### GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system.
+### RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system.
 
-*GraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *GraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system. By scaling shapes and graph elements, *GraphSpace* can provide a framework for layered visualizations.
+*RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system. By scaling shapes and graph elements, *RGraphSpace* can provide a framework for layered visualizations.
 
 ### Installation in R (>=4.2)
 
@@ -13,22 +13,22 @@ install.packages("BiocManager")
 BiocManager::install("BiocStyle")
 ```
 
-##### Install the GraphSpace package
+##### Install the RGraphSpace package
 
 ```r
 install.packages("remotes")
-remotes::install_github("sysbiolab/GraphSpace", build_vignettes=TRUE)
+remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 ```
 
 ### Examples
 
-Follow the *GraphSpace* vignette and try to make some *plots*!
+Follow the *RGraphSpace* vignette and try to make some *plots*!
 
 ```r
-library(GraphSpace)
-vignette("GraphSpace")
+library(RGraphSpace)
+vignette("RGraphSpace")
 ```
 
 ### Licenses
 
-The *GraphSpace* package is distributed under [Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)
+The *RGraphSpace* package is distributed under [Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)

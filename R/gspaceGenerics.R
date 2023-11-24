@@ -1,10 +1,10 @@
 
-setGeneric("plotGraphSpace", 
+setGeneric("plotGraphSpace", signature = "gs",
     function(gs, ...) standardGeneric("plotGraphSpace"),
-    signature = "gs"
+    package = "RGraphSpace"
 )
 
-setGeneric("getGraphSpace", 
+setGeneric("getGraphSpace", signature = "gs",
     function(gs, what = "summary") standardGeneric("getGraphSpace"),
-    package = "GraphSpace"
+    package = "RGraphSpace"
 )

@@ -25,7 +25,7 @@ individual slots available in a GraphSpace object.
 }
 \examples{
 # Load a demo igraph
-data('gtoy1', package = 'GraphSpace')
+data('gtoy1', package = 'RGraphSpace')
 
 # Create a new GraphSpace object
 gs <- GraphSpace(gtoy1)

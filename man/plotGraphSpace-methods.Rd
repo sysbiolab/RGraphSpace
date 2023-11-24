@@ -5,7 +5,7 @@
 \alias{plotGraphSpace,GraphSpace-method}
 \alias{plotGraphSpace}
 \alias{plotGraphSpace,igraph-method}
-\title{Plotting igraph objects with the GraphSpace package}
+\title{Plotting igraph objects with RGraphSpace package}
 \usage{
 \S4method{plotGraphSpace}{GraphSpace}(
   gs,
@@ -32,7 +32,7 @@ and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).}
 
 \item{font.size}{A single numeric value passed to ggplot themes.}
 
-\item{theme}{Name of a custom GraphSpace theme. These themes 
+\item{theme}{Name of a custom RGraphSpace theme. These themes 
 (from 'th1' to 'th3') consist mainly of preconfigured ggplot settings, 
 which the user can subsequently fine-tune within the resulting 
 ggplot object.}
@@ -64,7 +64,7 @@ create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
 }
 \examples{
 # Load a demo igraph
-data('gtoy1', package = 'GraphSpace')
+data('gtoy1', package = 'RGraphSpace')
 
 # Generate a ggplot for gtoy1
 plotGraphSpace(gtoy1)
