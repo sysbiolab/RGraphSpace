@@ -159,7 +159,7 @@ plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 
 ```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
 # Load RedeR, a graph package for interactive visualization
-library(RedeR)
+library(RedeR) # (currently in Bioc devel, version >= 3.19)
 startRedeR()
 resetRedeR()
 
