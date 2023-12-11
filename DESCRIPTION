@@ -10,7 +10,7 @@ Authors@R:
               comment = c(ORCID = "0000-0003-4942-8131")))
 Depends: R(>= 4.2), methods, igraph, ggplot2
 Imports: grDevices, scales, grid
-Suggests: knitr, rmarkdown, RUnit, BiocGenerics, BiocStyle, PathwaySpace, RedeR
+Suggests: knitr, rmarkdown, RUnit, BiocGenerics, BiocStyle, RedeR
 Description: RGraphSpace is an R package that integrates igraph and ggplot2 graphics within spatial maps. RGraphSpace implements new geometric objects using ggplot2 protypes, customized for representing large igraph objects in a normalized coordinate system. By scaling shapes and graph elements, RGraphSpace can provide a framework for layered visualizations.
 License: Artistic-2.0
 biocViews: GraphAndNetwork, Network, NetworkEnrichment, Spatial
