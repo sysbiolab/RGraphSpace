@@ -6,7 +6,8 @@
         if (!is.vector(para) || !is.numeric(para)) stop(msg, call. = FALSE)
     } else if (check == "integer_vec") {
         msg <- paste0("'", name, "' should be an integer vector.")
-        if (!is.vector(para) || !.all_integerValues(para)) stop(msg, call. = FALSE)
+        if (!is.vector(para) || !.all_integerValues(para)) 
+            stop(msg, call. = FALSE)
     } else if (check == "numeric_mtx") {
         msg <- paste0("'", name, "' should be a numeric matrix")
         if (!is.numeric(para) || !is.matrix(para)) stop(msg, call. = FALSE)
