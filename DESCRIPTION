@@ -1,7 +1,7 @@
 Package: RGraphSpace
 Type: Package
 Title: A lightweight package for representing large igraph objects in a normalized coordinate system
-Version: 0.99.6
+Version: 0.99.8
 Authors@R: 
     c(person("Vinicius", "Chagas", role = "ctb"),
       person("Victor", "Apolonio", role = "ctb"),
@@ -16,6 +16,7 @@ License: Artistic-2.0
 biocViews: GraphAndNetwork, Network, NetworkEnrichment, Spatial
 VignetteBuilder: knitr
 URL: https://github.com/sysbiolab/RGraphSpace
+BugReports: https://github.com/sysbiolab/RGraphSpace/issues
 Collate:
     gspaceChecks.R
     gspaceValidation.R

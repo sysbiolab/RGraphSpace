@@ -47,6 +47,7 @@ Genome Biology 13:R29, 2012.
 Useful links:
 \itemize{
   \item \url{https://github.com/sysbiolab/RGraphSpace}
+  \item Report bugs at \url{https://github.com/sysbiolab/RGraphSpace/issues}
 }
 
 }
