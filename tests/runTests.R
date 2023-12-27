@@ -1,1 +1,1 @@
-BiocGenerics:::testPackage("GraphSpace")
+BiocGenerics:::testPackage("RGraphSpace")
