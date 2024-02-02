@@ -1,7 +1,7 @@
 Package: RGraphSpace
 Type: Package
-Title: A Lightweight Package for Representing Large Igraph Objects in a Normalized Coordinate System
-Version: 1.0.2
+Title: A Lightweight Package for Representing Large 'igraph' Objects in a Normalized Coordinate System
+Version: 1.0.3
 Authors@R: 
     c(person("Victor", "Apolonio", role = "ctb"),
       person("Vinicius", "Chagas", role = "ctb"),
@@ -11,7 +11,7 @@ Authors@R:
 Depends: R(>= 4.3), methods, igraph, ggplot2
 Imports: grDevices, scales, grid
 Suggests: knitr, rmarkdown, RUnit, RedeR
-Description: Interface to integrate igraph and ggplot2 graphics within spatial maps. RGraphSpace implements new geometric objects using ggplot2 prototypes, customized for representing large igraph objects in a normalized coordinate system. By scaling shapes and graph elements, RGraphSpace can provide a framework for layered visualizations.
+Description: Interface to integrate 'igraph' and 'ggplot2' graphics within spatial maps. 'RGraphSpace' implements new geometric objects using 'ggplot2' prototypes, customized for representing large 'igraph' objects in a normalized coordinate system. By scaling shapes and graph elements, 'RGraphSpace' can provide a framework for layered visualizations.
 License: Artistic-2.0
 VignetteBuilder: knitr
 URL: https://github.com/sysbiolab/RGraphSpace

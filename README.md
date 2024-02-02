@@ -1,4 +1,4 @@
-### RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system.
+### RGraphSpace: A lightweight package for representing large 'igraph' objects in a normalized coordinate system.
 
 *RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for representing large *igraph* objects in a normalized coordinate system. By scaling shapes and graph elements, *RGraphSpace* can provide a framework for layered visualizations.
 
