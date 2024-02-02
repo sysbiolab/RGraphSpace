@@ -3,10 +3,11 @@ title: "*RGraphSpace*: A lightweight package for representing large *igraph* obj
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "<p>*RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
+abstract: "<p>*RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
 package: "RGraphSpace `r packageVersion('RGraphSpace')`"
 output: 
-  BiocStyle::html_document:
+  html_document:
+    theme: cerulean
     self_contained: yes
     toc: true
     toc_float: true
@@ -24,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], which are scaled to fit within a standard unit space, making it easier to display different graphs side by side. *RGraphSpace* implements new geometric objects using *ggplot2* protypes [@Wickham2016], taking into account relative sizes and positions of the input graph. By scaling graph elements, *RGraphSpace* can provide a framework for layered visualizations, ensuring proper alignment within a spatial map. *RGraphSpace*'s use of *ggplot2* allows for extensive customization of aesthetics and visual style, such as colors, shapes, and line types.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], which are scaled to fit within a standard unit space, making it easier to display different graphs side by side. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes [@Wickham2016], taking into account relative sizes and positions of the input graph. By scaling graph elements, *RGraphSpace* can provide a framework for layered visualizations, ensuring proper alignment within a spatial map. *RGraphSpace*'s use of *ggplot2* allows for extensive customization of aesthetics and visual style, such as colors, shapes, and line types.
 
 # Quick start
 
@@ -61,12 +62,12 @@ V(gtoy1)$y <- c(0, 0,  6, -6,  0)
 V(gtoy1)$name <- paste0("n", 1:5)
 ```
 
-```{r Toy igraph - 2, eval=TRUE, message=FALSE, out.width="40%"}
+```{r Toy igraph - 2, eval=TRUE, message=FALSE, out.width="100%"}
 # Plot the 'gtoy1' using standard R graphics
 plot(gtoy1)
 ```
 
-```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="60%"}
+```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="80%"}
 # Plot the 'gtoy1' using RGraphSpace
 plotGraphSpace(gtoy1, marks = TRUE)
 ```
@@ -149,7 +150,7 @@ E(gtoy1)$arrowLength <- 1
 
 ... and now plot the updated *igraph* object with *RGraphSpace*:
  
-```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE, out.width="60%"}
+```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE, out.width="80%"}
 # Plot the updated 'gtoy1' using RGraphSpace
 plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 ```
@@ -159,9 +160,10 @@ plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 
 ```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
 # Load RedeR, a graph package for interactive visualization
-## currently in Bioc devel (version >= 3.19)
-## https://bioconductor.org/packages/devel/bioc/html/RedeR.html
-library(RedeR) 
+## Note: for this example, please use Bioc >= 3.19 (currently devel)
+## BiocManager::install(version='devel')
+## BiocManager::install("RedeR")
+library(RedeR)
 startRedeR()
 resetRedeR()
 

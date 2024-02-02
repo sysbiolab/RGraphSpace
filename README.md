@@ -9,8 +9,6 @@
 ```r
 install.packages("knitr")
 install.packages("rmarkdown")
-BiocManager::install("BiocStyle")
-BiocManager::install("RedeR")
 ```
 
 ##### Install the RGraphSpace package
