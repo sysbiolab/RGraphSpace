@@ -56,8 +56,8 @@ Useful links:
 
 Other contributors:
 \itemize{
-  \item Vinicius Chagas [contributor]
   \item Victor Apolonio [contributor]
+  \item Vinicius Chagas [contributor]
 }
 
 }

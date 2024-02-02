@@ -23,17 +23,16 @@
 #' gs <- GraphSpace(gtoy1)
 #' 
 #' @importFrom igraph degree vcount ecount which_mutual
-#' @importFrom igraph as_edgelist as_adjacency_matrix is.simple 
-#' @importFrom igraph simplify V E 'V<-' 'E<-' is.directed vertex_attr
+#' @importFrom igraph as_edgelist as_adjacency_matrix is_simple 
+#' @importFrom igraph simplify V E 'V<-' 'E<-' is_directed vertex_attr
 #' @importFrom igraph layout_nicely as.undirected delete_edge_attr
 #' @importFrom igraph vertex_attr_names edge_attr edge_attr_names
-#' @importFrom igraph delete_vertex_attr 'edge_attr<-'
+#' @importFrom igraph ends delete_vertex_attr 'edge_attr<-'
 #' @importFrom scales rescale
 #' @aliases GraphSpace
 #' @export
 #'
-GraphSpace <- function(g, layout = NULL, mar = 0.075, 
-    verbose = TRUE) {
+GraphSpace <- function(g, layout = NULL, mar = 0.075, verbose = TRUE) {
     if(!is.null(layout)) .validate.args("numeric_mtx", "layout", layout)
     .validate.args("singleNumber", "mar", mar)
     .validate.args("singleLogical", "verbose", verbose)
