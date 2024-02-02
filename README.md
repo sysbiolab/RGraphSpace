@@ -2,14 +2,13 @@
 
 *RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system. By scaling shapes and graph elements, *RGraphSpace* can provide a framework for layered visualizations.
 
-### Installation in R (>=4.4)
+### Installation in R (>=4.3)
 
 ##### Install dependencies to build the package's vignettes
 
 ```r
 install.packages("knitr")
 install.packages("rmarkdown")
-install.packages("BiocManager")
 BiocManager::install("BiocStyle")
 BiocManager::install("RedeR")
 ```

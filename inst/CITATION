@@ -1,5 +1,5 @@
 
-citEntry(entry = "Manual",
+bibentry(bibtype = "Manual",
 author = "Sysbiolab Team",
 title = "GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system.",
 year = "2023",
@@ -7,7 +7,7 @@ note = "R package",
 textVersion = "Sysbiolab Team. GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package, 2023."
 )
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
 author = "Mauro AA Castro, Xin Wang, Michael NC Fletcher, Kerstin B Meyer and Florian Markowetz",
 title = "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations.",
 journal = "Genome Biology",

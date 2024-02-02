@@ -4,7 +4,7 @@ author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
 abstract: "<p>*RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* protypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
-package: "`r BiocStyle::pkg_ver('RGraphSpace')`"
+package: "RGraphSpace `r packageVersion('RGraphSpace')`"
 output: 
   BiocStyle::html_document:
     self_contained: yes
@@ -159,7 +159,9 @@ plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 
 ```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
 # Load RedeR, a graph package for interactive visualization
-library(RedeR) # (currently in Bioc devel, version >= 3.19)
+## currently in Bioc devel (version >= 3.19)
+## https://bioconductor.org/packages/devel/bioc/html/RedeR.html
+library(RedeR) 
 startRedeR()
 resetRedeR()
 
