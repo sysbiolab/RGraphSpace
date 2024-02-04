@@ -1,7 +1,7 @@
 Package: RGraphSpace
 Type: Package
-Title: A Lightweight Package for Representing Large 'igraph' Objects in a Normalized Coordinate System
-Version: 1.0.3
+Title: A Lightweight Interface Between 'ggplot2' and 'igraph' Objects
+Version: 1.0.4
 Authors@R: 
     c(person("Victor", "Apolonio", role = "ctb"),
       person("Vinicius", "Chagas", role = "ctb"),

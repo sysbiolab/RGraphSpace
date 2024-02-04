@@ -14,7 +14,7 @@ output:
     toc_depth: 2
     css: custom.css
 vignette: >
-  %\VignetteIndexEntry{"RGraphSpace: ggplot2 graphics for PathwaySpace."}
+  %\VignetteIndexEntry{"RGraphSpace: ggplot2 graphics for igraph"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -44,7 +44,7 @@ library(RGraphSpace)
 gtoy1 <- make_star(5, mode="out")
 
 # Check whether the graph is directed or not
-is.directed(gtoy1)
+is_directed(gtoy1)
 ## [1] TRUE
 
 # Check graph size
@@ -177,8 +177,8 @@ gtoy2 <- getGraphFromRedeR(unit="npc")
 # Check the round trip...
 plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
 
-## Note: for the round trip, shapes and line types are 
-## partially compatible between the tools.
+## Note: for the round trip, shapes and line types 
+## are partially compatible between the tools.
 
 # ...alternatively, just update the graph layout
 gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
@@ -193,6 +193,7 @@ plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
 If you use *RGraphSpace*, please cite:
 
 * Sysbiolab Team. "RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system." R package, 2023.
+https://cran.r-project.org/package=RGraphSpace
 
 * Castro MA, Wang X, Fletcher MN, Meyer KB, Markowetz F (2012). "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations." *Genome Biology*, 13(4), R29. 
 https://bioconductor.org/packages/RedeR/
