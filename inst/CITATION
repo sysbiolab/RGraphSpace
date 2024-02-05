@@ -1,6 +1,6 @@
 
 bibentry(bibtype = "Manual",
-author = "{Sysbiolab Team}",
+author = "'Sysbiolab Team'",
 title = "RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system",
 year = "2023",
 note = "R package",

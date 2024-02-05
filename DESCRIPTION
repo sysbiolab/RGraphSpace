@@ -1,7 +1,7 @@
 Package: RGraphSpace
 Type: Package
 Title: A Lightweight Interface Between 'ggplot2' and 'igraph' Objects
-Version: 1.0.4
+Version: 1.0.5
 Authors@R: 
     c(person("Victor", "Apolonio", role = "ctb"),
       person("Vinicius", "Chagas", role = "ctb"),
