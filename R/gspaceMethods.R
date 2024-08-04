@@ -65,8 +65,8 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075, verbose = TRUE) {
 #' @param bg.color A single color for background.
 #' @param marks A logical value indicating whether to add 'marks' to vertex 
 #' positions. Alternatively, this could be a vector listing vertex names.
-#' @param mark.size A font size argument passed to \code{\link{geom_text}}.
-#' @param mark.color A color passed to \code{\link{geom_text}}.
+#' @param mark.size A font size argument passed to \code{\link[ggplot2]{geom_text}}.
+#' @param mark.color A color passed to \code{\link[ggplot2]{geom_text}}.
 #' @return A ggplot-class object.
 #' @author Sysbiolab.
 #' @seealso \code{\link{GraphSpace}}

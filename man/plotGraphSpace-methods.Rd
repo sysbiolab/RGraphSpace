@@ -42,9 +42,9 @@ ggplot object.}
 \item{marks}{A logical value indicating whether to add 'marks' to vertex 
 positions. Alternatively, this could be a vector listing vertex names.}
 
-\item{mark.size}{A font size argument passed to \code{\link{geom_text}}.}
+\item{mark.size}{A font size argument passed to \code{\link[ggplot2]{geom_text}}.}
 
-\item{mark.color}{A color passed to \code{\link{geom_text}}.}
+\item{mark.color}{A color passed to \code{\link[ggplot2]{geom_text}}.}
 
 \item{...}{Additional arguments passed to the 
 \code{\link{plotGraphSpace}} function.}
