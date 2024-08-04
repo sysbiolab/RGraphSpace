@@ -1,11 +1,11 @@
 
 bibentry(bibtype = "Manual",
-author = "'Sysbiolab Team'",
+author = person("Sysbiolab Team"),
 title = "RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system",
-year = "2023",
+year = 2023,
 note = "R package",
-url = "https://CRAN.R-project.org/package=RGraphSpace",
-textVersion = "Sysbiolab Team. GraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package, 2023."
+doi = "10.32614/CRAN.package.RGraphSpace",
+textVersion = "Sysbiolab Team. RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace"
 )
 
 bibentry(bibtype = "Article",
