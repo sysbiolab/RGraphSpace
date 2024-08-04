@@ -38,7 +38,7 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
 ################################################################################
 ### ggplot2 calls for GraphSpace-class methods
 ################################################################################
-.set.gspace <- function(nodes, edges, xlab, ylab, cl){
+.set.gspace <- function(nodes, xlab, ylab, cl){
     X <- Y <- NULL
     ggp <- ggplot2::ggplot(nodes, ggplot2::aes(X, Y)) +
         ggplot2::scale_x_continuous(name = xlab, breaks = cl$axis.ticks,
@@ -60,18 +60,24 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
     return(ggp)
 }
 .add.nodes <- function(ggp, nodes){
+    fill_color <- main_color <- nodes$nodeColor
+    idx <- nodes$nodeShape >= 21
+    main_color[idx] <-  nodes$nodeLineColor[idx]
     ggp <- ggp + .geom_nodespace(size = grid::unit(nodes$nodeSize, "npc"), 
-        fill = nodes$nodeColor, colour=nodes$nodeLineColor, 
+        fill = fill_color, colour = main_color, 
         shape=nodes$nodeShape, stroke = nodes$nodeLineWidth)
     return(ggp)
 }
 .add.segments <- function(ggp, edges){
-    x1 <- y1 <- x2 <- y2 <- NULL
-    ggp <- ggp + ggplot2::geom_segment(
-        aes(x = x1, y = y1, xend = x2, yend = y2), 
-        data = edges, linewidth = edges$edgeLineWidth, 
-        linetype = edges$edgeLineType, linejoin = "mitre",  
-        colour = edges$edgeLineColor, show.legend = FALSE)
+    linetype <- levels(as.factor(edges$edgeLineType))
+    names(linetype) <- linetype
+    x1 <- y1 <- x2 <- y2 <- edgeLineType <- NULL
+    ggp <- ggp + 
+      ggplot2::geom_segment(
+        aes(x = x1, y = y1, xend = x2, yend = y2, linetype=edgeLineType), 
+        data = edges, linewidth = edges$edgeLineWidth, linejoin = "mitre", 
+        colour = edges$edgeLineColor, show.legend = TRUE) +
+      scale_linetype_manual(values=linetype)
     return(ggp)
 }
 .add.arrows <- function(ggp, edges){
@@ -211,7 +217,7 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
     et1 <- ggplot2::element_text(size = 14 * font.size)
     et2 <- ggplot2::element_text(size = 12 * font.size)
     gg <- gg + ggplot2::theme(axis.title = et1, axis.text = et2,
-        legend.title = et2, legend.text = et2,
+        legend.title = et2, legend.text = et2, legend.position = "none",
         panel.background = element_rect(fill = bg.color))
     return(gg)
 }
@@ -227,6 +233,7 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
         plot.background = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
+        legend.position = "none",
         axis.ticks = element_line(linewidth = 0.7),
         axis.line = element_blank(), panel.border = element_blank(),
         panel.background = element_rect(fill = bg.color))
@@ -246,6 +253,7 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
         plot.background = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
+        legend.position = "none",
         axis.ticks = element_line(linewidth = 0.5),
         axis.line = element_blank(), panel.border = element_blank(),
         panel.background = element_rect(fill = bg.color))

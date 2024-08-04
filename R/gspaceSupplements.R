@@ -10,7 +10,7 @@
     if(verbose) message("Extracting edges...")
     edges <- .get.edges(g)
     if(verbose) message("Creating a 'GraphSpace' object...")
-    pars <- list(mar = mar, is.directed = igraph::is.directed(g))
+    pars <- list(mar = mar, is.directed = igraph::is_directed(g))
     grs <- new(Class = "GraphSpace", nodes = nodes, 
         edges = edges, pars = pars, graph=g)
     return(grs)

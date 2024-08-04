@@ -87,6 +87,7 @@ GraphSpace <- function(g, layout = NULL, mar = 0.075, verbose = TRUE) {
 #' @importFrom ggplot2 geom_point geom_segment aes Geom .pt
 #' @importFrom ggplot2 element_rect margin element_blank layer
 #' @importFrom ggplot2 element_line element_text ggproto
+#' @importFrom ggplot2 scale_linetype_manual
 #' @importFrom grDevices col2rgb
 #' @importFrom grid gpar arrow unit pointsGrob
 #' @importFrom scales alpha
@@ -120,7 +121,7 @@ setMethod("plotGraphSpace", "GraphSpace",
         #--- set theme pars
         cl <- .set.theme.bks(theme)
         #--- get ggplot object
-        ggp <- .set.gspace(nodes, edges, xlab, ylab, cl)
+        ggp <- .set.gspace(nodes, xlab, ylab, cl)
         if(nrow(nodes)>0){
             ggp <- .add.graph(ggp, nodes, edges)
             #--- add marks if available
@@ -132,7 +133,7 @@ setMethod("plotGraphSpace", "GraphSpace",
             }
         }
         #--- apply custom theme
-        ggp <- .custom.themes(ggp, theme, 
+        ggp <- .custom.themes(ggp, theme,
             font.size=font.size, bg.color=bg.color)
         return(ggp)
     }

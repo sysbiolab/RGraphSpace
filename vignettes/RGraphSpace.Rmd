@@ -72,7 +72,6 @@ plot(gtoy1)
 plotGraphSpace(gtoy1, marks = TRUE)
 ```
 
-
 # *RGraphSpace* attributes
 
 Next, we will demonstrate all vertex and edge attributes that can be passed to *RGraphSpace* methods.
@@ -155,14 +154,20 @@ E(gtoy1)$arrowLength <- 1
 plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
 ```
 
-
 # Interactive layout
 
 ```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
 # Load RedeR, a graph package for interactive visualization
-## Note: for this example, please use Bioc >= 3.19 (currently devel)
-## BiocManager::install(version='devel')
-## BiocManager::install("RedeR")
+## Note: for this example, please use Bioc >= 3.19
+if(!require("BiocManager", quietly = TRUE)){
+  install.packages("BiocManager")
+  #BiocManager::install(version = "3.19")
+}
+if(!require("RedeR", quietly = TRUE)){
+  BiocManager::install("RedeR")
+}
+
+# Launch the RedeR application
 library(RedeR)
 startRedeR()
 resetRedeR()
@@ -186,7 +191,6 @@ gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
 # ...check the updated layout
 plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
 ```
-
 
 # Citation
 
