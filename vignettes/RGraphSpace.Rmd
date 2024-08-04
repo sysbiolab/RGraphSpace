@@ -182,8 +182,8 @@ gtoy2 <- getGraphFromRedeR(unit="npc")
 # Check the round trip...
 plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
 
-## Note: for the round trip, shapes and line types 
-## are partially compatible between the tools.
+## Note that for the round trip, shapes and line types are
+## only partially compatible between ggplot2 and RedeR.
 
 # ...alternatively, just update the graph layout
 gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
