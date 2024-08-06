@@ -3,8 +3,7 @@ title: "*RGraphSpace*: A lightweight package for representing large *igraph* obj
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "<p>*RGraphSpace* is an *R* package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for representing large *igraph* objects in a normalized coordinate system.</p>"
-package: "RGraphSpace `r packageVersion('RGraphSpace')`"
+abstract: "*RGraphSpace* is an *R* package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for representing large *igraph* objects in a normalized coordinate system."
 output: 
   html_document:
     theme: cerulean
@@ -22,6 +21,9 @@ vignette: >
 ```{r setup, include=FALSE, purl=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+<br/>
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 
 # Overview
 
