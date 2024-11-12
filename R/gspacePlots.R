@@ -246,7 +246,7 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
         axis.text = et2, legend.title = element_text(size = 12 * 
                 font.size, vjust = 1), legend.text = et2,
         legend.margin = margin(0, 0, 0, 0),
-        legend.position = "bottom", plot.margin = margin(5, 5, 5, 5), 
+        plot.margin = margin(5, 5, 5, 5), 
         legend.box.margin = margin(0, 0, 0, 0), 
         legend.background = element_blank(),
         legend.box.background = element_blank(),
