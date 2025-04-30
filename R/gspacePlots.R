@@ -53,9 +53,11 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
 
 #-------------------------------------------------------------------------------
 .add.graph <- function(ggp, nodes, edges){
-    edges <- .offset.edges(nodes, edges)
-    ggp <- .add.segments(ggp, edges)
-    ggp <- .add.arrows(ggp, edges)
+    if(nrow(edges)>0){
+      edges <- .offset.edges(nodes, edges)
+      ggp <- .add.segments(ggp, edges)
+      ggp <- .add.arrows(ggp, edges) 
+    }
     ggp <- .add.nodes(ggp, nodes)
     return(ggp)
 }

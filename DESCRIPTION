@@ -1,6 +1,6 @@
 Package: RGraphSpace
 Type: Package
-Version: 1.0.7
+Version: 1.0.8
 Title: A Lightweight Interface Between 'ggplot2' and 'igraph' Objects
 Description: Interface to integrate 'igraph' and 'ggplot2' graphics within spatial maps. 'RGraphSpace' implements new geometric objects using 'ggplot2' prototypes, customized for representing large 'igraph' objects in a normalized coordinate system. By scaling shapes and graph elements, 'RGraphSpace' can provide a framework for layered visualizations.
 Authors@R: 
