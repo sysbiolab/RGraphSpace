@@ -7,10 +7,13 @@
 #'
 #' @param g An \code{igraph} object. It must include coordinates and names
 #' assigned to \code{x}, \code{y}, and \code{name}  vertex attributes.
-#' @param layout an optional numeric matrix with two columns for \code{x} 
-#' and \code{y} coordinates.
 #' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
 #' the outer margins as a fraction of the graph space.
+#' @param layout An optional numeric matrix with two columns for \code{x} 
+#' and \code{y} coordinates.
+#' @param image An optional matrix, array, or raster image object. 
+#' For this option, \code{x} and \code{y} coordinates must represent 
+#' pixel positions in the image space.
 #' @param verbose A single logical value specifying to display detailed 
 #' messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).
 #' @return A \linkS4class{GraphSpace} class object.
@@ -25,29 +28,38 @@
 #' @importFrom igraph degree vcount ecount which_mutual
 #' @importFrom igraph as_edgelist as_adjacency_matrix is_simple 
 #' @importFrom igraph simplify V E 'V<-' 'E<-' is_directed vertex_attr
-#' @importFrom igraph layout_nicely as.undirected delete_edge_attr
+#' @importFrom igraph layout_nicely as_undirected delete_edge_attr
 #' @importFrom igraph vertex_attr_names edge_attr edge_attr_names
 #' @importFrom igraph ends delete_vertex_attr 'edge_attr<-'
 #' @importFrom scales rescale
+#' @importFrom grDevices is.raster
 #' @aliases GraphSpace
 #' @export
 #'
-GraphSpace <- function(g, layout = NULL, mar = 0.075, verbose = TRUE) {
-    if(!is.null(layout)) .validate.args("numeric_mtx", "layout", layout)
+GraphSpace <- function(g, mar = 0.075, layout = NULL, image = NULL, 
+    verbose = TRUE) {
     .validate.args("singleNumber", "mar", mar)
     .validate.args("singleLogical", "verbose", verbose)
     #--- validate argument values
     if (mar < 0 || mar > 1) {
         stop("'mar' should be in [0,1]", call. = FALSE)
     }
-    #--- validate the igraph object
-    g <- .validate.igraph(g, layout, verbose)
-    gs <- .buildGraphSpace(g, mar, verbose)
+    if(!is.null(layout)){
+        .validate.args("numeric_mtx", "layout", layout)
+        if (ncol(layout) != 2) {
+            stop("'layout' matrix should have two columns.", call. = FALSE)
+        } 
+    }
+    if(!is.null(image)){
+        .validate.args("image_mtx", "image", image)
+    }
+    #--- validate igraph and build a gs object
+    gs <- .buildGraphSpace(g, layout, mar, image, verbose)
     return(gs)
 }
 
 #-------------------------------------------------------------------------------
-#' @title Plotting igraph objects with RGraphSpace package
+#' @title Plotting igraph objects with RGraphSpace
 #'
 #' @description \code{plotGraphSpace} is a wrapper function to 
 #' create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
@@ -142,8 +154,6 @@ setMethod("plotGraphSpace", "GraphSpace",
 #-------------------------------------------------------------------------------
 #' @param ... Additional arguments passed to the 
 #' \code{\link{plotGraphSpace}} function.
-#' @param layout an optional numeric matrix with two columns for \code{x} 
-#' and \code{y} coordinates.
 #' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
 #' the outer margins as a fraction of the graph space.
 #' @import methods
@@ -153,8 +163,8 @@ setMethod("plotGraphSpace", "GraphSpace",
 #' @export
 #'
 setMethod("plotGraphSpace", "igraph", 
-    function(gs, ..., layout = NULL, mar = 0.075) {
-        gs <- GraphSpace(gs, layout, mar, verbose=FALSE)
+    function(gs, ..., mar = 0.075) {
+        gs <- GraphSpace(gs, mar, verbose=FALSE)
         gg <- plotGraphSpace(gs, ...=...)
         return(gg)
     }

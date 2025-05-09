@@ -4,17 +4,21 @@
 \alias{GraphSpace}
 \title{Constructor of GraphSpace-class objects}
 \usage{
-GraphSpace(g, layout = NULL, mar = 0.075, verbose = TRUE)
+GraphSpace(g, mar = 0.075, layout = NULL, image = NULL, verbose = TRUE)
 }
 \arguments{
 \item{g}{An \code{igraph} object. It must include coordinates and names
 assigned to \code{x}, \code{y}, and \code{name}  vertex attributes.}
 
-\item{layout}{an optional numeric matrix with two columns for \code{x} 
-and \code{y} coordinates.}
-
 \item{mar}{A single numeric value (in \code{[0,1]}) indicating the size of
 the outer margins as a fraction of the graph space.}
+
+\item{layout}{An optional numeric matrix with two columns for \code{x} 
+and \code{y} coordinates.}
+
+\item{image}{An optional matrix, array, or raster image object. 
+For this option, \code{x} and \code{y} coordinates must represent 
+pixel positions in the image space.}
 
 \item{verbose}{A single logical value specifying to display detailed 
 messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).}

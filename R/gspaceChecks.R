@@ -3,7 +3,7 @@
 .validate.args <- function(check, name, para) {
     if (check == "numeric_vec") {
         msg <- paste0("'", name, "' should be a numeric vector.")
-        if (!is.vector(para) || !is.numeric(para)) stop(msg, call. = FALSE)
+        if (!is.numeric(para) || !is.vector(para)) stop(msg, call. = FALSE)
     } else if (check == "integer_vec") {
         msg <- paste0("'", name, "' should be an integer vector.")
         if (!is.vector(para) || !.all_integerValues(para)) 
@@ -11,6 +11,10 @@
     } else if (check == "numeric_mtx") {
         msg <- paste0("'", name, "' should be a numeric matrix")
         if (!is.numeric(para) || !is.matrix(para)) stop(msg, call. = FALSE)
+    } else if (check == "image_mtx") {
+        msg <- paste0("'", name, "' should be a numeric matrix or array.")
+        if (!is.raster(para) || !is.matrix(para) || !is.array(para))
+            stop(msg, call. = FALSE)
     } else if (check == "allCharacter") {
         msg <- paste0("'", name, "' should be a vector with strings.")
         if (!.all_characterValues(para)) stop(msg, call. = FALSE)

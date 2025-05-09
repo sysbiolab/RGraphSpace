@@ -9,8 +9,8 @@ Authors@R:
       person("Mauro", "Castro", role = c("aut", "cre"),
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
-Depends: R(>= 4.4), methods, igraph, ggplot2
-Imports: grDevices, scales, grid
+Depends: R(>= 4.4), methods
+Imports: grDevices, scales, grid, igraph, ggplot2
 Suggests: knitr, rmarkdown, testthat
 Enhances: RedeR
 License: Artistic-2.0

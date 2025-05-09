@@ -9,7 +9,7 @@ textVersion = "Sysbiolab Team. RGraphSpace: A lightweight package for representi
 
 bibentry(bibtype = "Article",
 author = "Mauro AA Castro, Xin Wang, Michael NC Fletcher, Kerstin B Meyer and Florian Markowetz",
-title = "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations",
+title = "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations.",
 journal = "Genome Biology",
 year = "2012",
 volume = "13",

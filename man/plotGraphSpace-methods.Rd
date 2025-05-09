@@ -5,7 +5,7 @@
 \alias{plotGraphSpace,GraphSpace-method}
 \alias{plotGraphSpace}
 \alias{plotGraphSpace,igraph-method}
-\title{Plotting igraph objects with RGraphSpace package}
+\title{Plotting igraph objects with RGraphSpace}
 \usage{
 \S4method{plotGraphSpace}{GraphSpace}(
   gs,
@@ -19,7 +19,7 @@
   mark.color = "grey20"
 )
 
-\S4method{plotGraphSpace}{igraph}(gs, ..., layout = NULL, mar = 0.075)
+\S4method{plotGraphSpace}{igraph}(gs, ..., mar = 0.075)
 }
 \arguments{
 \item{gs}{Either an \code{igraph} or \linkS4class{GraphSpace} class object.
@@ -48,9 +48,6 @@ positions. Alternatively, this could be a vector listing vertex names.}
 
 \item{...}{Additional arguments passed to the 
 \code{\link{plotGraphSpace}} function.}
-
-\item{layout}{an optional numeric matrix with two columns for \code{x} 
-and \code{y} coordinates.}
 
 \item{mar}{A single numeric value (in \code{[0,1]}) indicating the size of
 the outer margins as a fraction of the graph space.}

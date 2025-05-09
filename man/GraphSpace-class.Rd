@@ -3,12 +3,12 @@
 \docType{class}
 \name{GraphSpace-class}
 \alias{GraphSpace-class}
-\title{GraphSpace: An S4 class for PathwaySpace graphics}
+\title{GraphSpace: An S4 class for igraph objects}
 \value{
 An S4 class object.
 }
 \description{
-GraphSpace: An S4 class for PathwaySpace graphics
+GraphSpace: An S4 class for igraph objects
 }
 \section{Slots}{
 
@@ -18,6 +18,8 @@ GraphSpace: An S4 class for PathwaySpace graphics
 \item{\code{edges}}{A data frame with edges.}
 
 \item{\code{graph}}{An igraph object.}
+
+\item{\code{image}}{An image matrix or array object.}
 
 \item{\code{pars}}{A list with parameters.}
 
