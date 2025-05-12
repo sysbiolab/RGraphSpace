@@ -57,8 +57,8 @@ ecount(gtoy1)
 
 # Assign 'x' and 'y' coordinates to each vertex;
 # ..this can be an arbitrary unit in (-Inf, +Inf)
-V(gtoy1)$x <- c(0, 3, -6, -6, -9)
-V(gtoy1)$y <- c(0, 0,  6, -6,  0)
+V(gtoy1)$x <- c(0, 2, -4, -4, -9)
+V(gtoy1)$y <- c(0, 0,  4, -4,  0)
 
 # Assign a name to each vertex
 V(gtoy1)$name <- paste0("n", 1:5)

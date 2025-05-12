@@ -9,6 +9,7 @@
 #' assigned to \code{x}, \code{y}, and \code{name}  vertex attributes.
 #' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
 #' the outer margins as a fraction of the graph space.
+#' Note: \code{mar} is ignored when an image is provided.
 #' @param layout An optional numeric matrix with two columns for \code{x} 
 #' and \code{y} coordinates.
 #' @param image An optional matrix, array, or raster image object. 

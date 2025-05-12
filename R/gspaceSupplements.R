@@ -26,7 +26,6 @@
             stop("Graph coordinates outside image dimensions.", call. = FALSE)
         }
         nodes <- .frame.nodes(nodes, xlim, ylim)
-        if(verbose) message("--'mar' will be set to 0.")
         mar <- 0
     }
 

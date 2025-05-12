@@ -11,7 +11,8 @@ GraphSpace(g, mar = 0.075, layout = NULL, image = NULL, verbose = TRUE)
 assigned to \code{x}, \code{y}, and \code{name}  vertex attributes.}
 
 \item{mar}{A single numeric value (in \code{[0,1]}) indicating the size of
-the outer margins as a fraction of the graph space.}
+the outer margins as a fraction of the graph space.
+Note: \code{mar} is ignored when an image is provided.}
 
 \item{layout}{An optional numeric matrix with two columns for \code{x} 
 and \code{y} coordinates.}
