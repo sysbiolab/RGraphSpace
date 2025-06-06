@@ -19,7 +19,7 @@ GraphSpace: An S4 class for igraph objects
 
 \item{\code{graph}}{An igraph object.}
 
-\item{\code{image}}{An image matrix or array object.}
+\item{\code{image}}{A raster background image matrix.}
 
 \item{\code{pars}}{A list with parameters.}
 

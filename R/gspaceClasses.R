@@ -1,12 +1,12 @@
 setOldClass("igraph")
-setClassUnion("array_Or_matrix", members = c("array", "matrix"))
+setOldClass("raster")
 
 #' @title GraphSpace: An S4 class for igraph objects
 #'
 #' @slot nodes A data frame with xy-vertex coordinates.
 #' @slot edges  A data frame with edges.
 #' @slot graph An igraph object.
-#' @slot image An image matrix or array object.
+#' @slot image A raster background image matrix.
 #' @slot pars A list with parameters.
 #' @slot misc A list with intermediate objects for downstream methods.
 #'
@@ -25,7 +25,7 @@ setClass("GraphSpace",
         nodes = "data.frame",
         edges = "data.frame",
         graph = "igraph",
-        image = "array_Or_matrix",
+        image = "raster",
         pars = "list",
         misc = "list"
     ),
@@ -33,7 +33,7 @@ setClass("GraphSpace",
         nodes = data.frame(),
         edges = data.frame(),
         graph = igraph::empty_graph(),
-        image = array(),
+        image = as.raster(matrix()),
         pars = list(),
         misc = list()
     )

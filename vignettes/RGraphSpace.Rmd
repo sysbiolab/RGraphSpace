@@ -71,7 +71,7 @@ plot(gtoy1)
 
 ```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="80%"}
 # Plot the 'gtoy1' using RGraphSpace
-plotGraphSpace(gtoy1, marks = TRUE)
+plotGraphSpace(gtoy1, add.labels = TRUE)
 ```
 
 # *RGraphSpace* attributes
@@ -82,13 +82,13 @@ Next, we will demonstrate all vertex and edge attributes that can be passed to *
 
 ```{r Node attributes, eval=TRUE, message=FALSE}
 # Node size (numeric in (0, 100), as '%' of the plot space)
-V(gtoy1)$nodeSize <- c(10, 5, 5, 5, 5)
+V(gtoy1)$nodeSize <- c(10, 7, 7, 7, 7)
 
 # Node shape (integer code between 0 and 25; see 'help(points)')
 V(gtoy1)$nodeShape <- c(21, 22, 23, 24, 25)
 
 # Node color (Hexadecimal or color name)
-V(gtoy1)$nodeColor <- c("red", "#00ad39", "grey80", "blue", "cyan")
+V(gtoy1)$nodeColor <- c("red", "#00ad39", "grey80", "lightblue", "cyan")
 
 # Node line width (as in 'lwd' standard graphics; see 'help(gpar)')
 V(gtoy1)$nodeLineWidth <- 1
@@ -100,13 +100,16 @@ V(gtoy1)$nodeLineColor <- "grey20"
 V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
 
 # Node label size (in pts)
-V(gtoy1)$nodeLabelSize <- 12
+V(gtoy1)$nodeLabelSize <- 8
 
 # Node label color (Hexadecimal or color name)
-V(gtoy1)$nodeLabelColor <- "grey40"
+V(gtoy1)$nodeLabelColor <- "black"
+
+# Node weight (numeric >=0)
+V(gtoy1)$weight <- 1
 ```
 
-## Edge line attributes
+## Edge attributes
 
 Given a list of edges, *RGraphSpace* represents only one edge for each pair of connected vertices. If there are multiple edges connecting the same vertex pairs, it will display the line attributes of the first edge in the list.
 
@@ -119,11 +122,14 @@ E(gtoy1)$edgeLineColor <- c("red","green","blue","black")
 
 # Edge type (as in 'lty' standard graphics; see 'help(gpar)')
 E(gtoy1)$edgeLineType <- c("solid", "dotted", "dashed", "2121")
+
+# Edge weight (numeric >=0)
+V(gtoy1)$weight <- 1
 ```
 
 ## Arrowhead attributes
 
-Arrowhead in directed graphs. By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
+Arrowhead in directed graphs: By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
 
 ```{r Edge attributes - 2, eval=TRUE, message=FALSE}
 # Arrowhead types in directed graphs (integer code or character)
@@ -134,7 +140,7 @@ E(gtoy1)$arrowType <- 1
 E(gtoy1)$arrowLength <- 1
 ```
 
-Arrowhead in undirected graphs. By default, no arrow will be drawn in undirected graphs.
+Arrowhead in undirected graphs: By default, no arrow will be drawn in undirected graphs.
 
 ```{r Edge attributes - 3, eval=TRUE, message=FALSE}
 # Arrowhead types in undirected graphs (integer or character code)
@@ -153,7 +159,7 @@ E(gtoy1)$arrowLength <- 1
  
 ```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE, out.width="80%"}
 # Plot the updated 'gtoy1' using RGraphSpace
-plotGraphSpace(gtoy1, marks = "n1", mark.color = "white")
+plotGraphSpace(gtoy1, add.labels = TRUE)
 ```
 
 # Interactive layout
@@ -182,7 +188,7 @@ relaxRedeR()
 gtoy2 <- getGraphFromRedeR(unit="npc")
 
 # Check the round trip...
-plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
+plotGraphSpace(gtoy2, add.labels = TRUE)
 
 ## Note that for the round trip, shapes and line types are
 ## only partially compatible between ggplot2 and RedeR.
@@ -191,7 +197,7 @@ plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
 gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
 
 # ...check the updated layout
-plotGraphSpace(gtoy2, marks = "n1", mark.color = "white")
+plotGraphSpace(gtoy2, add.labels = TRUE)
 ```
 
 # Citation

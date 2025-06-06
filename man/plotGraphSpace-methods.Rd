@@ -9,22 +9,31 @@
 \usage{
 \S4method{plotGraphSpace}{GraphSpace}(
   gs,
+  theme = c("th0", "th1", "th2", "th3"),
   xlab = "Graph coordinates 1",
   ylab = "Graph coordinates 2",
   font.size = 1,
-  theme = c("th1", "th2", "th3"),
   bg.color = "grey95",
-  marks = FALSE,
-  mark.size = 3,
-  mark.color = "grey20"
+  add.labels = FALSE,
+  node.labels = NULL,
+  label.size = 3,
+  label.color = "grey20",
+  add.image = FALSE,
+  marks = deprecated(),
+  mark.size = deprecated(),
+  mark.color = deprecated()
 )
 
-\S4method{plotGraphSpace}{igraph}(gs, ..., mar = 0.075)
+\S4method{plotGraphSpace}{igraph}(gs, ..., mar = 0.1)
 }
 \arguments{
 \item{gs}{Either an \code{igraph} or \linkS4class{GraphSpace} class object.
 If \code{gs} is an \code{igraph}, then it must include \code{x}, \code{y}, 
 and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).}
+
+\item{theme}{Name of a custom RGraphSpace theme. These themes 
+(from 'th1' to 'th3') consist of preconfigured ggplot settings, 
+which the user can subsequently refine using \code{\link[ggplot2]{ggplot2}}.}
 
 \item{xlab}{The title for the 'x' axis of a 2D-image space.}
 
@@ -32,19 +41,25 @@ and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).}
 
 \item{font.size}{A single numeric value passed to ggplot themes.}
 
-\item{theme}{Name of a custom RGraphSpace theme. These themes 
-(from 'th1' to 'th3') consist mainly of preconfigured ggplot settings, 
-which the user can subsequently fine-tune within the resulting 
-ggplot object.}
-
 \item{bg.color}{A single color for background.}
 
-\item{marks}{A logical value indicating whether to add 'marks' to vertex 
-positions. Alternatively, this could be a vector listing vertex names.}
+\item{add.labels}{A logical value indicating whether to plot vertex labels.}
 
-\item{mark.size}{A font size argument passed to \code{\link[ggplot2]{geom_text}}.}
+\item{node.labels}{A vector of vertex names to be highlighted in the graph
+space. This argument overrides 'add.labels'.}
 
-\item{mark.color}{A color passed to \code{\link[ggplot2]{geom_text}}.}
+\item{label.size}{A size argument passed to \code{\link[ggplot2]{geom_text}}.}
+
+\item{label.color}{A color passed to \code{\link[ggplot2]{geom_text}}.}
+
+\item{add.image}{A logical value indicating whether to add a background 
+image, when one is available (see \code{\link{GraphSpace}}).}
+
+\item{marks}{Deprecated from RGraphSpace 1.0.9; use 'node.labels' instead.}
+
+\item{mark.size}{Deprecated from RGraphSpace 1.0.9; use 'label.size' instead.}
+
+\item{mark.color}{Deprecated from RGraphSpace 1.0.9; use 'label.color' instead.}
 
 \item{...}{Additional arguments passed to the 
 \code{\link{plotGraphSpace}} function.}

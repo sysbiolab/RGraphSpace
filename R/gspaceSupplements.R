@@ -2,31 +2,26 @@
 ################################################################################
 ### Main constructor of GraphSpace-class objects
 ################################################################################
-.buildGraphSpace <- function(g, layout, mar = 0.075, image = NULL, 
+.buildGraphSpace <- function(g, layout, mar = 0.1, image = NULL, 
     verbose = TRUE) {
     
     gg <- .validate.igraph(g, layout, verbose)
-
+    
     if(verbose) message("Extracting vertices...")
     nodes <- .get.nodes(gg)
     if(is.null(image)){
-        image <- array()
+        image.layer <- FALSE
+        image <- as.raster(matrix())
         nodes <- .center.nodes(nodes, mar)
     } else {
-        if(is.raster(image)) image <- as.matrix(image)
+        image.layer <- TRUE
+        if(!is.raster(image)) image <- as.raster(image)
         if(verbose) message("Setting graph coordinates to image space...")
-        xlim <- c(1, ncol(image))
-        ylim <- c(1, nrow(image))
-        xr <- range(nodes$X)
-        yr <- range(nodes$Y)
-        if( (xr[1] < xlim[1]) || (xr[2] > xlim[2]) ){
-            stop("Graph coordinates outside image dimensions.", call. = FALSE)
+        if(nrow(nodes) > 0){
+            temp <- .frame.nodes(nodes, image, mar)
+            nodes <- temp$nodes
+            image <- temp$img
         }
-        if( (yr[1] < ylim[1]) || (yr[2] > ylim[2]) ){
-            stop("Graph coordinates outside image dimensions.", call. = FALSE)
-        }
-        nodes <- .frame.nodes(nodes, xlim, ylim)
-        mar <- 0
     }
 
     if(verbose) message("Extracting edges...")
@@ -37,10 +32,136 @@
     }
 
     if(verbose) message("Creating a 'GraphSpace' object...")
-    pars <- list(is.directed = is_directed(gg), mar = mar)
+    pars <- list(is.directed = is_directed(gg), mar = mar, 
+        image.layer = image.layer)
     gs <- new(Class = "GraphSpace", nodes = nodes, edges = edges, 
         graph=gg, image = image, pars = pars, misc = list(igraph = g))
     return(gs)
+}
+
+################################################################################
+### Functions for image adjusts
+################################################################################
+
+#-------------------------------------------------------------------------------
+.frame.nodes <- function(nodes, image, mar){
+    d <- dim(image)
+    xr <- range(nodes$X)
+    yr <- range(nodes$Y)
+    if( (xr[1] < 1) || (xr[2] > d[2]) ){
+        stop("Graph coordinates outside image dimensions.", call. = FALSE)
+    }
+    if( (yr[1] < 1) || (yr[2] > d[1]) ){
+        stop("Graph coordinates outside image dimensions.", call. = FALSE)
+    }
+    # adjust image and node coordinates
+    res <- list(nodes=nodes, img=image)
+    res <- .crop_image(res$nodes, res$img, mar)
+    res <- .square_image(res$nodes, res$img)
+    # normalize node coordinates
+    d <- dim(res$img)
+    res$nodes$X <- scales::rescale(res$nodes$X, 
+        from = c(1, d[2]), to = c(0, 1))
+    res$nodes$Y <- scales::rescale(res$nodes$Y, 
+        from = c(1, d[1]), to = c(0, 1))
+    return(res)
+}
+
+#-------------------------------------------------------------------------------
+.crop_image <- function(nodes, img, mar){
+    
+    d <- dim(img)
+    
+    # set node limits to integer
+    xl <- range(nodes$X)
+    yl <- range(nodes$Y)
+    xl <- c(ceiling(xl[1]), floor(xl[2]))
+    yl <- c(ceiling(yl[1]), floor(yl[2]))
+    nodes$X <- scales::rescale(nodes$X, to=xl)
+    nodes$Y <- scales::rescale(nodes$Y, to=yl)
+    
+    # adjust limits to a square window
+    lim <- .adjust.lim(xl, yl, d)
+    xl <- lim$xl
+    yl <- lim$yl
+    mlen <- lim$mlen
+    
+    # set margins as a fraction of the image border 
+    # xm <- min(xl[1]-1, d[2] - xl[2]) * mar
+    # ym <- min(yl[1]-1, d[1] - yl[2]) * mar
+    # dm <- floor(min(xm,ym))
+    
+    # set margins as a fraction of the graph size 
+    dm <- ceiling(mlen * (1 + mar) * mar)
+    
+    # check margins
+    if((xl[1] - dm) < 1) dm <- floor(xl[1])
+    if((yl[1] - dm) < 1) dm <- floor(yl[1])
+    if((xl[2] + dm) > d[2]) dm <- floor(d[2] - xl[2])
+    if((yl[2] + dm) > d[1]) dm <- floor(d[1] - yl[2])
+    
+    # set image frame
+    xl <- c(xl[1] - dm, xl[2] + dm )
+    yl <- c(yl[1] - dm, yl[2] + dm )
+    xl <- c(floor(xl[1]), ceiling(xl[2]))
+    yl <- c(floor(yl[1]), ceiling(yl[2]))
+    
+    # check limits
+    lim <- .adjust.lim(xl, yl, d)
+    xl <- lim$xl
+    yl <- lim$yl
+    
+    # crop on flipped rows to match node y-coordinates
+    img <- img[seq.int(nrow(img), 1), ]
+    img <- img[seq.int(yl[1], yl[2]), seq.int(xl[1], xl[2])]
+    img <- img[seq.int(nrow(img), 1), ]
+    
+    # set new node coordinates
+    nodes$X <- nodes$X - xl[1] + 1
+    nodes$Y <- nodes$Y - yl[1] + 1
+    
+    res <- list(nodes=nodes, img=img)
+    return(res)
+} 
+# adjust limits to a square window
+.adjust.lim <- function(xl, yl, d){
+    dx <- xl[2] - xl[1] + 1
+    dy <- yl[2] - yl[1] + 1
+    if(dx > dy){
+        dm <- (dx - dy)/2
+        yl <- c(yl[1] - ceiling(dm), yl[2] + floor(dm))
+        if(yl[1] < 1) yl[1] <- 1
+        if(yl[2] > d[2]) yl[2] <- d[2]
+    } else if(dx < dy){
+        dm <- (dy - dx)/2
+        xl <- c(xl[1] - ceiling(dm), xl[2] + floor(dm))
+        if(xl[1] < 1) xl[1] <- 1
+        if(xl[2] > d[2]) xl[2] <- d[2]
+    }
+    dx <- xl[2] - xl[1] + 1
+    dy <- yl[2] - yl[1] + 1
+    res <- list(xl = xl, yl = yl, mlen = max(dx,dy))
+    return(res)
+}
+
+#-------------------------------------------------------------------------------
+.square_image <- function(nodes, img){
+    d <- dim(img)
+    if(d[1] > d[2]){
+        n <- ceiling( (d[1] - d[2]) )/2
+        img_d <- matrix(NA, nrow = d[1], ncol = d[1])
+        img_d[ , seq(n + 1, n + d[2])] <- as.matrix(img)
+        nodes$X <- nodes$X + n
+        img <- as.raster(img_d)
+    } else if(d[1] < d[2]){
+        n <- ceiling( (d[2] - d[1])/2 )
+        img_d <- matrix(NA, nrow = d[2], ncol = d[2])
+        img_d[seq(n + 1, n + d[1]), ] <- as.matrix(img)
+        nodes$Y <- nodes$Y + n
+        img <- as.raster(img_d)
+    }
+    res <- list(nodes=nodes, img=img)
+    return(res)
 }
 
 ################################################################################
@@ -78,23 +199,12 @@
     return(nodes)
 }
 
-#-------------------------------------------------------------------------------
-.frame.nodes <- function(nodes, xlim, ylim){
-    if(nrow(nodes)>0){
-        to <- c(0, 1)
-        nodes$X <- scales::rescale(nodes$X, from = xlim, to=to)
-        nodes$Y <- scales::rescale(nodes$Y, from = ylim, to=to)
-    }
-    return(nodes)
-}
-
 ################################################################################
 ### Get edges in a df object
 ################################################################################
 .get.edges <- function(g){
     if(ecount(g)>0){
         vertex <- igraph::V(g)$name
-        eatt <- .get.default.eatt(is.directed = FALSE)
         edges <- igraph::as_edgelist(g, names = FALSE)
         rownames(edges) <- colnames(edges) <- NULL
         edges <- as.data.frame(edges)
@@ -127,29 +237,25 @@
     return(atts)
 }
 .set.arrowangle <- function(edges){
-    a_names <- names(.get.default.eatt())
-    a_names <- a_names[grep("arrow",a_names)]
-    a_names <- a_names[-which(a_names=="arrowType")]
-    arrow1 <- arrow2 <- edges[,a_names]
-    arrow1 <- .set.arrowangle1(arrow1, edges$arrowType)
-    arrow2 <- .set.arrowangle2(arrow2, edges$arrowType)
-    edges <- edges[, -which(colnames(edges)%in%a_names)]
-    edges <- cbind(edges, arrow1, arrow2)
+    arrowAngle_1 <- .set.arrowangle1(edges$arrowType)
+    arrowAngle_2 <- .set.arrowangle2(edges$arrowType)
+    edges <- cbind(edges, arrowAngle_1 = arrowAngle_1,
+        arrowAngle_2 = arrowAngle_2)
     return(edges)
 }
-.set.arrowangle1 <- function(arrow1, etype){
-    arrow1$arrowAngle[etype %in% c(0, 1, -1)] <- 0
-    arrow1$arrowAngle[etype %in% c(2, 3, -4)] <- 30
-    arrow1$arrowAngle[etype %in% c(-2, -3, 4)] <- 90
-    colnames(arrow1) <- paste0(names(arrow1), "_", 1)
-    return(arrow1)
+.set.arrowangle1 <- function(etype){
+    arrowAngle <- rep(NA, length(etype))
+    arrowAngle[etype %in% c(0, 1, -1)] <- 0
+    arrowAngle[etype %in% c(2, 3, -4)] <- 30
+    arrowAngle[etype %in% c(-2, -3, 4)] <- 90
+    return(arrowAngle)
 }
-.set.arrowangle2 <- function(arrow2, etype){
-    arrow2$arrowAngle[etype %in% c(0, 2, -2)] <- 0
-    arrow2$arrowAngle[etype %in% c(1, 3, 4)] <- 30
-    arrow2$arrowAngle[etype %in% c(-1, -3, -4)] <- 90
-    colnames(arrow2) <- paste0(names(arrow2), "_", 2)
-    return(arrow2)
+.set.arrowangle2 <- function(etype){
+    arrowAngle <- rep(NA, length(etype))
+    arrowAngle[etype %in% c(0, 2, -2)] <- 0
+    arrowAngle[etype %in% c(1, 3, 4)] <- 30
+    arrowAngle[etype %in% c(-1, -3, -4)] <- 90
+    return(arrowAngle)
 }
 .set.emode <- function(edges){
     emode <- abs(edges$arrowType)
@@ -249,10 +355,10 @@
     atts <- as.data.frame(atts)
     colnames(atts) <- c("vertex1", "vertex2")
     atts$e <- as.numeric(e)
-    a_names <- igraph::edge_attr_names(g)
+    a_names <- names(.get.default.eatt())
+    a_names <- intersect(a_names, igraph::edge_attr_names(g))
     ne <- e == 0
     for (at in a_names) {
-        # x <- igraph::as_adjacency_matrix(g, sparse = FALSE, attr = at)
         x <- .adjacency(g, attr = at)
         x[ne] <- NA
         if (is.numeric(x)) {
@@ -295,16 +401,18 @@
 #-------------------------------------------------------------------------------
 .get.empty.edgedf <- function(){
     n <- numeric(); c <- character()
-    edges <- data.frame(n, n, n, c, c, n, c, c, n, n, n, n, n)
-    colnames(edges) <- c("vertex1","vertex2","emode","name1","name2", 
-        "edgeLineWidth","edgeLineColor","edgeLineType",
-        "arrowType", "arrowLength_1","arrowAngle_1",
-        "arrowLength_2","arrowAngle_2")
+    edges <- data.frame(n, n, n, c, c, n, c, c, n, n, n, n, n, n)
+    colnames(edges) <- c("vertex1","vertex2","emode", "name1", "name2", 
+        "weight", "edgeLineWidth","edgeLineColor","edgeLineType",
+        "arrowType", "arrowAngle_1", "arrowAngle_2", 
+        "arrowLength_1", "arrowLength_2")
     return(edges)
 }
 
 #-------------------------------------------------------------------------------
 .adjust.arrow.length <- function(edges){
+    edges$arrowLength_1 <- edges$arrowLength
+    edges$arrowLength_2 <- edges$arrowLength
     a_theta <- 60 #default arrow angle * 2 (not implemented)
     a_theta <- a_theta / 180 * pi
     idx <- edges$arrowAngle_1==90
@@ -319,6 +427,7 @@
         b <- sqrt( (l^2 + l^2) - (2 * l^2) * cos(a_theta))
         edges$arrowLength_2[idx] <- b + edges$edgeLineWidth[idx]/4
     }
+    edges <- edges[ , -which(colnames(edges)=="arrowLength")]
     return(edges)
 }
 

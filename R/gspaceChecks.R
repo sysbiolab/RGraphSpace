@@ -67,8 +67,8 @@
 #-------------------------------------------------------------------------------
 # Validate custom plot args
 .validate.plot.args <- function(name, para) {
-    if (name == "marks") {
-        if (!.is_singleLogical(para)) {
+    if (name == "node.labels") {
+        if (!is.null(para)) {
             if (!.all_characterValues(para)) {
                 msg <- paste0("'", name, "' should be a vector with strings.")
                 stop(msg, call. = FALSE)

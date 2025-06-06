@@ -34,6 +34,9 @@
             "duplicated names.")
         stop(msg, call. = FALSE)
     }
+    if (is.null(igraph::V(g)$nodeLabel)){
+        igraph::V(g)$nodeLabel <- igraph::V(g)$name
+    }
     if (!igraph::is_simple(g)) {
         if (verbose && igraph::any_loop(g)) message("Removing loops...")
         if (verbose && igraph::any_multiple(g))
@@ -49,50 +52,52 @@
 
 #-------------------------------------------------------------------------------
 .validate.nodes <- function(g) {
+    # get default attributes
     atts <- c(.get.required.vatt(), .get.default.vatt())
     a_names <- names(atts)
+    # check default attributes
     b_names <- a_names[a_names %in% igraph::vertex_attr_names(g)]
-    if (vcount(g) > 0) {
-        .validate.vatt(igraph::vertex_attr(g)[b_names])
+    if(length(b_names)>0){
+        if (vcount(g) > 0) {
+            .validate.vatt(igraph::vertex_attr(g))
+        }
     }
+    # add missing default attributes
     c_names <- a_names[!a_names %in% b_names]
     if (length(c_names) > 0) {
         for (at in c_names) {
             igraph::vertex_attr(g, name = at) <- atts[[at]]
         }
     }
-    d_names <- igraph::vertex_attr_names(g)
-    d_names <- d_names[!c_names %in% a_names]
-    if (length(d_names) > 0) {
-        for (at in d_names) {
-            g <- igraph::delete_vertex_attr(g, name = at)
-        }
-    }
+    # keep default attributes only
+    igraph::vertex_attr(g) <- igraph::vertex_attr(g)[a_names]
+    # further checks
     g <- .transform.nodeshape(g)
     return(g)
 }
 
 #-------------------------------------------------------------------------------
 .validate.edges <- function(g) {
+    # get default attributes
     atts <- .get.default.eatt(igraph::is_directed(g))
     a_names <- names(atts)
+    # check default attributes
     b_names <- a_names[a_names %in% igraph::edge_attr_names(g)]
-    if (igraph::ecount(g) > 0) {
-        .validate.eatt(igraph::edge_attr(g)[b_names])
+    if(length(b_names)>0){
+        if (igraph::ecount(g) > 0) {
+            .validate.eatt(igraph::edge_attr(g))
+        }
     }
+    # add missing default attributes
     c_names <- a_names[!a_names %in% b_names]
     if (length(c_names) > 0) {
         for (at in c_names) {
             igraph::edge_attr(g, name = at) <- atts[[at]]
         }
     }
-    d_names <- igraph::edge_attr_names(g)
-    d_names <- d_names[!c_names %in% a_names]
-    if (length(d_names) > 0) {
-        for (at in d_names) {
-            g <- igraph::delete_edge_attr(g, name = at)
-        }
-    }
+    # keep default attributes only
+    igraph::edge_attr(g) <- igraph::edge_attr(g)[a_names]
+    # further checks
     g <- .transform.arrowtype(g)
     g <- .transform.linetype(g)
     return(g)
@@ -117,20 +122,21 @@
     return(atts)
 }
 .get.default.vatt <- function() {
-    atts <- list("nodeLabel" = NA, "nodeLabelSize" = 12,
+    atts <- list("weight"=1, "nodeLabel" = NA, "nodeLabelSize" = 8,
         "nodeLabelColor" = "grey40", "nodeSize" = 5,
         "nodeShape" = 21, "nodeColor" = "grey80",
         "nodeLineWidth" = 1, "nodeLineColor" = "grey20")
     return(atts)
 }
 .get.default.eatt <- function(is.directed = FALSE) {
-    atts <- list("edgeLineWidth" = 0.5, "edgeLineColor" = "grey80",
-        "edgeLineType" = "solid", "arrowLength" = 1, "arrowAngle" = 30)
+    atts <- list("weight"=1, "edgeLineWidth" = 0.5, 
+        "edgeLineColor" = "grey80", "edgeLineType" = "solid")
     if (is.directed) {
         atts$arrowType <- 1
     } else {
         atts$arrowType <- 0
     }
+    atts$arrowLength=1
     return(atts)
 }
 
@@ -183,6 +189,13 @@
     if (!is.null(atts$nodeLineColor)) {
         .validate.colors("allColors", "nodeLineColor", atts$nodeLineColor)
     }
+    if (!is.null(atts$weight)) {
+        .validate.args("numeric_vec", "weight", atts$weight)
+        if (min(atts$weight) < 0) {
+            stop("'weight' should be a vector of numeric values >=0", 
+                call. = FALSE)
+        }
+    }
 }
 #-------------------------------------------------------------------------------
 .validate.eatt <- function(atts) {
@@ -209,6 +222,13 @@
     }
     if (!is.null(atts$arrowType)) {
         .validate.args("allCharacterOrInteger", "arrowType", atts$arrowType)
+    }
+    if (!is.null(atts$weight)) {
+        .validate.args("numeric_vec", "weight", atts$weight)
+        if (min(atts$weight) < 0) {
+            stop("'weight' should be a vector of numeric values >=0", 
+                call. = FALSE)
+        }
     }
 }
 
@@ -243,13 +263,13 @@
 .transform.arrowtype <- function(g) {
     if (ecount(g) > 0 && "arrowType" %in% names(edge_attr(g))) {
         eatt <- E(g)$arrowType
-        gtype <- is_directed(g)
-        aty <- .get.arrowtypes(gtype)
+        is_dir <- is_directed(g)
+        aty <- .get.arrowtypes(is_dir)
         if (.all_integerValues(eatt)) {
             idx <- !eatt %in% aty
             if (any(idx)) {
-                eatt[idx] <- 1
-                .get.arrowtypes(gtype, warning = TRUE)
+                eatt[idx] <- ifelse(is_dir, 1, 0)
+                .get.arrowtypes(is_dir, warning = TRUE)
             }
         } else {
             idx <- eatt %in% as.character(aty)
@@ -259,7 +279,7 @@
             idx <- !eatt %in% names(aty)
             if (any(idx)) {
                 eatt[idx] <- "-->"
-                .get.arrowtypes(gtype, warning = TRUE)
+                .get.arrowtypes(is_dir, warning = TRUE)
             }
             eatt <- aty[eatt]
         }
@@ -285,8 +305,8 @@
     }
     if (warning) {
         gtype <- ifelse(is.dir, "directed", "undirected")
-        msg1 <- paste("'arrowType' integer or character code in",
-            gtype, "graphs should be in:\n")
+        msg1 <- paste("'arrowType' value in",
+            gtype, "graphs must be one of:\n")
         if (is.dir) {
             msg2 <- atypes[match(unique(atypes), atypes)]
             msg2 <- paste(msg2, paste0("'", names(msg2), "'"), sep = " = ")
@@ -300,7 +320,8 @@
             atp2 <- paste(atp2, collapse = ", ")
             msg2 <- paste0(atp1, atp2)
         }
-        warning(msg1, msg2, call. = FALSE)
+        msg3 <- c("\n...using default value.")
+        warning(msg1, msg2, msg3, call. = FALSE)
     } else {
         return(atypes)
     }
