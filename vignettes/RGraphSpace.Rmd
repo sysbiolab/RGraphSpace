@@ -105,7 +105,7 @@ V(gtoy1)$nodeLabelSize <- 8
 # Node label color (Hexadecimal or color name)
 V(gtoy1)$nodeLabelColor <- "black"
 
-# Node weight (numeric >=0)
+# Node weight (numeric >=0; not passed to ggplot)
 V(gtoy1)$weight <- 1
 ```
 
