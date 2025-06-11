@@ -41,8 +41,8 @@ library(RGraphSpace)
 ```
 
 ```{r Toy igraph - 1, eval=TRUE, message=FALSE, results=FALSE}
-# Make a 'toy' igraph with 5 nodes and 4 edges
-# Note: this will be a directed graph
+# Make a 'toy' igraph with 5 nodes and 4 edges;
+# ..either a directed or undirected graph
 gtoy1 <- make_star(5, mode="out")
 
 # Check whether the graph is directed or not
@@ -57,8 +57,8 @@ ecount(gtoy1)
 
 # Assign 'x' and 'y' coordinates to each vertex;
 # ..this can be an arbitrary unit in (-Inf, +Inf)
-V(gtoy1)$x <- c(0, 2, -4, -4, -9)
-V(gtoy1)$y <- c(0, 0,  4, -4,  0)
+V(gtoy1)$x <- c(0, 2, -2, -4, -8)
+V(gtoy1)$y <- c(0, 0,  2, -4,  0)
 
 # Assign a name to each vertex
 V(gtoy1)$name <- paste0("n", 1:5)
@@ -82,7 +82,7 @@ Next, we will demonstrate all vertex and edge attributes that can be passed to *
 
 ```{r Node attributes, eval=TRUE, message=FALSE}
 # Node size (numeric in (0, 100), as '%' of the plot space)
-V(gtoy1)$nodeSize <- c(10, 7, 7, 7, 7)
+V(gtoy1)$nodeSize <- c(8, 5, 5, 5, 5)
 
 # Node shape (integer code between 0 and 25; see 'help(points)')
 V(gtoy1)$nodeShape <- c(21, 22, 23, 24, 25)
@@ -115,15 +115,15 @@ Given a list of edges, *RGraphSpace* represents only one edge for each pair of c
 
 ```{r Edge attributes - 1, eval=TRUE, message=FALSE}
 # Edge width (as in 'lwd' standard graphics; see 'help(gpar)')
-E(gtoy1)$edgeLineWidth <- 1
+E(gtoy1)$edgeLineWidth <- 0.8
 
 # Edge color (Hexadecimal or color name)
 E(gtoy1)$edgeLineColor <- c("red","green","blue","black")
 
 # Edge type (as in 'lty' standard graphics; see 'help(gpar)')
-E(gtoy1)$edgeLineType <- c("solid", "dotted", "dashed", "2121")
+E(gtoy1)$edgeLineType <- c("solid", "11", "dashed", "2124")
 
-# Edge weight (numeric >=0)
+# Edge weight (numeric >=0; not passed to ggplot)
 V(gtoy1)$weight <- 1
 ```
 
