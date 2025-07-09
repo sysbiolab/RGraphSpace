@@ -78,7 +78,7 @@ create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
 # Load a demo igraph
 data('gtoy1', package = 'RGraphSpace')
 
-# Generate a ggplot for gtoy1
+# Generate a ggplot for igraph
 plotGraphSpace(gtoy1)
 
 # Create a GraphSpace object

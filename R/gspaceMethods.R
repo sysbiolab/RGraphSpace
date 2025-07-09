@@ -56,7 +56,7 @@ GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL,
         .validate.args("image_mtx", "image", image)
     }
     #--- validate igraph and build a gs object
-    gs <- .buildGraphSpace(g, layout, mar, image, verbose)
+    gs <- .buildGraphSpace(g, mar, image, layout, verbose)
     return(gs)
 }
 
@@ -93,7 +93,7 @@ GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL,
 #' # Load a demo igraph
 #' data('gtoy1', package = 'RGraphSpace')
 #' 
-#' # Generate a ggplot for gtoy1
+#' # Generate a ggplot for igraph
 #' plotGraphSpace(gtoy1)
 #' 
 #' # Create a GraphSpace object
@@ -225,6 +225,20 @@ setMethod("plotGraphSpace", "igraph",
     }
 )
 
+#' Plot GraphSpace objects
+#' 
+#' @param x A \linkS4class{GraphSpace} class object.
+#' @param ... Additional arguments passed to the 
+#' \code{\link{plotGraphSpace}} function.
+#' @seealso \code{\link{plotGraphSpace}}
+#' 
+#' @importFrom graphics plot
+#' @export
+#'
+plot.GraphSpace <- function(x, ...) {
+    plotGraphSpace(x, ...)
+}
+
 #-------------------------------------------------------------------------------
 #' @title Accessors for fetching slots from a GraphSpace object
 #'
@@ -245,15 +259,15 @@ setMethod("plotGraphSpace", "igraph",
 #' gs <- GraphSpace(gtoy1)
 #'
 #' # Get the 'summary' slot in gs
-#' getGraphSpace(gs, what = 'summary')
+#' getGraphSpace(gs, what = 'graph')
 #'
 #' @import methods
 #' @docType methods
 #' @rdname getGraphSpace-methods
 #' @aliases getGraphSpace
 #' @export
-setMethod("getGraphSpace", "GraphSpace", function(gs, what = "summary") {
-    opts <- c("nodes", "edges", "graph","pars", "misc", "summary", "image")
+setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
+    opts <- c("nodes", "edges", "graph","pars", "misc", "image")
     if (!what %in% opts) {
         opts <- paste0(opts, collapse = ", ")
         stop("'what' must be one of:\n", opts, call. = FALSE)
@@ -271,7 +285,7 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "summary") {
     } else if (what == "image") {
         obj <- gs@image
     } else {
-        obj <- summary(gs@graph)
+        obj <- gs@graph
     }
     return(obj)
 })
@@ -280,5 +294,187 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "summary") {
 # show summary information on screen
 setMethod("show", "GraphSpace", function(object) {
     message("A GraphSpace-class object for:")
-    getGraphSpace(object)
+    obj <- getGraphSpace(object, what = "graph")
+    summary(obj)
 })
+
+#-------------------------------------------------------------------------------
+#' @title Accessors for applying essential igraph methods to modify
+#' attributes of GraphSpace objects.
+#' 
+#' @description Access and modify individual slots of a GraphSpace 
+#' object. Selected 'igraph' methods are applied to the 'graph' slot and 
+#' propagated to downstream components.
+#' 
+#' @param x A \linkS4class{GraphSpace} class object
+#' @param name Name of the attribute.
+#' @param value The new value of the attribute.
+#' @param ... Additional arguments passed to igraph methods.
+#' @return Updated \linkS4class{GraphSpace} object.
+#' @seealso \code{\link[igraph]{vertex_attr}}, \code{\link[igraph]{edge_attr}}
+#' @examples
+#' # Load a demo igraph
+#' data('gtoy1', package = 'RGraphSpace')
+#' 
+#' # Create a new GraphSpace object
+#' gs <- GraphSpace(gtoy1)
+#' 
+#' # Usage of GraphSpace attribute accessors:
+#' 
+#' # Get vertex names
+#' names(gs)
+#' 
+#' # Get vertex count
+#' gs_vcount(gs)
+#' 
+#' # Get edge count
+#' gs_ecount(gs)
+#' 
+#' # Access all vertex attributes
+#' gs_vertex_attr(gs)
+#' 
+#' # Access a specific vertex attribute
+#' gs_vertex_attr(gs, "nodeLabel")
+#' 
+#' # Modify a single value within a vertex attribute
+#' gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
+#' 
+#' # Replace an entire vertex attribute
+#' gs_vertex_attr(gs, "nodeSize") <- 10
+#' 
+#' # Alternative syntax using `$` accessor
+#' gs_vertex_attr(gs)$nodeSize <- 10
+#' 
+#' # Access a specific edge attribute
+#' gs_edge_attr(gs, "edgeLineColor")
+#' 
+#' # Replace an entire edge attribute
+#' gs_edge_attr(gs, "edgeLineWidth") <- 1
+#' 
+#'  # Alternative syntax using `$` for edge attributes
+#' gs_edge_attr(gs)$edgeLineWidth <- 3
+#' 
+#' @aliases names
+#' @aliases names<-
+#' @aliases gs_vcount
+#' @aliases gs_ecount
+#' @aliases gs_vertex_attr
+#' @aliases gs_edge_attr
+#' @aliases gs_vertex_attr<-
+#' @aliases gs_edge_attr<-
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("names", "GraphSpace", function(x) {
+    x@nodes$name
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("names<-", "GraphSpace", function(x, value) {
+    gs_vertex_attr(x, "name") <- value
+    return(x)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_vcount", "GraphSpace", function(x) {
+    igraph::vcount(x@graph)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_ecount", "GraphSpace", function(x) {
+    igraph::ecount(x@graph)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ...) {
+    g <- x@graph
+    if(missing(name)){
+        att <- igraph::vertex_attr(graph = g, ...=...)
+    } else {
+        if(name %in% igraph::vertex_attr_names(g)){
+            att <- igraph::vertex_attr(graph = g, name = name, ...=...)
+            if(name!="name") names(att) <- V(g)$name
+        } else {
+            att <- NULL
+        }
+    }
+    return(att)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
+    g <- x@graph
+    if (missing(name) && is.list(value)){
+        #workaround for analogy to igraph's "syntactic sugar" $<-
+        len1 <- unlist(lapply(value, length))==1
+        if(any(len1)){
+            for(i in which(len1)){
+                vl <- value[[i]]
+                vl <- ifelse(.is_replicable(vl), vl, list(vl))
+                value[[i]] <- rep(vl, igraph::vcount(g))
+            }
+        }
+        igraph::vertex_attr(graph = g) <- value
+    } else {
+        if(length(value)==1){
+            value <- ifelse(.is_replicable(value), value, list(value))
+        }
+        igraph::vertex_attr(graph = g, name = name, ...=...) <- value  
+    }
+    x <- .updateGraphSpace(x, g)
+    return(x)
+})
+.is_replicable <- function(x) {
+    tryCatch({
+        rep(x, 2)
+        TRUE
+    }, error = function(e) FALSE)
+}
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_edge_attr", "GraphSpace", function(x, name, ...) {
+    g <- x@graph
+    att <- igraph::edge_attr(graph = g, name = name, ...=...)
+    return(att)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
+    g <- x@graph
+    if (missing(name) && is.list(value)){
+        #workaround for analogy to igraph's "syntactic sugar" $<-
+        len1 <- unlist(lapply(value, length))==1
+        if(any(len1)){
+            for(i in which(len1)){
+                vl <- value[[i]]
+                vl <- ifelse(.is_replicable(vl), vl, list(vl))
+                value[[i]] <- rep(vl, igraph::ecount(g))
+            }
+        }
+        igraph::edge_attr(graph = g) <- value
+    } else {
+        if(length(value)==1){
+            value <- ifelse(.is_replicable(value), value, list(value))
+        }
+        igraph::edge_attr(graph = g, name = name, ...=...) <- value  
+    }
+    x <- .updateGraphSpace(x, g)
+    return(x)
+})
+
+.updateGraphSpace <- function(x, g) {
+    x@graph <- .validate.igraph(g)
+    x@edges <- .get.edges(x@graph)
+    temp <- .center.nodes(.get.nodes(x@graph), x@misc$image, x@pars$mar)
+    x@nodes <- temp$nodes
+    x@image <- temp$image
+    return(x)
+}
+
+

@@ -2,40 +2,27 @@
 ################################################################################
 ### Main constructor of GraphSpace-class objects
 ################################################################################
-.buildGraphSpace <- function(g, layout, mar = 0.1, image = NULL, 
+.buildGraphSpace <- function(g, mar = 0.1, image = NULL, layout = NULL,
     verbose = TRUE) {
     
     gg <- .validate.igraph(g, layout, verbose)
     
     if(verbose) message("Extracting vertices...")
     nodes <- .get.nodes(gg)
-    if(is.null(image)){
-        image.layer <- FALSE
-        image <- as.raster(matrix())
-        nodes <- .center.nodes(nodes, mar)
-    } else {
-        image.layer <- TRUE
-        if(!is.raster(image)) image <- as.raster(image)
-        if(verbose) message("Setting graph coordinates to image space...")
-        if(nrow(nodes) > 0){
-            temp <- .frame.nodes(nodes, image, mar)
-            nodes <- temp$nodes
-            image <- temp$img
-        }
-    }
-
+    temp <- .center.nodes(nodes, image, mar)
+    nodes <- temp$nodes
+    image.mar <- temp$image
+    image.layer <- temp$image.layer
+    
     if(verbose) message("Extracting edges...")
-    if (igraph::is_directed(gg)) {
-        edges <- .get.directed.edges(gg)
-    } else {
-        edges <- .get.edges(gg)
-    }
-
+    edges <- .get.edges(gg)
+    
     if(verbose) message("Creating a 'GraphSpace' object...")
     pars <- list(is.directed = is_directed(gg), mar = mar, 
         image.layer = image.layer)
     gs <- new(Class = "GraphSpace", nodes = nodes, edges = edges, 
-        graph=gg, image = image, pars = pars, misc = list(igraph = g))
+        graph=gg, image = image.mar, pars = pars, 
+        misc = list(g = g, image=image))
     return(gs)
 }
 
@@ -46,8 +33,8 @@
 #-------------------------------------------------------------------------------
 .frame.nodes <- function(nodes, image, mar){
     d <- dim(image)
-    xr <- range(nodes$X)
-    yr <- range(nodes$Y)
+    xr <- range(nodes$x)
+    yr <- range(nodes$y)
     if( (xr[1] < 1) || (xr[2] > d[2]) ){
         stop("Graph coordinates outside image dimensions.", call. = FALSE)
     }
@@ -55,30 +42,30 @@
         stop("Graph coordinates outside image dimensions.", call. = FALSE)
     }
     # adjust image and node coordinates
-    res <- list(nodes=nodes, img=image)
-    res <- .crop_image(res$nodes, res$img, mar)
-    res <- .square_image(res$nodes, res$img)
+    res <- list(nodes=nodes, image=image)
+    res <- .crop_image(res$nodes, res$image, mar)
+    res <- .square_image(res$nodes, res$image)
     # normalize node coordinates
-    d <- dim(res$img)
-    res$nodes$X <- scales::rescale(res$nodes$X, 
+    d <- dim(res$image)
+    res$nodes$x <- scales::rescale(res$nodes$x, 
         from = c(1, d[2]), to = c(0, 1))
-    res$nodes$Y <- scales::rescale(res$nodes$Y, 
+    res$nodes$y <- scales::rescale(res$nodes$y, 
         from = c(1, d[1]), to = c(0, 1))
     return(res)
 }
 
 #-------------------------------------------------------------------------------
-.crop_image <- function(nodes, img, mar){
+.crop_image <- function(nodes, image, mar){
     
-    d <- dim(img)
+    d <- dim(image)
     
     # set node limits to integer
-    xl <- range(nodes$X)
-    yl <- range(nodes$Y)
+    xl <- range(nodes$x)
+    yl <- range(nodes$y)
     xl <- c(ceiling(xl[1]), floor(xl[2]))
     yl <- c(ceiling(yl[1]), floor(yl[2]))
-    nodes$X <- scales::rescale(nodes$X, to=xl)
-    nodes$Y <- scales::rescale(nodes$Y, to=yl)
+    nodes$x <- scales::rescale(nodes$x, to=xl)
+    nodes$y <- scales::rescale(nodes$y, to=yl)
     
     # adjust limits to a square window
     lim <- .adjust.lim(xl, yl, d)
@@ -112,15 +99,15 @@
     yl <- lim$yl
     
     # crop on flipped rows to match node y-coordinates
-    img <- img[seq.int(nrow(img), 1), ]
-    img <- img[seq.int(yl[1], yl[2]), seq.int(xl[1], xl[2])]
-    img <- img[seq.int(nrow(img), 1), ]
+    image <- image[seq.int(nrow(image), 1), ]
+    image <- image[seq.int(yl[1], yl[2]), seq.int(xl[1], xl[2])]
+    image <- image[seq.int(nrow(image), 1), ]
     
     # set new node coordinates
-    nodes$X <- nodes$X - xl[1] + 1
-    nodes$Y <- nodes$Y - yl[1] + 1
+    nodes$x <- nodes$x - xl[1] + 1
+    nodes$y <- nodes$y - yl[1] + 1
     
-    res <- list(nodes=nodes, img=img)
+    res <- list(nodes=nodes, image=image)
     return(res)
 } 
 # adjust limits to a square window
@@ -145,64 +132,80 @@
 }
 
 #-------------------------------------------------------------------------------
-.square_image <- function(nodes, img){
-    d <- dim(img)
+.square_image <- function(nodes, image ){
+    d <- dim(image )
     if(d[1] > d[2]){
         n <- ceiling( (d[1] - d[2]) )/2
         img_d <- matrix(NA, nrow = d[1], ncol = d[1])
-        img_d[ , seq(n + 1, n + d[2])] <- as.matrix(img)
-        nodes$X <- nodes$X + n
-        img <- as.raster(img_d)
+        img_d[ , seq(n + 1, n + d[2])] <- as.matrix(image )
+        nodes$x <- nodes$x + n
+        image  <- as.raster(img_d)
     } else if(d[1] < d[2]){
         n <- ceiling( (d[2] - d[1])/2 )
         img_d <- matrix(NA, nrow = d[2], ncol = d[2])
-        img_d[seq(n + 1, n + d[1]), ] <- as.matrix(img)
-        nodes$Y <- nodes$Y + n
-        img <- as.raster(img_d)
+        img_d[seq(n + 1, n + d[1]), ] <- as.matrix(image )
+        nodes$y <- nodes$y + n
+        image  <- as.raster(img_d)
     }
-    res <- list(nodes=nodes, img=img)
+    res <- list(nodes=nodes, image=image)
     return(res)
 }
 
+#-------------------------------------------------------------------------------
+.center.nodes <- function(nodes, image, mar, verbose = FALSE){
+    if(is.null(image)){
+        if(nrow(nodes)>0){
+            nodes$x <- nodes$x - mean(range(nodes$x))
+            nodes$y <- nodes$y - mean(range(nodes$y))
+            from <- range(c(nodes$x, nodes$y))
+            to <- c(mar, 1-mar)
+            nodes$x <- scales::rescale(nodes$x, from = from, to=to)
+            nodes$y <- scales::rescale(nodes$y, from = from, to=to)
+        }
+        temp <- list(nodes=nodes, image=as.raster(matrix()),
+            image.layer = FALSE)
+    } else {
+        if(verbose) message("Setting graph coordinates to image space...")
+        if(!is.raster(image)) image <- as.raster(image)
+        if(nrow(nodes) > 0){
+            temp <- .frame.nodes(nodes, image, mar)
+            temp$image.layer <- TRUE
+        } else {
+            temp <- list(nodes=nodes, image=image, image.layer=TRUE)
+        }
+    }
+    return(temp)
+}
+
 ################################################################################
-### Get nodes in a df object
+### Get nodes and edges in a df object
 ################################################################################
 
 #-------------------------------------------------------------------------------
 .get.nodes <- function(g){
-    X <- igraph::V(g)$x
-    Y <- igraph::V(g)$y
-    vertex <- igraph::V(g)$name
-    nodes <- data.frame(X = X, Y = Y, name=vertex)
-    rownames(nodes) <- vertex
-    nodes <- .get.node.attrs(g, nodes)
-    return(nodes)
-}
-.get.node.attrs <- function(g, nodes){
-    vatt <- .get.default.vatt()
-    atts <- vertex_attr(g)[names(vatt)]
-    atts <- as.data.frame(atts)
-    nodes <- cbind(nodes, atts)
-    return(nodes)
-}
-
-#-------------------------------------------------------------------------------
-.center.nodes <- function(nodes, mar){
-    if(nrow(nodes)>0){
-        nodes$X <- nodes$X - mean(range(nodes$X))
-        nodes$Y <- nodes$Y - mean(range(nodes$Y))
-        from <- range(c(nodes$X, nodes$Y))
-        to <- c(mar, 1-mar)
-        nodes$X <- scales::rescale(nodes$X, from = from, to=to)
-        nodes$Y <- scales::rescale(nodes$Y, from = from, to=to)
+    lt <- vertex_attr(g)
+    nodes <- data.frame(row.names = seq_along(lt[[1]]))
+    for(nm in names(lt)){
+        nodes[[nm]] <- lt[[nm]]
     }
+    vertex <- seq_len(igraph::vcount(g))
+    nodes <- cbind(vertex = vertex, nodes)
+    rownames(nodes) <- nodes$name
     return(nodes)
+}
+.get.edges <- function(g){
+    if (igraph::is_directed(g)) {
+        edges <- .get.directed.edges(g)
+    } else {
+        edges <- .get.undirected.edges(g)
+    }
+    return(edges)
 }
 
 ################################################################################
 ### Get edges in a df object
 ################################################################################
-.get.edges <- function(g){
+.get.undirected.edges <- function(g){
     if(ecount(g)>0){
         vertex <- igraph::V(g)$name
         edges <- igraph::as_edgelist(g, names = FALSE)
@@ -222,15 +225,19 @@
         edges <- .set.arrowangle(edges)
         edges <- .set.emode(edges)
         edges <- .adjust.arrow.length(edges)
+        idx <- colnames(edges) %in% names(.get.empty.edgedf())
+        edges <- edges[, c(which(idx), which(!idx))]
     } else {
         edges <- .get.empty.edgedf()
     }
     return(edges)
 }
 .get.eatt <- function(g){
-    a_names <- names(.get.default.eatt())
-    atts <- igraph::edge_attr(g)[a_names]
-    atts <- as.data.frame(atts)
+    lt <- igraph::edge_attr(g)
+    atts <- data.frame(row.names = seq_along(lt[[1]]))
+    for(nm in names(lt)){
+        atts[[nm]] <- lt[[nm]]
+    }
     e <- igraph::as_edgelist(g, names = FALSE)
     colnames(e) <- c("vertex1", "vertex2")
     atts <- cbind(e, atts)
@@ -291,6 +298,7 @@
         edges$eid <- as.numeric(eid)
         edges$ut <- as.numeric(upper.tri(e))
         edges$lt <- as.numeric(lower.tri(e))
+        g <- .remove.hidden.eatt(g)
         atts <- .extract.directed.att(g)
         if (!all(atts[, c(1, 2)] == edges[, c(1, 2)])) {
             stop("unexpected indexing during edge attribute combination.", 
@@ -305,6 +313,8 @@
         edges <- .set.arrowangle(edges)
         edges <- .set.emode(edges)
         edges <- .adjust.arrow.length(edges)
+        idx <- colnames(edges) %in% names(.get.empty.edgedf())
+        edges <- edges[, c(which(idx), which(!idx))]
     } else {
         edges <- .get.empty.edgedf()
     }
@@ -355,16 +365,20 @@
     atts <- as.data.frame(atts)
     colnames(atts) <- c("vertex1", "vertex2")
     atts$e <- as.numeric(e)
-    a_names <- names(.get.default.eatt())
-    a_names <- intersect(a_names, igraph::edge_attr_names(g))
+    # a_names <- names(.get.default.eatt())
+    a_names <- igraph::edge_attr_names(g)
     ne <- e == 0
     for (at in a_names) {
         x <- .adjacency(g, attr = at)
         x[ne] <- NA
-        if (is.numeric(x)) {
-            atts[[at]] <- as.numeric(x)
-        } else if (is.character(x)) {
-            atts[[at]] <- as.character(x)
+        if (is.data.frame(x)){
+            atts[[at]] <- I(unlist(x, recursive=FALSE))
+        } else {
+            if (is.numeric(x)) {
+                atts[[at]] <- as.numeric(x)
+            } else if (is.character(x)) {
+                atts[[at]] <- as.character(x)
+            }
         }
     }
     rownames(atts) <- NULL
@@ -372,26 +386,20 @@
     return(atts)
 }
 # ..this is a fix for 'as_adjacency_matrix', when 'attr' is character
-.adjacency <- function(graph, attr = NULL) {
+.adjacency <- function(g, attr = NULL) {
     if(is.null(attr)){
-        exattr <- rep(1, ecount(graph))
+        exattr <- rep(1, ecount(g))
+        x <- matrix(0, nrow = vcount(g), ncol = vcount(g))
     } else {
-        exattr <- edge_attr(graph, as.character(attr))
+        exattr <- edge_attr(g, as.character(attr))
+        x <- matrix(NA, nrow = vcount(g), ncol = vcount(g))
+        if(is.list(exattr)) x <- as.data.frame(x)
     }
-    if (is.logical(exattr)) {
-        res <- matrix(FALSE, nrow = vcount(graph), ncol = vcount(graph))
-    } else if (is.numeric(exattr)) {
-        res <- matrix(0, nrow = vcount(graph), ncol = vcount(graph))
-    } else {
-        res <- matrix(NA, nrow = vcount(graph), ncol = vcount(graph))
-    }
-    e <- igraph::ends(graph, seq_len(ecount(graph)), names = FALSE)
-    res[e] <- exattr
-    if (!is_directed(graph)) {
-        res[e[,c(2,1)]] <- exattr
-    }
-    colnames(res) <- rownames(res) <- V(graph)$name
-    return(res)
+    e <- igraph::ends(g, seq_len(ecount(g)), names = FALSE)
+    x[e] <- exattr
+    if (!is_directed(g)) x[e[,c(2,1)]] <- exattr
+    colnames(x) <- rownames(x) <- V(g)$name
+    return(x)
 }
 
 ################################################################################
@@ -434,10 +442,10 @@
 #-------------------------------------------------------------------------------
 .get.exy <- function(gxy, edges){
     exy <- data.frame(
-        x1 = gxy[edges$vertex1,"X"], 
-        x2 = gxy[edges$vertex2,"X"], 
-        y1 = gxy[edges$vertex1,"Y"], 
-        y2 = gxy[edges$vertex2,"Y"])
+        x1 = gxy[edges$vertex1,"x"], 
+        x2 = gxy[edges$vertex2,"x"], 
+        y1 = gxy[edges$vertex1,"y"], 
+        y2 = gxy[edges$vertex2,"y"])
     edges <- cbind(edges, exy)
     return(edges)
 }

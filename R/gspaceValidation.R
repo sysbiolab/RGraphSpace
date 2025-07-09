@@ -2,7 +2,7 @@
 ################################################################################
 ### Validate igraph for RGraphSpace
 ################################################################################
-.validate.igraph <- function(g, layout, verbose = TRUE) {
+.validate.igraph <- function(g, layout = NULL, verbose = FALSE) {
     if (verbose) message("Validating the 'igraph' object...")
     if (!is(g, "igraph")) {
         stop("'g' should be an 'igraph' object.", call. = FALSE)
@@ -59,7 +59,7 @@
     b_names <- a_names[a_names %in% igraph::vertex_attr_names(g)]
     if(length(b_names)>0){
         if (vcount(g) > 0) {
-            .validate.vatt(igraph::vertex_attr(g))
+            .validate.vatt(igraph::vertex_attr(g)[b_names])
         }
     }
     # add missing default attributes
@@ -69,7 +69,9 @@
             igraph::vertex_attr(g, name = at) <- atts[[at]]
         }
     }
-    # keep default attributes only
+    # put default attributes 1st
+    d_names <- igraph::vertex_attr_names(g)
+    a_names <- c(a_names, d_names[ ! d_names %in% a_names ])
     igraph::vertex_attr(g) <- igraph::vertex_attr(g)[a_names]
     # further checks
     g <- .transform.nodeshape(g)
@@ -78,6 +80,7 @@
 
 #-------------------------------------------------------------------------------
 .validate.edges <- function(g) {
+    g <- .remove.hidden.eatt(g)
     # get default attributes
     atts <- .get.default.eatt(igraph::is_directed(g))
     a_names <- names(atts)
@@ -85,7 +88,7 @@
     b_names <- a_names[a_names %in% igraph::edge_attr_names(g)]
     if(length(b_names)>0){
         if (igraph::ecount(g) > 0) {
-            .validate.eatt(igraph::edge_attr(g))
+            .validate.eatt(igraph::edge_attr(g)[b_names])
         }
     }
     # add missing default attributes
@@ -95,7 +98,9 @@
             igraph::edge_attr(g, name = at) <- atts[[at]]
         }
     }
-    # keep default attributes only
+    # put default attributes 1st
+    d_names <- igraph::edge_attr_names(g)
+    a_names <- c(a_names, d_names[ ! d_names %in% a_names ])
     igraph::edge_attr(g) <- igraph::edge_attr(g)[a_names]
     # further checks
     g <- .transform.arrowtype(g)
@@ -122,22 +127,35 @@
     return(atts)
 }
 .get.default.vatt <- function() {
-    atts <- list("weight"=1, "nodeLabel" = NA, "nodeLabelSize" = 8,
-        "nodeLabelColor" = "grey40", "nodeSize" = 5,
-        "nodeShape" = 21, "nodeColor" = "grey80",
+    atts <- list(
+        "nodeLabel" = NA, "nodeLabelSize" = 8, "nodeLabelColor" = "grey40",
+        "nodeShape" = 21, "nodeSize" = 5, "nodeColor" = "grey80",
         "nodeLineWidth" = 1, "nodeLineColor" = "grey20")
     return(atts)
 }
 .get.default.eatt <- function(is.directed = FALSE) {
-    atts <- list("weight"=1, "edgeLineWidth" = 0.5, 
-        "edgeLineColor" = "grey80", "edgeLineType" = "solid")
+    atts <- list("edgeLineType" = "solid", "edgeLineWidth" = 0.5, 
+        "edgeLineColor" = "grey80")
     if (is.directed) {
         atts$arrowType <- 1
     } else {
         atts$arrowType <- 0
     }
     atts$arrowLength=1
+    atts$weight=1
     return(atts)
+}
+# remove gs' internally used hidden attributes
+.remove.hidden.eatt <- function(g){
+    atts <- names(.get.default.eatt(igraph::is_directed(g)))
+    hidden <- setdiff(names(.get.empty.edgedf()), atts)
+    hidden <- hidden[hidden %in% igraph::edge_attr_names(g)]
+    if (length(hidden) > 0) {
+        for (at in hidden) {
+            g <- igraph::delete_edge_attr(g, name = at)
+        }
+    }
+    g
 }
 
 ################################################################################
@@ -188,13 +206,6 @@
     }
     if (!is.null(atts$nodeLineColor)) {
         .validate.colors("allColors", "nodeLineColor", atts$nodeLineColor)
-    }
-    if (!is.null(atts$weight)) {
-        .validate.args("numeric_vec", "weight", atts$weight)
-        if (min(atts$weight) < 0) {
-            stop("'weight' should be a vector of numeric values >=0", 
-                call. = FALSE)
-        }
     }
 }
 #-------------------------------------------------------------------------------

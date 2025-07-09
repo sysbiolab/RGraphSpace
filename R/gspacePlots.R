@@ -39,8 +39,8 @@ GeomNodeSpace <- ggproto("GeomNodeSpace", Geom,
 ### ggplot2 calls for GraphSpace-class methods
 ################################################################################
 .set.gspace <- function(nodes, xlab, ylab, cl){
-    X <- Y <- NULL
-    ggp <- ggplot2::ggplot(nodes, ggplot2::aes(X, Y)) +
+    x <- y <- NULL
+    ggp <- ggplot2::ggplot(nodes, ggplot2::aes(x, y)) +
         ggplot2::scale_x_continuous(name = xlab, breaks = cl$axis.ticks,
             labels = format(cl$axis.ticks), position = cl$x.position,
             limits = cl$xylim, expand = ggplot2::expansion(mult = 0)) +

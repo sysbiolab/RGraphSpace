@@ -51,12 +51,12 @@
 
 #-------------------------------------------------------------------------------
 .validate.colors <- function(check, name, para) {
-    if (name == "singleColor") {
+    if (check == "singleColor") {
         if (!.is_singleColor(para)) {
             msg <- paste0("'", name, "' should be a single color.")
             stop(msg, call. = FALSE)
         }
-    } else if (name == "allColors") {
+    } else if (check == "allColors") {
         if (!.is_color(para)) {
             msg <- paste0("'", name, "' should be a vector with colors.")
             stop(msg, call. = FALSE)

@@ -1,5 +1,5 @@
 ---
-title: "*RGraphSpace*: A lightweight package for representing large *igraph* objects in a normalized coordinate system."
+title: "*RGraphSpace*:A lightweight package for representing large *igraph* objects in a normalized coordinate system." 
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
@@ -104,9 +104,6 @@ V(gtoy1)$nodeLabelSize <- 8
 
 # Node label color (Hexadecimal or color name)
 V(gtoy1)$nodeLabelColor <- "black"
-
-# Node weight (numeric >=0; not passed to ggplot)
-V(gtoy1)$weight <- 1
 ```
 
 ## Edge attributes
@@ -124,7 +121,7 @@ E(gtoy1)$edgeLineColor <- c("red","green","blue","black")
 E(gtoy1)$edgeLineType <- c("solid", "11", "dashed", "2124")
 
 # Edge weight (numeric >=0; not passed to ggplot)
-V(gtoy1)$weight <- 1
+E(gtoy1)$weight <- 1
 ```
 
 ## Arrowhead attributes
