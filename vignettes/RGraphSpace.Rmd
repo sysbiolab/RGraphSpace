@@ -1,9 +1,9 @@
 ---
-title: "*RGraphSpace*:A lightweight package for representing large *igraph* objects in a normalized coordinate system." 
+title: "*RGraphSpace*: A lightweight interface for representing *igraph* objects in a normalized coordinate system." 
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "*RGraphSpace* is an *R* package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for representing large *igraph* objects in a normalized coordinate system."
+abstract: "*RGraphSpace* is an *R* package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for scaling graph elements in a normalized coordinate system."
 output: 
   html_document:
     theme: cerulean
@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Overview
 
-*RGraphSpace* is an *R* package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], which are scaled to fit within a standard unit space, making it easier to display different graphs side by side. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes [@Wickham2016], taking into account relative sizes and positions of the input graph. By scaling graph elements, *RGraphSpace* can provide a framework for layered visualizations, ensuring proper alignment within a spatial map. *RGraphSpace*'s use of *ggplot2* allows for extensive customization of aesthetics and visual style, such as colors, shapes, and line types.
+*RGraphSpace* is an R package designed to generate *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling them to fit within a standardized unit space. This facilitates the side-by-side visualization of multiple graphs. The package implements new geometric objects based on *ggplot2* prototypes [@Wickham2016], accounting for the relative sizes of nodes and edges. By scaling graph elements, *RGraphSpace* supports layered visualizations with consistent spatial alignment. Its integration with *ggplot2* also enables extensive customization of aesthetics and visual style, including colors, shapes, and line types.
 
 # Quick start
 
