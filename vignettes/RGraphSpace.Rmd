@@ -1,9 +1,9 @@
 ---
-title: "*RGraphSpace*: A lightweight interface for representing *igraph* objects in a normalized coordinate system." 
+title: "*RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics."
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "*RGraphSpace* is an *R* package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for scaling graph elements in a normalized coordinate system."
+abstract: "*RGraphSpace* is an interface to integrate *igraph* and *ggplot2* graphics in a normalized coordinate system. The package implements new geometric objects using *ggplot2* prototypes, customized for side-by-side visualization of multiple graphs. By scaling shapes and graph elements, *RGraphSpace* can provide a framework for layered visualizations."
 output: 
   html_document:
     theme: cerulean
@@ -27,11 +27,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Overview
 
-*RGraphSpace* is an R package designed to generate *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling them to fit within a standardized unit space. This facilitates the side-by-side visualization of multiple graphs. The package implements new geometric objects based on *ggplot2* prototypes [@Wickham2016], accounting for the relative sizes of nodes and edges. By scaling graph elements, *RGraphSpace* supports layered visualizations with consistent spatial alignment. Its integration with *ggplot2* also enables extensive customization of aesthetics and visual style, including colors, shapes, and line types.
+*RGraphSpace* is an R package designed to generate *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling them to fit within a standardized unit space. This facilitates the side-by-side visualization of multiple graphs. The package implements new geometric objects based on *ggplot2* prototypes [@Wickham2016], accounting for the relative sizes of nodes and edges. By scaling graph elements, *RGraphSpace* supports layered visualizations with consistent spatial alignment. Its integration with *ggplot2* enables extensive customization of aesthetics and visual style, including colors, shapes, and line types.
 
 # Quick start
 
-This section will create a toy *igraph* object to demonstrate the *RGraphSpace* workflow. The graph layout is configured manually to ensure that users can easily view all the relevant arguments needed to prepare the input data for the *RGraphSpace* package. We will use the igraph's `make_star()` function to create a simple star-like graph and then the `V()` and `E()` functions are used to set attributes for vertices and edges, respectively. The *RGraphSpace* package will require that all vertices have `x`, `y`, and `name` attributes.
+This section will create a toy *igraph* object to demonstrate the *RGraphSpace* workflow. The graph layout is configured manually to ensure that users can easily view all the relevant arguments needed to prepare the input data for the *RGraphSpace* package. We will use the igraph's `make_star()` function to create a simple star-like graph and then the `V()` and `E()` functions to set attributes for vertices and edges, respectively. The *RGraphSpace* package will require that all vertices have `x`, `y`, and `name` attributes.
 
 ```{r Load packages for quick start, eval=TRUE, message=FALSE}
 #--- Load required packages
@@ -161,9 +161,11 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 
 # Interactive layout
 
+The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, a package for interactive network visualization and manipulation.
+
 ```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
 # Load RedeR, a graph package for interactive visualization
-## Note: for this example, please use Bioc >= 3.19
+## Note: this example requires Bioc >= 3.19
 if(!require("BiocManager", quietly = TRUE)){
   install.packages("BiocManager")
   #BiocManager::install(version = "3.19")
@@ -181,14 +183,14 @@ resetRedeR()
 addGraphToRedeR(gtoy1, unit="npc")
 relaxRedeR()
 
-# Fetch the graph with a fresh layout
+# Fetch 'gtoy1' with a fresh layout
 gtoy2 <- getGraphFromRedeR(unit="npc")
 
 # Check the round trip...
 plotGraphSpace(gtoy2, add.labels = TRUE)
 
 ## Note that for the round trip, shapes and line types are
-## only partially compatible between ggplot2 and RedeR.
+## partially compatible between ggplot2 and RedeR.
 
 # ...alternatively, just update the graph layout
 gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
@@ -196,6 +198,14 @@ gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
 # ...check the updated layout
 plotGraphSpace(gtoy2, add.labels = TRUE)
 ```
+
+# Other examples
+
+The following vignettes present usage examples of *RGraphSpace* in combination with *PathwaySpace*, which projects network signals into landscape images.
+
+[Projection of network signals](https://sysbiolab.github.io/PathwaySpace/){target="_blank" rel="noopener"}
+
+[Visualizing feature sets](https://sysbiolab.github.io/PathwaySpace/visualizing-feature-sets.html){target="_blank" rel="noopener"}
 
 # Citation
 

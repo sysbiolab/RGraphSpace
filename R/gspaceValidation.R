@@ -236,10 +236,6 @@
     }
     if (!is.null(atts$weight)) {
         .validate.args("numeric_vec", "weight", atts$weight)
-        if (min(atts$weight) < 0) {
-            stop("'weight' should be a vector of numeric values >=0", 
-                call. = FALSE)
-        }
     }
 }
 
