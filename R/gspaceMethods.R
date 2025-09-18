@@ -168,7 +168,10 @@ setMethod("plotGraphSpace", "GraphSpace",
         cl <- .set.theme.bks(theme)
         
         #--- initialize a ggplot object
-        ggp <- .set.gspace(nodes, xlab, ylab, cl)
+        ggp <- .set.gspace(nodes, cl)
+        
+        #--- add labels
+        ggp <- ggp + labs(x=xlab, y=ylab)
         
         #--- add image
         if(pars$image.layer){
