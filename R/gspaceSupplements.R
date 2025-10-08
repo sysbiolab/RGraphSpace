@@ -42,8 +42,7 @@
         stop("Graph coordinates outside image dimensions.", call. = FALSE)
     }
     # adjust image and node coordinates
-    res <- list(nodes=nodes, image=image)
-    res <- .crop_image(res$nodes, res$image, mar)
+    res <- .crop_image(nodes, image, mar)
     res <- .square_image(res$nodes, res$image)
     # normalize node coordinates
     d <- dim(res$image)
@@ -55,17 +54,17 @@
 }
 
 #-------------------------------------------------------------------------------
-.crop_image <- function(nodes, image, mar){
+.crop_image <- function(nds, img, mar){
     
-    d <- dim(image)
+    d <- dim(img)
     
     # set node limits to integer
-    xl <- range(nodes$x)
-    yl <- range(nodes$y)
+    xl <- range(nds$x)
+    yl <- range(nds$y)
     xl <- c(ceiling(xl[1]), floor(xl[2]))
     yl <- c(ceiling(yl[1]), floor(yl[2]))
-    nodes$x <- scales::rescale(nodes$x, to=xl)
-    nodes$y <- scales::rescale(nodes$y, to=yl)
+    nds$x <- scales::rescale(nds$x, to=xl)
+    nds$y <- scales::rescale(nds$y, to=yl)
     
     # adjust limits to a square window
     lim <- .adjust.lim(xl, yl, d)
@@ -99,15 +98,15 @@
     yl <- lim$yl
     
     # crop on flipped rows to match node y-coordinates
-    image <- image[seq.int(nrow(image), 1), ]
-    image <- image[seq.int(yl[1], yl[2]), seq.int(xl[1], xl[2])]
-    image <- image[seq.int(nrow(image), 1), ]
+    img <- img[seq.int(nrow(img), 1), ]
+    img <- img[seq.int(yl[1], yl[2]), seq.int(xl[1], xl[2])]
+    img <- img[seq.int(nrow(img), 1), ]
     
     # set new node coordinates
-    nodes$x <- nodes$x - xl[1] + 1
-    nodes$y <- nodes$y - yl[1] + 1
+    nds$x <- nds$x - xl[1] + 1
+    nds$y <- nds$y - yl[1] + 1
     
-    res <- list(nodes=nodes, image=image)
+    res <- list(nodes=nds, image=img)
     return(res)
 } 
 # adjust limits to a square window
@@ -132,22 +131,22 @@
 }
 
 #-------------------------------------------------------------------------------
-.square_image <- function(nodes, image ){
-    d <- dim(image )
+.square_image <- function(nds, img ){
+    d <- dim(img )
     if(d[1] > d[2]){
         n <- ceiling( (d[1] - d[2]) )/2
         img_d <- matrix(NA, nrow = d[1], ncol = d[1])
-        img_d[ , seq(n + 1, n + d[2])] <- as.matrix(image )
-        nodes$x <- nodes$x + n
-        image  <- as.raster(img_d)
+        img_d[ , seq(n + 1, n + d[2])] <- as.matrix(img)
+        nds$x <- nds$x + n
+        img  <- as.raster(img_d)
     } else if(d[1] < d[2]){
         n <- ceiling( (d[2] - d[1])/2 )
         img_d <- matrix(NA, nrow = d[2], ncol = d[2])
-        img_d[seq(n + 1, n + d[1]), ] <- as.matrix(image )
-        nodes$y <- nodes$y + n
-        image  <- as.raster(img_d)
+        img_d[seq(n + 1, n + d[1]), ] <- as.matrix(img)
+        nds$y <- nds$y + n
+        img  <- as.raster(img_d)
     }
-    res <- list(nodes=nodes, image=image)
+    res <- list(nodes=nds, image=img)
     return(res)
 }
 
