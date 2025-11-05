@@ -201,11 +201,9 @@ plotGraphSpace(gtoy2, add.labels = TRUE)
 
 # Other examples
 
-The following vignettes present usage examples of *RGraphSpace* in combination with *PathwaySpace*, which projects network signals into landscape images.
+The following vignettes illustrate how *RGraphSpace* can be used in combination with *PathwaySpace* to project network signals into landscape images.
 
 [Projection of network signals](https://sysbiolab.github.io/PathwaySpace/){target="_blank" rel="noopener"}
-
-[Visualizing feature sets](https://sysbiolab.github.io/PathwaySpace/visualizing-feature-sets.html){target="_blank" rel="noopener"}
 
 # Citation
 
