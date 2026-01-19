@@ -9,6 +9,16 @@ setGeneric("getGraphSpace", function(gs, what = "summary")
   package = "RGraphSpace"
 )
 
+setGeneric("gs_nodes", function(x) 
+  standardGeneric("gs_nodes"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_edges", function(x) 
+  standardGeneric("gs_edges"),
+  package = "RGraphSpace"
+)
+
 setGeneric("gs_vcount", function(x) 
   standardGeneric("gs_vcount"),
   package = "RGraphSpace"

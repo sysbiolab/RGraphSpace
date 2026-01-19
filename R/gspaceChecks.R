@@ -1,6 +1,6 @@
 
 #-------------------------------------------------------------------------------
-.validate.args <- function(check, name, para) {
+.validate_gs_args <- function(check, name, para) {
   if (check == "numeric_vec") {
     msg <- paste0("'", name, "' should be a numeric vector.")
     if (!is.numeric(para) || !is.vector(para)) stop(msg, call. = FALSE)
@@ -52,7 +52,7 @@
 }
 
 #-------------------------------------------------------------------------------
-.validate.colors <- function(check, name, para) {
+.validate_gs_colors <- function(check, name, para) {
   if (check == "singleColor") {
     if (!.is_singleColor(para)) {
       msg <- paste0("'", name, "' should be a single color.")
@@ -65,21 +65,6 @@
     }
   } else {
     warning("Skipped color validation.", call. = FALSE)
-  }
-}
-
-#-------------------------------------------------------------------------------
-# Validate custom plot args
-.validate.plot.args <- function(name, para) {
-  if (name == "node.labels") {
-    if (!is.null(para)) {
-      if (!.all_characterValues(para)) {
-        msg <- paste0("'", name, "' should be a vector with strings.")
-        stop(msg, call. = FALSE)
-      }
-    }
-  } else {
-    warning("Skipped arg validation.", call. = FALSE)
   }
 }
 

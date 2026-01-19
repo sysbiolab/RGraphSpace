@@ -2,7 +2,7 @@
 ################################################################################
 ### Validate igraph for RGraphSpace
 ################################################################################
-.validate.igraph <- function(g, layout = NULL, verbose = FALSE) {
+.validate_igraph <- function(g, layout = NULL, verbose = FALSE) {
     if (verbose) message("Validating the 'igraph' object...")
     if (!is(g, "igraph")) {
         stop("'g' should be an 'igraph' object.", call. = FALSE)
@@ -44,22 +44,22 @@
         g <- igraph::simplify(g, remove.loops = TRUE, remove.multiple = TRUE,
           edge.attr.comb = list(weight = "max", "first"))
     }
-    g <- .validate.nodes(g)
-    g <- .validate.edges(g)
-    g <- .validate.graph(g)
+    g <- .validate_nodes(g)
+    g <- .validate_edges(g)
+    g <- .validate_graph(g)
     return(g)
 }
 
 #-------------------------------------------------------------------------------
-.validate.nodes <- function(g) {
+.validate_nodes <- function(g) {
     # get default attributes
-    atts <- c(.get.required.vatt(), .get.default.vatt())
+    atts <- c(.get_required_vatt(), .get_default_vatt())
     a_names <- names(atts)
     # check default attributes
     b_names <- a_names[a_names %in% igraph::vertex_attr_names(g)]
     if(length(b_names)>0){
         if (vcount(g) > 0) {
-            .validate.vatt(igraph::vertex_attr(g)[b_names])
+            .validate_vatt(igraph::vertex_attr(g)[b_names])
         }
     }
     # add missing default attributes
@@ -74,21 +74,21 @@
     a_names <- c(a_names, d_names[ ! d_names %in% a_names ])
     igraph::vertex_attr(g) <- igraph::vertex_attr(g)[a_names]
     # further checks
-    g <- .transform.nodeshape(g)
+    g <- .transform_nodeshape(g)
     return(g)
 }
 
 #-------------------------------------------------------------------------------
-.validate.edges <- function(g) {
-    g <- .remove.hidden.eatt(g)
+.validate_edges <- function(g) {
+    g <- .remove_hidden_eatt(g)
     # get default attributes
-    atts <- .get.default.eatt(igraph::is_directed(g))
+    atts <- .get_default_eatt(igraph::is_directed(g))
     a_names <- names(atts)
     # check default attributes
     b_names <- a_names[a_names %in% igraph::edge_attr_names(g)]
     if(length(b_names)>0){
         if (igraph::ecount(g) > 0) {
-            .validate.eatt(igraph::edge_attr(g)[b_names])
+            .validate_eatt(igraph::edge_attr(g)[b_names])
         }
     }
     # add missing default attributes
@@ -103,13 +103,13 @@
     a_names <- c(a_names, d_names[ ! d_names %in% a_names ])
     igraph::edge_attr(g) <- igraph::edge_attr(g)[a_names]
     # further checks
-    g <- .transform.arrowtype(g)
-    g <- .transform.linetype(g)
+    g <- .validate_arrowtype(g)
+    g <- .validate_linetype(g)
     return(g)
 }
 
 #-------------------------------------------------------------------------------
-.validate.graph <- function(g) {
+.validate_graph <- function(g) {
     d_names <- igraph::graph_attr_names(g)
     if (length(d_names) > 0) {
         for (at in d_names) {
@@ -122,33 +122,32 @@
 ################################################################################
 ### Default RGraphSpace attributes
 ################################################################################
-.get.required.vatt <- function() {
+.get_required_vatt <- function() {
     atts <- list("x" = 0, "y" = 0, "name" = NA)
     return(atts)
 }
-.get.default.vatt <- function() {
+.get_default_vatt <- function() {
     atts <- list(
         "nodeLabel" = NA, "nodeLabelSize" = 8, "nodeLabelColor" = "grey40",
         "nodeShape" = 21, "nodeSize" = 5, "nodeColor" = "grey80",
         "nodeLineWidth" = 1, "nodeLineColor" = "grey20")
     return(atts)
 }
-.get.default.eatt <- function(is.directed = FALSE) {
-    atts <- list("edgeLineType" = "solid", "edgeLineWidth" = 0.5, 
-        "edgeLineColor" = "grey80")
+.get_default_eatt <- function(is.directed = FALSE) {
+    atts <- list("edgeLineType" = "solid", "edgeLineColor" = "grey80",
+        "edgeLineWidth" = 0.5)
     if (is.directed) {
         atts$arrowType <- 1
     } else {
         atts$arrowType <- 0
     }
-    atts$arrowLength=1
-    atts$weight=1
+    atts$weight <- 1
     return(atts)
 }
-# remove gs' internally used hidden attributes
-.remove.hidden.eatt <- function(g){
-    atts <- names(.get.default.eatt(igraph::is_directed(g)))
-    hidden <- setdiff(names(.get.empty.edgedf()), atts)
+# remove internally used hidden attributes
+.remove_hidden_eatt <- function(g){
+    atts <- names(.get_default_eatt(igraph::is_directed(g)))
+    hidden <- setdiff(names(.get_empty_edgedf()), atts)
     hidden <- hidden[hidden %in% igraph::edge_attr_names(g)]
     if (length(hidden) > 0) {
         for (at in hidden) {
@@ -161,81 +160,74 @@
 ################################################################################
 ### Validate attribute values
 ################################################################################
-.validate.vatt <- function(atts) {
+.validate_vatt <- function(atts) {
     if (!is.null(atts$x)) {
-        .validate.args("numeric_vec", "x", atts$x)
+        .validate_gs_args("numeric_vec", "x", atts$x)
     }
     if (!is.null(atts$y)) {
-        .validate.args("numeric_vec", "y", atts$y)
+        .validate_gs_args("numeric_vec", "y", atts$y)
     }
     if (!is.null(atts$name)) {
-        .validate.args("allCharacter", "name", atts$name)
+        .validate_gs_args("allCharacter", "name", atts$name)
     }
     if (!is.null(atts$nodeLabel)) {
-        .validate.args("allCharacterOrNa", "nodeLabel", atts$nodeLabel)
+        .validate_gs_args("allCharacterOrNa", "nodeLabel", atts$nodeLabel)
     }
     if (!is.null(atts$nodeLabelSize)) {
-        .validate.args("numeric_vec", "nodeLabelSize", atts$nodeLabelSize)
-        if (min(atts$nodeLabelSize) < 0) {
-            stop("'nodeLabelSize' should be a vector of numeric values >=0", 
+        .validate_gs_args("numeric_vec", "nodeLabelSize", atts$nodeLabelSize)
+        if (min(atts$nodeLabelSize) <= 0) {
+            stop("'nodeLabelSize' should be a vector of numeric values >0", 
               call. = FALSE)
         }
     }
     if (!is.null(atts$nodeLabelColor)) {
-        .validate.colors("allColors", "nodeLabelColor", atts$nodeLabelColor)
+        .validate_gs_colors("allColors", "nodeLabelColor", atts$nodeLabelColor)
     }
     if (!is.null(atts$nodeSize)) {
-        .validate.args("numeric_vec", "nodeSize", atts$nodeSize)
+        .validate_gs_args("numeric_vec", "nodeSize", atts$nodeSize)
         if (max(atts$nodeSize) > 100 || min(atts$nodeSize) < 0) {
             stop("'nodeSize' should be a vector of numeric values in [0, 100]", 
               call. = FALSE)
         }
     }
     if (!is.null(atts$nodeShape)) {
-        .validate.args("allCharacterOrInteger", "nodeShape", atts$nodeShape)
+        .validate_gs_args("allCharacterOrInteger", "nodeShape", atts$nodeShape)
     }
     if (!is.null(atts$nodeColor)) {
-        .validate.colors("allColors", "nodeColor", atts$nodeColor)
+        .validate_gs_colors("allColors", "nodeColor", atts$nodeColor)
     }
     if (!is.null(atts$nodeLineWidth)) {
-        .validate.args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)
-        if (min(atts$nodeLineWidth) < 0) {
-            stop("'nodeLineWidth' should be a vector of numeric values >=0", 
+        .validate_gs_args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)
+        if (min(atts$nodeLineWidth) <= 0) {
+            stop("'nodeLineWidth' should be a vector of numeric values >0", 
               call. = FALSE)
         }
     }
     if (!is.null(atts$nodeLineColor)) {
-        .validate.colors("allColors", "nodeLineColor", atts$nodeLineColor)
+        .validate_gs_colors("allColors", "nodeLineColor", atts$nodeLineColor)
     }
 }
 #-------------------------------------------------------------------------------
-.validate.eatt <- function(atts) {
+.validate_eatt <- function(atts) {
+    if (!is.null(atts$edgeLineType)) {
+        .validate_gs_args("allCharacterOrInteger", "edgeLineType",
+            atts$edgeLineType)
+    }
     if (!is.null(atts$edgeLineWidth)) {
-        .validate.args("numeric_vec", "edgeLineWidth", atts$edgeLineWidth)
-        if (min(atts$edgeLineWidth) < 0) {
-            stop("'edgeLineWidth' should be a vector of numeric values >=0", 
-              call. = FALSE)
+        .validate_gs_args("numeric_vec", "edgeLineWidth", atts$edgeLineWidth)
+        if (min(atts$edgeLineWidth) <= 0) {
+            stop("'edgeLineWidth' should be a vector of numeric values >0", 
+                call. = FALSE)
         }
     }
     if (!is.null(atts$edgeLineColor)) {
-        .validate.colors("allColors", "edgeLineColor", atts$edgeLineColor)
-    }
-    if (!is.null(atts$edgeLineType)) {
-        .validate.args("allCharacterOrInteger", "edgeLineType",
-            atts$edgeLineType)
-    }
-    if (!is.null(atts$arrowLength)) {
-        .validate.args("numeric_vec", "arrowLength", atts$arrowLength)
-        if (min(atts$arrowLength) < 0) {
-            stop("'arrowLength' should be a vector of numeric values >=0", 
-              call. = FALSE)
-        }
+        .validate_gs_colors("allColors", "edgeLineColor", atts$edgeLineColor)
     }
     if (!is.null(atts$arrowType)) {
-        .validate.args("allCharacterOrInteger", "arrowType", atts$arrowType)
+        .validate_gs_args("allCharacterOrInteger", "arrowType", atts$arrowType)
     }
     if (!is.null(atts$weight)) {
-        .validate.args("numeric_vec", "weight", atts$weight)
+        .validate_gs_args("numeric_vec", "weight", atts$weight)
     }
 }
 
@@ -244,7 +236,7 @@
 ################################################################################
 
 #-------------------------------------------------------------------------------
-.transform.nodeshape <- function(g) {
+.transform_nodeshape <- function(g) {
     if (vcount(g) > 0 && "nodeShape" %in% names(vertex_attr(g))) {
         vshapes <- V(g)$nodeShape
         if (.all_integerValues(vshapes)) {
@@ -267,16 +259,19 @@
 }
 
 #-------------------------------------------------------------------------------
-.transform.arrowtype <- function(g) {
+.validate_arrowtype <- function(g) {
     if (ecount(g) > 0 && "arrowType" %in% names(edge_attr(g))) {
-        eatt <- E(g)$arrowType
-        is_dir <- is_directed(g)
-        aty <- .get.arrowtypes(is_dir)
+        E(g)$arrowType  <- .transform_arrowtype(E(g)$arrowType, is_directed(g))
+    }
+    return(g)
+}
+.transform_arrowtype <- function(eatt, is_dir = FALSE) {
+        aty <- .arrowtypes(is_dir)
         if (.all_integerValues(eatt)) {
             idx <- !eatt %in% aty
             if (any(idx)) {
                 eatt[idx] <- ifelse(is_dir, 1, 0)
-                .get.arrowtypes(is_dir, warning = TRUE)
+                .arrowtypes_warning(is_dir)
             }
         } else {
             idx <- eatt %in% as.character(aty)
@@ -286,15 +281,13 @@
             idx <- !eatt %in% names(aty)
             if (any(idx)) {
                 eatt[idx] <- "-->"
-                .get.arrowtypes(is_dir, warning = TRUE)
+                .arrowtypes_warning(is_dir)
             }
             eatt <- aty[eatt]
         }
-        E(g)$arrowType <- eatt
-    }
-    return(g)
+    return(eatt)
 }
-.get.arrowtypes <- function(is.dir = FALSE, warning = FALSE) {
+.arrowtypes <- function(is.dir = FALSE, unique = FALSE) {
     atp1 <- c(
         "---" = 0, "--" = 0, "-" = 0,
         "-->" = 1, "->" = 1, ">" = 1,
@@ -309,54 +302,65 @@
     atypes <- c(atp1, atp2)
     if (is.dir) {
         atypes <- atypes[atypes %in% c(-1, 0, 1)]
-    }
-    if (warning) {
-        gtype <- ifelse(is.dir, "directed", "undirected")
-        msg1 <- paste("'arrowType' value in",
-            gtype, "graphs must be one of:\n")
-        if (is.dir) {
-            msg2 <- atypes[match(unique(atypes), atypes)]
-            msg2 <- paste(msg2, paste0("'", names(msg2), "'"), sep = " = ")
-            msg2 <- paste(msg2, collapse = ", ")
-        } else {
+        if(unique){
+            atypes <- atypes[match(unique(atypes), atypes)]
+        }
+    } else {
+        if(unique){
             atp1 <- atp1[match(unique(atp1), atp1)]
             atp2 <- atp2[match(unique(atp2), atp2)]
-            atp1 <- paste(atp1, paste0("'", names(atp1), "'"), sep = " = ")
-            atp2 <- paste(atp2, paste0("'", names(atp2), "'"), sep = " = ")
-            atp1 <- paste0(paste(atp1, collapse = ", "), "\n")
-            atp2 <- paste(atp2, collapse = ", ")
-            msg2 <- paste0(atp1, atp2)
+            atypes <- c(atp1, atp2)
         }
-        msg3 <- c("\n...using default value.")
-        warning(msg1, msg2, msg3, call. = FALSE)
-    } else {
-        return(atypes)
     }
+    return(atypes)
+}
+.arrowtypes_warning <- function(is.dir = FALSE){
+    
+    atypes <- .arrowtypes(is.dir, unique = TRUE)
+    
+    if (is.dir) {
+        msg1 <- paste("'arrow type' for directed graphs must be one of:\n")
+        msg2 <- paste(paste0("'", names(atypes), "'"), atypes, sep = " or ")
+        msg2 <- paste(msg2, collapse = ", ")
+    } else {
+        msg1 <- paste("'arrow type' for undirected graphs must be one of:\n")
+        idx <- atypes >= 0
+        atp1 <- paste(paste0("'", names(atypes)[idx], "'"), atypes[idx], sep = " or ")
+        atp2 <- paste(paste0("'", names(atypes)[!idx], "'"), atypes[!idx], sep = " or ")
+        atp1 <- paste0(paste(atp1, collapse = ", "), "\n")
+        atp2 <- paste(atp2, collapse = ", ")
+        msg2 <- paste0(atp1, atp2)
+    }
+    msg3 <- c("\n...using default values.")
+    warning(msg1, msg2, msg3, call. = FALSE)
+    
 }
 
 #-------------------------------------------------------------------------------
-.transform.linetype <- function(g) {
+.validate_linetype <- function(g) {
     if (ecount(g) > 0 && "edgeLineType" %in% names(edge_attr(g))) {
-        lty <- E(g)$edgeLineType
-        if (.all_integerValues(lty)) {
-            ltypes <- .linetype.table()
-            lty[!lty %in% ltypes] <- 1
-            lty <- ltypes[match(lty, ltypes)]
-            lty <- names(lty)
-        } else {
-            lty <- tolower(lty)
-            lty[grep("solid", lty)] <- "solid"
-            lty[grep("dotted", lty)] <- "dotted"
-            lty[grep("dashed", lty)] <- "dashed"
-            lty[grep("long", lty)] <- "longdash"
-            lty[grep("two", lty)] <- "twodash"
-        }
-        E(g)$edgeLineType <- lty
+        E(g)$edgeLineType  <- .transform_linetype(E(g)$edgeLineType)
     }
     return(g)
 }
-.linetype.table <- function() {
-    atp <- c('blank' = 0, 'solid' = 1, 'dashed' = 2, 'dotted' = 3,
+.transform_linetype <- function(lty) {
+    if (.all_integerValues(lty)) {
+        ltypes <- .linetypes()
+        lty[!lty %in% ltypes] <- 1
+        lty <- ltypes[match(lty, ltypes)]
+        lty <- names(lty)
+    } else {
+        lty <- tolower(lty)
+        lty[grep("solid", lty)] <- "solid"
+        lty[grep("dotted", lty)] <- "dotted"
+        lty[grep("dashed", lty)] <- "dashed"
+        lty[grep("long", lty)] <- "longdash"
+        lty[grep("two", lty)] <- "twodash"
+    }
+    return(lty)
+}
+.linetypes <- function() {
+    c('blank' = 0, 'solid' = 1, 'dashed' = 2, 'dotted' = 3,
         'dotdash' = 4, 'longdash' = 5, 'twodash' = 6)
 }
 

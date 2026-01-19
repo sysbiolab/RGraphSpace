@@ -19,9 +19,9 @@
   label.size = 3,
   label.color = "grey20",
   add.image = FALSE,
-  marks = deprecated(),
-  mark.size = deprecated(),
-  mark.color = deprecated()
+  raster = FALSE,
+  dpi = 300,
+  dev = "cairo_png"
 )
 
 \S4method{plotGraphSpace}{igraph}(gs, ..., mar = 0.1)
@@ -55,11 +55,12 @@ space. This argument overrides 'add.labels'.}
 \item{add.image}{A logical value indicating whether to add a background 
 image, when one is available (see \code{\link{GraphSpace}}).}
 
-\item{marks}{Deprecated from RGraphSpace 1.0.9; use 'node.labels' instead.}
+\item{raster}{A logical value indicating whether to rasterize the main plot.
+See \code{\link[ggrastr]{rasterise}} for further specifications.}
 
-\item{mark.size}{Deprecated from RGraphSpace 1.0.9; use 'label.size' instead.}
+\item{dpi}{Raster resolution, in dots per inch.}
 
-\item{mark.color}{Deprecated from RGraphSpace 1.0.9; use 'label.color' instead.}
+\item{dev}{Device used in the \code{\link[ggrastr]{rasterise}} call.}
 
 \item{...}{Additional arguments passed to the 
 \code{\link{plotGraphSpace}} function.}

@@ -1,8 +1,8 @@
 Package: RGraphSpace
 Type: Package
-Version: 1.1.0
+Version: 1.1.1
 Title: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics
-Description: Interface to integrate 'igraph' and 'ggplot2' graphics in a normalized coordinate system. 'RGraphSpace' implements new geometric objects using 'ggplot2' prototypes, customized for side-by-side visualization of multiple graphs. By scaling shapes and graph elements, 'RGraphSpace' can provide a framework for layered visualizations.
+Description: Interface to integrate 'igraph' and 'ggplot2' graphics in a normalized coordinate system. 'RGraphSpace' implements new geometric objects using 'ggplot2' prototypes, customized for side-by-side visualization of multiple graphs. By scaling shapes and graph elements, 'RGraphSpace' helps to create layered visualizations that stay coherent across multiple graphs.
 Authors@R: 
     c(person("Victor", "Apolonio", role = "ctb"),
       person("Vinicius", "Chagas", role = "ctb"),
@@ -10,7 +10,7 @@ Authors@R:
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
 Depends: R(>= 4.4), methods, ggplot2
-Imports: grDevices, scales, grid, igraph, lifecycle
+Imports: grDevices, scales, grid, igraph, rlang, lifecycle, patchwork, cowplot, gtable, ggrastr, circlize
 Suggests: knitr, rmarkdown, testthat
 Enhances: RedeR
 License: Artistic-2.0
@@ -20,11 +20,12 @@ BugReports: https://github.com/sysbiolab/RGraphSpace/issues
 Collate:
     gspaceChecks.R
     gspaceValidation.R
+    gspaceConstructor.R
     gspaceSupplements.R
-    gspaceMisc.R
-    gspacePlots.R
+    gspaceGeom.R
     gspaceClasses.R
     gspaceGenerics.R
     gspaceMethods.R
+    gspaceMisc.R
 Encoding: UTF-8
 RoxygenNote: 7.3.2

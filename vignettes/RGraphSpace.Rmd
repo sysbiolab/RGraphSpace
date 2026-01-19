@@ -120,7 +120,7 @@ E(gtoy1)$edgeLineColor <- c("red","green","blue","black")
 # Edge type (as in 'lty' standard graphics; see 'help(gpar)')
 E(gtoy1)$edgeLineType <- c("solid", "11", "dashed", "2124")
 
-# Edge weight (numeric >=0; not passed to ggplot)
+# Edge weight (numeric; not passed to ggplot)
 E(gtoy1)$weight <- 1
 ```
 
@@ -132,10 +132,7 @@ Arrowhead in directed graphs: By default, an arrow will be drawn for each edge a
 # Arrowhead types in directed graphs (integer code or character)
 ## 0 = "---", 1 = "-->", -1 = "--|"
 E(gtoy1)$arrowType <- 1
-
-# Arrowhead length (as in 'lwd' standard graphics; see 'help(gpar)')
-E(gtoy1)$arrowLength <- 1
-```
+``` 
 
 Arrowhead in undirected graphs: By default, no arrow will be drawn in undirected graphs.
 
@@ -147,9 +144,6 @@ Arrowhead in undirected graphs: By default, no arrow will be drawn in undirected
 E(gtoy1)$arrowType <- 1
 # Note: in undirected graphs, this attribute overrides the 
 # edge's orientation in the edge list
-
-# Arrowhead length (as in 'lwd' standard graphics; see 'help(gpar)')
-E(gtoy1)$arrowLength <- 1
 ```
 
 ... and now plot the updated *igraph* object with *RGraphSpace*:

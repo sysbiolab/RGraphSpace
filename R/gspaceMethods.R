@@ -40,20 +40,20 @@
 #'
 GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL, 
     verbose = TRUE) {
-    .validate.args("singleNumber", "mar", mar)
-    .validate.args("singleLogical", "verbose", verbose)
+    .validate_gs_args("singleNumber", "mar", mar)
+    .validate_gs_args("singleLogical", "verbose", verbose)
     #--- validate argument values
     if (mar < 0 || mar > 1) {
         stop("'mar' should be in [0,1]", call. = FALSE)
     }
     if(!is.null(layout)){
-        .validate.args("numeric_mtx", "layout", layout)
+        .validate_gs_args("numeric_mtx", "layout", layout)
         if (ncol(layout) != 2) {
             stop("'layout' matrix should have two columns.", call. = FALSE)
         } 
     }
     if(!is.null(image)){
-        .validate.args("image_mtx", "image", image)
+        .validate_gs_args("image_mtx", "image", image)
     }
     #--- validate igraph and build a gs object
     gs <- .buildGraphSpace(g, mar, image, layout, verbose)
@@ -83,9 +83,10 @@ GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL,
 #' @param label.color A color passed to \code{\link[ggplot2]{geom_text}}.
 #' @param add.image A logical value indicating whether to add a background 
 #' image, when one is available (see \code{\link{GraphSpace}}).
-#' @param marks Deprecated from RGraphSpace 1.0.9; use 'node.labels' instead.
-#' @param mark.size Deprecated from RGraphSpace 1.0.9; use 'label.size' instead.
-#' @param mark.color Deprecated from RGraphSpace 1.0.9; use 'label.color' instead.
+#' @param raster A logical value indicating whether to rasterize the main plot.
+#' See \code{\link[ggrastr]{rasterise}} for further specifications.
+#' @param dpi Raster resolution, in dots per inch.
+#' @param dev Device used in the \code{\link[ggrastr]{rasterise}} call.
 #' @return A ggplot-class object.
 #' @author Sysbiolab.
 #' @seealso \code{\link{GraphSpace}}
@@ -103,12 +104,13 @@ GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL,
 #' plotGraphSpace(gs)
 #' 
 #' @import methods
-#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt geom_text
+#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt geom_text gg_par
 #' @importFrom ggplot2 element_rect margin element_blank layer theme_bw
 #' @importFrom ggplot2 element_line element_text ggproto theme theme_gray
 #' @importFrom ggplot2 scale_linetype_manual annotation_raster coord_fixed
 #' @importFrom ggplot2 scale_x_continuous scale_y_continuous expansion labs
 #' @importFrom grDevices col2rgb
+#' @importFrom ggrastr rasterize
 #' @importFrom grid gpar arrow unit pointsGrob
 #' @importFrom scales alpha
 #' @importFrom lifecycle deprecated deprecate_soft is_present
@@ -122,53 +124,35 @@ setMethod("plotGraphSpace", "GraphSpace",
         xlab = "Graph coordinates 1", ylab = "Graph coordinates 2", 
         font.size = 1, bg.color = "grey95", add.labels = FALSE,
         node.labels = NULL, label.size = 3, label.color = "grey20", 
-        add.image = FALSE, marks = deprecated(), 
-        mark.size = deprecated(), mark.color = deprecated()) {
-        ### deprecate
-        if (lifecycle::is_present(marks)) {
-            deprecate_soft("1.0.9", "plotGraphSpace(marks)", 
-                "plotGraphSpace(node.labels)")
-            node.labels <- marks
-        }
-        if (lifecycle::is_present(mark.size)) {
-            deprecate_soft("1.0.9", "plotGraphSpace(mark.size)", 
-                "plotGraphSpace(label.size)")
-            label.size <- mark.size
-        }
-        if (lifecycle::is_present(mark.color)) {
-            deprecate_soft("1.0.9", "plotGraphSpace(mark.color)", 
-                "plotGraphSpace(label.color)")
-            label.color <- mark.color
-        }
-        ###
+        add.image = FALSE, raster = FALSE, dpi = 300, dev = "cairo_png") {
         #--- validate the gs object and args
-        .validate.args("singleString", "xlab", xlab)
-        .validate.args("singleString", "ylab", ylab)
-        .validate.args("singleNumber", "font.size", font.size)
-        .validate.colors("singleColor", "bg.color", bg.color)
-        .validate.args("singleLogical", "add.labels", add.labels)
-        .validate.args("singleNumber", "label.size", label.size)
-        .validate.colors("singleColor", "label.color", label.color)
-        .validate.args("singleLogical", "add.image", add.image)
-        .validate.plot.args("node.labels", node.labels)
+        .validate_gs_args("singleString", "xlab", xlab)
+        .validate_gs_args("singleString", "ylab", ylab)
+        .validate_gs_args("singleNumber", "font.size", font.size)
+        .validate_gs_colors("singleColor", "bg.color", bg.color)
+        .validate_gs_args("singleLogical", "add.labels", add.labels)
+        .validate_gs_args("singleNumber", "label.size", label.size)
+        .validate_gs_colors("singleColor", "label.color", label.color)
+        .validate_gs_args("singleLogical", "add.image", add.image)
+        .validate_gs_args("singleLogical", "raster", raster)
+        .validate_gs_args("singleInteger", "dpi", dpi)
+        .validate_gs_args("singleString", "dev", dev)
+        if (!is.null(node.labels)) {
+            .validate_gs_args("allCharacter", "node.labels", node.labels)
+        }
         theme <- match.arg(theme)
         
-        #--- get slots from gs
-        nodes <- getGraphSpace(gs, "nodes")
-        edges <- getGraphSpace(gs, "edges")
+        #--- get gs slots
+        nodes <- gs_nodes(gs)
+        edges <- gs_edges(gs)
         pars <- getGraphSpace(gs, "pars")
         
-        #--- get edge coordinates
-        edges <- .get.exy(nodes, edges)
-        
-        #--- nodeSize is a '%' of plot space
-        nodes$nodeSize <- nodes$nodeSize/100
-        
-        #--- set theme pars
-        cl <- .set.theme.bks(theme)
+        #--- use only one color entry when shape < 21
+        idx <- nodes$nodeShape < 21
+        nodes$nodeLineColor[idx] <-  nodes$nodeColor[idx]
         
         #--- initialize a ggplot object
-        ggp <- .set.gspace(nodes, cl)
+        ggp <- .set_gspace(theme)
         
         #--- add labels
         ggp <- ggp + labs(x=xlab, y=ylab)
@@ -177,27 +161,50 @@ setMethod("plotGraphSpace", "GraphSpace",
         if(pars$image.layer){
             img <- getGraphSpace(gs, "image")
             if(add.image){
-                ggp <- .add.image(ggp, img)
+                ggp <- .add_image(ggp, img)
             } else {
-                ggi <- .add.image(ggp, img)
-                ggi <- .custom.themes(ggi, theme, font.size, bg.color)
+                ggi <- .add_image(ggp, img)
+                ggi <- .custom_themes(ggi, theme, font.size, bg.color)
             }
         }
 
+        #--- add edges
+        if(nrow(edges)>0){
+            x <- y <- xend <- yend <- NULL
+            edgeLineType <- edgeLineWidth <- edgeLineColor <- NULL 
+            ggp <- ggp + geom_edgespace(
+                mapping = aes(x = x, y = y, xend = xend, yend = yend),
+                linetype = edges$edgeLineType, linewidth = edges$edgeLineWidth,
+                colour = edges$edgeLineColor,
+                data = gs)
+        }
+        
         #--- add nodes
         if(nrow(nodes)>0){
-            ggp <- .add.graph(ggp, nodes, edges)
+            x <- y <- nodeColor <- nodeLineColor <- NULL
+            nodeShape <- nodeLineWidth <- nodeSize <- NULL
+            ggp <- ggp + geom_nodespace(mapping = aes(x = x, y = y), 
+                fill = nodes$nodeColor, colour = nodes$nodeLineColor,
+                shape = nodes$nodeShape, size = nodes$nodeSize, 
+                linewidth = nodes$nodeLineWidth, 
+                data = nodes)
+            
             #--- add node labels
             if (!is.null(node.labels)){
-                ggp <- .add.labels1(ggp, nodes, node.labels, 
+                ggp <- .add_labels1(ggp, nodes, node.labels, 
                     label.size, label.color)
             } else if(add.labels){
-                ggp <- .add.labels2(ggp, nodes)
+                ggp <- .add_labels2(ggp, nodes)
             }
         }
         
         #--- apply custom theme
-        ggp <- .custom.themes(ggp, theme, font.size, bg.color)
+        ggp <- .custom_themes(ggp, theme, font.size, bg.color)
+        
+        if(raster){
+          ggp <- ggrastr::rasterize(ggp, layers=c('NodeSpace',"EdgeSpace"), 
+              dpi = dpi, dev = dev)
+        }
         
         if(pars$image.layer && !add.image){
             ggl <- list(graph = ggp, image = ggi)
@@ -278,7 +285,7 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
     if (what == "nodes") {
         obj <- gs@nodes
     } else if (what == "edges") {
-        obj <- gs@edges
+        obj <- .get_edge_coords(gs)
     } else if (what == "graph") {
         obj <- gs@graph
     } else if (what == "pars") {
@@ -322,16 +329,22 @@ setMethod("show", "GraphSpace", function(object) {
 #' # Create a new GraphSpace object
 #' gs <- GraphSpace(gtoy1)
 #' 
-#' # Usage of GraphSpace attribute accessors:
+#' #--- Usage of GraphSpace attribute accessors:
+#'
+#' # Get a data frame with nodes for plotting methods
+#' gs_nodes(gs)
 #' 
-#' # Get vertex names
-#' names(gs)
+#' # Get a data frame with edges for plotting methods
+#' gs_edges(gs)
 #' 
 #' # Get vertex count
 #' gs_vcount(gs)
 #' 
 #' # Get edge count
 #' gs_ecount(gs)
+#' 
+#' # Get vertex names
+#' names(gs)
 #' 
 #' # Access all vertex attributes
 #' gs_vertex_attr(gs)
@@ -359,6 +372,8 @@ setMethod("show", "GraphSpace", function(object) {
 #' 
 #' @aliases names
 #' @aliases names<-
+#' @aliases gs_nodes
+#' @aliases gs_edges
 #' @aliases gs_vcount
 #' @aliases gs_ecount
 #' @aliases gs_vertex_attr
@@ -367,15 +382,16 @@ setMethod("show", "GraphSpace", function(object) {
 #' @aliases gs_edge_attr<-
 #' @rdname GraphSpace-accessors
 #' @export
-setMethod("names", "GraphSpace", function(x) {
-    x@nodes$name
+setMethod("gs_nodes", "GraphSpace", function(x) {
+    nodes <- .get_node_coords(x)
+    return(nodes)
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
-setMethod("names<-", "GraphSpace", function(x, value) {
-    gs_vertex_attr(x, "name") <- value
-    return(x)
+setMethod("gs_edges", "GraphSpace", function(x) {
+    edges <- .get_edge_coords(x)
+    return(edges)
 })
 
 #' @rdname GraphSpace-accessors
@@ -388,6 +404,19 @@ setMethod("gs_vcount", "GraphSpace", function(x) {
 #' @export
 setMethod("gs_ecount", "GraphSpace", function(x) {
     igraph::ecount(x@graph)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("names", "GraphSpace", function(x) {
+    x@nodes$name
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("names<-", "GraphSpace", function(x, value) {
+    gs_vertex_attr(x, "name") <- value
+    return(x)
 })
 
 #' @rdname GraphSpace-accessors
@@ -472,9 +501,9 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
 })
 
 .updateGraphSpace <- function(x, g) {
-    x@graph <- .validate.igraph(g)
-    x@edges <- .get.edges(x@graph)
-    temp <- .center.nodes(.get.nodes(x@graph), x@misc$image, x@pars$mar)
+    x@graph <- .validate_igraph(g)
+    x@edges <- .get_edges(x@graph)
+    temp <- .center_nodes(.get_nodes(x@graph), x@misc$image, x@pars$mar)
     x@nodes <- temp$nodes
     x@image <- temp$image
     return(x)

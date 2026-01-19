@@ -1,450 +1,174 @@
 
 ################################################################################
-### Main constructor of GraphSpace-class objects
+### Plotting adjusts for GraphSpace-class methods
 ################################################################################
-.buildGraphSpace <- function(g, mar = 0.1, image = NULL, layout = NULL,
-    verbose = TRUE) {
-    
-    gg <- .validate.igraph(g, layout, verbose)
-    
-    if(verbose) message("Extracting vertices...")
-    nodes <- .get.nodes(gg)
-    temp <- .center.nodes(nodes, image, mar)
-    nodes <- temp$nodes
-    image.mar <- temp$image
-    image.layer <- temp$image.layer
-    
-    if(verbose) message("Extracting edges...")
-    edges <- .get.edges(gg)
-    
-    if(verbose) message("Creating a 'GraphSpace' object...")
-    pars <- list(is.directed = is_directed(gg), mar = mar, 
-        image.layer = image.layer)
-    gs <- new(Class = "GraphSpace", nodes = nodes, edges = edges, 
-        graph=gg, image = image.mar, pars = pars, 
-        misc = list(g = g, image=image))
-    return(gs)
+.set_gspace <- function(theme){
+  bks <- .get_breaks(theme)
+  ggp <- ggplot2::ggplot() +
+    ggplot2::scale_x_continuous(breaks = bks$axis.ticks,
+      labels = format(bks$axis.ticks), position = bks$x.position,
+      limits = bks$xylim, expand = ggplot2::expansion(mult = 0)) +
+    ggplot2::scale_y_continuous(breaks = bks$axis.ticks,
+      labels = format(bks$axis.ticks), limits = bks$xylim,
+      expand = ggplot2::expansion(mult = 0)) + ggplot2::coord_fixed()
+  return(ggp)
 }
-
-################################################################################
-### Functions for image adjusts
-################################################################################
-
-#-------------------------------------------------------------------------------
-.frame.nodes <- function(nodes, image, mar){
-    d <- dim(image)
-    xr <- range(nodes$x)
-    yr <- range(nodes$y)
-    if( (xr[1] < 1) || (xr[2] > d[2]) ){
-        stop("Graph coordinates outside image dimensions.", call. = FALSE)
-    }
-    if( (yr[1] < 1) || (yr[2] > d[1]) ){
-        stop("Graph coordinates outside image dimensions.", call. = FALSE)
-    }
-    # adjust image and node coordinates
-    res <- .crop_image(nodes, image, mar)
-    res <- .square_image(res$nodes, res$image)
-    # normalize node coordinates
-    d <- dim(res$image)
-    res$nodes$x <- scales::rescale(res$nodes$x, 
-        from = c(1, d[2]), to = c(0, 1))
-    res$nodes$y <- scales::rescale(res$nodes$y, 
-        from = c(1, d[1]), to = c(0, 1))
-    return(res)
+.get_breaks <- function(theme){
+  bks <- list()
+  if (theme %in% c("th3")) {
+    bks$axis.ticks <- c(0.25, 0.5, 0.75)
+    bks$xylim <- c(-0.01, 1.01)
+    bks$x.position <- "top"
+    bks$justify <- "centre"
+  } else if (theme %in% c("th2")) {
+    bks$axis.ticks <- seq(0.1, 0.9, 0.2)
+    bks$xylim <- c(-0.01, 1.01)
+    bks$x.position <- "bottom"
+    bks$justify <- "right"
+  } else {
+    bks$axis.ticks <- seq(0, 1, 0.2)
+    bks$xylim <- c(-0.05, 1.05)
+    bks$x.position <- "bottom"
+    bks$justify <- "right"
+  }
+  return(bks)
 }
 
 #-------------------------------------------------------------------------------
-.crop_image <- function(nds, img, mar){
-    
-    d <- dim(img)
-    
-    # set node limits to integer
-    xl <- range(nds$x)
-    yl <- range(nds$y)
-    xl <- c(ceiling(xl[1]), floor(xl[2]))
-    yl <- c(ceiling(yl[1]), floor(yl[2]))
-    nds$x <- scales::rescale(nds$x, to=xl)
-    nds$y <- scales::rescale(nds$y, to=yl)
-    
-    # adjust limits to a square window
-    lim <- .adjust.lim(xl, yl, d)
-    xl <- lim$xl
-    yl <- lim$yl
-    mlen <- lim$mlen
-    
-    # set margins as a fraction of the image border 
-    # xm <- min(xl[1]-1, d[2] - xl[2]) * mar
-    # ym <- min(yl[1]-1, d[1] - yl[2]) * mar
-    # dm <- floor(min(xm,ym))
-    
-    # set margins as a fraction of the graph size 
-    dm <- ceiling(mlen * (1 + mar) * mar)
-    
-    # check margins
-    if((xl[1] - dm) < 1) dm <- floor(xl[1])
-    if((yl[1] - dm) < 1) dm <- floor(yl[1])
-    if((xl[2] + dm) > d[2]) dm <- floor(d[2] - xl[2])
-    if((yl[2] + dm) > d[1]) dm <- floor(d[1] - yl[2])
-    
-    # set image frame
-    xl <- c(xl[1] - dm, xl[2] + dm )
-    yl <- c(yl[1] - dm, yl[2] + dm )
-    xl <- c(floor(xl[1]), ceiling(xl[2]))
-    yl <- c(floor(yl[1]), ceiling(yl[2]))
-    
-    # check limits
-    lim <- .adjust.lim(xl, yl, d)
-    xl <- lim$xl
-    yl <- lim$yl
-    
-    # crop on flipped rows to match node y-coordinates
-    img <- img[seq.int(nrow(img), 1), ]
-    img <- img[seq.int(yl[1], yl[2]), seq.int(xl[1], xl[2])]
-    img <- img[seq.int(nrow(img), 1), ]
-    
-    # set new node coordinates
-    nds$x <- nds$x - xl[1] + 1
-    nds$y <- nds$y - yl[1] + 1
-    
-    res <- list(nodes=nds, image=img)
-    return(res)
-} 
-# adjust limits to a square window
-.adjust.lim <- function(xl, yl, d){
-    dx <- xl[2] - xl[1] + 1
-    dy <- yl[2] - yl[1] + 1
-    if(dx > dy){
-        dm <- (dx - dy)/2
-        yl <- c(yl[1] - ceiling(dm), yl[2] + floor(dm))
-        if(yl[1] < 1) yl[1] <- 1
-        if(yl[2] > d[2]) yl[2] <- d[2]
-    } else if(dx < dy){
-        dm <- (dy - dx)/2
-        xl <- c(xl[1] - ceiling(dm), xl[2] + floor(dm))
-        if(xl[1] < 1) xl[1] <- 1
-        if(xl[2] > d[2]) xl[2] <- d[2]
-    }
-    dx <- xl[2] - xl[1] + 1
-    dy <- yl[2] - yl[1] + 1
-    res <- list(xl = xl, yl = yl, mlen = max(dx,dy))
-    return(res)
+.add_labels1 <- function(ggp, nodes, node.labels, label.size, label.color){
+  node.labels <- node.labels[!duplicated(node.labels)]
+  if (is.null(names(node.labels))) names(node.labels) <- node.labels
+  names(node.labels) <- ifelse(is.na(names(node.labels)), 
+    node.labels, names(node.labels))
+  names(node.labels) <- ifelse(names(node.labels) == "",
+    node.labels, names(node.labels))
+  idx_df <- .label_idx(node.labels, nodes)
+  if(any(is.na(idx_df$idx))){
+    stop("All 'node.labels' should be annotated in the 'PathwaySpace' object.",
+      call. = FALSE)
+  }
+  nodes_ft <- nodes[idx_df$idx, , drop = FALSE]
+  nodes_ft$ID <- idx_df$label
+  x <- y <- ID <- NULL
+  ggp <- ggp + ggplot2::geom_text(
+    mapping = aes(x = x, y = y, label = ID), 
+    data = nodes_ft, fontface = "bold", size.unit = "mm",
+    size = label.size, colour = label.color, 
+    vjust="center", hjust="center")
+  return(ggp)
+}
+.label_idx <- function(node.labels, nodes){
+  idx_df <- data.frame(name=node.labels, label=names(node.labels))
+  idx_df$name1 <- match(node.labels, nodes$name)
+  idx_df$name2 <- match(names(node.labels), nodes$name)
+  idx_df$labl1  <- match(node.labels, nodes$nodeLabel)
+  idx_df$labl2  <- match(names(node.labels), nodes$nodeLabel)
+  idx_df$idx <- sapply(seq_len(nrow(idx_df)), function(i){
+    idx <- idx_df[i,seq.int(3,6)]
+    idx[!is.na(idx)][1]
+  })
+  idx_df <- idx_df[,c(1,2,7)]
+  return(idx_df)
 }
 
 #-------------------------------------------------------------------------------
-.square_image <- function(nds, img ){
-    d <- dim(img )
-    if(d[1] > d[2]){
-        n <- ceiling( (d[1] - d[2]) )/2
-        img_d <- matrix(NA, nrow = d[1], ncol = d[1])
-        img_d[ , seq(n + 1, n + d[2])] <- as.matrix(img)
-        nds$x <- nds$x + n
-        img  <- as.raster(img_d)
-    } else if(d[1] < d[2]){
-        n <- ceiling( (d[2] - d[1])/2 )
-        img_d <- matrix(NA, nrow = d[2], ncol = d[2])
-        img_d[seq(n + 1, n + d[1]), ] <- as.matrix(img)
-        nds$y <- nds$y + n
-        img  <- as.raster(img_d)
-    }
-    res <- list(nodes=nds, image=img)
-    return(res)
+.add_labels2 <- function(ggp, nodes){
+  nodes_ft <- nodes[!is.na(nodes$nodeLabel), ]
+  x <- y <- nodeLabel <- NULL
+  ggp <- ggp + geom_text(
+    mapping = aes(x = x, y = y, label = nodeLabel), 
+    data = nodes_ft, fontface = "bold",
+    size = nodes_ft$nodeLabelSize, 
+    colour = nodes_ft$nodeLabelColor, 
+    size.unit = "pt", vjust="center", hjust="center")
+  return(ggp)
 }
 
 #-------------------------------------------------------------------------------
-.center.nodes <- function(nodes, image, mar, verbose = FALSE){
-    if(is.null(image)){
-        if(nrow(nodes)>0){
-            nodes$x <- nodes$x - mean(range(nodes$x))
-            nodes$y <- nodes$y - mean(range(nodes$y))
-            from <- range(c(nodes$x, nodes$y))
-            to <- c(mar, 1-mar)
-            nodes$x <- scales::rescale(nodes$x, from = from, to=to)
-            nodes$y <- scales::rescale(nodes$y, from = from, to=to)
-        }
-        temp <- list(nodes=nodes, image=as.raster(matrix()),
-            image.layer = FALSE)
+.add_image <- function(ggp, image){
+  ggp <- ggp + annotation_raster(image, xmin = 0, xmax = 1, ymin = 0, ymax = 1)
+  return(ggp)
+}
+
+#-------------------------------------------------------------------------------
+.custom_themes <- function(gg, theme, font.size, bg.color) {
+    et1 <- ggplot2::element_text(size = 14 * font.size)
+    et2 <- ggplot2::element_text(size = 12 * font.size)
+    if (theme == "th3") {
+        gg <- .custom_th3(gg, font.size, bg.color)
+    } else if (theme == "th2") {
+        gg <- .custom_th2(gg, font.size, bg.color)
+    } else if (theme == "th1") {
+      gg <- .custom_th1(gg, font.size, bg.color) 
     } else {
-        if(verbose) message("Setting graph coordinates to image space...")
-        if(!is.raster(image)) image <- as.raster(image)
-        if(nrow(nodes) > 0){
-            temp <- .frame.nodes(nodes, image, mar)
-            temp$image.layer <- TRUE
-        } else {
-            temp <- list(nodes=nodes, image=image, image.layer=TRUE)
-        }
+        gg <- .custom_th0(gg, font.size, bg.color)
     }
-    return(temp)
+    return(gg)
+}
+.custom_th0 <- function(gg, font.size, bg.color) {
+    et1 <- ggplot2::element_text(size = 14 * font.size)
+    et2 <- ggplot2::element_text(size = 12 * font.size)
+    gg <- gg + ggplot2::theme(axis.title = et1, axis.text = et2,
+        legend.title = et2, legend.text = et2, legend.position = "none",
+        panel.background = element_rect(fill = bg.color))
+    return(gg)
+}
+.custom_th1 <- function(gg, font.size, bg.color) {
+  et1 <- ggplot2::element_text(size = 14 * font.size)
+  et2 <- ggplot2::element_text(size = 12 * font.size)
+  gg <- gg + ggplot2::theme_bw() +
+    ggplot2::theme(axis.title = et1,
+      axis.text = et2, legend.title = et2,
+      legend.text = et2, legend.margin = margin(0, 0, 0, 0), 
+      plot.margin = margin(1, 1, 1, 1), 
+      legend.background = element_blank(),
+      legend.box.background = element_blank(),
+      panel.grid.minor = element_line(linewidth = 0.7, 
+        colour = bg.color),
+      panel.grid.major = element_line(linewidth = 0.7,
+        colour = bg.color),
+      legend.position = "none",
+      axis.ticks = element_line(linewidth = 0.7),
+      axis.line = element_blank(),
+      panel.border = element_rect(linewidth = 1.2))
+  return(gg)
+}
+.custom_th2 <- function(gg, font.size, bg.color) {
+    et1 <- ggplot2::element_text(size = 14 * font.size)
+    et2 <- ggplot2::element_text(size = 12 * font.size)
+    gg <- gg + ggplot2::theme_gray() + ggplot2::theme(axis.title = et1,
+        axis.text = et2, legend.title = et2,
+        legend.text = et2, legend.margin = margin(0, 0, 0, 0), 
+        plot.margin = margin(5, 10, 0, 10), 
+        legend.background = element_blank(),
+        legend.box.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(linewidth = 0.75),
+        legend.position = "none",
+        axis.ticks = element_line(linewidth = 0.7),
+        axis.line = element_blank(), panel.border = element_blank(),
+        panel.background = element_rect(fill = bg.color))
+    return(gg)
+}
+.custom_th3 <- function(gg, font.size, bg.color) {
+    et1 <- ggplot2::element_text(size = 14 * font.size)
+    et2 <- ggplot2::element_text(size = 12 * font.size)
+    gg <- gg + ggplot2::theme_gray() + 
+        ggplot2::theme(axis.title = et1, axis.text = et2, 
+        legend.title = element_text(size = 12 * font.size, vjust = 1), 
+        legend.text = et2,
+        legend.margin = margin(0, 0, 0, 0),
+        legend.position = "none",
+        plot.margin = margin(5, 5, 5, 5), 
+        legend.box.margin = margin(0, 0, 0, 0), 
+        legend.background = element_blank(),
+        legend.box.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(linewidth = 0.75),
+        axis.ticks = element_line(linewidth = 0.5),
+        axis.line = element_blank(), panel.border = element_blank(),
+        panel.background = element_rect(fill = bg.color))
+    return(gg)
 }
 
-################################################################################
-### Get nodes and edges in a df object
-################################################################################
 
-#-------------------------------------------------------------------------------
-.get.nodes <- function(g){
-    lt <- vertex_attr(g)
-    nodes <- data.frame(row.names = seq_along(lt[[1]]))
-    for(nm in names(lt)){
-        nodes[[nm]] <- lt[[nm]]
-    }
-    vertex <- seq_len(igraph::vcount(g))
-    nodes <- cbind(vertex = vertex, nodes)
-    rownames(nodes) <- nodes$name
-    return(nodes)
-}
-.get.edges <- function(g){
-    if (igraph::is_directed(g)) {
-        edges <- .get.directed.edges(g)
-    } else {
-        edges <- .get.undirected.edges(g)
-    }
-    return(edges)
-}
-
-################################################################################
-### Get edges in a df object
-################################################################################
-.get.undirected.edges <- function(g){
-    if(ecount(g)>0){
-        vertex <- igraph::V(g)$name
-        edges <- igraph::as_edgelist(g, names = FALSE)
-        rownames(edges) <- colnames(edges) <- NULL
-        edges <- as.data.frame(edges)
-        colnames(edges) <- c("vertex1", "vertex2")
-        edges$emode <- 0
-        edges$name1 <- vertex[edges$vertex1]
-        edges$name2 <- vertex[edges$vertex2]
-        atts <- .get.eatt(g)
-        if(!all(atts[,c(1,2)]==edges[,c(1,2)])){
-            stop("unexpected indexing during edge attribute combination.", 
-                call. = FALSE)
-        }
-        edges <- cbind(edges, atts[,-c(1,2)])
-        edges <- edges[order(edges$vertex1,edges$vertex2), ]
-        edges <- .set.arrowangle(edges)
-        edges <- .set.emode(edges)
-        edges <- .adjust.arrow.length(edges)
-        idx <- colnames(edges) %in% names(.get.empty.edgedf())
-        edges <- edges[, c(which(idx), which(!idx))]
-    } else {
-        edges <- .get.empty.edgedf()
-    }
-    return(edges)
-}
-.get.eatt <- function(g){
-    lt <- igraph::edge_attr(g)
-    atts <- data.frame(row.names = seq_along(lt[[1]]))
-    for(nm in names(lt)){
-        atts[[nm]] <- lt[[nm]]
-    }
-    e <- igraph::as_edgelist(g, names = FALSE)
-    colnames(e) <- c("vertex1", "vertex2")
-    atts <- cbind(e, atts)
-    return(atts)
-}
-.set.arrowangle <- function(edges){
-    arrowAngle_1 <- .set.arrowangle1(edges$arrowType)
-    arrowAngle_2 <- .set.arrowangle2(edges$arrowType)
-    edges <- cbind(edges, arrowAngle_1 = arrowAngle_1,
-        arrowAngle_2 = arrowAngle_2)
-    return(edges)
-}
-.set.arrowangle1 <- function(etype){
-    arrowAngle <- rep(NA, length(etype))
-    arrowAngle[etype %in% c(0, 1, -1)] <- 0
-    arrowAngle[etype %in% c(2, 3, -4)] <- 30
-    arrowAngle[etype %in% c(-2, -3, 4)] <- 90
-    return(arrowAngle)
-}
-.set.arrowangle2 <- function(etype){
-    arrowAngle <- rep(NA, length(etype))
-    arrowAngle[etype %in% c(0, 2, -2)] <- 0
-    arrowAngle[etype %in% c(1, 3, 4)] <- 30
-    arrowAngle[etype %in% c(-1, -3, -4)] <- 90
-    return(arrowAngle)
-}
-.set.emode <- function(edges){
-    emode <- abs(edges$arrowType)
-    emode[emode>3] <- 3
-    edges$emode <- emode
-    return(edges)
-}
-
-################################################################################
-### Get undirected edges in a df object
-################################################################################
-.get.directed.edges <- function(g) {
-    if (ecount(g) > 0) {
-        vertex <- igraph::V(g)$name
-        E(g)$emode <- 1
-        E(g)$emode[igraph::which_mutual(g)] <- 3
-        e <- emode <- .adjacency(g, attr = "emode")
-        bl <- lower.tri(emode) & emode == 3
-        emode[bl] <- 0
-        edges <- arrayInd(seq_len(prod(dim(emode))), dim(emode), 
-            useNames = TRUE)
-        edges <- as.data.frame(edges)
-        colnames(edges) <- c("vertex1", "vertex2")
-        edges$emode <- as.numeric(emode)
-        edges$name1 <- vertex[edges$vertex1]
-        edges$name2 <- vertex[edges$vertex2]
-        edges$e <- as.numeric(e > 0)
-        eid <- e; eid[,] <- 0
-        ut <- upper.tri(eid)
-        eid[ut] <- seq_len(sum(ut))
-        eid <- t(eid)
-        eid[ut] <- seq_len(sum(ut))
-        edges$eid <- as.numeric(eid)
-        edges$ut <- as.numeric(upper.tri(e))
-        edges$lt <- as.numeric(lower.tri(e))
-        g <- .remove.hidden.eatt(g)
-        atts <- .extract.directed.att(g)
-        if (!all(atts[, c(1, 2)] == edges[, c(1, 2)])) {
-            stop("unexpected indexing during edge attribute combination.", 
-                call. = FALSE)
-        }
-        edges <- cbind(edges, atts[, -c(1, 2)])
-        eid <- unique(edges$eid[edges$e > 0])
-        edges <- edges[edges$eid %in% eid, ]
-        edges <- edges[order(edges$eid), ]
-        rownames(edges) <- NULL
-        edges <- .set.arrowtype.dir(edges)
-        edges <- .set.arrowangle(edges)
-        edges <- .set.emode(edges)
-        edges <- .adjust.arrow.length(edges)
-        idx <- colnames(edges) %in% names(.get.empty.edgedf())
-        edges <- edges[, c(which(idx), which(!idx))]
-    } else {
-        edges <- .get.empty.edgedf()
-    }
-    return(edges)
-}
-.set.arrowtype.dir <- function(edges, a_name = "arrowType") {
-    # Flip ut/lt from single-edge arrows; this
-    # for collecting arrows from the same mtx side
-    idx <- which(edges$emode == 1 & edges$lt == 1)
-    if (length(idx) > 0) {
-        for (i in idx) {
-            ii <- which(edges$eid == edges$eid[i])
-            edges[ii, c("ut", "lt")] <- edges[ii, c("lt", "ut")]
-        }
-    }
-    # collect left-side arrows
-    arrow1 <- edges[edges$lt == 1, a_name]
-    arrow1[is.na(arrow1)] <- 0
-    # collect right-side arrows
-    arrow2 <- edges[edges$ut == 1, a_name]
-    arrow2[is.na(arrow2)] <- 0
-    # get single-edge assigments
-    edges <- edges[, -which(colnames(edges) %in% a_name)]
-    edges <- edges[edges$e == 1, ]
-    eid <- sort(unique(edges$eid))
-    edges <- edges[order(-edges$ut, edges$eid), ]
-    edges <- edges[match(eid, edges$eid), ]
-    # add arrows and remove intermediate columns
-    edges <- .merge.arrowtypes.dir(edges, arrow1, arrow2)
-    edges <- edges[, -which(colnames(edges) %in%
-            c("e", "eid", "ut", "lt"))]
-    return(edges)
-}
-.merge.arrowtypes.dir <- function(edges, arrow1, arrow2) {
-    ##  0 = "---", 1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->",
-    ## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|",
-    atypes <- c(0, 1, 2, 3, 4, -1, -2, -3, -4)
-    names(atypes) <- c("00","01","10","11","-11","0-1","-10","-1-1","1-1")
-    arrowType <- paste0(format(arrow1, digits = 1, trim = TRUE),
-        format(arrow2, digits = 1, trim = TRUE))
-    edges$arrowType <- as.numeric(atypes[arrowType])
-    return(edges)
-}
-.extract.directed.att <- function(g) {
-    # e <- igraph::as_adjacency_matrix(g, sparse = FALSE)
-    e <- .adjacency(g)
-    atts <- arrayInd(seq_len(prod(dim(e))), dim(e), useNames = TRUE)
-    atts <- as.data.frame(atts)
-    colnames(atts) <- c("vertex1", "vertex2")
-    atts$e <- as.numeric(e)
-    # a_names <- names(.get.default.eatt())
-    a_names <- igraph::edge_attr_names(g)
-    ne <- e == 0
-    for (at in a_names) {
-        x <- .adjacency(g, attr = at)
-        x[ne] <- NA
-        if (is.data.frame(x)){
-            atts[[at]] <- I(unlist(x, recursive=FALSE))
-        } else {
-            if (is.numeric(x)) {
-                atts[[at]] <- as.numeric(x)
-            } else if (is.character(x)) {
-                atts[[at]] <- as.character(x)
-            }
-        }
-    }
-    rownames(atts) <- NULL
-    atts <- atts[, c("vertex1", "vertex2", a_names)]
-    return(atts)
-}
-# ..this is a fix for 'as_adjacency_matrix', when 'attr' is character
-.adjacency <- function(g, attr = NULL) {
-    if(is.null(attr)){
-        exattr <- rep(1, ecount(g))
-        x <- matrix(0, nrow = vcount(g), ncol = vcount(g))
-    } else {
-        exattr <- edge_attr(g, as.character(attr))
-        x <- matrix(NA, nrow = vcount(g), ncol = vcount(g))
-        if(is.list(exattr)) x <- as.data.frame(x)
-    }
-    e <- igraph::ends(g, seq_len(ecount(g)), names = FALSE)
-    x[e] <- exattr
-    if (!is_directed(g)) x[e[,c(2,1)]] <- exattr
-    colnames(x) <- rownames(x) <- V(g)$name
-    return(x)
-}
-
-################################################################################
-### Other functions
-################################################################################
-
-#-------------------------------------------------------------------------------
-.get.empty.edgedf <- function(){
-    n <- numeric(); c <- character()
-    edges <- data.frame(n, n, n, c, c, n, c, c, n, n, n, n, n, n)
-    colnames(edges) <- c("vertex1","vertex2","emode", "name1", "name2", 
-        "weight", "edgeLineWidth","edgeLineColor","edgeLineType",
-        "arrowType", "arrowAngle_1", "arrowAngle_2", 
-        "arrowLength_1", "arrowLength_2")
-    return(edges)
-}
-
-#-------------------------------------------------------------------------------
-.adjust.arrow.length <- function(edges){
-    edges$arrowLength_1 <- edges$arrowLength
-    edges$arrowLength_2 <- edges$arrowLength
-    a_theta <- 60 #default arrow angle * 2 (not implemented)
-    a_theta <- a_theta / 180 * pi
-    idx <- edges$arrowAngle_1==90
-    if(any(idx, na.rm = TRUE)){
-        l <- edges$arrowLength_1[idx]/2
-        b <- sqrt( (l^2 + l^2) - (2 * l^2) * cos(a_theta))
-        edges$arrowLength_1[idx] <- b + edges$edgeLineWidth[idx]/4
-    }
-    idx <- edges$arrowAngle_2==90
-    if(any(idx, na.rm = TRUE)){
-        l <- edges$arrowLength_2[idx]/2
-        b <- sqrt( (l^2 + l^2) - (2 * l^2) * cos(a_theta))
-        edges$arrowLength_2[idx] <- b + edges$edgeLineWidth[idx]/4
-    }
-    edges <- edges[ , -which(colnames(edges)=="arrowLength")]
-    return(edges)
-}
-
-#-------------------------------------------------------------------------------
-.get.exy <- function(gxy, edges){
-    exy <- data.frame(
-        x1 = gxy[edges$vertex1,"x"], 
-        x2 = gxy[edges$vertex2,"x"], 
-        y1 = gxy[edges$vertex1,"y"], 
-        y2 = gxy[edges$vertex2,"y"])
-    edges <- cbind(edges, exy)
-    return(edges)
-}
