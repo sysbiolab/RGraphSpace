@@ -7,10 +7,10 @@
 \usage{
 make_gspace_legend(
   color_palette,
-  breaks,
+  breaks = NULL,
   legend_title = "Title",
-  legend_size = 6,
   legend_shape = 21,
+  legend_size = 6,
   text_size = 10,
   orientation = c("vertical", "horizontal"),
   justification = c("left", "right"),
@@ -34,11 +34,11 @@ If missing, `color_palette` will instead produce a discrete legend.}
 
 \item{legend_title}{The legend title.}
 
-\item{legend_size}{Size of legend points (default 6 in mm).}
+\item{legend_shape}{Point shape (default 21, for circle).}
 
-\item{legend_shape}{Point shape (default 21, for filled circle with outline).}
+\item{legend_size}{Size of legend points (default 6 mm).}
 
-\item{text_size}{Text size (default 10 in mm).}
+\item{text_size}{Text size (default 10 mm).}
 
 \item{orientation}{Legend arrangement ("vertical" or "horizontal").}
 
@@ -84,7 +84,7 @@ library(patchwork)
 p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 
 # Add a discrete standalone legend to a plot
-leg1 <- make_gspace_legend(c(A="red", B="blue"))
+leg1 <- make_gspace_legend(c(A="red", B="blue"), legend_size = 5)
 p + leg1 + plot_layout(widths = c(1, 0.1))
 
 # Add a continuous standalone legend to a plot

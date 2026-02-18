@@ -84,9 +84,9 @@ NULL
 #' @param breaks A vector indicating numeric breaks for a continuous legend. 
 #' If missing, `color_palette` will instead produce a discrete legend.
 #' @param legend_title The legend title.
-#' @param legend_size Size of legend points (default 6 in mm).
-#' @param legend_shape Point shape (default 21, for filled circle with outline).
-#' @param text_size Text size (default 10 in mm).
+#' @param legend_shape Point shape (default 21, for circle).
+#' @param legend_size Size of legend points (default 6 mm).
+#' @param text_size Text size (default 10 mm).
 #' @param orientation Legend arrangement ("vertical" or "horizontal").
 #' @param justification Legend justification within bounding box 
 #' ("left" or "right").
@@ -120,7 +120,7 @@ NULL
 #' p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 #' 
 #' # Add a discrete standalone legend to a plot
-#' leg1 <- make_gspace_legend(c(A="red", B="blue"))
+#' leg1 <- make_gspace_legend(c(A="red", B="blue"), legend_size = 5)
 #' p + leg1 + plot_layout(widths = c(1, 0.1))
 #' 
 #' # Add a continuous standalone legend to a plot
@@ -142,29 +142,29 @@ NULL
 #' @aliases make_gspace_legend
 #' @aliases add_gspace_legend
 #' @export
-make_gspace_legend <- function(color_palette, breaks, legend_title = "Title",
-  legend_size = 6, legend_shape = 21, text_size = 10,
-  orientation = c("vertical", "horizontal"),
+make_gspace_legend <- function(color_palette, breaks = NULL, 
+  legend_title = "Title", legend_shape = 21, legend_size = 6,
+  text_size = 10, orientation = c("vertical", "horizontal"),
   justification = c("left", "right"), 
   custom_theme = theme()) {
 
   .validate_gs_colors("allColors", "color_palette", color_palette)
   .validate_gs_args("singleString", "legend_title", legend_title)
   .validate_gs_args("singleNumber", "legend_size", legend_size)
-  .validate_gs_args("singleInteger", "legend_shape", legend_shape)
+  .validate_gs_args("integer_vec", "legend_shape", legend_shape)
   .validate_gs_args("singleNumber", "text_size", text_size)
   orientation <- match.arg(orientation)
   justification <- match.arg(justification)
   if(!ggplot2::is_theme(custom_theme)) 
     stop("'custom_theme' must be a 'ggplot2::theme' object.")
   
-  if(missing(breaks)){
-    if(length(color_palette)<2) 
+  if(is.null(breaks)){
+    if(length(color_palette)<2)
       stop("'color_palette' must contain at least 2 colors.")
     if (is.null(names(color_palette)))
       names(color_palette) <- color_palette
-    p <- .discrete_color_legend(color_palette, 
-      legend_shape, legend_size, legend_title)
+    p <- .discrete_color_legend(color_palette, legend_shape, 
+      legend_size, legend_title)
   } else {
     .validate_gs_args("numeric_vec", "breaks", breaks)
     if(length(breaks)<3) stop("'breaks' must contain at least 3 values.")
@@ -173,19 +173,20 @@ make_gspace_legend <- function(color_palette, breaks, legend_title = "Title",
     p <- .continuous_color_legend(color_palette, breaks, legend_title)
   }
   hjust <- ifelse(justification=="left", 0, 1)
-  text_size <- max(text_size, 2)
+  text_size <- max(text_size, 1)
   position <- ifelse(orientation=="vertical", "right", "bottom")
   
   p <- p + ggplot2::theme_void() +
     ggplot2::theme(
       legend.position = position, legend.box.just = justification,
-      legend.title = ggplot2::element_text(size = text_size, hjust = hjust),
-      legend.text  = ggplot2::element_text(size = text_size - 2),
+      legend.title = ggplot2::element_text(size = text_size + 1, hjust = hjust),
+      legend.text  = ggplot2::element_text(size = text_size),
       legend.box.margin = ggplot2::margin(0, 0, 0, 0),
       legend.spacing = ggplot2::unit(0.1, "mm"),
       legend.spacing.y = ggplot2::unit(0.1, "mm"),
       legend.spacing.x = ggplot2::unit(0.1, "mm"),
-      legend.key.spacing = ggplot2::unit(0.1, "mm"),
+      legend.key.spacing = ggplot2::unit(0.1, "mm"), 
+      legend.key.size = ggplot2::unit(legend_size + 1, "mm"),
       plot.margin = ggplot2::margin(0, 0, 0, 0)
     ) + custom_theme
   
@@ -282,7 +283,7 @@ add_gspace_legend <- function(plot, legend, spacer = unit(2, "mm"),
     ggplot2::geom_point(
       shape = 21,
       size = 6,
-      colour = "black") +
+      colour = "grey50") +
     ggplot2::scale_fill_gradientn(
       colours = color_palette,
       name = legend_title,
@@ -314,29 +315,87 @@ add_gspace_legend <- function(plot, legend, spacer = unit(2, "mm"),
 #-------------------------------------------------------------------------------
 .discrete_color_legend <- function(color_palette, legend_shape,
   legend_size, legend_title){
+  if(length(legend_shape)==1){
+    .fun <- .discrete_color_legend1
+  } else {
+    if(length(unique(legend_shape))==1){
+      .fun <- .discrete_color_legend1
+      legend_shape <- legend_shape[1]
+    } else {
+      .fun <- .discrete_color_legend2
+    }
+  }
+  .fun(color_palette, legend_shape, legend_size, legend_title)
+}
+.discrete_color_legend1 <- function(color_palette, legend_shape,
+  legend_size, legend_title){
   
   # Small legend data frame
-  legend_df <- data.frame(x = 1,
+  legend_df <- data.frame(
+    x = 1,
     y = seq_along(color_palette),
-    legend_color = unname(color_palette),
+    color = unname(color_palette),
     label = names(color_palette)
   )
   
   # Temporary legend-producing plot
-  x <- y <- legend_color <- NULL
+  x <- y <- color <- NULL
   p <- ggplot2::ggplot(legend_df,
-    ggplot2::aes(x = x, y = y, fill = legend_color) ) +
+    ggplot2::aes(x = x, y = y, fill = color, 
+      colour = color) ) +
     ggplot2::geom_point(
-      shape = legend_shape,
-      size = legend_size,
-      colour = "black"
-    ) +
+      size = legend_size, 
+      shape = legend_shape) +
     ggplot2::scale_fill_identity(
       name = legend_title,
       labels = legend_df$label,
-      breaks = legend_df$legend_color,
+      breaks = legend_df$color,
+      guide = "legend"
+    ) +
+    ggplot2::scale_colour_identity(
+      name = legend_title,
+      labels = legend_df$label,
+      breaks = legend_df$color,
       guide = "legend"
     )
+  return(p)
+}
+
+#-------------------------------------------------------------------------------
+.discrete_color_legend2 <- function(color_palette, legend_shape,
+  legend_size, legend_title){
+  
+  # Small legend data frame
+  legend_df <- data.frame(
+    x = 1,
+    y = seq_along(color_palette),
+    color = unname(color_palette),
+    shape = legend_shape,
+    label = names(color_palette)
+  )
+  
+  # Temporary legend-producing plot
+  x <- y <- color <- shape <- NULL
+  p <- ggplot2::ggplot(legend_df,
+    ggplot2::aes(x = x, y = y, fill = color, 
+      colour = color, shape = shape) ) +
+    ggplot2::geom_point(size = legend_size) +
+    ggplot2::scale_fill_identity(
+      name = legend_title,
+      labels = legend_df$label,
+      breaks = legend_df$color,
+      guide = "legend"
+    ) +
+    ggplot2::scale_colour_identity(
+      name = legend_title,
+      labels = legend_df$label,
+      breaks = legend_df$color,
+      guide = "legend"
+    ) +
+    scale_shape_identity(name = legend_title, 
+      labels = legend_df$label,
+      breaks = legend_df$shape,
+      guide = "legend")
   return(p)
 }
 
