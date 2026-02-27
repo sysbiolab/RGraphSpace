@@ -9,7 +9,7 @@
     
     if(verbose) message("Extracting vertices...")
     nodes <- .get_nodes(gg)
-    temp <- .center_nodes(nodes, image, mar)
+    temp <- .center_nodes(nodes, image, mar, verbose=verbose)
     nodes <- temp$nodes
     image.mar <- temp$image
     image.layer <- temp$image.layer
@@ -67,9 +67,10 @@
     # set margins
     dp <- c(yl[2]-yl[1], xl[2]-xl[1])
     m <- floor(min(dp) * mar)
-    dxmar <- min( c(xl[2], d[2] - xl[2]) )
-    dymar <- min( c(yl[2], d[1] - yl[2]) )
+    dxmar <- min( c(xl[1], d[2] - xl[2]) )
+    dymar <- min( c(yl[1], d[1] - yl[2]) )
     m <- min(c(m, dxmar, dymar))
+    m <- max(m, 1)
     xl <- c(xl[1] - m, xl[2] + m)
     yl <- c(yl[1] - m, yl[2] + m)
     

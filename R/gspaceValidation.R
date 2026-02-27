@@ -198,8 +198,8 @@
     }
     if (!is.null(atts$nodeLineWidth)) {
         .validate_gs_args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)
-        if (min(atts$nodeLineWidth) <= 0) {
-            stop("'nodeLineWidth' should be a vector of numeric values >0", 
+        if (min(atts$nodeLineWidth) < 0) {
+            stop("'nodeLineWidth' should be a vector of numeric values >=0", 
               call. = FALSE)
         }
     }

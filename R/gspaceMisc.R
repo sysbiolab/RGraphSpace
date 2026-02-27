@@ -131,13 +131,16 @@ NULL
 #' legs <- list(leg1, leg2)
 #' add_gspace_legend(plot = p, legs, position = "right")
 #' 
-#' @importFrom ggplot2 ggplot is_ggplot annotation_custom 
-#' @importFrom ggplot2 coord_cartesian theme_void theme
-#' @importFrom cowplot get_legend
+#' @importFrom ggplot2 ggplot is_ggplot annotation_custom element_text
+#' @importFrom ggplot2 coord_cartesian theme_void theme is_theme
+#' @importFrom ggplot2 scale_fill_gradientn margin unit
 #' @importFrom grid grobWidth convertWidth unit unit.pmax is.unit
+#' @importFrom grid grobHeight convertHeight
+#' @importFrom cowplot get_legend
 #' @importFrom gtable gtable
-#' @importFrom patchwork wrap_plots
+#' @importFrom patchwork wrap_plots patchworkGrob
 #' @importFrom circlize colorRamp2
+#' @importFrom scales rescale
 #' @rdname legend-accessors
 #' @aliases make_gspace_legend
 #' @aliases add_gspace_legend
@@ -392,7 +395,7 @@ add_gspace_legend <- function(plot, legend, spacer = unit(2, "mm"),
       breaks = legend_df$color,
       guide = "legend"
     ) +
-    scale_shape_identity(name = legend_title, 
+    ggplot2::scale_shape_identity(name = legend_title, 
       labels = legend_df$label,
       breaks = legend_df$shape,
       guide = "legend")

@@ -43,6 +43,15 @@
 #' @seealso
 #' \code{\link{geom_nodespace}}, \code{\link[ggplot2]{geom_point}}
 #'
+#' @importFrom ggplot2 scale_colour_identity draw_key_point
+#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt geom_text gg_par
+#' @importFrom ggplot2 element_rect margin element_blank layer theme_bw
+#' @importFrom ggplot2 element_line element_text ggproto theme theme_gray
+#' @importFrom ggplot2 scale_linetype_manual annotation_raster coord_fixed
+#' @importFrom ggplot2 scale_x_continuous scale_y_continuous expansion labs
+#' @importFrom ggplot2 expansion
+#' @importFrom grid gpar arrow unit pointsGrob segmentsGrob grobTree gList
+#' @importFrom scales alpha
 #' @export
 GeomNodeSpace <- ggproto(
   

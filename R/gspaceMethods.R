@@ -104,15 +104,8 @@ GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL,
 #' plotGraphSpace(gs)
 #' 
 #' @import methods
-#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt geom_text gg_par
-#' @importFrom ggplot2 element_rect margin element_blank layer theme_bw
-#' @importFrom ggplot2 element_line element_text ggproto theme theme_gray
-#' @importFrom ggplot2 scale_linetype_manual annotation_raster coord_fixed
-#' @importFrom ggplot2 scale_x_continuous scale_y_continuous expansion labs
 #' @importFrom grDevices col2rgb
 #' @importFrom ggrastr rasterize
-#' @importFrom grid gpar arrow unit pointsGrob
-#' @importFrom scales alpha
 #' @importFrom lifecycle deprecated deprecate_soft is_present
 #' @docType methods
 #' @rdname plotGraphSpace-methods
