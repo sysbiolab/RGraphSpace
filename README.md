@@ -8,7 +8,7 @@
   <!-- badges: end -->
 *RGraphSpace* is an *R* package that integrates *igraph* and *ggplot2* graphics within spatial maps. *RGraphSpace* implements new geometric objects using *ggplot2* prototypes, customized for representing large *igraph* objects in a normalized coordinate system. By scaling shapes and graph elements, *RGraphSpace* can provide a framework for layered visualizations.
 
-### Installation in R (>=4.4)
+### Installation in R (>=4.5)
 
 ##### Install dependencies to build the package's vignettes
 
