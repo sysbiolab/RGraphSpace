@@ -1,3 +1,15 @@
+#-------------------------------------------------------------------------------
+draw_key_nodespace <- function(data, params, size) {
+  data$size <- max(data$size, 3)  # minimum legend size
+  ggplot2::draw_key_point(data, params, size)
+}
+
+#-------------------------------------------------------------------------------
+#' @importFrom ggplot2 fortify
+#' @export
+fortify.GraphSpace <- function(model, data, ...) {
+  gs_nodes(model)
+}
 
 #-------------------------------------------------------------------------------
 #' @title GeomNodeSpace: a ggplot2 prototype for GraphSpace-class methods
@@ -80,7 +92,7 @@ GeomNodeSpace <- ggproto(
     )
   },
   
-  draw_key = ggplot2::draw_key_point
+  draw_key = draw_key_nodespace
   
 )
 
@@ -143,7 +155,7 @@ GeomNodeSpace <- ggproto(
 #' }
 #' 
 #' @seealso
-#' \code{\link{GeomNodeSpace}}, \linkS4class{GraphSpace}
+#' \link{geom_edgespace}, \linkS4class{GraphSpace}
 #'
 #' @examples
 #' 
@@ -164,15 +176,26 @@ GeomNodeSpace <- ggproto(
 geom_nodespace <- function(mapping = NULL, data = NULL, 
   stat = "identity", position = "identity", ..., na.rm = TRUE, 
   show.legend = NA, inherit.aes = FALSE) {
+  
   if (inherits(data, "GraphSpace")) {
     data <- gs_nodes(data)
   }
+  
+  x <- y <- NULL
+  default_mapping <- ggplot2::aes(x = x, y = y)
+  if (is.null(mapping)) {
+    mapping <- default_mapping
+  } else {
+    mapping <- utils::modifyList(default_mapping, mapping)
+  }
+  
   ggplot2::layer(
     geom = GeomNodeSpace, mapping = mapping,  
     data = data, stat = stat, position = position, 
     show.legend = show.legend, inherit.aes = inherit.aes,
     params = list2(na.rm = na.rm, ...)
   )
+  
 }
 
 #-------------------------------------------------------------------------------
@@ -391,7 +414,7 @@ GeomEdgeSpace <- ggproto(
 #' - Backward arrow with forward bar: \code{-4 or "<-|"}\cr
 #' 
 #' @seealso
-#' \code{\link{GeomEdgeSpace}}, \linkS4class{GraphSpace}
+#' \code{\link{geom_nodespace}}, \linkS4class{GraphSpace}
 #'
 #' @examples
 #' 
@@ -403,8 +426,9 @@ GeomEdgeSpace <- ggproto(
 #' 
 #' \dontrun{
 #' 
-#' ggplot() + geom_edgespace(aes(x = x, y = y, xend = xend, yend = yend),
-#'   data = gs) + theme(aspect.ratio = 1) + 
+#' ggplot() + 
+#'   geom_edgespace(data = gs) + 
+#'   theme(aspect.ratio = 1) + 
 #'   scale_x_continuous(limits = c(0, 1)) +
 #'   scale_y_continuous(limits = c(0, 1))
 #' 
@@ -432,6 +456,15 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
       offset_start = offset_start, 
       offset_end = offset_end, ...)
   }
+  
+  x <- y <- xend <- yend <- NULL
+  default_mapping <- ggplot2::aes(x = x, y = y, xend = xend, yend = yend)
+  if (is.null(mapping)) {
+    mapping <- default_mapping
+  } else {
+    mapping <- utils::modifyList(default_mapping, mapping)
+  }
+  
   ggplot2::layer(
     geom = GeomEdgeSpace,
     mapping = mapping,
@@ -442,7 +475,9 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
     inherit.aes = inherit.aes,
     params = params
   )
+  
 }
+
 
 ################################################################################
 ### Adjust arrows for GeomNodeSpace

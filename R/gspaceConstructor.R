@@ -2,28 +2,54 @@
 ################################################################################
 ### Main constructor of GraphSpace-class objects
 ################################################################################
-.buildGraphSpace <- function(g, mar = 0.1, image = NULL, layout = NULL,
-    verbose = TRUE) {
+.buildGraphSpace <- function(g, mar = 0.1, layout = NULL, 
+    image = NULL, flip.image = FALSE, verbose = TRUE) {
     
     gg <- .validate_igraph(g, layout, verbose)
     
-    if(verbose) message("Extracting vertices...")
-    nodes <- .get_nodes(gg)
-    temp <- .center_nodes(nodes, image, mar, verbose=verbose)
-    nodes <- temp$nodes
-    image.mar <- temp$image
-    image.layer <- temp$image.layer
+    if(verbose) message("Mapping vertices...")
+    if(is.null(image)){
+        if(verbose) message("Centering nodes to graph space...")
+        nodes <- .get_nodes(gg)
+        temp_list <- .center_graph_nodes(nodes, mar)
+    } else {
+        if(verbose) message("Adjusting nodes to image space...")
+        if(!flip.image) gg <- .flip_graph(gg, image, verbose)
+        if(!is.raster(image)) image <- as.raster(image)
+        nodes <- .get_nodes(gg)
+        temp_list <- .adjust_image_nodes(nodes, image, mar)
+    }
     
-    if(verbose) message("Extracting edges...")
+    if(verbose) message("Mapping edges...")
     edges <- .get_edges(gg)
     
     if(verbose) message("Creating a 'GraphSpace' object...")
     pars <- list(is.directed = is_directed(gg), mar = mar, 
-        image.layer = image.layer)
-    gs <- new(Class = "GraphSpace", nodes = nodes, edges = edges, 
-        graph=gg, image = image.mar, pars = pars, 
-        misc = list(g = g, image=image))
+        image.layer = temp_list$image.layer)
+    gs <- new(Class = "GraphSpace", 
+        image = temp_list$image, 
+        nodes = temp_list$nodes, 
+        edges = edges, 
+        graph=gg, 
+        pars = pars, 
+        misc = list(g = g, image = image))
     return(gs)
+}
+
+#-------------------------------------------------------------------------------
+.flip_graph <- function(gg, image, verbose){
+    if(verbose){
+        message("Flipping graph to match image origin...")  
+    }
+    y <- V(gg)$y
+    y <- -(y - max(y)) + nrow(image) - max(y) + 1
+    rg <- range(y)
+    if(min(rg)<1 || max(rg) > nrow(image)){
+        ms <- "Coordinate flip incompatible with image dimensions."
+        stop(ms, call. = FALSE)
+    }
+    V(gg)$y <- y
+    return(gg)
 }
 
 ################################################################################
@@ -31,7 +57,24 @@
 ################################################################################
 
 #-------------------------------------------------------------------------------
-.frame_nodes <- function(nodes, image, mar){
+.center_graph_nodes <- function(nodes, mar){
+    if(is.na(mar)) mar <- 0
+    mar <- max(0, min(mar, 0.5))
+    if(nrow(nodes)>0){
+        nodes$x <- nodes$x - mean(range(nodes$x))
+        nodes$y <- nodes$y - mean(range(nodes$y))
+        from <- range(c(nodes$x, nodes$y))
+        to <- c(mar, 1 - mar)
+        nodes$x <- scales::rescale(nodes$x, from = from, to=to)
+        nodes$y <- scales::rescale(nodes$y, from = from, to=to)
+    }
+    temp_list <- list(nodes=nodes, image=as.raster(matrix()),
+        image.layer = FALSE)
+    return(temp_list)
+}
+
+#-------------------------------------------------------------------------------
+.adjust_image_nodes <- function(nodes, image, mar){
     d <- dim(image)
     xr <- range(nodes$x)
     yr <- range(nodes$y)
@@ -41,36 +84,57 @@
     if( (yr[1] < 1) || (yr[2] > d[1]) ){
         stop("Graph coordinates outside image dimensions.", call. = FALSE)
     }
-    # adjust image and node coordinates
-    res <- .crop_image(nds=nodes, img=image, mar)
-    res <- .square_image(res$nodes, res$image)
-    # normalize node coordinates
-    d <- dim(res$image)
-    res$nodes$x <- scales::rescale(res$nodes$x, from = c(1, d[2]), to = c(0, 1))
-    res$nodes$y <- scales::rescale(res$nodes$y, from = c(1, d[1]), to = c(0, 1))
-    return(res)
+    if(nrow(nodes) > 0){
+        temp_list <- .frame_image_nodes(nodes, image, mar)
+        temp_list$image.layer <- TRUE
+    } else {
+        temp_list <- list(nodes=nodes, image=image, image.layer=TRUE)
+    }
+    return(temp_list)
 }
 
 #-------------------------------------------------------------------------------
-.crop_image <- function(nds, img, mar){
+.frame_image_nodes <- function(nodes, image, mar){
+    # adjust image and node coordinates
+    if(!is.na(mar)){
+        temp_list <- .crop_image_nodes(nodes, image, mar)
+    } else {
+        temp_list <- list(nodes=nodes, image=image)
+    }
+    temp_list <- .set_image_acpect_ratio(temp_list$nodes, temp_list$image)
+    temp_list <- .normalize_image_nodes(temp_list$nodes, temp_list$image)
+    return(temp_list)
+}
+
+#-------------------------------------------------------------------------------
+.crop_image_nodes <- function(nodes, image, mar){
+    nds <- nodes
+    img <- image
     
-    d <- dim(img)
-    
-    # set node limits to integer
+    # graph range
     xl <- range(nds$x)
     yl <- range(nds$y)
+    
+    # set node coords to integer
     xl <- c(ceiling(xl[1]), floor(xl[2]))
     yl <- c(ceiling(yl[1]), floor(yl[2]))
     nds$x <- scales::rescale(nds$x, to=xl)
     nds$y <- scales::rescale(nds$y, to=yl)
+    xl <- range(nds$x)
+    yl <- range(nds$y)
     
-    # set margins
-    dp <- c(yl[2]-yl[1], xl[2]-xl[1])
-    m <- floor(min(dp) * mar)
-    dxmar <- min( c(xl[1], d[2] - xl[2]) )
-    dymar <- min( c(yl[1], d[1] - yl[2]) )
-    m <- min(c(m, dxmar, dymar))
-    m <- max(m, 1)
+    # available margins for cropping, in image space
+    d <- dim(img)
+    dxmar <- min( c( xl[1] - 1, d[2] - xl[2] ) )
+    dymar <- min( c( yl[1] - 1, d[1] - yl[2] ) )
+    max_crop <- min(c(dxmar, dymar))
+    
+    # set margins margins for cropping
+    set_crop <- (mar * min(d)) - 1
+    m <- max(min(set_crop, max_crop), 0)
+    m <- floor(m)
+    
+    # set margins with crop_mar
     xl <- c(xl[1] - m, xl[2] + m)
     yl <- c(yl[1] - m, yl[2] + m)
     
@@ -110,8 +174,10 @@
 }
 
 #-------------------------------------------------------------------------------
-.square_image <- function(nds, img ){
-    d <- dim(img )
+.set_image_acpect_ratio <- function(nodes, image){
+    nds <- nodes
+    img <- image
+    d <- dim(img)
     if(d[1] > d[2]){
         n <- ceiling( (d[1] - d[2]) )/2
         img_d <- matrix(NA, nrow = d[1], ncol = d[1])
@@ -130,29 +196,12 @@
 }
 
 #-------------------------------------------------------------------------------
-.center_nodes <- function(nodes, image, mar, verbose = FALSE){
-    if(is.null(image)){
-        if(nrow(nodes)>0){
-            nodes$x <- nodes$x - mean(range(nodes$x))
-            nodes$y <- nodes$y - mean(range(nodes$y))
-            from <- range(c(nodes$x, nodes$y))
-            to <- c(mar, 1-mar)
-            nodes$x <- scales::rescale(nodes$x, from = from, to=to)
-            nodes$y <- scales::rescale(nodes$y, from = from, to=to)
-        }
-        temp <- list(nodes=nodes, image=as.raster(matrix()),
-            image.layer = FALSE)
-    } else {
-        if(verbose) message("Setting graph coordinates to image space...")
-        if(!is.raster(image)) image <- as.raster(image)
-        if(nrow(nodes) > 0){
-            temp <- .frame_nodes(nodes, image, mar)
-            temp$image.layer <- TRUE
-        } else {
-            temp <- list(nodes=nodes, image=image, image.layer=TRUE)
-        }
-    }
-    return(temp)
+.normalize_image_nodes <- function(nodes, image){
+    d <- dim(image)
+    nodes$x <- scales::rescale(nodes$x, from = c(1, d[2]), to = c(0, 1))
+    nodes$y <- scales::rescale(nodes$y, from = c(1, d[1]), to = c(0, 1))
+    temp_list <- list(nodes=nodes, image=image)
+    return(temp_list)
 }
 
 ################################################################################

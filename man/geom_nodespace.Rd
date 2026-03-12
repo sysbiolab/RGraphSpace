@@ -90,5 +90,5 @@ ggplot() + geom_nodespace(aes(x = x, y = y), data = gs)
 
 }
 \seealso{
-\code{\link{GeomNodeSpace}}, \linkS4class{GraphSpace}
+\link{geom_edgespace}, \linkS4class{GraphSpace}
 }

@@ -119,8 +119,9 @@ gs <- GraphSpace(gtoy1)
 
 \dontrun{
 
-ggplot() + geom_edgespace(aes(x = x, y = y, xend = xend, yend = yend),
-  data = gs) + theme(aspect.ratio = 1) + 
+ggplot() + 
+  geom_edgespace(data = gs) + 
+  theme(aspect.ratio = 1) + 
   scale_x_continuous(limits = c(0, 1)) +
   scale_y_continuous(limits = c(0, 1))
 
@@ -128,5 +129,5 @@ ggplot() + geom_edgespace(aes(x = x, y = y, xend = xend, yend = yend),
 
 }
 \seealso{
-\code{\link{GeomEdgeSpace}}, \linkS4class{GraphSpace}
+\code{\link{geom_nodespace}}, \linkS4class{GraphSpace}
 }

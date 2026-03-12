@@ -3,7 +3,11 @@
 .validate_gs_args <- function(check, name, para) {
   if (check == "numeric_vec") {
     msg <- paste0("'", name, "' should be a numeric vector.")
-    if (!is.numeric(para) || !is.vector(para)) stop(msg, call. = FALSE)
+    if (!is.vector(para) || !.all_numericValues(para)) stop(msg, call. = FALSE)
+  } else if (check == "character_vec") {
+    msg <- paste0("'", name, "' should be a character vector.")
+    if (!is.vector(para) || !.all_characterValues(para)) 
+      stop(msg, call. = FALSE)
   } else if (check == "integer_vec") {
     msg <- paste0("'", name, "' should be an integer vector.")
     if (!is.vector(para) || !.all_integerValues(para)) 
@@ -12,24 +16,35 @@
     msg <- paste0("'", name, "' should be a numeric matrix")
     if (!is.numeric(para) || !is.matrix(para)) stop(msg, call. = FALSE)
   } else if (check == "image_mtx") {
-    msg <- paste0("'", name, "' should be a numeric matrix or array.")
+    msg1 <- paste0("Invalid '", name, "' input. Expected a raster object\n")
+    msg2 <- c("or a numeric matrix with values in the range [0, 1]")
     if (!is.raster(para) || !is.matrix(para) || !is.array(para))
-      stop(msg, call. = FALSE)
+      stop(msg1, msg2, call. = FALSE)
+    if(!is.raster(para)){
+      if(!is.numeric(para)){
+        stop(msg1, msg2, call. = FALSE)
+      } else {
+        rg <- range(para, na.rm = TRUE)
+        if(rg[1]<0 || rg[2]>1){
+          stop(msg1, msg2, call. = FALSE)
+        }
+      }
+    }
   } else if (check == "allCharacter") {
-    msg <- paste0("'", name, "' should be a vector with strings.")
+    msg <- paste0("'", name, "' should be a vector of strings.")
     if (!.all_characterValues(para)) stop(msg, call. = FALSE)
   } else if (check == "allCharacterOrInteger") {
     msg <- paste("'", name, "'should be a vector of strings of integers.")
     if (! (.all_characterValues(para) | .all_integerValues(para) ) ) 
       stop(msg, call. = FALSE)
   } else if (check == "allCharacterOrNa") {
-    msg <- paste0("'", name, "' should be a vector with strings.")
+    msg <- paste0("'", name, "' should be a vector of strings.")
     if (!.all_characterValues(para, notNA=FALSE)) stop(msg, call. = FALSE)
   } else if (check == "allBinary") {
-    msg <- paste0("'", name, "' should be a vector with binary values.")
+    msg <- paste0("'", name, "' should be a vector of binary values.")
     if (!.all_binaryValues(para)) stop(msg, call. = FALSE)
   } else if (check == "allInteger") {
-    msg <- paste0("'", name, "' should be a vector with integer values.")
+    msg <- paste0("'", name, "' should be a vector of integer values.")
     if (!.all_integerValues(para)) stop(msg, call. = FALSE)
   } else if (check == "singleString") {
     msg <- paste0("'", name, "' should be a single string.")

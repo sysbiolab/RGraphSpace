@@ -4,22 +4,35 @@
 \alias{GraphSpace}
 \title{Constructor of GraphSpace-class objects}
 \usage{
-GraphSpace(g, mar = 0.1, layout = NULL, image = NULL, verbose = TRUE)
+GraphSpace(
+  g,
+  mar = 0.1,
+  layout = NULL,
+  image = NULL,
+  flip.image = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{g}{An \code{\link[igraph]{igraph}} object. It must include graph 
 coordinates assigned to \code{x} and \code{y} vertex attributes, and
 vertex labels assigned to \code{name} vertex attribute.}
 
-\item{mar}{A single numeric value (in \code{[0,1]}) indicating the size of
-the outer margins as a fraction of the graph space.
-Note: When an image is provided, \code{mar} is a fraction of image margins.}
+\item{mar}{A single numeric value in \code{[0, 0.5]} controlling the size of
+the outer margins around the graph. Without an image, \code{mar} specifies
+symmetric margins as a fraction of the graph space. With an image,
+\code{mar} is interpreted as a fraction of the available image margins
+surrounding the graph.}
 
-\item{layout}{An optional numeric matrix with two columns for \code{x} 
-and \code{y} coordinates.}
+\item{layout}{deprecated; pass layout through the \code{x} and \code{y}
+vertex attributes instead.}
 
 \item{image}{An optional background image. When provided, \code{x} and 
-\code{y} coordinates must represent pixel positions in the image space.}
+\code{y} coordinates must represent pixel positions in the image matrix.}
+
+\item{flip.image}{Logical indicating whether the image should be vertically
+flipped to match the graph coordinate system. If set to \code{FALSE}, the
+graph is effectively flipped to align with the image orientation.}
 
 \item{verbose}{A single logical value specifying to display detailed 
 messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).}

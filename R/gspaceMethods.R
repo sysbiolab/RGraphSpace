@@ -8,15 +8,20 @@
 #' @param g An \code{\link[igraph]{igraph}} object. It must include graph 
 #' coordinates assigned to \code{x} and \code{y} vertex attributes, and
 #' vertex labels assigned to \code{name} vertex attribute.
-#' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
-#' the outer margins as a fraction of the graph space.
-#' Note: When an image is provided, \code{mar} is a fraction of image margins.
-#' @param layout An optional numeric matrix with two columns for \code{x} 
-#' and \code{y} coordinates.
+#' @param mar A single numeric value in \code{[0, 0.5]} controlling the size of
+#' the outer margins around the graph. Without an image, \code{mar} specifies
+#' symmetric margins as a fraction of the graph space. With an image,
+#' \code{mar} is interpreted as a fraction of the available image margins
+#' surrounding the graph.
 #' @param image An optional background image. When provided, \code{x} and 
-#' \code{y} coordinates must represent pixel positions in the image space.
+#' \code{y} coordinates must represent pixel positions in the image matrix.
+#' @param flip.image Logical indicating whether the image should be vertically
+#' flipped to match the graph coordinate system. If set to \code{FALSE}, the
+#' graph is effectively flipped to align with the image orientation.
 #' @param verbose A single logical value specifying to display detailed 
 #' messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).
+#' @param layout deprecated; pass layout through the \code{x} and \code{y}
+#' vertex attributes instead.
 #' @return A \linkS4class{GraphSpace} class object.
 #' @author Sysbiolab.
 #' @seealso \code{\link{plotGraphSpace}}
@@ -38,13 +43,16 @@
 #' @aliases GraphSpace
 #' @export
 #'
-GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL, 
-    verbose = TRUE) {
-    .validate_gs_args("singleNumber", "mar", mar)
+GraphSpace <- function(g, mar = 0.1, layout = NULL, 
+    image = NULL, flip.image = FALSE, verbose = TRUE) {
     .validate_gs_args("singleLogical", "verbose", verbose)
     #--- validate argument values
-    if (mar < 0 || mar > 1) {
-        stop("'mar' should be in [0,1]", call. = FALSE)
+    if(!is.na(mar)){
+        .validate_gs_args("singleNumber", "mar", mar)
+        if (mar < 0 || mar > 0.5) {
+            warning("'mar' should be in [0, 0.5]", call. = FALSE)
+            mar <- max(0, min(mar, 0.5))
+        }
     }
     if(!is.null(layout)){
         .validate_gs_args("numeric_mtx", "layout", layout)
@@ -54,9 +62,13 @@ GraphSpace <- function(g, mar = 0.1, layout = NULL, image = NULL,
     }
     if(!is.null(image)){
         .validate_gs_args("image_mtx", "image", image)
+        if(flip.image){
+            message("Flipping image to graph origin...", call. = FALSE)  
+            image <- image[rev(seq_len(nrow(image))), , drop = FALSE]
+        }
     }
     #--- validate igraph and build a gs object
-    gs <- .buildGraphSpace(g, mar, image, layout, verbose)
+    gs <- .buildGraphSpace(g, mar, layout, image, flip.image, verbose)
     return(gs)
 }
 
@@ -145,10 +157,9 @@ setMethod("plotGraphSpace", "GraphSpace",
         nodes$nodeLineColor[idx] <-  nodes$nodeColor[idx]
         
         #--- initialize a ggplot object
-        ggp <- .set_gspace(theme)
+        ggp <- ggplot()
         
         #--- add labels
-        ggp <- ggp + labs(x=xlab, y=ylab)
         
         #--- add image
         if(pars$image.layer){
@@ -157,7 +168,8 @@ setMethod("plotGraphSpace", "GraphSpace",
                 ggp <- .add_image(ggp, img)
             } else {
                 ggi <- .add_image(ggp, img)
-                ggi <- .custom_themes(ggi, theme, font.size, bg.color)
+                ggi <- ggi + 
+                    theme_gspace_axes(theme, font.size, bg.color, xlab, ylab)
             }
         }
 
@@ -192,7 +204,7 @@ setMethod("plotGraphSpace", "GraphSpace",
         }
         
         #--- apply custom theme
-        ggp <- .custom_themes(ggp, theme, font.size, bg.color)
+        ggp <- ggp + theme_gspace_axes(theme, font.size, bg.color, xlab, ylab)
         
         if(raster){
           ggp <- ggrastr::rasterize(ggp, layers=c('NodeSpace',"EdgeSpace"), 
@@ -496,10 +508,18 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
 .updateGraphSpace <- function(x, g) {
     x@graph <- .validate_igraph(g)
     x@edges <- .get_edges(x@graph)
-    temp <- .center_nodes(.get_nodes(x@graph), x@misc$image, x@pars$mar)
-    x@nodes <- temp$nodes
-    x@image <- temp$image
+    temp_list <- .recenter_nodes(.get_nodes(x@graph), x@misc$image, x@pars$mar)
+    x@nodes <- temp_list$nodes
+    x@image <- temp_list$image
     return(x)
 }
 
+.recenter_nodes <- function(nodes, image, mar){
+    if(is.null(image)){
+        temp_list <- .center_graph_nodes(nodes, mar)
+    } else {
+        temp_list <- .adjust_image_nodes(nodes, image, mar)
+    }
+    return(temp_list)
+}
 

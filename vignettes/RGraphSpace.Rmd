@@ -153,9 +153,129 @@ E(gtoy1)$arrowType <- 1
 plotGraphSpace(gtoy1, add.labels = TRUE)
 ```
 
+
+# Mapping graphs to images
+
+Images can be used as spatial references for graph layouts in *RGraphSpace*. When a raster image is provided, its pixel grid defines the coordinate system where nodes are positioned, supporting the construction of graphs from image features.
+
+Next, we use the `volcano` topographic matrix as an example. Features extracted from this matrix are mapped to graph nodes and visualized over a raster background.
+
+```{r Mapping images to graph space, eval=TRUE, message=FALSE, out.width="80%"}
+# Extract pixel coordinates from the 'volcano' matrix,
+# representing features at the 0.85 quantile level
+coords <- which(volcano == quantile(volcano, 0.85), arr.ind = TRUE)
+
+# Make an igraph from pixel coordinates
+gtoy2 <- igraph::make_empty_graph(n = nrow(coords))
+igraph::V(gtoy2)$y <- coords[,1]
+igraph::V(gtoy2)$x <- coords[,2]
+
+# Create a GraphSpace object, including the raster image;
+# The 'mar' parameter controls the margins between the graph 
+# and the image boundaries
+gs <- GraphSpace(gtoy2, image = as_colorraster(volcano), mar = 0.1)
+
+# Plot 'gs' with the raster as background
+plotGraphSpace(gs, add.image = TRUE)
+```
+
+
+# Using *ggplot2* geoms
+
+The examples below illustrate how *RGraphSpace* integrates with *ggplot2* using graph attributes stored in the `GraphSpace` object. Node and edge attributes can either define final visual properties (used as identity values) or be mapped to aesthetics and rendered through standard *ggplot2* geoms as building blocks.
+
+In the following example, we create a small modular graph containing variables of different types in order to demonstrate several plotting options.
+
+```{r Load a toy graph, eval=TRUE, message=FALSE, out.width="80%"}
+# Make a toy modular graph
+library(igraph)
+gtoy3 <- sample_islands(
+  islands.n = 3,       # number of modules
+  islands.size = 30,   # nodes per module
+  islands.pin = 0.25,  # probability of edges within modules
+  n.inter = 2)         # edges between modules
+
+# Assign module membership to nodes
+V(gtoy3)$module <- rep(1:3, each = 30)
+
+# Assign colors to nodes
+V(gtoy3)$nodeColor <- rainbow(3)[V(gtoy3)$module]
+
+# Assign a categorical variable to nodes
+V(gtoy3)$node_group <- c("A", "B", "C")[V(gtoy3)$module]
+
+# Assign numeric variables to nodes and edges
+V(gtoy3)$node_var <- runif(vcount(gtoy3))
+E(gtoy3)$edge_var <- runif(ecount(gtoy3))
+
+# Create a GraphSpace from the toy igraph
+gs <- GraphSpace(gtoy3)
+```
+
+## Plotting identity values
+
+In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. Therefore, the colours can be used directly by mapping them and applying `scale_fill_identity()`.
+
+```{r Plot identity values, eval=TRUE, message=FALSE, out.width="70%"}
+ggplot() + 
+  geom_edgespace(colour = "grey", data = gs) +
+  geom_nodespace(aes(fill = nodeColor), colour = "grey", data = gs) +
+  scale_fill_identity() +
+  theme_gspace_axes(theme = "th0")
+```
+
+## Mapping categorical variables
+
+Node and edge attributes can also be mapped to aesthetics and then rendered using appropriate scales. In this example, the node categorical variable `node_group` is mapped to `fill`, while the edge numeric variable `edge_var` is mapped to `colour`.
+
+```{r Map aesthetics to categorical variables, eval=TRUE, message=FALSE, out.width="70%"}
+ggplot() + 
+  geom_edgespace(aes(colour = edge_var), data = gs) +
+  geom_nodespace(aes(fill = node_group), colour = "grey", data = gs) +
+  scale_colour_continuous(palette = c("cyan","blue")) +
+  scale_fill_viridis_d(option = "viridis") +
+  theme_gspace_axes(theme = "th0") + 
+  theme(legend.position = "right")
+```
+
+## Mapping numeric variables
+
+Numeric attributes can also be mapped to aesthetics and visualised using continuous colour scales. In this example, both node and edge attributes are numeric variables.
+
+```{r Map aesthetics to numeric variables, eval=TRUE, message=FALSE, out.width="70%"}
+# Map aesthetics to numeric variables
+ggplot() + 
+  geom_edgespace(aes(colour = edge_var), data = gs) +
+  geom_nodespace(aes(fill = node_var), colour = "grey", data = gs) +
+  scale_colour_continuous(palette = c("cyan","blue")) +
+  scale_fill_continuous(palette = c("white","purple")) +
+  theme_gspace_axes(theme = "th0") + 
+  theme(legend.position = "right")
+```
+
+## Using separate colour scales
+
+When multiple geoms use the same aesthetic (for example `colour`) but should be mapped to different variables with independent scales, the *ggnewscale* package can be used to introduce a new scale.
+
+```{r Map aesthetics to separate colour scales, eval=FALSE, message=FALSE, out.width="70%"}
+if (!require("ggnewscale", quietly = TRUE)) {
+  install.packages("ggnewscale")
+}
+ggplot() + 
+  geom_edgespace(aes(colour = edge_var), data = gs) +
+  scale_colour_continuous(palette = c("cyan","blue")) +
+  ggnewscale::new_scale_colour() +
+  geom_nodespace(aes(colour = node_var), data = gs) +
+  scale_colour_continuous(palette = c("white","purple")) +
+  theme_gspace_axes(theme = "th0") + 
+  theme(legend.position = "right")
+```
+
+This approach allows node and edge aesthetics to be controlled independently while still being drawn within the same plot.
+
 # Interactive layout
 
-The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, a package for interactive network visualization and manipulation.
+The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, an R/Bioconductor package for interactive network visualization and manipulation.
 
 ```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
 # Load RedeR, a graph package for interactive visualization

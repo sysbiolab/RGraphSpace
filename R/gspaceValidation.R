@@ -20,22 +20,35 @@
         layout <- igraph::layout_nicely(g)
         igraph::V(g)$x <- layout[, 1]
         igraph::V(g)$y <- layout[, 2]
-        msg <- paste0("'x' and 'y' vertex attributes are not available;",
-            " using a layout algorithm automatically.")
-        warning(msg, call. = FALSE)
+        msg <- paste0("Vertex attributes 'x' and 'y' missing; ",
+            "computing layout...")
+        if (verbose) message(msg)
     }
     if (is.null(igraph::V(g)$name)) {
-        msg <- paste0("'name' vertex attribute is not available; ",
-            "names will be assigned automatically.")
-        warning(msg, call. = FALSE)
+        msg <- "Vertex attribute 'name' missing; assigning names... "
+        if (verbose) message(msg)
         igraph::V(g)$name <- paste0("n", seq_len(igraph::vcount(g)))
-    } else if (anyDuplicated(igraph::V(g)$name) > 0) {
-        msg <- paste0("'name' vertex attribute should not contain ",
-            "duplicated names.")
-        stop(msg, call. = FALSE)
+    } else {
+        if(is.vector(igraph::V(g)$name) || !is.list(igraph::V(g)$name)){
+            if(any(is.na(igraph::V(g)$name))){
+                msg <- "NA values found in vertex attribute 'name'."
+                stop(msg, call. = FALSE)
+            }
+            if(!.all_characterValues(igraph::V(g)$name)){
+                warning("vertex attribute 'name' converted to character.", 
+                    call. = FALSE)
+                igraph::V(g)$name <- as.character(igraph::V(g)$name)
+            }
+        } else {
+            msg <- "vertex attribute 'name' should be a character vector."
+            stop(msg, call. = FALSE) 
+        }
+        if (anyDuplicated(igraph::V(g)$name) > 0){
+            stop("vertex names must be unique.", call. = FALSE)
+        }
     }
     if (is.null(igraph::V(g)$nodeLabel)){
-        igraph::V(g)$nodeLabel <- igraph::V(g)$name
+        igraph::V(g)$nodeLabel <- as.character(igraph::V(g)$name)
     }
     if (!igraph::is_simple(g)) {
         if (verbose && igraph::any_loop(g)) message("Removing loops...")
