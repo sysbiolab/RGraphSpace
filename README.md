@@ -25,8 +25,8 @@ node states.
 `GeomSegment` aesthetic mappings; unlike standard segment geoms, it is 
 "node-aware" and dynamically adjusts geometries based on connected nodes.
 
-By scaling graph elements, *RGraphSpace* supports the overlay of networks onto 
-image features. Its dual-anchor normalization approach also aligns nodes with  
+By scaling graph elements, *RGraphSpace* also supports the overlay of networks  
+onto image features. Its dual-anchor normalization approach aligns nodes with  
 matrix indices, which is critical for pixel-level precision. 
 
 *RGraphSpace* may provide infrastructure support for packages that require
