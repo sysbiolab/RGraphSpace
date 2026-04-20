@@ -8,8 +8,8 @@ Authors@R:
       person("Flávio", "Kessler", role = "ctb"),
       person("Jonathan", "Back", role = "ctb"),
       person("Lana", "Querne", role = "ctb"),
-      person("Victor", "Apolonio", role = "ctb"),
-      person("Vinicius", "Chagas", role = "ctb"),
+      person("Victor", "Apolonio", role = "swd"),
+      person("Vinicius", "Chagas", role = "com"),
       person("Mauro", "Castro", role = c("cre"),
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
