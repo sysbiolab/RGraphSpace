@@ -11,26 +11,28 @@
 objects, scaling nodes and edges to a standardized unit space. This facilitates 
 the side-by-side visualization of multiple graphs. The package implements new 
 geometric objects based on *ggplot2* prototypes, optimized for representing 
-large networks. The integration with *ggplot2* enables customization of aesthetics 
-and visual style, including colors, shapes, and line types. Three `geoms` are 
-used to translate graph data to *ggplot2* graphics: 
+large networks. The integration with *ggplot2* enables extensive customization 
+of aesthetics and visual style, including colors, shapes, and line types. Three 
+specialized `geoms` are used to translate graph data into geometric layers: 
 
-1. **`geom_graphspace()`**: A high-level convenience layer that process both 
-node and edge layers in a single call.
-2. **`geom_nodespace()`**: Dedicated to rendering vertices, optimized to ensure 
-that nodes and edges are correctly scaled between layers.
-3. **`geom_edgespace()`**: Handles the relational data between nodes. Unlike 
-standard segment geoms, it is "node-aware", meaning it can dynamically adjust 
-edges based on connected nodes.
+1. **geom_graphspace()**: A high-level convenience layer that processes both 
+node and edge layers in a single call. 
+2. **geom_nodespace()**: Dedicated to rendering vertices. Inherits *GeomPoint* 
+aesthetic mappings, optimized to scale nodes and inform the edge layer on 
+node states.
+3. **geom_edgespace()**: Handles the relational data between nodes. Inherits 
+*GeomSegment* aesthetic mappings; unlike standard segment geoms, it is 
+"node-aware" and dynamically adjusts geometries based on connected nodes.
 
 By scaling graph elements, *RGraphSpace* supports the overlay of networks onto 
 image features. It uses a dual-anchor normalization approach to align nodes 
 with matrix indices, which is critical for layered analysis where graph elements 
 must be accurately referenced to a spatial map with pixel-level precision. 
 
-*RGraphSpace* gives infrastructure support for the 
-[PathwaySpace](https://github.com/sysbiolab/PathwaySpace) package for
-exploring signal patterns in spatial transcriptomics.
+*RGraphSpace* can also provide infrastructure support for packages that require
+graph data abstraction. For example, it currently provides classes and 
+methods inherited by [PathwaySpace](https://github.com/sysbiolab/PathwaySpace), 
+a tool dedicated to exploring signal patterns in spatial transcriptomics. 
 
 ### Installation in R (>=4.5)
 
