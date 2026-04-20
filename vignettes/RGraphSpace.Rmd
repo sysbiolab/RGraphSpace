@@ -479,7 +479,7 @@ The following vignettes illustrate how *RGraphSpace* can be used in combination 
 
 If you use *RGraphSpace*, please cite:
 
-* Sysbiolab Team. "RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system." R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
+* Sysbiolab Team. "RGraphSpace: A lightweight interface between igraph and ggplot2 graphics." R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
 
 * Castro MA, Wang X, Fletcher MN, Meyer KB, Markowetz F (2012). "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations." *Genome Biology*, 13(4), R29. Doi: 10.1186/gb-2012-13-4-r29
 
