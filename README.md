@@ -1,4 +1,4 @@
-### *RGraphSpace*: A lightweight interface between 'ggplot2' and 'igraph' objects.
+### *RGraphSpace*: A lightweight interface between 'ggplot2' and 'igraph' graphics
   <!-- badges: start -->
   [![](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
   [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
@@ -63,7 +63,7 @@ vignette("RGraphSpace")
 
 If you use *RGraphSpace*, please cite:
 
-* Sysbiolab Team. "*RGraphSpace*: A lightweight package for representing large igraph objects in a normalized coordinate system". R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
+* Sysbiolab Team. "*RGraphSpace*: A lightweight interface between igraph and ggplot2 graphics". R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
 
 * Castro MAA, Wang X, Fletcher MNC, Meyer KB, Markowetz F. "*RedeR*: R/Bioconductor package for representing modular structures nested networks and multiple levels of hierarchical associations". *Genome Biology* 13:R29, 2012. Doi: 10.1186/gb-2012-13-4-r29
 
