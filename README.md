@@ -16,7 +16,7 @@ of aesthetics and visual style, including colors, shapes, and line types. Three
 specialized `geoms` are used to translate graph data into geometric layers: 
 
 1. **geom_graphspace()**: A high-level convenience layer that processes both 
-node and edge layers in a single call. 
+nodes and edges in a single call. 
 2. **geom_nodespace()**: Dedicated to rendering vertices. Inherits *GeomPoint* 
 aesthetic mappings, optimized to scale nodes and inform the edge layer on 
 node states.
