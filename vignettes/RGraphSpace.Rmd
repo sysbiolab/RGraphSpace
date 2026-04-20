@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Overview
 
-*RGraphSpace* is an R package designed to generate *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling them to fit within a standardized unit space. This facilitates the side-by-side visualization of multiple graphs. The package implements new geometric objects based on *ggplot2* prototypes [@Wickham2016], accounting for the relative sizes of nodes and edges. By scaling graph elements, *RGraphSpace* supports layered visualizations with consistent spatial alignment. Its integration with *ggplot2* enables extensive customization of aesthetics and visual style, including colors, shapes, and line types.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a standardized unit space. This facilitates the side-by-side visualization of multiple graphs. The package implements new geometric objects based on *ggplot2* prototypes [@Wickham2016], optimized for representing large networks. By scaling graph elements, *RGraphSpace* supports the overlay of networks onto image features. It uses a dual-anchor normalization approach to align nodes with matrix indices, which is critical for multi-layered analysis where network elements must be accurately referenced to a spatial map with pixel-level precision. The integration with *ggplot2* enables extensive customization of aesthetics and visual style, including colors, shapes, and line types.
 
 # Quick start
 

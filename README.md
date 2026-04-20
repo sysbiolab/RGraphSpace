@@ -7,18 +7,17 @@
   [![](https://img.shields.io/badge/doi-10.32614/CRAN.package.RGraphSpace-blue.svg)](https://doi.org/10.32614/CRAN.package.RGraphSpace)
   <!-- badges: end -->
   
-*RGraphSpace* is an R package that integrates *igraph* and *ggplot2* graphics 
-within spatial maps. The package implements specialized layers based on *ggplot2* 
-prototypes, optimized for representing large networks.
-
-The package enables the overlay of networks onto discrete matrix indices 
-with pixel-level precision through a dual-anchor normalization. This ensures 
-the network remains aligned with the underlying data, critical for 
-multi-layered analysis where network elements must be accurately 
-referenced with the spatial map or an image background.
-
-By scaling shapes and graph elements, *RGraphSpace* provides a framework 
-for layered comparative visualizations.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* 
+objects, scaling nodes and edges to a standardized unit space. This facilitates 
+the side-by-side visualization of multiple graphs. The package implements new 
+geometric objects based on *ggplot2* prototypes, optimized for representing 
+large networks. By scaling graph elements, *RGraphSpace* supports the overlay 
+of networks onto image features. It uses a dual-anchor normalization approach 
+to align nodes with matrix indices, which is critical for multi-layered analysis 
+where network elements must be accurately referenced to a spatial map with 
+pixel-level precision. The integration with *ggplot2* enables extensive 
+customization of aesthetics and visual style, including colors, 
+shapes, and line types.
 
 ### Installation in R (>=4.5)
 
