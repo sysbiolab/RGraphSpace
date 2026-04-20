@@ -15,13 +15,13 @@ large networks. The integration with *ggplot2* enables extensive customization
 of aesthetics and visual style, including colors, shapes, and line types. Three 
 specialized `geoms` are used to translate graph data into geometric layers: 
 
-1. **geom_graphspace()**: A high-level convenience layer that processes both 
+1. **`geom_graphspace()`**: A high-level convenience layer that processes both 
 nodes and edges in a single call. 
-2. **geom_nodespace()**: Dedicated to rendering vertices. Inherits *GeomPoint* 
+2. **`geom_nodespace()`**: Dedicated to rendering vertices. Inherits `GeomPoint`
 aesthetic mappings, optimized to scale nodes and inform the edge layer on 
 node states.
-3. **geom_edgespace()**: Handles the relational data between nodes. Inherits 
-*GeomSegment* aesthetic mappings; unlike standard segment geoms, it is 
+3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits 
+`GeomSegment` aesthetic mappings; unlike standard segment geoms, it is 
 "node-aware" and dynamically adjusts geometries based on connected nodes.
 
 By scaling graph elements, *RGraphSpace* supports the overlay of networks onto 
