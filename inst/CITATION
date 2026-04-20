@@ -1,23 +1,13 @@
 
-bibentry(bibtype = "Manual",
-author = person("Sysbiolab Team"),
-title = "RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system",
-year = 2023,
-note = "R package version 1.0.7 (Doi: 10.32614/CRAN.package.RGraphSpace)",
-textVersion = "Sysbiolab Team. RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package version 1.0.7, 2023. Doi: 10.32614/CRAN.package.RGraphSpace"
+meta <- packageDescription("RGraphSpace")
+current_year <- format(Sys.Date(), "%Y")
+
+bibentry(
+  bibtype = "Manual",
+  author = person("Sysbiolab Team"),
+  title = "RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system",
+  year = current_year,
+  note = paste0("R package version ", meta$Version, " (Doi: 10.32614/CRAN.package.RGraphSpace)"),
+  textVersion = paste0("Sysbiolab Team. RGraphSpace: A lightweight package for representing large igraph objects in a normalized coordinate system. R package version ", meta$Version, ", ", current_year, ". Doi: 10.32614/CRAN.package.RGraphSpace")
 )
 
-bibentry(bibtype = "Article",
-author = "Mauro AA Castro, Xin Wang, Michael NC Fletcher, Kerstin B Meyer and Florian Markowetz",
-title = "RedeR: R/Bioconductor package for representing modular structures, nested networks and multiple levels of hierarchical associations.",
-journal = "Genome Biology",
-year = "2012",
-volume = "13",
-pages = "R29",
-number = "4",
-doi = "10.1186/gb-2012-13-4-r29",
-textVersion = paste("Castro MAA, Wang X, Fletcher MNC, Meyer KB, Markowetz F.", 
-"RedeR: R/Bioconductor package for representing modular structures,",
-"nested networks and multiple levels of hierarchical associations.",
-"Genome Biology 13:R29, 2012.", sep=" ")
-)

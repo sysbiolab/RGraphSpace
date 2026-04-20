@@ -1,5 +1,5 @@
 ---
-title: "*RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics."
+title: "RGraphSpace: A lightweight interface between igraph and ggplot2 graphics"
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
@@ -13,13 +13,20 @@ output:
     toc_depth: 2
     css: custom.css
 vignette: >
-  %\VignetteIndexEntry{"RGraphSpace: ggplot2 graphics for igraph"}
+  %\VignetteIndexEntry{"RGraphSpace: igraph to ggplot2 graphics"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE, purl=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5
+  )
 ```
 
 <br/>
