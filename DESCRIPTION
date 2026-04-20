@@ -18,7 +18,7 @@ Authors@R:
       person("Flávio", "Kessler", role = "ctb"),
       person("Jonathan", "Back", role = "ctb"),
       person("Lana", "Querne", role = "ctb"),
-      person("Victor", "Apolonio", role = "swd"),
+      person("Victor", "Apolonio", role = c("com")),
       person("Vinicius", "Chagas", role = "com"),
       person("Mauro", "Castro", role = c("cre"),
               email = "mauro.a.castro@gmail.com",

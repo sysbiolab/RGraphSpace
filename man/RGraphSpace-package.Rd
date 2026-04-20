@@ -4,22 +4,9 @@
 \name{RGraphSpace-package}
 \alias{RGraphSpace}
 \alias{RGraphSpace-package}
-\title{RGraphSpace: A lightweight package for representing large igraph
-objects in a normalized coordinate system}
+\title{RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics}
 \description{
-RGraphSpace is an R package that integrates igraph and ggplot2 graphics
-within spatial maps. RGraphSpace implements new geometric objects using
-ggplot2 protypes, customized for representing large igraph objects in a
-normalized coordinate system. By scaling shapes and graph elements,
-RGraphSpace can provide a framework for layered visualizations.
-}
-\details{
-\tabular{ll}{
-Package: \tab RGraphSpace\cr
-Type: \tab Software\cr
-License: \tab GPL-3\cr
-Maintainer: \tab Mauro Castro \email{mauro.a.castro@gmail.com}\cr
-}
+An interface to integrate 'igraph' and 'ggplot2' graphics within a normalized coordinate system. 'RGraphSpace' implements geometric objects based on 'ggplot2' prototypes, optimized for representing large networks. The package provides three specialized geoms to translate graph data into geometric layers, supporting customization of aesthetics and visual style. These geoms use a dual-anchor normalization approach to align layers, required for multi-layered analysis where network elements are referenced to a spatial map. 'RGraphSpace' aims to facilitate side-by-side visualization of multiple graphs and the integration of background reference images.
 }
 \section{Index}{
 
@@ -35,12 +22,6 @@ HTML by typing \code{help.start()} and selecting the RGraphSpace package
 from the menu.
 }
 
-\references{
-Castro MAA, Wang X, Fletcher MNC, Meyer KB, Markowetz F. RedeR:
-R/Bioconductor package for representing modular structures, nested
-networks and multiple levels of hierarchical associations.
-Genome Biology 13:R29, 2012.
-}
 \seealso{
 Useful links:
 \itemize{
@@ -52,13 +33,18 @@ Useful links:
 \author{
 \strong{Maintainer}: Mauro Castro \email{mauro.a.castro@gmail.com} (\href{https://orcid.org/0000-0003-4942-8131}{ORCID})
 
+Authors:
+\itemize{
+  \item Sysbiolab Team
+}
+
 Other contributors:
 \itemize{
   \item Flávio Kessler [contributor]
   \item Jonathan Back [contributor]
   \item Lana Querne [contributor]
-  \item Victor Apolonio [contributor]
-  \item Vinicius Chagas [contributor]
+  \item Victor Apolonio [compiler]
+  \item Vinicius Chagas [compiler]
 }
 
 }

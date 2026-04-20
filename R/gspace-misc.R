@@ -3,24 +3,6 @@
 ### Package documentation
 ################################################################################
 #' @aliases RGraphSpace-package
-#' @title RGraphSpace: A lightweight package for representing large igraph 
-#' objects in a normalized coordinate system
-#'
-#' @description
-#' RGraphSpace is an R package that integrates igraph and ggplot2 graphics 
-#' within spatial maps. RGraphSpace implements new geometric objects using 
-#' ggplot2 protypes, customized for representing large igraph objects in a 
-#' normalized coordinate system. By scaling shapes and graph elements, 
-#' RGraphSpace can provide a framework for layered visualizations.
-#'
-#' @details
-#'
-#' \tabular{ll}{
-#' Package: \tab RGraphSpace\cr
-#' Type: \tab Software\cr
-#' License: \tab GPL-3\cr
-#' Maintainer: \tab Mauro Castro \email{mauro.a.castro@@gmail.com}\cr
-#' }
 #'
 #' @section Index:
 #' \tabular{ll}{
@@ -29,16 +11,13 @@
 #' \link{plotGraphSpace}:
 #' \tab Wrapper function to plot GraphSpace objects in ggplot2.
 #' }
-#' Further information is available in the vignettes by typing
+#' Further information is available in the vignettes by typing 
 #' \code{vignette('RGraphSpace')}. Documented topics are also available in
 #' HTML by typing \code{help.start()} and selecting the RGraphSpace package
 #' from the menu.
 #'
 #' @references
-#' Castro MAA, Wang X, Fletcher MNC, Meyer KB, Markowetz F. RedeR:
-#' R/Bioconductor package for representing modular structures, nested
-#' networks and multiple levels of hierarchical associations.
-#' Genome Biology 13:R29, 2012.
+#' `r paste(format(citation("RGraphSpace"), style = "text"), collapse = "\n\n")`
 #' 
 #' @importFrom lifecycle deprecated deprecate_soft is_present
 #' @keywords internal
