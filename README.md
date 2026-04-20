@@ -8,12 +8,13 @@
   <!-- badges: end -->
   
 *RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* 
-objects, scaling nodes and edges to a standardized unit space. This facilitates 
-the side-by-side visualization of multiple graphs. The package implements new 
+objects, scaling nodes and edges to a unit space. The package implements new 
 geometric objects based on *ggplot2* prototypes, optimized for representing 
-large networks. The integration with *ggplot2* enables extensive customization 
-of aesthetics and visual style, including colors, shapes, and line types. Three 
-specialized `geoms` are used to translate graph data into geometric layers: 
+large networks. This enables extensive customization of aesthetics and 
+visual style, including colors, shapes, and line types. Three specialized 
+`geoms` translate graph data into geometric layers. These `geoms` use a 
+dual-anchor normalization approach to align layers, required for analysis 
+where network elements must be accurately referenced to a spatial map. 
 
 1. **`geom_graphspace()`**: A high-level convenience layer that processes both 
 nodes and edges in a single call. 
@@ -25,11 +26,10 @@ node states.
 "node-aware" and dynamically adjusts geometries based on connected nodes.
 
 By scaling graph elements, *RGraphSpace* supports the overlay of networks onto 
-image features. It uses a dual-anchor normalization approach to align nodes 
-with matrix indices, which is critical for layered analysis where graph elements 
-must be accurately referenced to a spatial map with pixel-level precision. 
+image features. Its dual-anchor normalization approach also aligns nodes with  
+matrix indices, which is critical for pixel-level precision. 
 
-*RGraphSpace* can also provide infrastructure support for packages that require
+*RGraphSpace* may provide infrastructure support for packages that require
 graph data abstraction. For example, it currently provides classes and 
 methods inherited by [PathwaySpace](https://github.com/sysbiolab/PathwaySpace), 
 a tool dedicated to exploring signal patterns in spatial transcriptomics. 

@@ -3,7 +3,7 @@ title: "RGraphSpace: A lightweight interface between igraph and ggplot2 graphics
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "*RGraphSpace* is an interface to integrate *igraph* and *ggplot2* graphics in a normalized coordinate system. The package implements new geometric objects using *ggplot2* prototypes, customized for side-by-side visualization of multiple graphs. By scaling shapes and graph elements, *RGraphSpace* can provide a framework for layered visualizations."
+abstract: "*RGraphSpace* is an R package that integrates igraph objects with the *ggplot2* ecosystem. It implements geometric prototypes designed for networks scaled to a standardized unit space. The package includes methods for side-by-side visualization of multiple graphs and for layering network elements onto spatial maps."
 output: 
   html_document:
     theme: cerulean
@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a standardized unit space. This facilitates the side-by-side visualization of multiple graphs. The package implements new geometric objects based on *ggplot2* prototypes [@Wickham2016], optimized for representing large networks. By scaling graph elements, *RGraphSpace* supports the overlay of networks onto image features. It uses a dual-anchor normalization approach to align nodes with matrix indices, which is critical for multi-layered analysis where network elements must be accurately referenced to a spatial map with pixel-level precision. The integration with *ggplot2* enables extensive customization of aesthetics and visual style, including colors, shapes, and line types.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for igraph objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016], optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including colors, shapes, and line types. Three specialized `geoms` translate graph data into geometric layers (see [*using geoms*](#using-geoms)). These `geoms` use a dual-anchor normalization approach to align layers, which is critical for analysis where network elements must be accurately referenced to a spatial map. Section [*mapping graphs to images*](#mapping-graphs-to-images) illustrates how this alignment achieves pixel-level precision. In what follows, this tutorial demonstrates how to use *RGraphSpace* for side-by-side visualization of multiple graphs.
 
 # Quick start
 
@@ -164,7 +164,7 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 ```
 
 
-# Using *ggplot2* geoms
+# Using *ggplot2* geoms {#using-geoms}
 
 ## Visual integration and aesthetics mapping
 
