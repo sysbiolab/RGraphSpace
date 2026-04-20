@@ -19,7 +19,7 @@ Suggests: knitr, rmarkdown, testthat, ggnewscale, patchwork
 Enhances: RedeR
 License: Artistic-2.0
 VignetteBuilder: knitr
-URL: https://github.com/sysbiolab/RGraphSpace
+URL: https://github.com/sysbiolab/RGraphSpace, https://sysbiolab.github.io/RGraphSpace/
 BugReports: https://github.com/sysbiolab/RGraphSpace/issues
 Collate:
     gspace-checks.R
