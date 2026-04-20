@@ -47,9 +47,6 @@
             stop("vertex names must be unique.", call. = FALSE)
         }
     }
-    if (is.null(igraph::V(g)$nodeLabel)){
-        igraph::V(g)$nodeLabel <- as.character(igraph::V(g)$name)
-    }
     if (!igraph::is_simple(g)) {
         if (verbose && igraph::any_loop(g)) message("Removing loops...")
         if (verbose && igraph::any_multiple(g))
@@ -57,6 +54,28 @@
         g <- igraph::simplify(g, remove.loops = TRUE, remove.multiple = TRUE,
           edge.attr.comb = list(weight = "max", "first"))
     }
+    if (is.null(igraph::V(g)$nodeLabel)){
+        igraph::V(g)$nodeLabel <- as.character(igraph::V(g)$name)
+    }
+    if (is.null(igraph::V(g)$nodeSize)){
+        igraph::V(g)$nodeSize <- .get_default_vatt()[["nodeSize"]]
+    }
+    if (is.null(igraph::E(g)$arrowType)){
+        if (is_directed(g)) {
+            igraph::E(g)$arrowType <- 1
+        } else {
+            igraph::E(g)$arrowType <- 0
+        }
+    }
+    g <- .validate_attributes(g)
+    return(g)
+    
+}
+
+################################################################################
+### Validate graph attributes
+################################################################################
+.validate_attributes <- function(g){
     g <- .validate_nodes(g)
     g <- .validate_edges(g)
     g <- .validate_graph(g)
@@ -65,6 +84,7 @@
 
 #-------------------------------------------------------------------------------
 .validate_nodes <- function(g) {
+    
     # get default attributes
     atts <- c(.get_required_vatt(), .get_default_vatt())
     a_names <- names(atts)
@@ -75,25 +95,24 @@
             .validate_vatt(igraph::vertex_attr(g)[b_names])
         }
     }
-    # add missing default attributes
-    c_names <- a_names[!a_names %in% b_names]
-    if (length(c_names) > 0) {
-        for (at in c_names) {
-            igraph::vertex_attr(g, name = at) <- atts[[at]]
-        }
-    }
+    
     # put default attributes 1st
     d_names <- igraph::vertex_attr_names(g)
+    a_names <- a_names[a_names %in% d_names]
     a_names <- c(a_names, d_names[ ! d_names %in% a_names ])
     igraph::vertex_attr(g) <- igraph::vertex_attr(g)[a_names]
-    # further checks
-    g <- .transform_nodeshape(g)
+    
+    # attributes that require transformation
+    g <- .validate_nodeshape(g)
+    
     return(g)
 }
 
 #-------------------------------------------------------------------------------
 .validate_edges <- function(g) {
+    
     g <- .remove_hidden_eatt(g)
+    
     # get default attributes
     atts <- .get_default_eatt(igraph::is_directed(g))
     a_names <- names(atts)
@@ -104,18 +123,14 @@
             .validate_eatt(igraph::edge_attr(g)[b_names])
         }
     }
-    # add missing default attributes
-    c_names <- a_names[!a_names %in% b_names]
-    if (length(c_names) > 0) {
-        for (at in c_names) {
-            igraph::edge_attr(g, name = at) <- atts[[at]]
-        }
-    }
+    
     # put default attributes 1st
     d_names <- igraph::edge_attr_names(g)
+    a_names <- a_names[a_names %in% d_names]
     a_names <- c(a_names, d_names[ ! d_names %in% a_names ])
     igraph::edge_attr(g) <- igraph::edge_attr(g)[a_names]
-    # further checks
+    
+    # attributes that require transformation
     g <- .validate_arrowtype(g)
     g <- .validate_linetype(g)
     return(g)
@@ -136,14 +151,14 @@
 ### Default RGraphSpace attributes
 ################################################################################
 .get_required_vatt <- function() {
-    atts <- list("x" = 0, "y" = 0, "name" = NA)
+    atts <- list("x" = NA, "y" = NA, "name" = NA)
     return(atts)
 }
 .get_default_vatt <- function() {
     atts <- list(
         "nodeLabel" = NA, "nodeLabelSize" = 8, "nodeLabelColor" = "grey40",
         "nodeShape" = 21, "nodeSize" = 5, "nodeColor" = "grey80",
-        "nodeLineWidth" = 1, "nodeLineColor" = "grey20")
+        "nodeLineWidth" = 0.5, "nodeLineColor" = "grey20")
     return(atts)
 }
 .get_default_eatt <- function(is.directed = FALSE) {
@@ -249,26 +264,28 @@
 ################################################################################
 
 #-------------------------------------------------------------------------------
-.transform_nodeshape <- function(g) {
+.validate_nodeshape <- function(g) {
     if (vcount(g) > 0 && "nodeShape" %in% names(vertex_attr(g))) {
-        vshapes <- V(g)$nodeShape
-        if (.all_integerValues(vshapes)) {
-            vshapes[vshapes > 25] <- 21
-            vshapes[vshapes < 0] <- 1
-        } else {
-            vshapes <- tolower(vshapes)
-            pch <- rep(21, length(vshapes))
-            pch[grep("circle", vshapes)] <- 21
-            pch[grep("ellipse", vshapes)] <- 21
-            pch[grep("square", vshapes)] <- 22
-            pch[grep("diamond", vshapes)] <- 23
-            pch[grep("triangle", vshapes)] <- 24
-            pch[grep("rectangle", vshapes)] <- 22
-            vshapes <- pch
-        }
-        V(g)$nodeShape <- vshapes
+        V(g)$nodeShape  <- .transform_nodeshape(V(g)$nodeShape)
     }
     return(g)
+}
+.transform_nodeshape <- function(vshapes) {
+    if (.all_integerValues(vshapes)) {
+        vshapes[vshapes > 25] <- 21
+        vshapes[vshapes < 0] <- 1
+    } else {
+        vshapes <- tolower(vshapes)
+        pch <- rep(21, length(vshapes))
+        pch[grep("circle", vshapes)] <- 21
+        pch[grep("ellipse", vshapes)] <- 21
+        pch[grep("square", vshapes)] <- 22
+        pch[grep("diamond", vshapes)] <- 23
+        pch[grep("triangle", vshapes)] <- 24
+        pch[grep("rectangle", vshapes)] <- 22
+        vshapes <- pch
+    }
+    return(vshapes)
 }
 
 #-------------------------------------------------------------------------------

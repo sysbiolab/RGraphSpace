@@ -42,13 +42,14 @@
 
 #-------------------------------------------------------------------------------
 .add_labels2 <- function(ggp, nodes){
+  vatt <- .get_default_vatt()
   nodes_ft <- nodes[!is.na(nodes$nodeLabel), ]
   x <- y <- nodeLabel <- NULL
   ggp <- ggp + geom_text(
     mapping = aes(x = x, y = y, label = nodeLabel), 
     data = nodes_ft, fontface = "bold",
-    size = nodes_ft$nodeLabelSize, 
-    colour = nodes_ft$nodeLabelColor, 
+    size = nodes_ft$nodeLabelSize %||% vatt$nodeLabelSize, 
+    colour = nodes_ft$nodeLabelColor %||% vatt$nodeLabelColor, 
     size.unit = "pt", vjust="center", hjust="center")
   return(ggp)
 }

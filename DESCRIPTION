@@ -1,32 +1,40 @@
 Package: RGraphSpace
 Type: Package
-Version: 1.1.2
+Version: 1.1.3
 Title: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics
 Description: Interface to integrate 'igraph' and 'ggplot2' graphics in a normalized coordinate system. 'RGraphSpace' implements new geometric objects using 'ggplot2' prototypes, customized for side-by-side visualization of multiple graphs. By scaling shapes and graph elements, 'RGraphSpace' helps to create layered visualizations that stay coherent across multiple graphs.
 Authors@R: 
-    c(person("Victor", "Apolonio", role = "ctb"),
+    c(person("Flávio", "Kessler", role = "ctb"),
+      person("Jonathan", "Back", role = "ctb"),
+      person("Lana", "Querne", role = "ctb"),
+      person("Victor", "Apolonio", role = "ctb"),
       person("Vinicius", "Chagas", role = "ctb"),
       person("Mauro", "Castro", role = c("aut", "cre"),
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
-Depends: R(>= 4.4), methods, ggplot2
-Imports: grDevices, scales, grid, igraph, rlang, patchwork, cowplot, gtable, ggrastr, circlize, lifecycle
-Suggests: knitr, rmarkdown, testthat
+Depends: R(>= 4.5), methods, ggplot2
+Imports: grDevices, grid, igraph, scales, rlang, ggrastr, lifecycle
+Suggests: knitr, rmarkdown, testthat, ggnewscale, patchwork
 Enhances: RedeR
 License: Artistic-2.0
 VignetteBuilder: knitr
 URL: https://github.com/sysbiolab/RGraphSpace
 BugReports: https://github.com/sysbiolab/RGraphSpace/issues
 Collate:
-    gspaceChecks.R
-    gspaceValidation.R
-    gspaceConstructor.R
-    gspaceSupplements.R
-    gspaceGeom.R
-    gspaceClasses.R
-    gspaceGenerics.R
-    gspaceMethods.R
-    gspaceMisc.R
-    gspaceThemes.R
+    gspace-checks.R
+    gspace-validation.R
+    gspace-constructor.R
+    gspace-supplements.R
+    gspace-classes.R
+    gspace-generics.R
+    gspace-methods.R
+    gspace-normalize.R
+    gspace-misc.R
+    gspace-themes.R
+    geom-graphspace.R
+    geom-nodespace.R
+    geom-edgespace.R
+    inject-nodespace.R
 Encoding: UTF-8
 RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)

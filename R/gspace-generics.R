@@ -1,11 +1,22 @@
 
-setGeneric("plotGraphSpace", function(gs, ...) 
+setGeneric("plotGraphSpace", function(gs, ...)
   standardGeneric("plotGraphSpace"),
   package = "RGraphSpace"
 )
 
 setGeneric("getGraphSpace", function(gs, what = "summary") 
   standardGeneric("getGraphSpace"), 
+  package = "RGraphSpace"
+)
+
+setGeneric("normalizeGraphSpace", function(gs, image = NULL, ...) 
+  standardGeneric("normalizeGraphSpace"),
+  signature = c("gs", "image"),
+  package = "RGraphSpace"
+)
+
+setGeneric("cropGraphSpace", function(gs, ...) 
+  standardGeneric("cropGraphSpace"),
   package = "RGraphSpace"
 )
 

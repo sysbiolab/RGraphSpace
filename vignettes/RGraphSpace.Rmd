@@ -35,9 +35,9 @@ This section will create a toy *igraph* object to demonstrate the *RGraphSpace* 
 
 ```{r Load packages for quick start, eval=TRUE, message=FALSE}
 #--- Load required packages
-library(igraph)
-library(ggplot2)
-library(RGraphSpace)
+library("igraph")
+library("ggplot2")
+library("RGraphSpace")
 ```
 
 ```{r Toy igraph - 1, eval=TRUE, message=FALSE, results=FALSE}
@@ -81,8 +81,8 @@ Next, we will demonstrate all vertex and edge attributes that can be passed to *
 ## Vertex attributes
 
 ```{r Node attributes, eval=TRUE, message=FALSE}
-# Node size (numeric in (0, 100), as '%' of the plot space)
-V(gtoy1)$nodeSize <- c(8, 5, 5, 5, 5)
+# Node size (numeric in [0, 100], as '%' of the plot space)
+V(gtoy1)$nodeSize <- c(8, 5, 5, 10, 5)
 
 # Node shape (integer code between 0 and 25; see 'help(points)')
 V(gtoy1)$nodeShape <- c(21, 22, 23, 24, 25)
@@ -104,6 +104,9 @@ V(gtoy1)$nodeLabelSize <- 8
 
 # Node label color (Hexadecimal or color name)
 V(gtoy1)$nodeLabelColor <- "black"
+
+# Node transparency (in [0,1])
+V(gtoy1)$nodeAlpha <- 1
 ```
 
 ## Edge attributes
@@ -120,8 +123,8 @@ E(gtoy1)$edgeLineColor <- c("red","green","blue","black")
 # Edge type (as in 'lty' standard graphics; see 'help(gpar)')
 E(gtoy1)$edgeLineType <- c("solid", "11", "dashed", "2124")
 
-# Edge weight (numeric; not passed to ggplot)
-E(gtoy1)$weight <- 1
+# Edge transparency (in [0,1])
+E(gtoy1)$edgeAlpha <- 1
 ```
 
 ## Arrowhead attributes
@@ -154,41 +157,29 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 ```
 
 
-# Mapping graphs to images
-
-Images can be used as spatial references for graph layouts in *RGraphSpace*. When a raster image is provided, its pixel grid defines the coordinate system where nodes are positioned, supporting the construction of graphs from image features.
-
-Next, we use the `volcano` topographic matrix as an example. Features extracted from this matrix are mapped to graph nodes and visualized over a raster background.
-
-```{r Mapping images to graph space, eval=TRUE, message=FALSE, out.width="80%"}
-# Extract pixel coordinates from the 'volcano' matrix,
-# representing features at the 0.85 quantile level
-coords <- which(volcano == quantile(volcano, 0.85), arr.ind = TRUE)
-
-# Make an igraph from pixel coordinates
-gtoy2 <- igraph::make_empty_graph(n = nrow(coords))
-igraph::V(gtoy2)$y <- coords[,1]
-igraph::V(gtoy2)$x <- coords[,2]
-
-# Create a GraphSpace object, including the raster image;
-# The 'mar' parameter controls the margins between the graph 
-# and the image boundaries
-gs <- GraphSpace(gtoy2, image = as_colorraster(volcano), mar = 0.1)
-
-# Plot 'gs' with the raster as background
-plotGraphSpace(gs, add.image = TRUE)
-```
-
-
 # Using *ggplot2* geoms
 
-The examples below illustrate how *RGraphSpace* integrates with *ggplot2* using graph attributes stored in the `GraphSpace` object. Node and edge attributes can either define final visual properties (used as identity values) or be mapped to aesthetics and rendered through standard *ggplot2* geoms as building blocks.
+## Visual integration and aesthetics mapping
 
-In the following example, we create a small modular graph containing variables of different types in order to demonstrate several plotting options.
+This section illustrates how *RGraphSpace* integrates with the *ggplot2* using `geoms` building blocks. Graph attributes stored within the `GraphSpace` object can be handled in two ways:
+
+* **Identity Mapping:** Graph attributes are interpreted as "identity values" (such as `nodeColor`, `nodeSize`, or `nodeShape`) and are displayed exactly as they are, without further scaling or mapping.
+
+* **Dynamic Aesthetic Mapping:** Graph attributes are mapped to  *aesthetics* (such as `colour`, `size`, and `shape`) and rendered through standard *ggplot2* scales, which automatically generate synchronized legends.
+
+### The *GraphSpace* geoms
+
+To facilitate this integration, *RGraphSpace* implements three specialized `geoms` designed to handle graph data types within a *ggplot2* workflow:
+
+1. **`geom_graphspace()`**: A high-level convenience layer that process both node and edge layers in a single call.
+2. **`geom_nodespace()`**: Dedicated to rendering vertices. It is optimized to work with the `inject_nodespace()` function, ensuring that node sizes and edge offsets are correctly scaled between layers.
+3. **`geom_edgespace()`**: Handles the relational data between nodes. Unlike standard segment geoms, it is "node-aware", meaning it can dynamically adjust its start and end points (clipping) based on the specific size and stroke of the connected nodes.
+
+In the following example, we create a small modular graph containing variables of different types in order to demonstrate these *geoms*.
 
 ```{r Load a toy graph, eval=TRUE, message=FALSE, out.width="80%"}
 # Make a toy modular graph
-library(igraph)
+library("igraph")
 gtoy3 <- sample_islands(
   islands.n = 3,       # number of modules
   islands.size = 30,   # nodes per module
@@ -214,66 +205,218 @@ gs <- GraphSpace(gtoy3)
 
 ## Plotting identity values
 
-In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. Therefore, the colours can be used directly by mapping them and applying `scale_fill_identity()`.
+In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is particularly useful when nodes have been pre-processed with specific color schemes and you want the visual output to reflect the original data directly, without further mapping.
+
+```{r, eval=TRUE, message=FALSE, include = FALSE}
+edge_var <- node_var <- nodeColor <- node_group <- NULL
+```
 
 ```{r Plot identity values, eval=TRUE, message=FALSE, out.width="70%"}
 ggplot() + 
-  geom_edgespace(colour = "grey", data = gs) +
-  geom_nodespace(aes(fill = nodeColor), colour = "grey", data = gs) +
-  scale_fill_identity() +
-  theme_gspace_axes(theme = "th0")
+  geom_graphspace(colour = "grey", data = gs) +
+  theme(aspect.ratio = 1)
 ```
+
+The trade-off on this approach is that, on one hand, all attributes remain scaled with the graph space, but no legend is accessible. This is because identity scales bypass the scaling and guide-building process of **ggplot2**. If a legend is required to explain the meaning of these colors, the attribute should be mapped as a variable (e.g., `aes(fill = attribute)`) using standard discrete or continuous scales.
 
 ## Mapping categorical variables
 
-Node and edge attributes can also be mapped to aesthetics and then rendered using appropriate scales. In this example, the node categorical variable `node_group` is mapped to `fill`, while the edge numeric variable `edge_var` is mapped to `colour`.
+In this example, the node categorical variable `node_group` is mapped to the `fill` aesthetic.
 
 ```{r Map aesthetics to categorical variables, eval=TRUE, message=FALSE, out.width="70%"}
 ggplot() + 
-  geom_edgespace(aes(colour = edge_var), data = gs) +
-  geom_nodespace(aes(fill = node_group), colour = "grey", data = gs) +
-  scale_colour_continuous(palette = c("cyan","blue")) +
+  geom_graphspace(aes(fill = node_group), 
+    colour = "grey", data = gs) +
   scale_fill_viridis_d(option = "viridis") +
-  theme_gspace_axes(theme = "th0") + 
-  theme(legend.position = "right")
+  theme_gspace_coords()
 ```
 
 ## Mapping numeric variables
 
-Numeric attributes can also be mapped to aesthetics and visualised using continuous colour scales. In this example, both node and edge attributes are numeric variables.
+In this example, node and edge numeric variables are mapped to `fill` and `colour` aesthetics, respectively.
 
 ```{r Map aesthetics to numeric variables, eval=TRUE, message=FALSE, out.width="70%"}
 # Map aesthetics to numeric variables
 ggplot() + 
   geom_edgespace(aes(colour = edge_var), data = gs) +
-  geom_nodespace(aes(fill = node_var), colour = "grey", data = gs) +
+  geom_nodespace(aes(fill = node_var), 
+    colour = "grey", data = gs) +
   scale_colour_continuous(palette = c("cyan","blue")) +
   scale_fill_continuous(palette = c("white","purple")) +
-  theme_gspace_axes(theme = "th0") + 
-  theme(legend.position = "right")
+  theme_gspace_coords()
 ```
 
 ## Using separate colour scales
 
-When multiple geoms use the same aesthetic (for example `colour`) but should be mapped to different variables with independent scales, the *ggnewscale* package can be used to introduce a new scale.
+When multiple geoms use the same aesthetic (for example `colour`) but require mapping to different variables with independent scales, the *ggnewscale* package can be used to introduce a new scale [@Campitelli2025].
 
 ```{r Map aesthetics to separate colour scales, eval=FALSE, message=FALSE, out.width="70%"}
 if (!require("ggnewscale", quietly = TRUE)) {
   install.packages("ggnewscale")
 }
+library("ggnewscale")
 ggplot() + 
   geom_edgespace(aes(colour = edge_var), data = gs) +
   scale_colour_continuous(palette = c("cyan","blue")) +
   ggnewscale::new_scale_colour() +
-  geom_nodespace(aes(colour = node_var), data = gs) +
+  geom_nodespace(aes(colour = node_var), 
+    data = gs, stroke = 2, fill = NA) +
   scale_colour_continuous(palette = c("white","purple")) +
-  theme_gspace_axes(theme = "th0") + 
-  theme(legend.position = "right")
+  theme_gspace_coords()
 ```
 
-This approach allows node and edge aesthetics to be controlled independently while still being drawn within the same plot.
+```{r toy_newscale.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+gg <- ggplot() + 
+  geom_edgespace(aes(colour = edge_var), data = gs) +
+  scale_colour_continuous(palette = c("cyan","blue")) +
+  ggnewscale::new_scale_colour() +
+  geom_nodespace(aes(colour = node_var), 
+    data = gs, stroke = 2, fill = NA) +
+  scale_colour_continuous(palette = c("white","purple")) +
+  theme_gspace_coords()
+ggsave(filename = "./figs/toy_newscale.png", height=NA, width=NA,
+  units="in", device="png", dpi=200, plot=gg)
+```
 
-# Interactive layout
+```{r toy_newscale, echo=FALSE, out.width = '70%', purl=FALSE}
+knitr::include_graphics("figs/toy_newscale.png")
+```
+
+
+# Mapping graphs to images
+
+Images can be used as spatial references for graph layouts in *RGraphSpace*. When a raster image is provided, its pixel grid defines the coordinate system where nodes are positioned, supporting the construction of graphs from image features.
+
+Next, we use the `volcano` topographic matrix as an example. Features extracted from this matrix are mapped to graph nodes and visualized over a raster background.
+
+```{r Mapping images to graph space, eval=TRUE, message=FALSE, out.width="80%"}
+# Extract pixel coordinates for a specific intensity quantile.
+coords <- which(volcano == quantile(volcano, 0.85), arr.ind = TRUE)
+
+# Mark target pixels with '0'; it will appear as black in the background. 
+# This creates a visual anchor to verify the alignment precision.
+volcano2 <- volcano
+volcano2[coords] <- 0
+
+# Create an igraph object from the pixel coordinates; 
+# note that at this stage, 'y' represents matrix row indices.
+gtoy2 <- igraph::make_empty_graph(n = nrow(coords))
+igraph::V(gtoy2)$y <- coords[,1]
+igraph::V(gtoy2)$x <- coords[,2]
+
+# Highlight the bottom-row vertex (max 'y' index) to demonstrate alignment; 
+# since matrix indexing is top-down, this accounts for the default flip 
+# between matrix and plot coordinate systems.
+igraph::V(gtoy2)$nodeColor <- NA
+bottom_row <- which.max(igraph::V(gtoy2)$y)
+igraph::V(gtoy2)$nodeColor[bottom_row] <- "red"
+
+# Initialize a GraphSpace object
+gs <- GraphSpace(gtoy2)
+
+# Map graph coordinates to the image space. 
+# Vertical flipping (flip.v = TRUE) is required to align coordinates.
+gs <- normalizeGraphSpace(gs, image = as_colorraster(volcano2), 
+  flip.v = TRUE)
+
+# Render the graph with the raster as background
+plotGraphSpace(gs, add.image = TRUE)
+```
+
+
+# Interoperability with other packages
+
+## Geospatial data
+
+The following example demonstrates interoperability between *RGraphSpace* and *sf*, a well-established infrastructure package for spatial data analysis [@Pebesma2023]. We will use a spatial network of cities to show how *RGraphSpace* geoms can be plugged into *sf* workflows.
+
+```{r Maps with sf, eval=FALSE, message=FALSE, out.width="80%"}
+if(!require("sf", quietly = TRUE)){
+  install.packages("sf")
+}
+if(!require("rnaturalearth", quietly = TRUE)){
+  install.packages("rnaturalearth")
+}
+if(!require("maps", quietly = TRUE)){
+  install.packages("maps")
+}
+if(!require("geometry", quietly = TRUE)){
+  install.packages("geometry")
+}
+library("RGraphSpace")
+library("igraph")
+library("sf")
+library("maps")
+library("geometry")
+library("rnaturalearth")
+
+# Load and project map
+map_sf <- ne_countries(country = "Brazil", returnclass = "sf")
+map_proj <- st_transform(map_sf)
+
+# Filter major cities by regional capitals
+data(world.cities, package = "maps")
+r_capitals <- c(
+  "Aracaju", "Belem", "Belo Horizonte", "Boa Vista", "Brasilia", 
+  "Campo Grande", "Cuiaba", "Curitiba", "Florianopolis", "Fortaleza", 
+  "Goiania", "Joao Pessoa", "Macapa", "Maceio", "Manaus", "Natal", 
+  "Palmas", "Porto Alegre", "Porto Velho", "Recife", "Rio Branco", 
+  "Rio de Janeiro", "Salvador", "Sao Luis", "Sao Paulo", "Teresina", 
+  "Vitoria"
+)
+cities <- subset(world.cities, country.etc == "Brazil" & 
+    name %in% r_capitals & pop > 1000000)
+
+# Create Delaunay triangulation edges
+# Note: the edges hold no particular meaning beyond
+# demonstrating integration between coordinate systems
+tri <- delaunayn(cities[,c("lat","long")])
+edges <- unique(rbind(tri[,c(1,2)], tri[,c(2,3)], tri[,c(1,3)] ))
+
+# Build igraph with coordinates
+gtoy1 <- igraph::graph_from_edgelist(edges, directed = FALSE)
+igraph::V(gtoy1)$x <- cities$long
+igraph::V(gtoy1)$y <- cities$lat
+igraph::V(gtoy1)$Cities <- cities$name
+igraph::V(gtoy1)$`Population (M)` <- cities$pop/1000000
+igraph::E(gtoy1)$arrowType <- 3
+
+# Make a GraphSpace
+gs1 <- GraphSpace(gtoy1)
+
+# Plot
+ggplot() + 
+  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_edgespace(color = "grey40", arrow_size = 0.5, 
+    arrow_offset = 0.01, data = gs1) + 
+  geom_nodespace(aes(fill = Cities, size = `Population (M)`), 
+    data = gs1) +
+  scale_size(range = c(3,9)) +
+  scale_fill_discrete() + 
+  inject_nodespace() +
+  theme_gspace_legend(key_fill = TRUE)
+```
+
+```{r toy_sf.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# gg <- ggplot() + 
+#   geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+#   geom_edgespace(color = "grey40", arrow_size = 0.5, 
+#     arrow_offset = 0.01, data = gs1) + 
+#   geom_nodespace(aes(fill = Cities, size = `Population (M)`), 
+#     data = gs1) +
+#   scale_size(range = c(3,9)) +
+#   scale_fill_discrete() + 
+#   inject_nodespace() +
+#   theme_gspace_legend(key_fill = TRUE)
+# ggsave(filename = "./figs/toy_sf.png", height=3.5, width=5,
+#   units="in", device="png", dpi=200, plot=gg)
+```
+
+```{r toymap, echo=FALSE, out.width = '75%', purl=FALSE}
+knitr::include_graphics("figs/toy_sf.png")
+```
+
+## Interactive visualization
 
 The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, an R/Bioconductor package for interactive network visualization and manipulation.
 
@@ -289,9 +432,10 @@ if(!require("RedeR", quietly = TRUE)){
 }
 
 # Launch the RedeR application
-library(RedeR)
+library("RedeR")
 startRedeR()
 resetRedeR()
+data(gtoy1, package = "RGraphSpace")
 
 # Send 'gtoy1' to the RedeR interface
 addGraphToRedeR(gtoy1, unit="npc")
@@ -313,7 +457,12 @@ gtoy2 <- updateLayoutFromRedeR(g=gtoy1)
 plotGraphSpace(gtoy2, add.labels = TRUE)
 ```
 
-# Other examples
+```{r toygraph, echo=FALSE, out.width = '95%', purl=FALSE}
+knitr::include_graphics("figs/toy_reder.png")
+```
+
+
+## Other examples
 
 The following vignettes illustrate how *RGraphSpace* can be used in combination with *PathwaySpace* to project network signals into landscape images.
 

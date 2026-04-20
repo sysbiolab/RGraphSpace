@@ -1,34 +1,132 @@
 
 #-------------------------------------------------------------------------------
-#' @title Constructor of GraphSpace-class objects
+#' @title Create a GraphSpace object
+#' 
+#' @description \code{GraphSpace} is the main constructor for 
+#' \linkS4class{GraphSpace} objects, designed to store graph data and 
+#' metadata for optimized rendering in RGraphSpace.
 #'
-#' @description \code{GraphSpace} is a constructor of
-#' GraphSpace-class objects.
-#'
-#' @param g An \code{\link[igraph]{igraph}} object. It must include graph 
-#' coordinates assigned to \code{x} and \code{y} vertex attributes, and
-#' vertex labels assigned to \code{name} vertex attribute.
-#' @param mar A single numeric value in \code{[0, 0.5]} controlling the size of
-#' the outer margins around the graph. Without an image, \code{mar} specifies
-#' symmetric margins as a fraction of the graph space. With an image,
-#' \code{mar} is interpreted as a fraction of the available image margins
-#' surrounding the graph.
-#' @param image An optional background image. When provided, \code{x} and 
-#' \code{y} coordinates must represent pixel positions in the image matrix.
-#' @param flip.image Logical indicating whether the image should be vertically
-#' flipped to match the graph coordinate system. If set to \code{FALSE}, the
-#' graph is effectively flipped to align with the image orientation.
-#' @param verbose A single logical value specifying to display detailed 
-#' messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).
-#' @param layout deprecated; pass layout through the \code{x} and \code{y}
-#' vertex attributes instead.
+#' @param g An \link[igraph]{igraph} object. It must include vertex 
+#' coordinates assigned to \code{x} and \code{y} attributes, and
+#' vertex labels assigned to \code{name} attribute.
+#' @param layout An optional numeric matrix with two columns for \code{x} and
+#' \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.
+#' @param verbose A logical value. If \code{TRUE}, displays detailed messages.
+#' @param mar `r lifecycle::badge("deprecated")` Deprecated since
+#' RGraphSpace 1.1.1; use \link{normalizeGraphSpace} instead.
+#' @param image `r lifecycle::badge("deprecated")` Deprecated since
+#' RGraphSpace 1.1.1; use \link{normalizeGraphSpace} instead.
+#' 
 #' @return A \linkS4class{GraphSpace} class object.
+#' 
+#' @details
+#' \code{GraphSpace} objects are designed to bridge the gap between network 
+#' analysis (via \code{igraph}) and high-quality visualization (via \code{ggplot2}). 
+#' The constructor ensures that all necessary aesthetics for 
+#' \code{\link{geom_graphspace}} are pre-processed and validated.
+#' 
+#' \strong{Coordinate System and Normalization:}
+#' By default, the constructor expects coordinates in the \code{x} and \code{y} 
+#' vertex attributes, along with unique IDs in the \code{name} vertex 
+#' attribute. If these are not provided, the constructor will generate 
+#' sequential IDs and assign a layout using the 
+#' \code{\link[igraph]{layout_nicely}} function. These coordinates define the 
+#' relative positioning of nodes. For optimal rendering, it is recommended 
+#' to pass the object through \code{\link{normalizeGraphSpace}} after 
+#' construction. This converts vertex positions to Normalized Parent Coordinates 
+#' (NPC), ensuring the graph remains centered and scaled relative to the 
+#' plotting area.
+#' 
+#' \strong{Data Structure:}
+#' The resulting object stores nodes and edges in separate internal slots, 
+#' preserving metadata such as \code{nodeSize} and \code{edgeLineColor}. 
+#' If an \code{igraph} object is provided without specific styling attributes, 
+#' \code{GraphSpace} will assign the default values defined in the 
+#' \code{\link{geom_graphspace}} aesthetics. Users can also specify custom 
+#' variables in the input graph to be used as aesthetics within the 
+#' \code{ggplot2} grammar.
+#' 
+#' \strong{Arrowhead Mapping:}
+#' The \code{arrowType} attribute (see \emph{Arrowhead types} section) 
+#' allows for a mapping between symbolic aliases (such as \code{"-->"}) 
+#' and internal integer codes. This is useful for assigning interaction 
+#' types in directed or undirected graphs (e.g., activation vs. inhibition).
+#'  
+#' @section Vertex attributes:
+#' The following attributes in \code{g} are evaluated by the constructor:
+#' 
+#' \tabular{ll}{
+#'   \code{nodeSize} \tab Numeric \code{[0, 100]}, representing % of the plotting space. \cr
+#'   \code{nodeShape} \tab Integer code \code{[0-25]}; see \link[graphics]{points}. \cr
+#'   \code{nodeColor} \tab A valid color name or hexadecimal code. \cr
+#'   \code{nodeLineWidth} \tab Border thickness; see \link[grid]{gpar}. \cr
+#'   \code{nodeLineColor} \tab A valid color name or hexadecimal code. \cr
+#'   \code{nodeLabel} \tab Character string (\code{NA} will omit labels). \cr
+#'   \code{nodeLabelSize} \tab Font size in \code{pts}; see \link[grid]{gpar}. \cr
+#'   \code{nodeLabelColor} \tab A valid color name or hexadecimal code.
+#' }
+#' 
+#' @section Edge attributes:
+#' The following attributes in \code{g} are evaluated by the constructor:
+#' 
+#' \tabular{ll}{
+#'   \code{edgeLineWidth} \tab Edge thickness; see \code{\link[grid]{gpar}}. \cr
+#'   \code{edgeLineColor} \tab A valid color name or hexadecimal code. \cr
+#'   \code{edgeLineType}  \tab Line style (e.g., "solid", "dashed"); see \code{\link[grid]{gpar}}. \cr
+#'   \code{arrowType}     \tab Arrowhead style (see \emph{Arrowhead types} section).
+#' }
+#' 
+#' @section Arrowhead types:
+#' 
+#' Arrowheads are controlled via the \code{arrowType} attribute using 
+#' integer or character codes (see examples in the \emph{RGraphSpace} vignette).
+#' 
+#' In directed graphs, arrows follow the edge list orientation by default, 
+#' representing forward directions (\emph{e.g.}, \code{A -> B}). 
+#' While undirected graphs do not show arrows by default, specific styles 
+#' can be manually assigned for detailed visualization, including forward, 
+#' backward, or bidirectional arrowheads.
+#' 
+#' \subsection{Directed graphs (A -> B):}{
+#' \tabular{lll}{
+#'   \strong{Code} \tab \strong{Alias} \tab \strong{Description} \cr
+#'   \code{0} \tab \code{"---"} \tab No arrow \cr
+#'   \code{1} \tab \code{"-->"} \tab Forward arrow \cr
+#'   \code{-1} \tab \code{"--|"} \tab Forward bar
+#' }
+#' }
+#' 
+#' \subsection{Undirected graphs (A -- B):}{
+#' \tabular{lll}{
+#'   \strong{Code} \tab \strong{Alias} \tab \strong{Description} \cr
+#'   \code{0} \tab \code{"---"} \tab No arrow \cr
+#'   \code{1} \tab \code{"-->"} \tab Forward arrow \cr
+#'   \code{2} \tab \code{"<--"} \tab Backward arrow \cr
+#'   \code{3} \tab \code{"<->"} \tab Bidirectional arrow \cr
+#'   \code{4} \tab \code{"|->"} \tab Forward arrow / backward bar \cr
+#'   \code{-1} \tab \code{"--|"} \tab Forward bar \cr
+#'   \code{-2} \tab \code{"|--"} \tab Backward bar \cr
+#'   \code{-3} \tab \code{"|-|"} \tab Bidirectional bar \cr
+#'   \code{-4} \tab \code{"<-|"} \tab Backward arrow / forward bar
+#' }
+#' }
+#' 
 #' @author Sysbiolab.
-#' @seealso \code{\link{plotGraphSpace}}
+#' 
+#' @seealso \code{\link{geom_graphspace}}, \code{\link{plotGraphSpace}}
+#' 
 #' @examples
-#' # Load a demo igraph
-#' data('gtoy1', package = 'RGraphSpace')
-#'
+#' library(igraph)
+#' 
+#' # Create a star graph
+#' gtoy1 <- make_full_graph(15)
+#' 
+#' # Custom attributes
+#' V(gtoy1)$nodeSize <- 5
+#' E(gtoy1)$edgeLineColor <- "red"
+#' E(gtoy1)$arrowType <- "-->"
+#' 
+#' # Create a GraphSpace
 #' gs <- GraphSpace(gtoy1)
 #' 
 #' @importFrom igraph degree vcount ecount which_mutual any_loop any_multiple
@@ -43,47 +141,44 @@
 #' @aliases GraphSpace
 #' @export
 #'
-GraphSpace <- function(g, mar = 0.1, layout = NULL, 
-    image = NULL, flip.image = FALSE, verbose = TRUE) {
+GraphSpace <- function(g, layout = NULL, verbose = TRUE,  
+    mar = deprecated(), image = deprecated()) {
+    ### deprecate
+    if (lifecycle::is_present(mar)) {
+        deprecate_soft("1.1.1", "GraphSpace(mar)", 
+            "normalizeGraphSpace(mar)")
+    }
+    if (lifecycle::is_present(image)) {
+        deprecate_soft("1.1.1", "GraphSpace(image)", 
+            "normalizeGraphSpace(image)")
+    }
     .validate_gs_args("singleLogical", "verbose", verbose)
     #--- validate argument values
-    if(!is.na(mar)){
-        .validate_gs_args("singleNumber", "mar", mar)
-        if (mar < 0 || mar > 0.5) {
-            warning("'mar' should be in [0, 0.5]", call. = FALSE)
-            mar <- max(0, min(mar, 0.5))
-        }
-    }
     if(!is.null(layout)){
         .validate_gs_args("numeric_mtx", "layout", layout)
         if (ncol(layout) != 2) {
             stop("'layout' matrix should have two columns.", call. = FALSE)
         } 
     }
-    if(!is.null(image)){
-        .validate_gs_args("image_mtx", "image", image)
-        if(flip.image){
-            message("Flipping image to graph origin...", call. = FALSE)  
-            image <- image[rev(seq_len(nrow(image))), , drop = FALSE]
-        }
-    }
     #--- validate igraph and build a gs object
-    gs <- .buildGraphSpace(g, mar, layout, image, flip.image, verbose)
+    gs <- .buildGraphSpace(g, layout, verbose)
+    
     return(gs)
 }
 
 #-------------------------------------------------------------------------------
-#' @title Plotting igraph objects with RGraphSpace
+#' @title Wrapper function to plot GraphSpace objects in ggplot2
 #'
-#' @description \code{plotGraphSpace} is a wrapper function to 
-#' create dedicated ggplot graphics for igraph- and GraphSpace-class objects.
+#' @description 
+#' \code{plotGraphSpace()} is a High-level plotting interface that translates 
+#' \code{igraph} and \code{GraphSpace} data objects into \code{ggplot2} layers.
 #'
 #' @param gs Either an \code{igraph} or \linkS4class{GraphSpace} class object.
 #' If \code{gs} is an \code{igraph}, then it must include \code{x}, \code{y}, 
 #' and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).
 #' @param theme Name of a custom RGraphSpace theme. These themes 
-#' (from 'th1' to 'th3') consist of preconfigured ggplot settings, 
-#' which the user can subsequently refine using \code{\link[ggplot2]{ggplot2}}.
+#' (from 'th0' to 'th3') consist of preconfigured ggplot settings, 
+#' which can subsequently refine using \code{\link[ggplot2]{ggplot2}}.
 #' @param xlab The title for the 'x' axis of a 2D-image space.
 #' @param ylab The title for the 'y' axis of a 2D-image space.
 #' @param font.size A single numeric value passed to ggplot themes.
@@ -103,33 +198,47 @@ GraphSpace <- function(g, mar = 0.1, layout = NULL,
 #' @author Sysbiolab.
 #' @seealso \code{\link{GraphSpace}}
 #' @examples
+#' library(igraph)
+#' 
 #' # Load a demo igraph
 #' data('gtoy1', package = 'RGraphSpace')
 #' 
-#' # Generate a ggplot for igraph
+#' # Generate a ggplot for gtoy1
 #' plotGraphSpace(gtoy1)
 #' 
-#' # Create a GraphSpace object
-#' gs <- GraphSpace(gtoy1)
+#' # Create a star graph
+#' gtoy_star <- make_full_graph(15)
 #' 
-#' # Generate a ggplot for gs
-#' plotGraphSpace(gs)
+#' # Example of setting node and edge attributes
+#' V(gtoy_star)$nodeSize <- 5
+#' E(gtoy_star)$edgeLineColor <- "red"
+#' E(gtoy_star)$arrowType <- "<->"
+#' 
+#' # Create a GraphSpace object
+#' gs_star <- GraphSpace(gtoy_star)
+#' 
+#' # Normalize graph coordinates
+#' gs_star <- normalizeGraphSpace(gs_star)
+#' 
+#' # Generate a ggplot for gs_star
+#' plotGraphSpace(gs_star)
 #' 
 #' @import methods
+#' @importFrom ggplot2 ggplot
 #' @importFrom grDevices col2rgb
 #' @importFrom ggrastr rasterize
-#' @importFrom lifecycle deprecated deprecate_soft is_present
 #' @docType methods
 #' @rdname plotGraphSpace-methods
 #' @aliases plotGraphSpace
 #' @export
 #'
 setMethod("plotGraphSpace", "GraphSpace", 
-    function(gs, theme = c("th0", "th1", "th2", "th3"),
-        xlab = "Graph coordinates 1", ylab = "Graph coordinates 2", 
-        font.size = 1, bg.color = "grey95", add.labels = FALSE,
-        node.labels = NULL, label.size = 3, label.color = "grey20", 
-        add.image = FALSE, raster = FALSE, dpi = 300, dev = "cairo_png") {
+    function(gs, theme = "th0", xlab = "Graph coordinates 1", 
+        ylab = "Graph coordinates 2", font.size = 1,
+        bg.color = "grey95", add.labels = FALSE,
+        node.labels = NULL, label.size = 3, 
+        label.color = "grey20", add.image = FALSE, 
+        raster = FALSE, dpi = 300, dev = "cairo_png") {
         #--- validate the gs object and args
         .validate_gs_args("singleString", "xlab", xlab)
         .validate_gs_args("singleString", "ylab", ylab)
@@ -145,21 +254,15 @@ setMethod("plotGraphSpace", "GraphSpace",
         if (!is.null(node.labels)) {
             .validate_gs_args("allCharacter", "node.labels", node.labels)
         }
-        theme <- match.arg(theme)
+        
+        theme <- match.arg(theme, choices = c("th0", "th1", "th2", "th3"))
         
         #--- get gs slots
         nodes <- gs_nodes(gs)
-        edges <- gs_edges(gs)
         pars <- getGraphSpace(gs, "pars")
-        
-        #--- use only one color entry when shape < 21
-        idx <- nodes$nodeShape < 21
-        nodes$nodeLineColor[idx] <-  nodes$nodeColor[idx]
         
         #--- initialize a ggplot object
         ggp <- ggplot()
-        
-        #--- add labels
         
         #--- add image
         if(pars$image.layer){
@@ -168,46 +271,32 @@ setMethod("plotGraphSpace", "GraphSpace",
                 ggp <- .add_image(ggp, img)
             } else {
                 ggi <- .add_image(ggp, img)
-                ggi <- ggi + 
-                    theme_gspace_axes(theme, font.size, bg.color, xlab, ylab)
+                ggi <- ggi + theme_gspace_coords(theme = theme, 
+                  is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
+                  txt_size = font.size, leg_size = font.size, 
+                  bg_color = bg.color)
             }
         }
 
-        #--- add edges
-        if(nrow(edges)>0){
-            x <- y <- xend <- yend <- NULL
-            edgeLineType <- edgeLineWidth <- edgeLineColor <- NULL 
-            ggp <- ggp + geom_edgespace(
-                mapping = aes(x = x, y = y, xend = xend, yend = yend),
-                linetype = edges$edgeLineType, linewidth = edges$edgeLineWidth,
-                colour = edges$edgeLineColor,
-                data = gs)
-        }
+        #--- add graph
+        ggp <- ggp + geom_graphspace(data = gs)
         
-        #--- add nodes
-        if(nrow(nodes)>0){
-            x <- y <- nodeColor <- nodeLineColor <- NULL
-            nodeShape <- nodeLineWidth <- nodeSize <- NULL
-            ggp <- ggp + geom_nodespace(mapping = aes(x = x, y = y), 
-                fill = nodes$nodeColor, colour = nodes$nodeLineColor,
-                shape = nodes$nodeShape, size = nodes$nodeSize, 
-                linewidth = nodes$nodeLineWidth, 
-                data = nodes)
-            
-            #--- add node labels
-            if (!is.null(node.labels)){
-                ggp <- .add_labels1(ggp, nodes, node.labels, 
-                    label.size, label.color)
-            } else if(add.labels){
-                ggp <- .add_labels2(ggp, nodes)
-            }
+        #--- add node labels
+        if (!is.null(node.labels)){
+            ggp <- .add_labels1(ggp, nodes, node.labels, 
+                label.size, label.color)
+        } else if(add.labels){
+            ggp <- .add_labels2(ggp, nodes)
         }
         
         #--- apply custom theme
-        ggp <- ggp + theme_gspace_axes(theme, font.size, bg.color, xlab, ylab)
+        ggp <- ggp + theme_gspace_coords(theme = theme, 
+          is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
+          txt_size = font.size, leg_size = font.size,
+          bg_color = bg.color)
         
         if(raster){
-          ggp <- ggrastr::rasterize(ggp, layers=c('NodeSpace',"EdgeSpace"), 
+          ggp <- ggrastr::rasterize(ggp, layers = "GraphSpace", 
               dpi = dpi, dev = dev)
         }
         
@@ -224,8 +313,6 @@ setMethod("plotGraphSpace", "GraphSpace",
 #-------------------------------------------------------------------------------
 #' @param ... Additional arguments passed to the 
 #' \code{\link{plotGraphSpace}} function.
-#' @param mar A single numeric value (in \code{[0,1]}) indicating the size of
-#' the outer margins as a fraction of the graph space.
 #' @import methods
 #' @docType methods
 #' @rdname plotGraphSpace-methods
@@ -233,10 +320,10 @@ setMethod("plotGraphSpace", "GraphSpace",
 #' @export
 #'
 setMethod("plotGraphSpace", "igraph", 
-    function(gs, ..., mar = 0.1) {
-        gs <- GraphSpace(gs, mar, verbose=FALSE)
-        gg <- plotGraphSpace(gs, ...=...)
-        return(gg)
+    function(gs, ...) {
+        gs <- GraphSpace(gs, verbose=FALSE)
+        gs <- normalizeGraphSpace(gs)
+        plotGraphSpace(gs = gs, ...)
     }
 )
 
@@ -290,7 +377,7 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
     if (what == "nodes") {
         obj <- gs@nodes
     } else if (what == "edges") {
-        obj <- .get_edge_coords(gs)
+        obj <- gs@edges
     } else if (what == "graph") {
         obj <- gs@graph
     } else if (what == "pars") {
@@ -388,15 +475,13 @@ setMethod("show", "GraphSpace", function(object) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_nodes", "GraphSpace", function(x) {
-    nodes <- .get_node_coords(x)
-    return(nodes)
+    x@nodes
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_edges", "GraphSpace", function(x) {
-    edges <- .get_edge_coords(x)
-    return(edges)
+    .get_gs_edges(x)
 })
 
 #' @rdname GraphSpace-accessors
@@ -462,7 +547,7 @@ setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
         }
         igraph::vertex_attr(graph = g, name = name, ...=...) <- value  
     }
-    x <- .updateGraphSpace(x, g)
+    x <- .updateNodeSpace(x, g)
     return(x)
 })
 .is_replicable <- function(x) {
@@ -501,25 +586,48 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
         }
         igraph::edge_attr(graph = g, name = name, ...=...) <- value  
     }
-    x <- .updateGraphSpace(x, g)
+    x <- .updateEdgeSpace(x, g)
     return(x)
 })
-
-.updateGraphSpace <- function(x, g) {
+.updateEdgeSpace <- function(x, g){
+  x@graph <- .validate_igraph(g)
+  x@edges <- .get_edges(x@graph)
+  return(x)
+}
+.updateNodeSpace <- function(x, g) {
     x@graph <- .validate_igraph(g)
-    x@edges <- .get_edges(x@graph)
-    temp_list <- .recenter_nodes(.get_nodes(x@graph), x@misc$image, x@pars$mar)
-    x@nodes <- temp_list$nodes
-    x@image <- temp_list$image
+    pars <- x@pars
+    if(pars$is.normalized){
+        if(pars$image.layer){
+            x <- normalizeGraphSpace(x, 
+                image = x@misc$image,
+                mar = pars$mar,
+                flip.x = pars$flip.x %||% FALSE, 
+                flip.y = pars$flip.y %||% FALSE, 
+                rotate.xy = pars$rotate.xy %||% FALSE, 
+                flip.v = pars$flip.v %||% TRUE, 
+                flip.h = pars$flip.h %||% FALSE,
+                verbose = FALSE)
+        } else {
+            x <- normalizeGraphSpace(x, 
+                mar = pars$mar,
+                flip.x = pars$flip.x %||% FALSE, 
+                flip.y = pars$flip.y %||% FALSE, 
+                rotate.xy = pars$rotate.xy %||% FALSE,
+                verbose = FALSE)
+        }
+    } else {
+      x@nodes <- .get_nodes(x@graph)
+    }
     return(x)
 }
 
-.recenter_nodes <- function(nodes, image, mar){
-    if(is.null(image)){
-        temp_list <- .center_graph_nodes(nodes, mar)
-    } else {
-        temp_list <- .adjust_image_nodes(nodes, image, mar)
-    }
-    return(temp_list)
-}
+# .recenter_nodes <- function(nodes, image, mar){
+#     if(is.null(image)){
+#         temp_list <- .center_graph_nodes(nodes, mar)
+#     } else {
+#         temp_list <- .adjust_image_nodes(nodes, image, mar)
+#     }
+#     return(temp_list)
+# }
 

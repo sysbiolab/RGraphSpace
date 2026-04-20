@@ -135,8 +135,13 @@
   is.vector(para) && .all_characterValues(para)
 }
 .is_color <- function(x) {
+  if (is.numeric(x)) {
+    if (any(x < 1 | x %% 1 != 0, na.rm = TRUE)) {
+      return(FALSE)
+    }
+  }
   res <- try(col2rgb(x), silent = TRUE)
-  return(!"try-error" %in% class(res))
+  return( !inherits(res, "try-error") )
 }
 .is_singleColor <- function(para) {
   .is_color(para) && length(para) == 1L && !is.na(para)
