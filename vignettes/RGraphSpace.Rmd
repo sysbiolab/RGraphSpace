@@ -178,9 +178,9 @@ This section illustrates how *RGraphSpace* integrates with the *ggplot2* using `
 
 To facilitate this integration, *RGraphSpace* implements three specialized `geoms` designed to handle graph data types within a *ggplot2* workflow:
 
-1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call.
-2. **`geom_nodespace()`**: Dedicated to rendering vertices. Inherits `GeomPoint` aesthetic mappings, optimized to scale nodes and inform the edge layer on node states. It is used with the `inject_nodespace()` function to adjust edge offsets between layers. 
-3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segment geoms, it is "node-aware" and dynamically adjusts geometries based on connected nodes.
+1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call. 
+2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, optimized to inform the edge layer on node states. It is used with the `inject_nodespace()` function to adjust edge offsets. 
+3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segment geoms, it is "node-aware" and dynamically adjusts geometries based on connected nodes. 
 
 In the following example, we create a small modular graph containing variables of different types in order to demonstrate these *geoms*.
 
