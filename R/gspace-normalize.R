@@ -286,7 +286,7 @@ setMethod("cropGraphSpace", "GraphSpace",
     y <- -(y - max(y)) + nrow(image) - max(y) + 1
     rg <- range(y)
     if(min(rg)<1 || max(rg)>nrow(image)){
-      ms2 <- "Revise normalizeImageSpace() arguments."
+      ms2 <- "Revise normalizeGraphSpace() arguments."
       if(rotate.xy){
         ms1 <- "Graph rotation/flip incompatible with the input image dimensions. "
       } else {
@@ -304,7 +304,7 @@ setMethod("cropGraphSpace", "GraphSpace",
     x <- -(x - max(x)) + ncol(image) - max(x) + 1
     rg <- range(x)
     if(min(rg)<1 || max(rg)>ncol(image)){
-      ms2 <- "Revise buildSpotSpace() arguments."
+      ms2 <- "Revise normalizeGraphSpace() arguments."
       if(rotate.xy){
         ms1 <- "Graph rotation/flip not compatible with the input image dimensions. "
       } else {
