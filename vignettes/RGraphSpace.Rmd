@@ -273,16 +273,16 @@ ggplot() +
 ```
 
 ```{r toy_newscale.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-gg <- ggplot() + 
-  geom_edgespace(aes(colour = edge_var), data = gs) +
-  scale_colour_continuous(palette = c("cyan","blue")) +
-  ggnewscale::new_scale_colour() +
-  geom_nodespace(aes(colour = node_var), 
-    data = gs, stroke = 2, fill = NA) +
-  scale_colour_continuous(palette = c("white","purple")) +
-  theme_gspace_coords()
-ggsave(filename = "./figs/toy_newscale.png", height=NA, width=NA,
-  units="in", device="png", dpi=200, plot=gg)
+# gg <- ggplot() + 
+#   geom_edgespace(aes(colour = edge_var), data = gs) +
+#   scale_colour_continuous(palette = c("cyan","blue")) +
+#   ggnewscale::new_scale_colour() +
+#   geom_nodespace(aes(colour = node_var), 
+#     data = gs, stroke = 2, fill = NA) +
+#   scale_colour_continuous(palette = c("white","purple")) +
+#   theme_gspace_coords()
+# ggsave(filename = "./figs/toy_newscale.png", height=NA, width=NA,
+#   units="in", device="png", dpi=200, plot=gg)
 ```
 
 ```{r toy_newscale, echo=FALSE, out.width = '70%', purl=FALSE}
@@ -323,12 +323,15 @@ gs <- GraphSpace(gtoy2)
 
 # Map graph coordinates to the image space. 
 # Vertical flipping (flip.v = TRUE) is required to align coordinates.
-gs <- normalizeGraphSpace(gs, image = as_colorraster(volcano2), 
+gs <- normalizeGraphSpace(gs, 
+  image = as_colorraster(volcano2), 
   flip.v = TRUE)
 
 # Render the graph with the raster as background
 plotGraphSpace(gs, add.image = TRUE)
 ```
+
+**Note on image alignment**: Proper spatial alignment between node coordinates and the background image requires consistent coordinate conventions. Spatial misalignment may occur when the input image and node coordinates follow origin placements or axis orientations that differ from internal conventions (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, `flip.v` and `flip.h` arguments can be used to apply flipping directly to the background image.
 
 
 # Interoperability with other packages

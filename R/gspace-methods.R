@@ -6,12 +6,18 @@
 #' \linkS4class{GraphSpace} objects, designed to store graph data and 
 #' metadata for optimized rendering in RGraphSpace.
 #'
-#' @param g An \link[igraph]{igraph} object. It must include vertex 
-#' coordinates assigned to \code{x} and \code{y} attributes, and
-#' vertex labels assigned to \code{name} attribute.
+#' @param g An \link[igraph]{igraph} object or a \code{data.frame} used to 
+#' initialize a \code{GraphSpace} object. If an \code{igraph} is provided, 
+#' it should include vertex coordinates in \code{x} and \code{y} attributes, 
+#' and vertex labels in the \code{name} attribute. If a \code{data.frame} is 
+#' provided, it must contain at least \code{x} and \code{y} columns 
+#' representing the node coordinates; additional columns will be treated 
+#' as vertex attributes. For graphs requiring edge definitions, use the 
+#' \code{igraph} initialization.
 #' @param layout An optional numeric matrix with two columns for \code{x} and
 #' \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.
 #' @param verbose A logical value. If \code{TRUE}, displays detailed messages.
+#' @param ... Additional arguments passed to the \code{GraphSpace} constructor.
 #' @param mar `r lifecycle::badge("deprecated")` Deprecated since
 #' RGraphSpace 1.1.1; use \link{normalizeGraphSpace} instead.
 #' @param image `r lifecycle::badge("deprecated")` Deprecated since
@@ -139,32 +145,86 @@
 #' @importFrom scales rescale
 #' @importFrom grDevices is.raster as.raster
 #' @aliases GraphSpace
+#' @rdname GraphSpace-methods
 #' @export
-#'
-GraphSpace <- function(g, layout = NULL, verbose = TRUE,  
-    mar = deprecated(), image = deprecated()) {
+setMethod("GraphSpace", signature(g = "igraph"),
+  function(g, layout = NULL, verbose = TRUE,  
+    mar = deprecated(), image = deprecated(), ...) {
     ### deprecate
     if (lifecycle::is_present(mar)) {
-        deprecate_soft("1.1.1", "GraphSpace(mar)", 
-            "normalizeGraphSpace(mar)")
+      deprecate_soft("1.1.1", "GraphSpace(mar)", 
+        "normalizeGraphSpace(mar)")
     }
     if (lifecycle::is_present(image)) {
-        deprecate_soft("1.1.1", "GraphSpace(image)", 
-            "normalizeGraphSpace(image)")
+      deprecate_soft("1.1.1", "GraphSpace(image)", 
+        "normalizeGraphSpace(image)")
     }
     .validate_gs_args("singleLogical", "verbose", verbose)
     #--- validate argument values
     if(!is.null(layout)){
-        .validate_gs_args("numeric_mtx", "layout", layout)
-        if (ncol(layout) != 2) {
-            stop("'layout' matrix should have two columns.", call. = FALSE)
-        } 
+      .validate_gs_args("numeric_mtx", "layout", layout)
+      if (ncol(layout) != 2) {
+        stop("'layout' matrix should have two columns.", call. = FALSE)
+      } 
     }
     #--- validate igraph and build a gs object
     gs <- .buildGraphSpace(g, layout, verbose)
     
     return(gs)
+  }
+)
+
+#' @rdname GraphSpace-methods
+#' @export
+setMethod("GraphSpace", signature(g = "data.frame"),
+  function(g, verbose = TRUE, ...){
+    
+    if(!all(c("x", "y") %in% colnames(g))){
+      ms_i <- c("i" = "GraphSpace requires x/y columns for 'data.frame' initialization.")
+      rlang::abort(
+        message = "Input 'g' is missing 'x' and 'y' coordinates.",
+        body = ms_i
+      )
+    }
+    
+    g <- .graphFromCoordinates(g)
+    
+    #--- build GraphSpace-class
+    gs <- GraphSpace(g = g, verbose = verbose, ...)
+    
+    return(gs)
+    
+  }
+)
+
+#-------------------------------------------------------------------------------
+.graphFromCoordinates <- function(coord){
+  
+  # Check attributes
+  attr <- unique(colnames(coord))
+  attr <- attr[!is.na(attr)]
+  attr <- attr[!attr%in%c("x","y")]
+  
+  # Initialize a graph using 'coord' as vertices, with no edges
+  g <- make_empty_graph(n = nrow(coord), directed = FALSE)
+  if(!is.null(rownames(coord))){
+    V(g)$name <- rownames(coord)
+  }
+  
+  # Add coordinates
+  V(g)$x <- coord$x
+  V(g)$y <- coord$y
+  
+  if(length(attr)>0){
+    for(name in attr){
+      igraph::vertex_attr(g, name) <- coord[[name]]
+    }
+  }
+  
+  return(g)
+  
 }
+
 
 #-------------------------------------------------------------------------------
 #' @title Wrapper function to plot GraphSpace objects in ggplot2
@@ -231,7 +291,6 @@ GraphSpace <- function(g, layout = NULL, verbose = TRUE,
 #' @rdname plotGraphSpace-methods
 #' @aliases plotGraphSpace
 #' @export
-#'
 setMethod("plotGraphSpace", "GraphSpace", 
     function(gs, theme = "th0", xlab = "Graph coordinates 1", 
         ylab = "Graph coordinates 2", font.size = 1,
@@ -318,7 +377,6 @@ setMethod("plotGraphSpace", "GraphSpace",
 #' @rdname plotGraphSpace-methods
 #' @aliases plotGraphSpace
 #' @export
-#'
 setMethod("plotGraphSpace", "igraph", 
     function(gs, ...) {
         gs <- GraphSpace(gs, verbose=FALSE)
@@ -336,7 +394,6 @@ setMethod("plotGraphSpace", "igraph",
 #' 
 #' @importFrom graphics plot
 #' @export
-#'
 plot.GraphSpace <- function(x, ...) {
     plotGraphSpace(x, ...)
 }

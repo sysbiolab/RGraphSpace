@@ -18,7 +18,7 @@ normalizeGraphSpace(gs, image = NULL, ...)
   flip.x = FALSE,
   flip.y = FALSE,
   rotate.xy = FALSE,
-  flip.v = TRUE,
+  flip.v = FALSE,
   flip.h = FALSE,
   verbose = TRUE
 )
@@ -41,7 +41,9 @@ surrounding the graph.}
 
 \item{flip.x}{Logical; whether to flip the node coordinates along the x-axis.}
 
-\item{flip.y}{Logical; whether to flip the node coordinates along the y-axis.}
+\item{flip.y}{Logical; whether to flip the node coordinates along the y-axis.
+Useful for aligning nodes with image backgrounds, which often use an
+inverted coordinate system.}
 
 \item{rotate.xy}{Logical; whether to rotate x-y coordinates.}
 
@@ -70,13 +72,16 @@ or by mapping them to pixel coordinates of a background image.
 \details{
 These functions provide different strategies for coordinate transformation:
 \itemize{
-\item \bold{normalizeGraphSpace}: Rescales node coordinates to a \code{[0, 1]}
-unit square based on the graph's bounding box (when \code{image} is missing)
-or maps them to pixel coordinates (when \code{image} is provided). It handles
-image-to-graph alignment via \code{flip.v}, \code{flip.h}, \code{flip.x},
-\code{flip.y}, and \code{rotate.xy}, used to adjust the graph origin
-with the image matrix layout.
-
+\item \bold{normalizeGraphSpace}: Re-scales node coordinates to a
+\code{[0, 1]} unit square based on the graph's bounding box (when
+\code{image} is missing) or maps them to pixel coordinates (when
+\code{image} is provided). It handles image-to-graph alignment via
+\code{flip.} and \code{rotate.} arguments, used to adjust the graph
+origin with the image matrix layout. Users should be aware of the
+potential discrepancy between image matrix orientation (top-down) and
+graph coordinates (bottom-up). The function attempts to automatically
+adjust the y-axis to align the graph's bottom-up coordinates with the
+image's top-down layout, but further manual adjustments might be required.
 \item \bold{cropGraphSpace}: Subsets the normalized graph space into a
 specific region defined by \code{crop.coord}. It recalculates node positions
 and background image boundaries to maintain spatial consistency after cropping.

@@ -182,5 +182,6 @@ ggplot() +
 
 }
 \seealso{
-\link{GraphSpace}, \link[ggplot2]{geom_point}
+\link{GraphSpace}, \link{geom_nodespace}, \link{geom_edgespace},
+\link[ggplot2]{geom_point}
 }

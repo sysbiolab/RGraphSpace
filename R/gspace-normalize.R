@@ -15,7 +15,9 @@
 #' symmetric margins as a fraction of the graph space. With an image,
 #' \code{mar} is interpreted as a fraction of the available image margins
 #' surrounding the graph.
-#' @param flip.y Logical; whether to flip the node coordinates along the y-axis.
+#' @param flip.y Logical; whether to flip the node coordinates along the y-axis. 
+#' Useful for aligning nodes with image backgrounds, which often use an 
+#' inverted coordinate system.
 #' @param flip.x Logical; whether to flip the node coordinates along the x-axis.
 #' @param rotate.xy Logical; whether to rotate x-y coordinates.
 #' @param flip.v Logical; whether to vertically flip the background image  
@@ -34,13 +36,16 @@
 #' @details 
 #' These functions provide different strategies for coordinate transformation:
 #' \itemize{
-#'   \item \bold{normalizeGraphSpace}: Rescales node coordinates to a \code{[0, 1]} 
-#'   unit square based on the graph's bounding box (when \code{image} is missing) 
-#'   or maps them to pixel coordinates (when \code{image} is provided). It handles 
-#'   image-to-graph alignment via \code{flip.v}, \code{flip.h}, \code{flip.x}, 
-#'   \code{flip.y}, and \code{rotate.xy}, used to adjust the graph origin 
-#'   with the image matrix layout.
-#' 
+#'   \item \bold{normalizeGraphSpace}: Re-scales node coordinates to a 
+#'   \code{[0, 1]} unit square based on the graph's bounding box (when 
+#'   \code{image} is missing) or maps them to pixel coordinates (when 
+#'   \code{image} is provided). It handles image-to-graph alignment via 
+#'   \code{flip.} and \code{rotate.} arguments, used to adjust the graph 
+#'   origin with the image matrix layout. Users should be aware of the 
+#'   potential discrepancy between image matrix orientation (top-down) and
+#'   graph coordinates (bottom-up). The function attempts to automatically 
+#'   adjust the y-axis to align the graph's bottom-up coordinates with the 
+#'   image's top-down layout, but further manual adjustments might be required.
 #'   \item \bold{cropGraphSpace}: Subsets the normalized graph space into a 
 #'   specific region defined by \code{crop.coord}. It recalculates node positions 
 #'   and background image boundaries to maintain spatial consistency after cropping. 
@@ -115,7 +120,7 @@ setMethod("normalizeGraphSpace",
 setMethod("normalizeGraphSpace", 
   signature = c(gs = "GraphSpace", image = "ANY"),
   function(gs, image, ..., mar = 0.1, flip.x = FALSE, flip.y = FALSE, 
-    rotate.xy = FALSE, flip.v = TRUE, flip.h = FALSE, verbose = TRUE){
+    rotate.xy = FALSE, flip.v = FALSE, flip.h = FALSE, verbose = TRUE){
     
     if(is.null(image)) {
       return(normalizeGraphSpace(gs = gs, mar = mar, 
@@ -155,9 +160,11 @@ setMethod("normalizeGraphSpace",
         if(verbose) message("Flipping image left-to-right...")  
         image_adj <- image_adj[, rev(seq_len(ncol(image_adj))), drop = FALSE]
       } 
-      nodes <- .setCoordToImage(nodes, image_adj, flip.x, flip.y,
-        rotate.xy, verbose)
+      
+      nodes <- .setCoordToImage(nodes, image_adj, flip.x, flip.y, rotate.xy, verbose)
+      
       l_temp <- .fitImageNodes(nodes, image_adj, mar)
+      
       gs@image <- l_temp$image
       gs@nodes <- l_temp$nodes
       gs@pars$is.normalized <- TRUE
@@ -279,21 +286,12 @@ setMethod("cropGraphSpace", "GraphSpace",
     coord$y2 <- coord$y
   }
   
-  # Flip y-coordinates over image axis
   if(flip.y){
     if(verbose) message("Flipping y-coordinates...")
+  } else {
+    # Flip 'y' by default if an image is provided
     y <- coord$y2
     y <- -(y - max(y)) + nrow(image) - max(y) + 1
-    rg <- range(y)
-    if(min(rg)<1 || max(rg)>nrow(image)){
-      ms2 <- "Revise normalizeGraphSpace() arguments."
-      if(rotate.xy){
-        ms1 <- "Graph rotation/flip incompatible with the input image dimensions. "
-      } else {
-        ms1 <- "Graph flipping incompatible with the input image dimensions. "
-      }
-      stop(paste0(ms1, ms2), call. = FALSE)
-    }
     coord$y2 <- y
   }
   
@@ -302,16 +300,6 @@ setMethod("cropGraphSpace", "GraphSpace",
     if(verbose) message("Flipping x-coordinates...")
     x <- coord$x2
     x <- -(x - max(x)) + ncol(image) - max(x) + 1
-    rg <- range(x)
-    if(min(rg)<1 || max(rg)>ncol(image)){
-      ms2 <- "Revise normalizeGraphSpace() arguments."
-      if(rotate.xy){
-        ms1 <- "Graph rotation/flip not compatible with the input image dimensions. "
-      } else {
-        ms1 <- "Graph flipping not compatible with the input image dimensions. "
-      }
-      stop(paste0(ms1, ms2), call. = FALSE)
-    }
     coord$x2 <- x
   }
   
@@ -319,26 +307,56 @@ setMethod("cropGraphSpace", "GraphSpace",
   nodes$x <- coord$x2
   nodes$y <- coord$y2
   
+  .check_final_coords(nodes, image)
+  
   return(nodes)
+  
+}
+
+#-------------------------------------------------------------------------------
+.check_final_coords <- function(nodes, image){
+  
+  d <- dim(image)
+  xr <- range(nodes$x, na.rm = TRUE)
+  yr <- range(nodes$y, na.rm = TRUE)
+  
+  xr_int <- c(floor(xr[1]), ceiling(xr[2]))
+  yr_int <- c(floor(yr[1]), ceiling(yr[2]))
+  
+  out_x <- (xr_int[1] < 1) || (xr_int[2] > d[2])
+  out_y <- (yr_int[1] < 1) || (yr_int[2] > d[1])
+  
+  if( out_x || out_y ){
+    msg <- "Graph coordinates outside the image boundaries."
+    
+    ms_i <- c("i" = "Note: node 'x' or 'y' coordinates are treated as indices of the image matrix.")
+    ms_x <- c("x" = sprintf(
+      "Observed ranges: x[%s, %s], y[%s, %s]. Image dimensions: %s x %s (yx).",
+      xr_int[1], xr_int[2], yr_int[1], yr_int[2], d[1], d[2]
+    ))
+    ms_a <- c("*" = "Try adjusting 'flip' and 'rotate' options in `normalizeGraphSpace()`.")
+    ms_f <- "See `vignette('RGraphSpace')` for more information on coordinate normalization."
+    
+    rlang::abort(message = msg, 
+      body = c(ms_i, ms_x, ms_a), footer = ms_f, 
+      call = rlang::caller_env())
+  }
+  
+  invisible(TRUE)
   
 }
 
 ################################################################################
 ### Adjust image to node coordinates
 ################################################################################
+
+#-------------------------------------------------------------------------------
 .fitImageNodes <- function(nodes, image, mar = 0.1){
-  d <- dim(image)
-  xr <- range(nodes$x)
-  yr <- range(nodes$y)
-  if( (xr[1] < 1) || (xr[2] > d[2]) ){
-    stop("Graph coordinates outside image dimensions.", call. = FALSE)
-  }
-  if( (yr[1] < 1) || (yr[2] > d[1]) ){
-    stop("Graph coordinates outside image dimensions.", call. = FALSE)
-  }
+  
   l_temp <- .fit_image_nodes(nodes, image, mar)
   l_temp <- .adjust_aspect_ratio(l_temp)
   l_temp <- .normalize_image_nodes(l_temp)
+  
   return(l_temp)
 }
 

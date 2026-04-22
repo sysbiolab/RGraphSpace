@@ -22,6 +22,12 @@ HTML by typing \code{help.start()} and selecting the RGraphSpace package
 from the menu.
 }
 
+\references{
+Sysbiolab Team (2026). \emph{RGraphSpace: A lightweight interface between
+igraph and ggplot2 graphics}. R package version 1.1.3 (Doi:
+10.32614/CRAN.package.RGraphSpace),
+\url{https://CRAN.R-project.org/package=RGraphSpace}.
+}
 \seealso{
 Useful links:
 \itemize{
@@ -43,8 +49,8 @@ Other contributors:
   \item Flávio Kessler [contributor]
   \item Jonathan Back [contributor]
   \item Lana Querne [contributor]
-  \item Victor Apolonio [compiler]
-  \item Vinicius Chagas [compiler]
+  \item Victor Apolonio [contributor]
+  \item Vinicius Chagas [contributor]
 }
 
 }

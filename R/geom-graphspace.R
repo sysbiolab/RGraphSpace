@@ -115,7 +115,8 @@
 #' Arrowhead types are specified in the \link{GraphSpace} constructor.
 #' 
 #' @seealso
-#' \link{GraphSpace}, \link[ggplot2]{geom_point}
+#' \link{GraphSpace}, \link{geom_nodespace}, \link{geom_edgespace}, 
+#' \link[ggplot2]{geom_point}
 #'
 #' @examples
 #' 

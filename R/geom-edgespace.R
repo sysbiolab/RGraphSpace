@@ -102,7 +102,8 @@
 #' Arrowhead types are specified in the \link{GraphSpace} constructor.
 #' 
 #' @seealso
-#' \code{\link{geom_nodespace}}, \link{GraphSpace}
+#' \link{GraphSpace}, \link{geom_nodespace}, \link{geom_graphspace}, 
+#' \link[ggplot2]{geom_segment}
 #'
 #' @examples
 #' 

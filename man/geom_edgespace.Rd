@@ -141,5 +141,6 @@ ggplot() +
 
 }
 \seealso{
-\code{\link{geom_nodespace}}, \link{GraphSpace}
+\link{GraphSpace}, \link{geom_nodespace}, \link{geom_graphspace},
+\link[ggplot2]{geom_segment}
 }

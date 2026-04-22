@@ -1,4 +1,8 @@
 
+setOldClass("igraph")
+
+setGeneric("GraphSpace", function(g, ...) standardGeneric("GraphSpace"))
+
 setGeneric("plotGraphSpace", function(gs, ...)
   standardGeneric("plotGraphSpace"),
   package = "RGraphSpace"

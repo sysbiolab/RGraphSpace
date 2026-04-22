@@ -32,20 +32,20 @@ VignetteBuilder: knitr
 URL: https://github.com/sysbiolab/RGraphSpace
 BugReports: https://github.com/sysbiolab/RGraphSpace/issues
 Collate:
-    gspace-checks.R
-    gspace-validation.R
-    gspace-constructor.R
-    gspace-supplements.R
-    gspace-classes.R
-    gspace-generics.R
-    gspace-methods.R
-    gspace-normalize.R
-    gspace-misc.R
-    gspace-themes.R
-    geom-graphspace.R
-    geom-nodespace.R
-    geom-edgespace.R
-    inject-nodespace.R
+    'geom-edgespace.R'
+    'geom-graphspace.R'
+    'geom-nodespace.R'
+    'gspace-checks.R'
+    'gspace-classes.R'
+    'gspace-constructor.R'
+    'gspace-generics.R'
+    'gspace-methods.R'
+    'gspace-misc.R'
+    'gspace-normalize.R'
+    'gspace-supplements.R'
+    'gspace-themes.R'
+    'gspace-validation.R'
+    'inject-nodespace.R'
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

@@ -76,7 +76,8 @@
 #' }
 #' 
 #' @seealso
-#' \link{geom_edgespace}, \link{GraphSpace}
+#' \link{GraphSpace}, \link{geom_edgespace}, \link{geom_graphspace}, 
+#' \link[ggplot2]{geom_point}
 #'
 #' @examples
 #' 
@@ -363,7 +364,7 @@ GeomNodeSpace <- ggproto(
     gp = ggplot2::gg_par(
       fill = scales::alpha(coords$fill, coords$alpha),
       col = scales::alpha(coords$colour, coords$alpha),
-      stroke = coords$stroke, pointsize = coords$size
+      stroke = coords$stroke
     )
   )
   

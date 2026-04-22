@@ -139,5 +139,6 @@ theme(aspect.ratio = 1)
 
 }
 \seealso{
-\link{geom_edgespace}, \link{GraphSpace}
+\link{GraphSpace}, \link{geom_edgespace}, \link{geom_graphspace},
+\link[ggplot2]{geom_point}
 }
