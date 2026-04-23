@@ -1,5 +1,5 @@
 ---
-title: "RGraphSpace: A lightweight interface between igraph and ggplot2 graphics"
+title: "RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics"
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
@@ -294,7 +294,7 @@ knitr::include_graphics("figs/toy_newscale.png")
 
 Images can be used as spatial references for graph layouts in *RGraphSpace*. When a raster image is provided, its pixel grid defines the coordinate system where nodes are positioned, supporting the construction of graphs from image features.
 
-Next, we use the `volcano` topographic matrix as an example. Features extracted from this matrix are mapped to graph nodes and visualized over a raster background.
+Next, we use the `volcano` topographic matrix as an example. Features extracted from this matrix are mapped to graph nodes and visualized over a raster image.
 
 ```{r Mapping images to graph space, eval=TRUE, message=FALSE, out.width="80%"}
 # Extract pixel coordinates for a specific intensity quantile.
@@ -321,17 +321,15 @@ igraph::V(gtoy2)$nodeColor[bottom_row] <- "red"
 # Initialize a GraphSpace object
 gs <- GraphSpace(gtoy2)
 
-# Map graph coordinates to the image space. 
-# Vertical flipping (flip.v = TRUE) is required to align coordinates.
-gs <- normalizeGraphSpace(gs, 
-  image = as_colorraster(volcano2), 
-  flip.v = TRUE)
+# Map graph coordinates to the image space; by default,
+# 'y' row indices will be flipped (see comments below).
+gs <- normalizeGraphSpace(gs, image = as_colorraster(volcano2))
 
 # Render the graph with the raster as background
 plotGraphSpace(gs, add.image = TRUE)
 ```
 
-**Note on image alignment**: Proper spatial alignment between node coordinates and the background image requires consistent coordinate conventions. Spatial misalignment may occur when the input image and node coordinates follow origin placements or axis orientations that differ from internal conventions (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, `flip.v` and `flip.h` arguments can be used to apply flipping directly to the background image.
+**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur when the input image and node coordinates follow origin placements or axis orientations that differ from the internal conventions (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, `flip.v` and `flip.h` arguments can be used to apply flipping directly to the background image.
 
 
 # Interoperability with other packages

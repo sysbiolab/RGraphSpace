@@ -360,7 +360,7 @@ setMethod("plotGraphSpace", "GraphSpace",
         }
         
         if(pars$image.layer && !add.image){
-            ggl <- list(graph = ggp, image = ggi)
+            ggl <- list(image = ggi, graph = ggp)
             return(ggl)
         } else {
             return(ggp)
