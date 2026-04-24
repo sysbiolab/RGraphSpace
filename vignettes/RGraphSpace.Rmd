@@ -186,7 +186,7 @@ To facilitate this integration, *RGraphSpace* implements three specialized `geom
 
 1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call. 
 2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states. It can be used with the `inject_nodespace()` function to adjust edge offsets when the `size` aesthetic is applied to nodes.
-3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically adjusts geometries based on connected nodes. 
+3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically calibrates start and end points to connected nodes. 
 
 In the following example, we create a small modular graph containing variables of different types in order to demonstrate these *geoms*.
 

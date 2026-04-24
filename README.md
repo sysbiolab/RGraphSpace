@@ -19,10 +19,10 @@ accurately referenced to a spatial map.
 1. **`geom_graphspace()`**: A high-level convenience layer that processes both 
 nodes and edges in a single call. 
 2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` 
-aesthetic mappings and inform the edge layer on node states. 
+aesthetic mappings, modified to inform the edge layer on node states. 
 3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits 
-`GeomSegment` aesthetic mappings; unlike standard segment `geoms`, it is 
-"node-aware" and dynamically adjusts geometries based on vertices. 
+`GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" 
+and dynamically calibrates start and end points to connected nodes. 
 
 By scaling graph elements, *RGraphSpace* also supports the overlay of networks 
 onto image features. Its dual-anchor normalization approach aligns nodes with 
