@@ -57,7 +57,7 @@ NULL
 #'
 #' @param x A numeric vector or matrix containing values to be mapped to colors.
 #' @param palette A vector of colors used as the palette. By default,
-#'   \code{viridisLite::viridis(256)} is used.
+#'   \code{hcl.colors(30)} is used.
 #' @param na.color Color used for \code{NA} values. Defaults to \code{NA}.
 #'
 #' @details
@@ -73,13 +73,9 @@ NULL
 #' img <- as_colorraster(volcano)
 #' plot(img)
 #'
-#' # Use a different color palette
-#' img <- as_colorraster(volcano, palette = terrain.colors(256))
-#' plot(img)
-#'
 #' @importFrom grDevices hcl.colors
 #' @export
-as_colorraster <- function(x, palette = hcl.colors(256), na.color = "white") {
+as_colorraster <- function(x, palette = hcl.colors(30), na.color = "white") {
   
   if(!is.numeric(x)){
     stop("'x' must be a numeric vector or matrix.", call. = FALSE)

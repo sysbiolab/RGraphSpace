@@ -3,7 +3,7 @@ title: "RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' grap
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "*RGraphSpace* is an R package that integrates igraph objects with the *ggplot2* ecosystem. It implements geometric prototypes designed for networks scaled to a standardized unit space. The package includes methods for side-by-side visualization of multiple graphs and for layering network elements onto spatial maps."
+abstract: "An interface to integrate 'igraph' and 'ggplot2' graphics within a normalized coordinate system. 'RGraphSpace' implements geometric objects based on 'ggplot2' prototypes, optimized for the representation of large networks. The package aims to facilitate side-by-side visualization of multiple graphs spatially aligned with reference maps and images."
 output: 
   html_document:
     theme: cerulean
@@ -32,13 +32,19 @@ knitr::opts_chunk$set(
 <br/>
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 
+# Highlights
+* Native *ggplot2* interface for *igraph* objects
+* Optimized *geoms* for large-scale network visualization
+* Dual-anchor normalization for precise spatial alignment
+* Aligns networks with background spatial references
+
 # Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for igraph objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016], optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including colors, shapes, and line types. Three specialized `geoms` translate graph data into geometric layers (see [*using geoms*](#using-geoms)). These `geoms` use a dual-anchor normalization approach to align layers, which is critical for analysis where network elements must be accurately referenced to a spatial map. Section [*mapping graphs to images*](#mapping-graphs-to-images) illustrates how this alignment achieves pixel-level precision. In what follows, this tutorial demonstrates how to use *RGraphSpace* for side-by-side visualization of multiple graphs.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016], optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including colors, shapes, and line types. Three specialized `geoms` translate graph data into geometric layers (see [*using geoms*](#using-geoms)). These `geoms` use a dual-anchor normalization approach to align layers, which is critical for analysis where network elements must be accurately referenced to a spatial map. Section [*mapping graphs to images*](#mapping-graphs-to-images) illustrates how this alignment achieves pixel-level precision. In what follows, this tutorial demonstrates how to use *RGraphSpace* for side-by-side visualization of multiple graphs.
 
 # Quick start
 
-This section will create a toy *igraph* object to demonstrate the *RGraphSpace* workflow. The graph layout is configured manually to ensure that users can easily view all the relevant arguments needed to prepare the input data for the *RGraphSpace* package. We will use the igraph's `make_star()` function to create a simple star-like graph and then the `V()` and `E()` functions to set attributes for vertices and edges, respectively. The *RGraphSpace* package will require that all vertices have `x`, `y`, and `name` attributes.
+This section will create a toy *igraph* object to demonstrate the *RGraphSpace* workflow. The graph layout is configured manually to ensure that users can easily view all the relevant arguments needed to prepare the input data. We will use the igraph's `make_star()` function to create a simple star-like graph and then the `V()` and `E()` functions to set attributes for vertices and edges, respectively. The *RGraphSpace* package will require that all vertices have `x`, `y`, and `name` attributes.
 
 ```{r Load packages for quick start, eval=TRUE, message=FALSE}
 #--- Load required packages
@@ -136,7 +142,7 @@ E(gtoy1)$edgeAlpha <- 1
 
 ## Arrowhead attributes
 
-Arrowhead in directed graphs: By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
+**Arrowhead in directed graphs**: By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
 
 ```{r Edge attributes - 2, eval=TRUE, message=FALSE}
 # Arrowhead types in directed graphs (integer code or character)
@@ -144,7 +150,7 @@ Arrowhead in directed graphs: By default, an arrow will be drawn for each edge a
 E(gtoy1)$arrowType <- 1
 ``` 
 
-Arrowhead in undirected graphs: By default, no arrow will be drawn in undirected graphs.
+**Arrowhead in undirected graphs**: By default, no arrow will be drawn in undirected graphs.
 
 ```{r Edge attributes - 3, eval=TRUE, message=FALSE}
 # Arrowhead types in undirected graphs (integer or character code)
@@ -156,7 +162,7 @@ E(gtoy1)$arrowType <- 1
 # edge's orientation in the edge list
 ```
 
-... and now plot the updated *igraph* object with *RGraphSpace*:
+... and plot the updated *igraph* object with *RGraphSpace*:
  
 ```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE, out.width="80%"}
 # Plot the updated 'gtoy1' using RGraphSpace
@@ -170,17 +176,17 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 
 This section illustrates how *RGraphSpace* integrates with the *ggplot2* using `geoms` building blocks. Graph attributes stored within the `GraphSpace` object can be handled in two ways:
 
-* **Identity Mapping:** Graph attributes are interpreted as "identity values" (such as `nodeColor`, `nodeSize`, or `nodeShape`) and are displayed exactly as they are, without further scaling or mapping.
+* **Identity mapping:** Graph attributes are interpreted as "identity values" (such as `nodeColor`, `nodeSize`, or `nodeShape`) and are displayed exactly as they are, without further scaling or mapping.
 
-* **Dynamic Aesthetic Mapping:** Graph attributes are mapped to  *aesthetics* (such as `colour`, `size`, and `shape`) and rendered through standard *ggplot2* scales, which automatically generate synchronized legends.
+* **Dynamic aesthetic mapping:** Graph attributes are mapped to  *aesthetics* (such as `colour`, `size`, and `shape`) and rendered through standard *ggplot2* scales, which automatically generate synchronized legends.
 
 ### The *GraphSpace* geoms
 
 To facilitate this integration, *RGraphSpace* implements three specialized `geoms` designed to handle graph data types within a *ggplot2* workflow:
 
 1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call. 
-2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, optimized to inform the edge layer on node states. It can be used with the `inject_nodespace()` function to adjust edge offsets when aesthetics are applied to node size.
-3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segment geoms, it is "node-aware" and dynamically adjusts geometries based on connected nodes. 
+2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states. It can be used with the `inject_nodespace()` function to adjust edge offsets when the `size` aesthetic is applied to nodes.
+3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically adjusts geometries based on connected nodes. 
 
 In the following example, we create a small modular graph containing variables of different types in order to demonstrate these *geoms*.
 
@@ -212,7 +218,7 @@ gs <- GraphSpace(gtoy3)
 
 ## Plotting identity values
 
-In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is particularly useful when nodes have been pre-processed with specific color schemes and you want the visual output to reflect the original data directly, without further mapping.
+In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is particularly useful when nodes have been pre-processed with specific color schemes and you want the visual output without further mapping.
 
 ```{r, eval=TRUE, message=FALSE, include = FALSE}
 edge_var <- node_var <- nodeColor <- node_group <- NULL
@@ -224,7 +230,7 @@ ggplot() +
   theme(aspect.ratio = 1)
 ```
 
-The trade-off on this approach is that, on one hand, all attributes remain scaled with the graph space, but no legend is accessible. This is because identity scales bypass the scaling and guide-building process of **ggplot2**. If a legend is required to explain the meaning of these colors, the attribute should be mapped as a variable (e.g., `aes(fill = attribute)`) using standard discrete or continuous scales.
+The trade-off on this approach is that, on one hand, all attributes reflect the original data directly, but no legend is accessible. This is because identity scales bypass the scaling and guide-building process of **ggplot2**. If a legend is required to explain the meaning of these colors, the attribute should be mapped as a variable (e.g., `aes(fill = attribute)`) using standard discrete or continuous scales.
 
 ## Mapping categorical variables
 
@@ -292,9 +298,9 @@ knitr::include_graphics("figs/toy_newscale.png")
 
 # Mapping graphs to images
 
-Images can be used as spatial references for graph layouts in *RGraphSpace*. When a raster image is provided, its pixel grid defines the coordinate system where nodes are positioned, supporting the construction of graphs from image features.
+Images can be used as spatial references for graphs. When a raster image is provided, pixel coordinates define where nodes are positioned, supporting the construction of graphs from image features.
 
-Next, we use the `volcano` topographic matrix as an example. Features extracted from this matrix are mapped to graph nodes and visualized over a raster image.
+As an example, topographic features extracted from the `volcano` matrix are mapped to graph nodes and visualized over a raster image.
 
 ```{r Mapping images to graph space, eval=TRUE, message=FALSE, out.width="80%"}
 # Extract pixel coordinates for a specific intensity quantile.
@@ -316,20 +322,20 @@ igraph::V(gtoy2)$x <- coords[,2]
 # between matrix and plot coordinate systems.
 igraph::V(gtoy2)$nodeColor <- NA
 bottom_row <- which.max(igraph::V(gtoy2)$y)
-igraph::V(gtoy2)$nodeColor[bottom_row] <- "red"
+igraph::V(gtoy2)$nodeColor[bottom_row] <- adjustcolor("red", 0.4)
 
 # Initialize a GraphSpace object
 gs <- GraphSpace(gtoy2)
 
 # Map graph coordinates to the image space; by default,
 # 'y' row indices will be flipped (see comments below).
-gs <- normalizeGraphSpace(gs, image = as_colorraster(volcano2))
+gs <- normalizeGraphSpace(gs, image = as_colorraster(volcano2) )
 
 # Render the graph with the raster as background
 plotGraphSpace(gs, add.image = TRUE)
 ```
 
-**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur when the input image and node coordinates follow origin placements or axis orientations that differ from the internal conventions (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, `flip.v` and `flip.h` arguments can be used to apply flipping directly to the background image.
+**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, `flip.v` and `flip.h` arguments can be used to apply flipping directly to the background image.
 
 
 # Interoperability with other packages
@@ -472,7 +478,7 @@ knitr::include_graphics("figs/toy_reder.png")
 
 ## Other examples
 
-The following vignettes illustrate how *RGraphSpace* can be used in combination with *PathwaySpace* to project network signals into landscape images.
+The following vignettes illustrate how *RGraphSpace* can be used in combination with *PathwaySpace* to project network signals on landscape images.
 
 [Projection of network signals](https://sysbiolab.github.io/PathwaySpace/){target="_blank" rel="noopener"}
 

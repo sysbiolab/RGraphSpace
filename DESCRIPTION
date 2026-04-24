@@ -1,18 +1,18 @@
 Package: RGraphSpace
 Type: Package
-Version: 1.1.4
+Version: 1.2.0
 Title: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics
 Description: An interface to integrate 'igraph' and 'ggplot2' graphics 
     within a normalized coordinate system. 'RGraphSpace' implements 
     geometric objects based on 'ggplot2' prototypes, optimized for 
-    representing large networks. The package provides three specialized 
-    geoms to translate graph data into geometric layers, supporting 
-    customization of aesthetics and visual style. These geoms use a 
-    dual-anchor normalization approach to align layers, required for 
-    multi-layered analysis where network elements are referenced to a 
-    spatial map. 'RGraphSpace' aims to facilitate side-by-side 
-    visualization of multiple graphs and the integration of background 
-    reference images.
+    the representation of large networks. The package provides three 
+    specialized 'geoms' to translate graph data into geometric layers, 
+    supporting customization of aesthetics and visual styles. These 
+    'geoms' use a dual-anchor normalization approach to align layers, 
+    required for analyses where network elements must be referenced 
+    to a spatial map. 'RGraphSpace' aims to facilitate side-by-side 
+    visualization of multiple graphs spatially aligned with reference 
+    maps and images.
 Authors@R: 
     c(person("Sysbiolab Team", role = "aut"),
       person("Flávio", "Kessler", role = "ctb"),
@@ -29,7 +29,7 @@ Suggests: knitr, rmarkdown, testthat, ggnewscale, patchwork
 Enhances: RedeR
 License: Artistic-2.0
 VignetteBuilder: knitr
-URL: https://github.com/sysbiolab/RGraphSpace, https://sysbiolab.github.io/RGraphSpace/
+URL: https://github.com/sysbiolab/RGraphSpace
 BugReports: https://github.com/sysbiolab/RGraphSpace/issues
 Collate:
     'geom-edgespace.R'
