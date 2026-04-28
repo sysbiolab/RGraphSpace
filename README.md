@@ -62,7 +62,7 @@ vignette("RGraphSpace")
 
 If you use *RGraphSpace*, please cite:
 
-* Sysbiolab Team. "*RGraphSpace*: A lightweight interface between igraph and ggplot2 graphics". R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
+* Sysbiolab Team (2026). RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics. R package version 1.2.0. Doi: 10.32614/CRAN.package.RGraphSpace
 
 ### Licenses
 
