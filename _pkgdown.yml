@@ -15,5 +15,11 @@ template:
           margin-top: 2rem !important;
         }
       </style>
-      
+footer:
+  structure:
+    left:  developed_by
+    right: built_with
+  components:
+    developed_by: "Developed by Sysbiolab"
+
 

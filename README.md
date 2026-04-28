@@ -64,8 +64,6 @@ If you use *RGraphSpace*, please cite:
 
 * Sysbiolab Team. "*RGraphSpace*: A lightweight interface between igraph and ggplot2 graphics". R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
 
-* Castro MAA, Wang X, Fletcher MNC, Meyer KB, Markowetz F. "*RedeR*: R/Bioconductor package for representing modular structures nested networks and multiple levels of hierarchical associations". *Genome Biology* 13:R29, 2012. Doi: 10.1186/gb-2012-13-4-r29
-
 ### Licenses
 
 The *RGraphSpace* package is distributed under [Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)
