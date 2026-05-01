@@ -314,18 +314,12 @@ GeomNodeSpace <- ggproto(
 )
 
 #-------------------------------------------------------------------------------
-.geom_check_node_size <- function(nodes, size_unit = "mm", 
-  range = NULL, verbose = TRUE){
+.geom_check_node_size <- function(nodes, size_unit = "npc"){
   # 1. Passed as a aesthetic, 'size' follows 'geom_point' behavior, in mm;
   # 2. Passed as a parameter, 'size' scales with the viewport (%) with
-  # range expected in [0, 100], then converted to 'npc'.
-  if (size_unit == "mm") {
-    if(!is.null(range)){
-      nodes$size <- scales::rescale(sqrt(nodes$size), to = range, 
-        from = c(0, max(sqrt(nodes$size), na.rm = T)))
-    }
-  } else {
-    if(verbose) .check_node_size(nodes[["size"]])
+  # range expected in [0, 100], then later converted to 'npc'.
+  if (size_unit == "npc") {
+    .check_node_size(nodes[["size"]])
     nodes$size <- scales::squish(nodes[["size"]], range = c(0, 100))
   }
   return(nodes)

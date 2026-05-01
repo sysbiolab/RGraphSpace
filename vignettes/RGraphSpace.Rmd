@@ -335,7 +335,7 @@ gs <- normalizeGraphSpace(gs, image = as_colorraster(volcano2) )
 plotGraphSpace(gs, add.image = TRUE)
 ```
 
-**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, `flip.v` and `flip.h` arguments can be used to apply flipping directly to the background image.
+**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
 
 
 # Interoperability with other packages
@@ -412,17 +412,17 @@ ggplot() +
 ```
 
 ```{r toy_sf.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# gg <- ggplot() + 
+# gg <- ggplot() +
 #   geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
-#   geom_edgespace(color = "grey40", arrow_size = 0.5, 
-#     arrow_offset = 0.01, data = gs1) + 
-#   geom_nodespace(aes(fill = Cities, size = `Population (M)`), 
+#   geom_edgespace(color = "grey40", arrow_size = 0.5,
+#     arrow_offset = 0.01, data = gs1) +
+#   geom_nodespace(aes(fill = Cities, size = `Population (M)`),
 #     data = gs1) +
 #   scale_size(range = c(3,9)) +
-#   scale_fill_discrete() + 
+#   scale_fill_discrete() +
 #   inject_nodespace() +
 #   theme_gspace_legend(key_fill = TRUE)
-# ggsave(filename = "./figs/toy_sf.png", height=3.5, width=5,
+# ggsave(filename = "./figs/toy_sf.png", height=6, width=8,
 #   units="in", device="png", dpi=200, plot=gg)
 ```
 

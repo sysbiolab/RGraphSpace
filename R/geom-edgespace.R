@@ -269,8 +269,8 @@ GeomEdgeSpace <- ggproto(
       size_range <- params$.size_rule$palette(c(0, 1))
     }
     
-    params$.nodes <- .geom_check_node_size(nodes, 
-      size_unit = params$.size_unit, range = size_range)
+    params$.nodes <- .geom_node_to_offset(nodes, 
+      range = size_range, size_unit = params$.size_unit)
     
     params
   },
@@ -342,8 +342,6 @@ GeomEdgeSpace <- ggproto(
   return(nodes)
   
 }
-
-#-------------------------------------------------------------------------------
 .is_valid_aes <- function(att, mapping, data_df) {
   if (is.null(mapping)) return(FALSE)
   expr <- mapping[[att]]
@@ -351,6 +349,21 @@ GeomEdgeSpace <- ggproto(
   vars <- all.vars(expr)
   if (length(vars) != 1) return(FALSE)
   vars %in% names(data_df)
+}
+
+#-------------------------------------------------------------------------------
+.geom_node_to_offset <- function(nodes, range = c(1, 6), 
+  size_unit = "npc"){
+  # 1. Passed as a aesthetic, 'size' follows 'geom_point' behavior, in mm;
+  # 2. Passed as a parameter, 'size' scales with the viewport (%) with
+  # range expected in [0, 100], then later converted to 'npc'.
+  if (size_unit == "npc") {
+    nodes$size <- scales::squish(nodes[["size"]], range = c(0, 100))
+  } else {
+    nsize <- scales::rescale(nodes[["size"]], range = c(0, 1))
+    nodes$size <- scales::rescale(sqrt(nsize), to = range)
+  }
+  return(nodes)
 }
 
 #-------------------------------------------------------------------------------
@@ -366,15 +379,21 @@ GeomEdgeSpace <- ggproto(
   # 4. Final sum is converted to 'npc' for grid coordinate alignment.
   mm2npc <- grid::convertWidth(unit(1, "mm"), unitTo = "npc", valueOnly = T)
   if(size_unit=="mm"){
-    # input 'size' and 'stroke' in 'mm', scaled to 'npc' by mm2npc
-    offsets <- (nodes[["size"]]/2 + nodes[["stroke"]]/2 * 0.75) * mm2npc
+    # input 'size' in 'mm', scaled to 'npc' by mm2npc
+    n_offsets <- nodes[["size"]]/2 * mm2npc
   } else {
     # input 'size' in [0, 100], transformed to 'npc' by 0.01
-    offsets <- (nodes[["size"]]/2 * 0.01) + ( nodes[["stroke"]]/2 * 0.75) * mm2npc
+    n_offsets <- nodes[["size"]]/2 * 0.01
   }
+  # input 'stroke' and 'linewidth' in 'mm', scaled to 'npc'
+  n_offsets <- n_offsets + ( nodes[["stroke"]]/2 * 0.75 * mm2npc )
+  e_offsets <-  edges[["linewidth"]] * 0.75 * mm2npc
+  
   emode <- .get_emode(edges[["arrowType"]])
-  edges$offset_start <- ifelse(emode %in% c(0,1), 0, offsets[edges[["vertex1"]]])
-  edges$offset_end <- ifelse(emode %in% c(0,2), 0, offsets[edges[["vertex2"]]])
+  edges$offset_start <- ifelse(emode %in% c(0,1), 0, 
+    n_offsets[edges[["vertex1"]]] + e_offsets)
+  edges$offset_end <- ifelse(emode %in% c(0,2), 0, 
+    n_offsets[edges[["vertex2"]]] + e_offsets)
   
   return(edges)
   
@@ -526,16 +545,31 @@ GeomEdgeSpace <- ggproto(
   
   offset_start <- edges$offset_start * as.numeric(emode %in% c(2, 3))
   offset_end <- edges$offset_end * as.numeric(emode %in% c(1, 3))
-  total_offset <- offset_start + offset_end
+  total_offset <- (offset_start + offset_end)
   
   dx <- edges$xend - edges$x
   dy <- edges$yend - edges$y
   L <- sqrt( dx^2 + dy^2 )
   L <- ifelse(L == 0, 1e-6, L)
   
-  scale <- pmin(1, L / total_offset)
-  offset_start <- offset_start * scale
-  offset_end <- offset_end * scale
+  edge_body_len <- pmax(0.02, L * 0.2)
+  available_space <- L - edge_body_len
+  
+  excess <- pmax(0, total_offset - available_space)
+  
+  adj_start <- offset_start - (excess / 2)
+  adj_end <- offset_end   - (excess / 2)
+  
+  final_start <- pmax(0, adj_start + pmin(0, adj_end))
+  final_end <- pmax(0, adj_end + pmin(0, adj_start))
+  
+  offset_start <- ifelse(excess > 0 & offset_start > 0, final_start, offset_start)
+  offset_end <- ifelse(excess > 0 & offset_end > 0, final_end, offset_end)
+
+  # max_offset <- L * 0.75
+  # scale <- pmin(1, max_offset / total_offset )
+  # offset_start <- offset_start * scale
+  # offset_end <- offset_end * scale
   
   edges$px <- dx/L
   edges$py <- dy/L

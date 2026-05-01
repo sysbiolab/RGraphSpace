@@ -405,10 +405,9 @@ plot.GraphSpace <- function(x, ...) {
 #' individual slots available in a GraphSpace object.
 #'
 #' @param gs A preprocessed \linkS4class{GraphSpace} class object
-#' @param what A single character value specifying which information should 
-#' be retrieved from the slots.
-#' Options: 'graph','gxy','gxyz','pars','misc','status','summits',
-#' 'summit_mask', and 'summit_contour'.
+#' @param what A single character value specifying which slot to 
+#' retrieve from the 'GraphSpace' object.
+#' Options: "graph", "nodes", "edges", "pars", "misc", and "image".
 #' @return Content from slots in the \linkS4class{GraphSpace} object.
 #' @examples
 #' # Load a demo igraph
@@ -426,7 +425,7 @@ plot.GraphSpace <- function(x, ...) {
 #' @aliases getGraphSpace
 #' @export
 setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
-    opts <- c("nodes", "edges", "graph","pars", "misc", "image")
+    opts <- c("graph", "nodes", "edges", "pars", "misc", "image")
     if (!what %in% opts) {
         opts <- paste0(opts, collapse = ", ")
         stop("'what' must be one of:\n", opts, call. = FALSE)

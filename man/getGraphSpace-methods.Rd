@@ -11,10 +11,9 @@
 \arguments{
 \item{gs}{A preprocessed \linkS4class{GraphSpace} class object}
 
-\item{what}{A single character value specifying which information should
-be retrieved from the slots.
-Options: 'graph','gxy','gxyz','pars','misc','status','summits',
-'summit_mask', and 'summit_contour'.}
+\item{what}{A single character value specifying which slot to
+retrieve from the 'GraphSpace' object.
+Options: "graph", "nodes", "edges", "pars", "misc", and "image".}
 }
 \value{
 Content from slots in the \linkS4class{GraphSpace} object.
