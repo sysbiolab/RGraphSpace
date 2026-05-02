@@ -558,18 +558,16 @@ GeomEdgeSpace <- ggproto(
   excess <- pmax(0, total_offset - available_space)
   
   adj_start <- offset_start - (excess / 2)
-  adj_end <- offset_end   - (excess / 2)
+  adj_end <- offset_end - (excess / 2)
   
   final_start <- pmax(0, adj_start + pmin(0, adj_end))
   final_end <- pmax(0, adj_end + pmin(0, adj_start))
   
-  offset_start <- ifelse(excess > 0 & offset_start > 0, final_start, offset_start)
-  offset_end <- ifelse(excess > 0 & offset_end > 0, final_end, offset_end)
-
-  # max_offset <- L * 0.75
-  # scale <- pmin(1, max_offset / total_offset )
-  # offset_start <- offset_start * scale
-  # offset_end <- offset_end * scale
+  idx <- which(excess > 0 & offset_start > 0)
+  offset_start[idx] <- final_start[idx]
+  
+  idx <- which(excess > 0 & offset_end > 0)
+  offset_end[idx] <- final_end[idx]
   
   edges$px <- dx/L
   edges$py <- dy/L
