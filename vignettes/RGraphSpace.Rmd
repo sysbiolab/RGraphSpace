@@ -1,9 +1,8 @@
 ---
-title: "RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics"
+title: "Getting started with RGraphSpace"
 author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
-abstract: "An interface to integrate 'igraph' and 'ggplot2' graphics within a normalized coordinate system. 'RGraphSpace' implements geometric objects based on 'ggplot2' prototypes, optimized for the representation of large networks. The package aims to facilitate side-by-side visualization of multiple graphs spatially aligned with reference maps and images."
 output: 
   html_document:
     theme: cerulean
