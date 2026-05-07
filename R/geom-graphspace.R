@@ -311,21 +311,20 @@ GeomGraphSpace <- ggproto(
   
   required_aes = c("x", "y", "vertex"),
   
-  non_missing_aes = c("size", "shape", "colour"),
+  non_missing_aes = c("size", "stroke", "shape", "colour"),
   
   default_aes = aes(
     size = 5,
+    stroke = 0.5,
     shape = 21,
     colour = "grey20",
     fill = "#E5E5E5B3",
-    stroke = 0.5,
     alpha = NA
   ),
   
   draw_panel = function(self, data, panel_params, coord, edges, 
-    edge_colour = "grey80", edge_alpha = NA,
-    edge_linewidth = 0.5, edge_linetype = "solid", 
-    arrow_size = 1, arrow_offset = 0.01, 
+    edge_colour = "grey80", edge_alpha = NA, edge_linewidth = 0.5, 
+    edge_linetype = "solid", arrow_size = 1, arrow_offset = 0.01, 
     arrow_lineend = "butt", arrow_linejoin = "mitre", 
     na.rm = FALSE, .size_unit = "mm") {
     
@@ -359,7 +358,7 @@ GeomGraphSpace <- ggproto(
       
       edges <- .geom_remap_edge_coords(edges = edges, nodes = coords)
       
-      edges <- .geom_get_edge_offsets(edges = edges, nodes = coords,
+      edges <- .geom_remap_edge_offsets(edges = edges, nodes = coords,
         size_unit = .size_unit)
       
       edges <- .geom_adj_arrow_offsets(edges)

@@ -2,11 +2,12 @@
 % Please edit documentation in R/geom-nodespace.R
 \name{geom_nodespace}
 \alias{geom_nodespace}
+\alias{gs_node_handler}
 \title{Draw node elements in a 2D graph layout}
 \usage{
 geom_nodespace(
   mapping = NULL,
-  data = NULL,
+  data = gs_node_handler(),
   stat = "identity",
   position = "identity",
   ...,
@@ -14,13 +15,17 @@ geom_nodespace(
   show.legend = NA,
   inherit.aes = FALSE
 )
+
+gs_node_handler()
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}.
 These mappings override global aesthetics and are not inherited
 from the top-level plot.}
 
-\item{data}{A \link{GraphSpace} object.}
+\item{data}{The data to be displayed in this layer. It can be a
+\link{GraphSpace} object, an \link[igraph]{igraph} object, or the
+\code{gs_node_handler()} handler (default).}
 
 \item{stat}{The statistical transformation to use on the data.
 Defaults to \code{identity}.}
@@ -53,6 +58,18 @@ node attributes stored in \link{GraphSpace} objects as aesthetics.
 This geom is designed to map node-level attributes (e.g., \code{fill},
 \code{size}) or any aesthetics supported by \link[ggplot2]{GeomPoint}.
 }
+\details{
+The interpretation of \strong{\code{size}} depends on how it is provided:
+\itemize{
+\item \strong{As an aesthetic}: When mapped within \code{aes()}, \code{size}
+follows the behavior of \link[ggplot2]{geom_point}, using absolute
+units to ensure consistency with the plot legends.
+\item \strong{As a parameter}: When set outside \code{aes()}, \code{size} is
+treated as a percentage of the viewport (\code{[0, 100]}), scaling
+in \code{npc} units. This allows nodes to resize dynamically with
+viewport changes.
+}
+}
 \section{Aesthetics}{
 
 
@@ -78,18 +95,17 @@ Additional parameters can be passed to control fixed values for the layer.
 For example: \code{fill = "red"}, \code{stroke = 3}, \code{alpha = 0.5}, or \code{shape = 21}.
 }
 
-\section{Drawing}{
+\section{Integration with ggraph}{
 
 
-The interpretation of \strong{\code{size}} depends on how it is provided:
+\code{geom_nodespace} is compatible with the \code{ggraph} methods.
+When used within a \code{ggraph()} call, the default \code{gs_node_handler()}
+handler automatically:
 \itemize{
-\item \strong{As an aesthetic}: When mapped within \code{aes()}, \code{size}
-follows the behavior of \link[ggplot2]{geom_point}, using absolute
-units to ensure consistency with the plot legends.
-\item \strong{As a parameter}: When set outside \code{aes()}, \code{size} is
-treated as a percentage of the viewport (\code{[0, 100]}), scaling
-in \code{npc} units. This allows nodes to resize dynamically with
-viewport changes.
+\item Identifies the current \code{layout_ggraph}.
+\item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
+\item Reconstructs a temporary \code{GraphSpace} object to inject spatial
+metadata and user-chosen \code{ggraph} layout.
 }
 }
 

@@ -15,9 +15,11 @@
 #' @param mapping Set of aesthetic mappings created by [ggplot2::aes()].
 #' These mappings override global aesthetics and are not inherited 
 #' from the top-level plot.
-#'
-#' @param data A \link{GraphSpace} object.
-#'
+#' 
+#' @param data The data to be displayed in this layer. It can be a 
+#' \link{GraphSpace} object, an \link[igraph]{igraph} object, or the 
+#' \code{gs_node_handler()} handler (default).
+#' 
 #' @param stat The statistical transformation to use on the data.
 #' Defaults to \code{identity}.
 #'
@@ -62,7 +64,19 @@
 #' Additional parameters can be passed to control fixed values for the layer.
 #' For example: `fill = "red"`, `stroke = 3`, `alpha = 0.5`, or `shape = 21`.
 #' 
-#' @section Drawing:
+#' @section Integration with ggraph:
+#' 
+#' \code{geom_nodespace} is compatible with the \code{ggraph} methods.
+#' When used within a \code{ggraph()} call, the default \code{gs_node_handler()} 
+#' handler automatically:
+#' \itemize{
+#'   \item Identifies the current \code{layout_ggraph}.
+#'   \item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
+#'   \item Reconstructs a temporary \code{GraphSpace} object to inject spatial 
+#'   metadata and user-chosen \code{ggraph} layout.
+#' }
+#' 
+#' @details
 #' 
 #' The interpretation of \strong{\code{size}} depends on how it is provided:
 #' \itemize{
@@ -124,27 +138,29 @@
 #' }
 #' 
 #' @export
-geom_nodespace <- function(mapping = NULL, data = NULL, 
+geom_nodespace <- function(mapping = NULL, data = gs_node_handler(), 
   stat = "identity", position = "identity", ...,
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE) {
-  
-  if (inherits(data, "GraphSpace")) {
-    .geom_check_slots(data)
-    nodes <- gs_nodes(data)
-  } else {
-    stop("'data' must be a 'GraphSpace' object.")
-  }
   
   mapping <- .mapping_nodespace(mapping)
   
   params <- rlang::list2(na.rm = na.rm, ...)
   
-  params <- .params_nodespace(params, mapping, nodes)
+  if (!inherits(data, "gs_node_handler")){
+    if (inherits(data, c("GraphSpace", "igraph"))){
+      if (inherits(data, "GraphSpace")) .geom_check_slots(data)
+      gs_handler <- gs_node_handler()
+      data <- gs_handler(data)
+      params <- .params_nodespace(params, mapping, data)
+    } else {
+      stop("'data' must be a 'GraphSpace' or 'igraph' object.", call. = FALSE)
+    }
+  }
   
   ggplot2::layer(
     geom = GeomNodeSpace,
     mapping = mapping,
-    data = nodes,
+    data = data,
     stat = stat,
     position = position,
     show.legend = show.legend,
@@ -152,6 +168,30 @@ geom_nodespace <- function(mapping = NULL, data = NULL,
     params = params
   )
   
+}
+
+#-------------------------------------------------------------------------------
+#' @rdname geom_nodespace
+#' @export
+gs_node_handler <- function() {
+  fn <- function(data) {
+    if (inherits(data, "layout_ggraph")) {
+      g <- attr(data, "graph")
+      coords <- tryCatch(
+        as.matrix(data[, c("x", "y")]),
+        error = function(e) NULL
+      )
+      data <- gs_nodes(GraphSpace(g, layout = coords, verbose = FALSE))
+    } else if (inherits(data, "igraph")) {
+      data <- gs_nodes(GraphSpace(data, verbose = FALSE))
+    } else if (inherits(data, "GraphSpace")){
+      data <- gs_nodes(data)
+    }
+    return(data)
+  }
+  attr(fn, "gs_handler_type") <- "node"
+  class(fn) <- c("gs_node_handler", class(fn))
+  return(fn)
 }
 
 #-------------------------------------------------------------------------------

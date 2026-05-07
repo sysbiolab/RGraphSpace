@@ -6,13 +6,14 @@
 #' \linkS4class{GraphSpace} objects, designed to store graph data and 
 #' metadata for optimized rendering in RGraphSpace.
 #'
-#' @param g An \link[igraph]{igraph} object or a \code{data.frame} used to 
-#' initialize a \code{GraphSpace} object. If an \code{igraph} is provided, 
-#' it should include vertex coordinates in \code{x} and \code{y} attributes, 
-#' and vertex labels in the \code{name} attribute. If a \code{data.frame} is 
-#' provided, it must contain at least \code{x} and \code{y} columns 
-#' representing the node coordinates; additional columns will be treated 
-#' as vertex attributes. For graphs requiring edge definitions, use the 
+#' @param g A graph object inheriting from the \link[igraph]{igraph} class 
+#' (such as \code{igraph} and \code{tbl_graph}) or a \code{data.frame} used 
+#' to initialize a \code{GraphSpace} object. If a graph is provided, it 
+#' should include vertex coordinates in \code{x} and \code{y} attributes, 
+#' and vertex labels in the \code{name} attribute. If a \code{data.frame} 
+#' is provided, it must contain at least \code{x} and \code{y} columns 
+#' representing the node coordinates; additional columns will be treated as 
+#' vertex attributes. For graphs requiring edge definitions, use the 
 #' \code{igraph} initialization.
 #' @param layout An optional numeric matrix with two columns for \code{x} and
 #' \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.
@@ -141,13 +142,14 @@
 #' @importFrom igraph simplify V E 'V<-' 'E<-' is_directed vertex_attr
 #' @importFrom igraph layout_nicely as_undirected delete_edge_attr
 #' @importFrom igraph vertex_attr_names edge_attr edge_attr_names
-#' @importFrom igraph ends delete_vertex_attr 'edge_attr<-'
+#' @importFrom igraph ends delete_vertex_attr 'edge_attr<-' as.igraph
+#' @importFrom tidygraph as.igraph
 #' @importFrom scales rescale
 #' @importFrom grDevices is.raster as.raster
 #' @aliases GraphSpace
 #' @rdname GraphSpace-methods
 #' @export
-setMethod("GraphSpace", signature(g = "igraph"),
+setMethod("GraphSpace", signature(g = "ANY"),
   function(g, layout = NULL, verbose = TRUE,  
     mar = deprecated(), image = deprecated(), ...) {
     ### deprecate
@@ -158,6 +160,9 @@ setMethod("GraphSpace", signature(g = "igraph"),
     if (lifecycle::is_present(image)) {
       deprecate_soft("1.1.1", "GraphSpace(image)", 
         "normalizeGraphSpace(image)")
+    }
+    if (!inherits(g, "igraph")) {
+      stop("Input 'g' must inherit 'igraph' class.", call. = FALSE)
     }
     .validate_gs_args("singleLogical", "verbose", verbose)
     #--- validate argument values
@@ -173,6 +178,12 @@ setMethod("GraphSpace", signature(g = "igraph"),
     return(gs)
   }
 )
+
+#' @importFrom igraph as.igraph
+#' @export
+as.igraph.GraphSpace <- function(x, ...) {
+  return(x@graph)
+}
 
 #' @rdname GraphSpace-methods
 #' @export
@@ -531,19 +542,23 @@ setMethod("show", "GraphSpace", function(object) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_nodes", "GraphSpace", function(x) {
-    x@nodes
+  x <- x@nodes
+  attr(x, "gs_handler_type") <- "node"
+  return(x)
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_edges", "GraphSpace", function(x) {
-    .get_gs_edges(x)
+  x <- .gs_edges(x)
+  attr(x, "gs_handler_type") <- "edge"
+  return(x)
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_vcount", "GraphSpace", function(x) {
-    igraph::vcount(x@graph)
+  igraph::vcount(x@graph)
 })
 
 #' @rdname GraphSpace-accessors
@@ -678,12 +693,5 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
     return(x)
 }
 
-# .recenter_nodes <- function(nodes, image, mar){
-#     if(is.null(image)){
-#         temp_list <- .center_graph_nodes(nodes, mar)
-#     } else {
-#         temp_list <- .adjust_image_nodes(nodes, image, mar)
-#     }
-#     return(temp_list)
-# }
+
 

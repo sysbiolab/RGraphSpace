@@ -4,8 +4,11 @@
 ################################################################################
 .validate_igraph <- function(g, layout = NULL, verbose = FALSE) {
     if (verbose) message("Validating the 'igraph' object...")
-    if (!is(g, "igraph")) {
+    if (!inherits(g, "igraph")) {
         stop("'g' should be an 'igraph' object.", call. = FALSE)
+    }
+    if (inherits(g, "tbl_graph")) {
+        g <- tidygraph::as.igraph(g)
     }
     if (!is.null(layout)) {
         if (nrow(layout) != vcount(g)) {

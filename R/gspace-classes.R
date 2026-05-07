@@ -9,7 +9,8 @@ setOldClass("raster")
 #' @slot image A raster background image matrix.
 #' @slot pars A list with parameters.
 #' @slot misc A list with intermediate objects for downstream methods.
-#'
+#' @slot uuid An Universally Unique Identifier (UUID).
+#' 
 #' @method plotGraphSpace \code{\link{plotGraphSpace}}
 #' @method getGraphSpace \code{\link{getGraphSpace}}
 #' @aliases GraphSpace-class
@@ -21,22 +22,24 @@ setOldClass("raster")
 #'
 ## Class GraphSpace
 setClass("GraphSpace",
-    slot = c(
-        nodes = "data.frame",
-        edges = "data.frame",
-        graph = "igraph",
-        image = "raster",
-        pars = "list",
-        misc = "list"
-    ),
-    prototype = list(
-        nodes = data.frame(),
-        edges = data.frame(),
-        graph = igraph::empty_graph(),
-        image = as.raster(matrix()),
-        pars = list(),
-        misc = list()
-    )
+  slot = c(
+    nodes = "data.frame",
+    edges = "data.frame",
+    graph = "igraph",
+    image = "raster",
+    pars = "list",
+    misc = "list",
+    uuid = "character"
+  ),
+  prototype = list(
+    nodes = data.frame(),
+    edges = data.frame(),
+    graph = igraph::empty_graph(),
+    image = as.raster(matrix()),
+    pars = list(),
+    misc = list(),
+    uuid = character()
+  )
 )
 setValidity("GraphSpace", function(object) {
   errors <- character()
@@ -68,3 +71,33 @@ setValidity("GraphSpace", function(object) {
   
   if (length(errors) == 0) TRUE else errors
 })
+
+#' Generate a unique identifier for GraphSpace objects
+#' 
+#' This helper function creates a unique ID without relying on the R 
+#' Random Number Generator (RNG), making it immune to `set.seed()`.
+#' It combines the Process ID (PID), high-precision system time, and 
+#' a system-level temporary identifier to ensure uniqueness across 
+#' parallel processes and rapid sequential calls.
+#' 
+#' @return A character string containing a unique alphanumeric ID.
+#' @keywords internal
+.generate_gs_uuid <- function() {
+  # Capture current PID (uniqueness across different R sessions)
+  pid <- Sys.getpid()
+  
+  # Capture high-precision time
+  # We use %OS6 for microsecond precision
+  time_stmp <- format(Sys.time(), "%d%H%M%OS6")
+  
+  # Capture a system-level unique string
+  # tempfile() calls the OS to generate a unique name, bypassing R's RNG
+  sys_id <- basename(tempfile(pattern = ""))
+  
+  # Combine and sanitize
+  raw_id <- paste0("gs", pid, time_stmp, sys_id)
+  uuid <- gsub("[^a-zA-Z0-9]", "", raw_id)
+  
+  return(uuid)
+  
+}

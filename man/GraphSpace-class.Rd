@@ -24,6 +24,8 @@ GraphSpace: An S4 class for igraph objects
 \item{\code{pars}}{A list with parameters.}
 
 \item{\code{misc}}{A list with intermediate objects for downstream methods.}
+
+\item{\code{uuid}}{An Universally Unique Identifier (UUID).}
 }}
 
 \section{Constructor}{

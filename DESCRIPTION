@@ -24,7 +24,7 @@ Authors@R:
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
 Depends: R(>= 4.5), methods, ggplot2
-Imports: grDevices, grid, igraph, scales, rlang, ggrastr, lifecycle
+Imports: grDevices, grid, igraph, tidygraph, scales, rlang, ggrastr, lifecycle
 Suggests: knitr, rmarkdown, testthat, ggnewscale, patchwork
 Enhances: RedeR
 License: Artistic-2.0
@@ -47,5 +47,5 @@ Collate:
     'gspace-validation.R'
     'inject-nodespace.R'
 Encoding: UTF-8
-RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.0.0

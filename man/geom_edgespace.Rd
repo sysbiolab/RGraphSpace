@@ -2,31 +2,34 @@
 % Please edit documentation in R/geom-edgespace.R
 \name{geom_edgespace}
 \alias{geom_edgespace}
+\alias{gs_edge_handler}
 \title{Draw edge elements in a 2D graph layout}
 \usage{
 geom_edgespace(
   mapping = NULL,
-  data = NULL,
+  data = gs_edge_handler(),
   stat = "identity",
   position = "identity",
   ...,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = FALSE,
-  size_aes = NULL,
-  range = c(1, 6),
   arrow_size = 1,
   arrow_offset = 0.01,
   lineend = "butt",
   linejoin = "mitre"
 )
+
+gs_edge_handler()
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}.
 These mappings override global aesthetics and are not inherited
 from the top-level plot.}
 
-\item{data}{A \link{GraphSpace} object.}
+\item{data}{The data to be displayed in this layer. It can be a
+\link{GraphSpace} object, an \link[igraph]{igraph} object, or the
+\code{gs_edge_handler()} handler (default).}
 
 \item{stat}{The statistical transformation to use on the data.
 Defaults to \code{identity}.}
@@ -45,19 +48,6 @@ whether this layer should be included in legends.}
 
 \item{inherit.aes}{Logical. If \code{FALSE} (default), the layer will use
 aesthetics defined in \code{mapping}.}
-
-\item{size_aes}{Optional node size mapping, created with \code{\link[ggplot2:aes]{ggplot2::aes()}}.
-Can be used to synchronize \link{geom_nodespace} and \link{geom_edgespace}
-to ensure directed edges and arrows are offset from node boundaries.
-This prevents overlaps when \link{geom_nodespace} includes a dynamic
-\code{size} or \code{stroke} mappings. For automated scale detection, use
-\link{inject_nodespace} instead.}
-
-\item{range}{Optional numeric vector of length 2 (default \code{c(1, 6)})
-specifying the min/max node diameters in mm. Used with \code{size_aes} and
-should match the \code{range} in \code{\link[ggplot2:scale_size]{ggplot2::scale_size_continuous()}} for
-accurate edge clipping. For automated scale detection, use
-\link{inject_nodespace} instead.}
 
 \item{arrow_size}{Numeric scaling factor controlling arrowhead
 geometry (see 'drawing' section).}
@@ -120,6 +110,20 @@ For example: \code{colour = "grey"}, \code{linetype = 2}, \code{linewidth = 1}.
 
 Arrows can be further adjusted by \code{arrow_size} and \code{arrow_offset}
 arguments (see \emph{details}).
+}
+
+\section{Integration with ggraph}{
+
+
+\code{geom_nodespace} is compatible with the \code{ggraph} methods.
+When used within a \code{ggraph()} call, the default \code{gs_edge_handler()}
+handler automatically:
+\itemize{
+\item Identifies the current \code{layout_ggraph}.
+\item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
+\item Reconstructs a temporary \code{GraphSpace} object to inject spatial
+metadata and user-chosen \code{ggraph} layout.
+}
 }
 
 \examples{

@@ -9,6 +9,9 @@
     edges <- .get_edges(gg)
     
     if(verbose) message("Creating a 'GraphSpace' object...")
+    instance_id <- .generate_gs_uuid()
+    attr(nodes, "gs_id") <- instance_id
+    attr(edges, "gs_id") <- instance_id
     pars <- list(is.directed = is_directed(gg), 
         is.normalized = FALSE, image.layer = FALSE)
     gs <- new(Class = "GraphSpace", 
@@ -17,7 +20,9 @@
         graph = gg, 
         image = as.raster(matrix()), 
         pars = pars, 
-        misc = list(g = g))
+        misc = list(g = g),
+        uuid = instance_id
+        )
     
     return(gs)
     
@@ -224,16 +229,27 @@
 ### Other functions
 ################################################################################
 
-.get_gs_edges <- function(gs){
+.gs_edges <- function(gs){
+    
     nodes <- gs@nodes
     edges <- gs@edges
+    
     coord <- data.frame(
         x = nodes[edges$vertex1, "x"],
         y = nodes[edges$vertex1, "y"],
         xend = nodes[edges$vertex2, "x"],
         yend = nodes[edges$vertex2, "y"]
         )
+    
+    n_offsets <- nodes[["nodeSize"]]
+    emode <- .get_emode(edges[["arrowType"]])
+    coord$offset_start <- ifelse(emode %in% c(0,1), 0, n_offsets[edges[["vertex1"]]])
+    coord$offset_end <- ifelse(emode %in% c(0,2), 0, n_offsets[edges[["vertex2"]]])
+    
+    gs_id <- attr(edges, "gs_id")
     edges <- cbind(coord, edges)
+    attr(edges, "gs_id") <- gs_id
+    
     return(edges)
 }
 
