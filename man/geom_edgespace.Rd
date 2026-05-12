@@ -2,13 +2,13 @@
 % Please edit documentation in R/geom-edgespace.R
 \name{geom_edgespace}
 \alias{geom_edgespace}
-\alias{gs_edge_handler}
+\alias{edgespace_handler}
 \title{Draw edge elements in a 2D graph layout}
 \usage{
 geom_edgespace(
   mapping = NULL,
-  data = gs_edge_handler(),
-  stat = "identity",
+  data = edgespace_handler(),
+  stat = StatEdgeSpace,
   position = "identity",
   ...,
   na.rm = FALSE,
@@ -20,7 +20,7 @@ geom_edgespace(
   linejoin = "mitre"
 )
 
-gs_edge_handler()
+edgespace_handler()
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}.
@@ -29,7 +29,7 @@ from the top-level plot.}
 
 \item{data}{The data to be displayed in this layer. It can be a
 \link{GraphSpace} object, an \link[igraph]{igraph} object, or the
-\code{gs_edge_handler()} handler (default).}
+\code{edgespace_handler()} handler (default).}
 
 \item{stat}{The statistical transformation to use on the data.
 Defaults to \code{identity}.}
@@ -116,7 +116,7 @@ arguments (see \emph{details}).
 
 
 \code{geom_nodespace} is compatible with the \code{ggraph} methods.
-When used within a \code{ggraph()} call, the default \code{gs_edge_handler()}
+When used within a \code{ggraph()} call, the default \code{edgespace_handler()}
 handler automatically:
 \itemize{
 \item Identifies the current \code{layout_ggraph}.

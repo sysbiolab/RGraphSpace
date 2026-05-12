@@ -4,6 +4,7 @@
 \alias{gs_nodes,GraphSpace-method}
 \alias{names}
 \alias{names<-}
+\alias{gs_graph}
 \alias{gs_nodes}
 \alias{gs_edges}
 \alias{gs_vcount}
@@ -13,6 +14,7 @@
 \alias{gs_vertex_attr<-}
 \alias{gs_edge_attr<-}
 \alias{gs_edges,GraphSpace-method}
+\alias{gs_graph,GraphSpace-method}
 \alias{gs_vcount,GraphSpace-method}
 \alias{gs_ecount,GraphSpace-method}
 \alias{names,GraphSpace-method}
@@ -21,12 +23,18 @@
 \alias{gs_vertex_attr<-,GraphSpace-method}
 \alias{gs_edge_attr,GraphSpace-method}
 \alias{gs_edge_attr<-,GraphSpace-method}
+\alias{$,GraphSpace-method}
+\alias{$<-,GraphSpace-method}
+\alias{[[<-,GraphSpace-method}
+\alias{as.igraph.GraphSpace}
 \title{Accessors for applying essential igraph methods to modify
 attributes of GraphSpace objects.}
 \usage{
 \S4method{gs_nodes}{GraphSpace}(x)
 
 \S4method{gs_edges}{GraphSpace}(x)
+
+\S4method{gs_graph}{GraphSpace}(x)
 
 \S4method{gs_vcount}{GraphSpace}(x)
 
@@ -43,6 +51,12 @@ attributes of GraphSpace objects.}
 \S4method{gs_edge_attr}{GraphSpace}(x, name, ...)
 
 \S4method{gs_edge_attr}{GraphSpace}(x, name, ...) <- value
+
+\S4method{$}{GraphSpace}(x, name)
+
+\S4method{$}{GraphSpace}(x, name) <- value
+
+\method{as.igraph}{GraphSpace}(x, ...)
 }
 \arguments{
 \item{x}{A \linkS4class{GraphSpace} class object}
@@ -51,7 +65,7 @@ attributes of GraphSpace objects.}
 
 \item{name}{Name of the attribute.}
 
-\item{...}{Additional arguments passed to igraph methods.}
+\item{...}{Additional arguments passed to igraph and extraction methods.}
 }
 \value{
 Updated \linkS4class{GraphSpace} object.
@@ -62,6 +76,7 @@ object. Selected 'igraph' methods are applied to the 'graph' slot and
 propagated to downstream components.
 }
 \examples{
+library(igraph)
 # Load a demo igraph
 data('gtoy1', package = 'RGraphSpace')
 
@@ -106,7 +121,7 @@ gs_edge_attr(gs, "edgeLineColor")
 # Replace an entire edge attribute
 gs_edge_attr(gs, "edgeLineWidth") <- 1
 
- # Alternative syntax using `$` for edge attributes
+# Alternative syntax using `$` for edge attributes
 gs_edge_attr(gs)$edgeLineWidth <- 3
 
 }

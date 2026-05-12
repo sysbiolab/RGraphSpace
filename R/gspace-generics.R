@@ -24,6 +24,11 @@ setGeneric("cropGraphSpace", function(gs, ...)
   package = "RGraphSpace"
 )
 
+setGeneric("gs_graph", function(x) 
+  standardGeneric("gs_graph"),
+  package = "RGraphSpace"
+)
+
 setGeneric("gs_nodes", function(x) 
   standardGeneric("gs_nodes"),
   package = "RGraphSpace"

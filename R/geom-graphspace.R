@@ -163,34 +163,39 @@
 #' }
 #' 
 #' @export
-geom_graphspace <- function(mapping = NULL, data = NULL, 
+geom_graphspace <- function(mapping = NULL, data, 
   stat = "identity", position = "identity", ...,
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE,
   arrow_size = 1, arrow_offset = 0.01) {
   
-  if (inherits(data, "GraphSpace")) {
-    .geom_check_slots(data)
-    nodes <- gs_nodes(data)
-    edges <- gs_edges(data)
-  } else {
-    stop("'data' must be a 'GraphSpace' object.")
+  if (missing(data) || is.null(data)){
+    rlang::warn(
+      message = c(
+        "!" = "`geom_graphspace()` ignored: explicit `data` object is required.",
+        "i" = "Accepted: 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout.",
+        "*" = "For inherited data, use `geom_nodespace()` and `geom_edgespace()` instead."
+      )
+    )
+    return(ggplot2::geom_blank())
   }
+  
+  mapping <- .mapping_graphspace(mapping)
   
   params <- rlang::list2(
     na.rm = na.rm,
-    edges = edges,
     arrow_size = arrow_size,
     arrow_offset = arrow_offset,
     ...)
   
-  mapping <- .mapping_graphspace(mapping)
-  
-  params <- .params_graphspace(params, mapping, nodes, edges)
+  data <- .graphspace_handler(data)
+  edges <- gs_edges(data)
+  data <- gs_nodes(data)
+  params <- .params_graphspace(params, mapping, data, edges)
   
   ggplot2::layer(
     geom = GeomGraphSpace,
     mapping = mapping,
-    data = nodes,
+    data = data,
     stat = stat,
     position = position,
     show.legend = show.legend,
@@ -198,6 +203,22 @@ geom_graphspace <- function(mapping = NULL, data = NULL,
     params = params
   )
   
+}
+
+#-------------------------------------------------------------------------------
+.graphspace_handler <- function(data) {
+  if ( inherits(data, c("igraph", "layout_ggraph")) ) {
+    data <- GraphSpace(data, verbose = FALSE)
+  } else if (!inherits(data, "GraphSpace")) {
+    rlang::abort(
+      message = c(
+        "x" = "Unsupported `data` type in `geom_graphspace()`.",
+        "i" = "Accepted: 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout.",
+        "*" = "For inherited data, use `geom_nodespace()` and `geom_edgespace()` instead."
+      )
+    )
+  }
+  return(data)
 }
 
 #-------------------------------------------------------------------------------
@@ -216,6 +237,7 @@ geom_graphspace <- function(mapping = NULL, data = NULL,
 .params_graphspace <- function(params, mapping, nodes, edges){
   
   params$.size_unit <- if("size" %in% names(mapping)) "mm" else "npc"
+  params$.edges <- edges
   
   #--- nodes
   
@@ -284,7 +306,6 @@ geom_graphspace <- function(mapping = NULL, data = NULL,
   params
 }
 
-
 #-------------------------------------------------------------------------------
 #' @title GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods
 #'
@@ -310,7 +331,7 @@ GeomGraphSpace <- ggproto(
   "GeomGraphSpace", ggplot2::Geom, 
   
   required_aes = c("x", "y", "vertex"),
-  
+    
   non_missing_aes = c("size", "stroke", "shape", "colour"),
   
   default_aes = aes(
@@ -322,11 +343,11 @@ GeomGraphSpace <- ggproto(
     alpha = NA
   ),
   
-  draw_panel = function(self, data, panel_params, coord, edges, 
+  draw_panel = function(self, data, panel_params, coord, 
     edge_colour = "grey80", edge_alpha = NA, edge_linewidth = 0.5, 
     edge_linetype = "solid", arrow_size = 1, arrow_offset = 0.01, 
     arrow_lineend = "butt", arrow_linejoin = "mitre", 
-    na.rm = FALSE, .size_unit = "mm") {
+    na.rm = FALSE, .size_unit = "mm", .edges = NULL) {
     
     data$shape <- translate_shape_string(data$shape)
     
@@ -338,39 +359,39 @@ GeomGraphSpace <- ggproto(
     node_grobs <- .get_node_grobs(coords, size_unit = .size_unit)
     node_grobs$name <- grobName(node_grobs, "nodes")
     
-    if(.empty(edges)){
+    if(.empty(.edges)){
       
       edge_grobs <- zeroGrob()
       
     } else {
       
-      edges$colour <- edge_colour %||% "grey80"
-      edges$linewidth <- edge_linewidth %||% 0.5
-      edges$linetype <- edge_linetype %||% "solid"
+      .edges$colour <- edge_colour %||% "grey80"
+      .edges$linewidth <- edge_linewidth %||% 0.5
+      .edges$linetype <- edge_linetype %||% "solid"
       
-      edges$alpha <- edge_alpha %||% NA
-      edges$arrow_size <- (arrow_size %||% 1)
-      edges$arrow_offset <- arrow_offset %||% 0
+      .edges$alpha <- edge_alpha %||% NA
+      .edges$arrow_size <- (arrow_size %||% 1)
+      .edges$arrow_offset <- arrow_offset %||% 0
       
-      edges <- remove_missing(edges, na.rm = na.rm,
+      .edges <- remove_missing(.edges, na.rm = na.rm,
         vars = c("vertex1", "vertex2", "arrowType"), 
         name = "geom_graphspace-edges")
       
-      edges <- .geom_remap_edge_coords(edges = edges, nodes = coords)
+      .edges <- .geom_remap_edge_coords(edges = .edges, nodes = coords)
       
-      edges <- .geom_remap_edge_offsets(edges = edges, nodes = coords,
+      .edges <- .geom_remap_edge_offsets(edges = .edges, nodes = coords,
         size_unit = .size_unit)
       
-      edges <- .geom_adj_arrow_offsets(edges)
+      .edges <- .geom_adj_arrow_offsets(.edges)
       
-      edges <- .geom_adj_arrow_size(edges, size_unit = .size_unit)
+      .edges <- .geom_adj_arrow_size(.edges, size_unit = .size_unit)
       
-      edges <- remove_missing(edges, na.rm = na.rm,
+      .edges <- remove_missing(.edges, na.rm = na.rm,
         vars = c("x", "y", "xend", "yend"), 
         name = "geom_graphspace-coords")
       
       # Create edge grobs
-      edge_grobs <- .get_edge_grobs(edges, lineend = arrow_lineend, 
+      edge_grobs <- .get_edge_grobs(.edges, lineend = arrow_lineend, 
         linejoin = arrow_linejoin, size_unit = .size_unit)
       
     }

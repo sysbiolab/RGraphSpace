@@ -18,7 +18,7 @@
 #' 
 #' @param data The data to be displayed in this layer. It can be a 
 #' \link{GraphSpace} object, an \link[igraph]{igraph} object, or the 
-#' \code{gs_node_handler()} handler (default).
+#' \code{nodespace_handler()} handler (default).
 #' 
 #' @param stat The statistical transformation to use on the data.
 #' Defaults to \code{identity}.
@@ -67,7 +67,7 @@
 #' @section Integration with ggraph:
 #' 
 #' \code{geom_nodespace} is compatible with the \code{ggraph} methods.
-#' When used within a \code{ggraph()} call, the default \code{gs_node_handler()} 
+#' When used within a \code{ggraph()} call, the default \code{nodespace_handler()} 
 #' handler automatically:
 #' \itemize{
 #'   \item Identifies the current \code{layout_ggraph}.
@@ -138,24 +138,27 @@
 #' }
 #' 
 #' @export
-geom_nodespace <- function(mapping = NULL, data = gs_node_handler(), 
-  stat = "identity", position = "identity", ...,
+geom_nodespace <- function(mapping = NULL, data = nodespace_handler(), 
+  stat = StatNodeSpace, position = "identity", ...,
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE) {
+  
+  if (!inherits(data, "nodespace_handler")){
+    if (is.function(data)){
+      rlang::abort(
+        message = c(
+          "x" = "Invalid handler function provided to `data`.",
+          "*" = "Use `nodespace_handler()` to create a compatible handler."
+        )
+      )
+    }
+    data <- nodespace_handler()(data)
+  }
   
   mapping <- .mapping_nodespace(mapping)
   
   params <- rlang::list2(na.rm = na.rm, ...)
   
-  if (!inherits(data, "gs_node_handler")){
-    if (inherits(data, c("GraphSpace", "igraph"))){
-      if (inherits(data, "GraphSpace")) .geom_check_slots(data)
-      gs_handler <- gs_node_handler()
-      data <- gs_handler(data)
-      params <- .params_nodespace(params, mapping, data)
-    } else {
-      stop("'data' must be a 'GraphSpace' or 'igraph' object.", call. = FALSE)
-    }
-  }
+  params$.size_unit <- if("size" %in% names(mapping)) "mm" else "npc"
   
   ggplot2::layer(
     geom = GeomNodeSpace,
@@ -171,118 +174,149 @@ geom_nodespace <- function(mapping = NULL, data = gs_node_handler(),
 }
 
 #-------------------------------------------------------------------------------
+#' Attribute Processing for GeomNodeSpace
+#'
+#' Manage visual attribute precedence (color, size, shape) for `GeomNodeSpace` 
+#' objects.
+#'
+#' @section Attribute Priority:
+#' 1. Explicit `aes()` mappings.
+#' 2. Fixed `geom_nodespace()` arguments.
+#' 3. Original graph attributes (via `optional_aes`).
+#' 
+#' During the `setup_data` stage, the Stat invokes internal functions 
+#' to resolve value priority:
+#' \enumerate{
+#'   \item **Explicit Mapping**: Values defined by the user inside `aes()`.
+#'   \item **Fixed Parameters**: Constant values passed as arguments in the `geom_nodespace()` call.
+#'   \item **Graph Attributes**: Original attributes stored within the GraphSpace 
+#'   object, retrieved from the data columns.
+#' }
+#'
+#' @format A \code{ggproto} object.
+#' @seealso \code{\link{geom_nodespace}}
+#' @export
+StatNodeSpace <- ggproto(
+  "StatNodeSpace", ggplot2::Stat,
+  optional_aes = c("nodeSize", "nodeShape", "nodeLineWidth", "nodeColor", "nodeAlpha"),
+  setup_data = function(data, params) {
+    data <- .params_nodespace(params, data)
+    return(data)
+  },
+  compute_panel = function(data, scales){
+    return(data)
+  }
+)
+
+#-------------------------------------------------------------------------------
 #' @rdname geom_nodespace
 #' @export
-gs_node_handler <- function() {
+nodespace_handler <- function() {
   fn <- function(data) {
-    if (inherits(data, "layout_ggraph")) {
-      g <- attr(data, "graph")
-      coords <- tryCatch(
-        as.matrix(data[, c("x", "y")]),
-        error = function(e) NULL
-      )
-      data <- gs_nodes(GraphSpace(g, layout = coords, verbose = FALSE))
-    } else if (inherits(data, "igraph")) {
+    if ( inherits(data, c("igraph", "layout_ggraph")) ) {
       data <- gs_nodes(GraphSpace(data, verbose = FALSE))
     } else if (inherits(data, "GraphSpace")){
       data <- gs_nodes(data)
+    } else if (!inherits(data, "gs_nodes")){
+      rlang::abort(
+        message = c(
+          "x" = "`nodespace_handler()` received an unsupported object type.",
+          "i" = "Input must be a 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout."
+        )
+      )
     }
     return(data)
   }
   attr(fn, "gs_handler_type") <- "node"
-  class(fn) <- c("gs_node_handler", class(fn))
+  class(fn) <- c("nodespace_handler", class(fn))
   return(fn)
 }
 
 #-------------------------------------------------------------------------------
-.geom_check_slots <- function(data){
-  
-  nodes <- gs_nodes(data)
-  edges <- gs_edges(data)
-  
-  essential_natt <- c("x", "y", "vertex")
-  essential_eatt <- c("vertex1", "vertex2", "arrowType")
-  
-  missing_n <- essential_natt[!(essential_natt %in% names(nodes))]
-  if (length(missing_n) > 0) {
-    stop("Required columns missing in slot 'data@nodes': ", 
-      paste(missing_n, collapse = ", "), call. = FALSE)
-  }
-  
-  missing_e <- essential_eatt[!(essential_eatt %in% names(edges))]
-  if (length(missing_e) > 0) {
-    stop("Required columns missing in slot 'data@edges': ", 
-      paste(missing_e, collapse = ", "), call. = FALSE)
-  }
-  
-  if (any(is.na(nodes[, essential_natt, drop = FALSE]))) {
-    stop("Slot 'data@nodes' contains NAs in essential geometry columns: ", 
-      paste(essential_natt, collapse = ", "), call. = FALSE)
-  }
-  
-  if (any(is.na(edges[, essential_eatt, drop = FALSE]))) {
-    stop("Slot 'data@edges' contains NAs in essential geometry columns: ", 
-      paste(essential_eatt, collapse = ", "), call. = FALSE)
-  }
-  
+#' @importFrom ggplot2 fortify
+#' @export
+fortify.GraphSpace <- function(model, data, ...) {
+  res <- gs_nodes(model)
+  attr(res, ".edges") <- gs_edges(model)
+  return(model)
 }
 
 #-------------------------------------------------------------------------------
 .mapping_nodespace <- function(mapping) {
+  
   x <- y <- NULL
+  
+  nodeColor <- nodeSize <- nodeShape <- nodeLineWidth <- nodeAlpha <- NULL
+  
   default_mapping <- ggplot2::aes(x = x, y = y)
+  
+  optional_mapping <- ggplot2::aes(
+    nodeColor = nodeColor, 
+    nodeSize = nodeSize,
+    nodeShape = nodeShape,
+    nodeLineWidth = nodeLineWidth,
+    nodeAlpha = nodeAlpha)
+  
   if (is.null(mapping)) {
-    mapping <- default_mapping
+    mapping <- utils::modifyList(
+      default_mapping, optional_mapping)
   } else {
-    mapping <- utils::modifyList(default_mapping, mapping)
+    mapping <- utils::modifyList(utils::modifyList(
+      default_mapping, optional_mapping), mapping)
   }
+  
   return(mapping)
+  
 }
 
 #-------------------------------------------------------------------------------
-.params_nodespace <- function(params, mapping, nodes){
+.params_nodespace <- function(params, nodes, mapping){
   
-  params$.size_unit <- if("size" %in% names(mapping)) "mm" else "npc"
+  if(missing(mapping)){
+    mapping <- colnames(nodes)
+  } else {
+    mapping <- names(mapping)
+  }
   
-  if(is.null(params[["size"]]) && is.null(mapping[["size"]])){
+  if(is.null(params[["size"]]) && !"size" %in% mapping){
     if("nodeSize" %in% names(nodes) ){
-      params[["size"]] <- nodes[["nodeSize"]]
+      nodes[["size"]] <- nodes[["nodeSize"]]
     }
   }
   
-  if(is.null(params[["stroke"]]) && is.null(mapping[["stroke"]])){
+  if(is.null(params[["stroke"]]) && !"stroke" %in% mapping ){
     if("nodeLineWidth" %in% names(nodes) ){
-      params[["stroke"]] <- nodes[["nodeLineWidth"]]
+      nodes[["stroke"]] <- nodes[["nodeLineWidth"]]
     }
   }
   
-  if(is.null(params[["shape"]]) && is.null(mapping[["shape"]])){
+  if(is.null(params[["shape"]]) && !"shape" %in% mapping ){
     if("nodeShape" %in% names(nodes) ){
-      params[["shape"]] <- nodes[["nodeShape"]]
+      nodes[["shape"]] <- nodes[["nodeShape"]]
     }
   }
   
-  if(is.null(params[["fill"]]) && is.null(mapping[["fill"]])){
+  if(is.null(params[["fill"]]) && !"fill" %in% mapping ){
     if("nodeColor" %in% names(nodes) ){
-      params[["fill"]] <- nodes[["nodeColor"]]
+      nodes[["fill"]] <- nodes[["nodeColor"]]
     }
   }
   
-  if(is.null(params[["colour"]]) && is.null(mapping[["colour"]])){
+  if(is.null(params[["colour"]]) && !"colour" %in% mapping ){
     if("nodeLineColor" %in% names(nodes) ){
-      params[["colour"]] <- nodes[["nodeLineColor"]]
+      nodes[["colour"]] <- nodes[["nodeLineColor"]]
     }
   }
   
-  if(is.null(params[["alpha"]]) && is.null(mapping[["alpha"]])){
+  if(is.null(params[["alpha"]]) && !"alpha" %in% mapping ){
     if("nodeAlpha" %in% names(nodes) ){
-      params[["alpha"]] <- nodes[["nodeAlpha"]]
+      nodes[["alpha"]] <- nodes[["nodeAlpha"]]
     }
   }
   
-  params
+  return(nodes)
+  
 }
-
 
 #-------------------------------------------------------------------------------
 #' @title GeomNodeSpace: a ggplot2 prototype for GraphSpace-class methods
@@ -309,7 +343,7 @@ gs_node_handler <- function() {
 #' @importFrom ggplot2 scale_linetype_manual annotation_raster coord_fixed
 #' @importFrom ggplot2 scale_x_continuous scale_y_continuous expansion labs
 #' @importFrom ggplot2 expansion translate_shape_string is_waiver 
-#' @importFrom ggplot2 remove_missing
+#' @importFrom ggplot2 remove_missing geom_blank
 #' @importFrom grid gpar arrow unit pointsGrob segmentsGrob
 #' @importFrom grid grobTree gList grobName
 #' @importFrom scales alpha squish
@@ -403,4 +437,3 @@ GeomNodeSpace <- ggproto(
   )
   
 }
-

@@ -6,7 +6,7 @@
 \usage{
 geom_graphspace(
   mapping = NULL,
-  data = NULL,
+  data,
   stat = "identity",
   position = "identity",
   ...,

@@ -19,7 +19,7 @@
 #'
 #' @param data The data to be displayed in this layer. It can be a 
 #' \link{GraphSpace} object, an \link[igraph]{igraph} object, or the 
-#' \code{gs_edge_handler()} handler (default).
+#' \code{edgespace_handler()} handler (default).
 #'
 #' @param stat The statistical transformation to use on the data.
 #' Defaults to \code{identity}.
@@ -82,7 +82,7 @@
 #' @section Integration with ggraph:
 #' 
 #' \code{geom_nodespace} is compatible with the \code{ggraph} methods.
-#' When used within a \code{ggraph()} call, the default \code{gs_edge_handler()} 
+#' When used within a \code{ggraph()} call, the default \code{edgespace_handler()} 
 #' handler automatically:
 #' \itemize{
 #'   \item Identifies the current \code{layout_ggraph}.
@@ -124,8 +124,8 @@
 #' }
 #' 
 #' @export
-geom_edgespace <- function(mapping = NULL, data = gs_edge_handler(),
-  stat = "identity", position = "identity", ..., 
+geom_edgespace <- function(mapping = NULL, data = edgespace_handler(),
+  stat = StatEdgeSpace, position = "identity", ..., 
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE,
   arrow_size = 1, arrow_offset = 0.01,
   lineend = "butt", linejoin = "mitre") {
@@ -136,6 +136,18 @@ geom_edgespace <- function(mapping = NULL, data = gs_edge_handler(),
   .validate_gs_args("singleNumber", "arrow_offset", arrow_offset)
   .validate_gs_args("singleString", "lineend", lineend)
   .validate_gs_args("singleString", "linejoin", linejoin)
+  
+  if (!inherits(data, "edgespace_handler")){
+    if (is.function(data)){
+      rlang::abort(
+        message = c(
+          "x" = "Invalid handler function provided to `data`.",
+          "*" = "Use `edgespace_handler()` to create a compatible handler."
+        )
+      )
+    }
+    data <- edgespace_handler()(data)
+  }
   
   mapping <- .mapping_edgespace(mapping)
   
@@ -148,17 +160,6 @@ geom_edgespace <- function(mapping = NULL, data = gs_edge_handler(),
     .size_unit = "mm",
     .nodes = NULL,
     ...)
-  
-  if (!inherits(data, "gs_edge_handler")){
-    if (inherits(data, c("GraphSpace", "igraph"))){
-      if (inherits(data, "GraphSpace")) .geom_check_slots(data)
-      gs_handler <- gs_edge_handler()
-      data <- gs_handler(data)
-      params <- .params_edgespace(params, mapping, data)
-    } else {
-      stop("'data' must be a 'GraphSpace' or 'igraph' object.", call. = FALSE)
-    }
-  }
   
   ggplot2::layer(
     geom = GeomEdgeSpace,
@@ -173,35 +174,85 @@ geom_edgespace <- function(mapping = NULL, data = gs_edge_handler(),
   
 }
 
+#-------------------------------------------------------------------------------
+#' Attribute Processing for GeomEdgeSpace
+#'
+#' Manage visual attribute precedence (color, size, shape) for `GeomEdgeSpace` 
+#' objects.
+#'
+#' @section Attribute Priority:
+#' 1. Explicit `aes()` mappings.
+#' 2. Fixed `geom_edgespace()` arguments.
+#' 3. Original graph attributes (via `optional_aes`).
+#' 
+#' During the `setup_data` stage, the Stat invokes internal functions 
+#' to resolve value priority:
+#' \enumerate{
+#'   \item **Explicit Mapping**: Values defined by the user inside `aes()`.
+#'   \item **Fixed Parameters**: Constant values passed as arguments in the `geom_edgespace()` call.
+#'   \item **Graph Attributes**: Original attributes stored within the GraphSpace 
+#'   object, retrieved from the data columns.
+#' }
+#'
+#' @format A \code{ggproto} object.
+#' @seealso \code{\link{geom_edgespace}}
+#' @export
+StatEdgeSpace <- ggproto(
+  "StatEdgeSpace", ggplot2::Stat,
+  optional_aes = c("edgeLineColor", "edgeLineWidth", "edgeLineType", "edgeAlpha"),
+  setup_data = function(data, params) {
+    data <- .params_edgespace(params, data)
+    return(data)
+  },
+  compute_panel = function(data, scales){
+    return(data)
+  }
+)
 
 #-------------------------------------------------------------------------------
 #' @rdname geom_edgespace
 #' @export
-gs_edge_handler <- function() {
+edgespace_handler <- function() {
   fn <- function(data) {
-    if (inherits(data, "layout_ggraph")) {
-      g <- attr(data, "graph")
-      coords <- tryCatch(
-        as.matrix(data[, c("x", "y")]),
-        error = function(e) NULL
-      )
-      data <- gs_edges(GraphSpace(g, layout = coords, verbose = FALSE))
-    } else if (inherits(data, "igraph")) {
+    if ( inherits(data, c("igraph", "layout_ggraph")) ) {
       data <- gs_edges(GraphSpace(data, verbose = FALSE))
     } else if (inherits(data, "GraphSpace")){
       data <- gs_edges(data)
+    } else if (inherits(data, "gs_nodes")){
+      data <- attr(data, ".edges")
+      if(!inherits(data, "gs_edges")){
+        rlang::warn(
+          message = c(
+            "x" = "`edgespace_handler()` found no edges in the input data.",
+            "i" = "Input must be a 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout."
+          )
+        )
+        data <- NULL
+      }
+    } else {
+      rlang::abort(
+        message = c(
+          "x" = "`edgespace_handler()` received an unsupported object type.",
+          "i" = "Input must be a 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout."
+        )
+      )
     }
     return(data)
   }
   attr(fn, "gs_handler_type") <- "edge"
-  class(fn) <- c("gs_edge_handler", class(fn))
+  class(fn) <- c("edgespace_handler", class(fn))
   return(fn)
 }
 
 #-------------------------------------------------------------------------------
 .mapping_edgespace <- function(mapping) {
+  
   x <- y <- xend <- yend <- arrowType <- NULL
+  
   offset_start <- offset_end <- vertex1 <- vertex2 <- NULL
+  
+  edgeLineColor <- edgeLineWidth <- edgeLineType <- edgeAlpha <- NULL
+  
   default_mapping <- ggplot2::aes(
     x = x, y = y, xend = xend, yend = yend,
     offset_start = offset_start,
@@ -209,44 +260,59 @@ gs_edge_handler <- function() {
     arrowType = arrowType, 
     vertex1 = vertex1, vertex2 = vertex2
   )
+  
+  optional_mapping <- ggplot2::aes(
+    edgeLineColor = edgeLineColor, 
+    edgeLineWidth = edgeLineWidth,
+    edgeLineType = edgeLineType,
+    edgeAlpha = edgeAlpha)
+  
   if (is.null(mapping)) {
-    mapping <- default_mapping
+    mapping <- utils::modifyList(
+      default_mapping, optional_mapping)
   } else {
-    mapping <- utils::modifyList(default_mapping, mapping)
+    mapping <- utils::modifyList(utils::modifyList(
+      default_mapping, optional_mapping), mapping)
   }
   return(mapping)
 }
 
 #-------------------------------------------------------------------------------
-.params_edgespace <- function(params, mapping, edges){
+.params_edgespace <- function(params, edges, mapping){
   
-  if(is.null(params[["colour"]]) && is.null(mapping[["colour"]])){
+  if(missing(mapping)){
+    mapping <- colnames(edges)
+  } else {
+    mapping <- names(mapping)
+  }
+  
+  if(is.null(params[["colour"]]) &&  !"colour" %in% mapping){
     if("edgeLineColor" %in% names(edges) ){
-      params[["colour"]] <- edges[["edgeLineColor"]]
+      edges[["colour"]] <- edges[["edgeLineColor"]]
     }
   }
   
-  if(is.null(params[["linewidth"]]) && is.null(mapping[["linewidth"]])){
+  if(is.null(params[["linewidth"]]) && !"linewidth" %in% mapping ){
     if("edgeLineWidth" %in% names(edges) ){
-      params[["linewidth"]] <- edges[["edgeLineWidth"]]
+      edges[["linewidth"]] <- edges[["edgeLineWidth"]]
     }
   }
   
-  if(is.null(params[["linetype"]]) && is.null(mapping[["linetype"]])){
+  if(is.null(params[["linetype"]]) && !"linetype" %in% mapping ){
     if("edgeLineType" %in% names(edges) ){
-      params[["linetype"]] <- edges[["edgeLineType"]]
+      edges[["linetype"]] <- edges[["edgeLineType"]]
     }
   }
   
-  if(is.null(params[["alpha"]]) && is.null(mapping[["alpha"]])){
+  if(is.null(params[["alpha"]]) && !"alpha" %in% mapping ){
     if("edgeAlpha" %in% names(edges) ){
-      params[["alpha"]] <- edges[["edgeAlpha"]]
+      edges[["alpha"]] <- edges[["edgeAlpha"]]
     }
   }
   
-  params
+  return(edges)
+  
 }
-
 
 #-------------------------------------------------------------------------------
 #' @title GeomEdgeSpace: a ggplot2 prototype for GraphSpace-class methods
@@ -397,7 +463,7 @@ GeomEdgeSpace <- ggproto(
   
   edges$colour <- scales::alpha(edges$colour, edges$alpha)
   
-  edges <- .set_arrows(edges)
+  edges <- .set_arrows(edges, size_unit)
   
   arrows <- .get_arrows(edges, size_unit)
   
@@ -465,9 +531,9 @@ GeomEdgeSpace <- ggproto(
 ################################################################################
 ### Adjust arrows
 ################################################################################
-.set_arrows <- function(edges){
+.set_arrows <- function(edges, size_unit){
   edges <- .add_arrow_angle(edges)
-  edges <- .adjust_arrow_size(edges)
+  edges <- .adjust_arrow_size(edges, size_unit)
   edges <- .adjust_arrow_position(edges)
   return(edges)
 }
@@ -490,22 +556,27 @@ GeomEdgeSpace <- ggproto(
   edges$arrowAngleEnd <- .a_end(edges$arrowType)
   return(edges)
 }
-.adjust_arrow_size <- function(edges){
+.adjust_arrow_size <- function(edges, size_unit){
   edges$arrowSize1 <- edges[["arrow_size"]]
   edges$arrowSize2 <- edges[["arrow_size"]]
-  a_theta <- 60 #default angle to arrow sides
+  if(size_unit=="npc"){
+    lw <- edges$linewidth * 0.01
+  } else {
+    lw <- edges$linewidth
+  }
+  a_theta <- 60 #default angle to arrows (both sides)
   a_theta <- a_theta / 180 * pi
   idx <- edges$arrowAngleStart==90
   if(any(idx, na.rm = TRUE)){
     l <- edges$arrowSize1[idx]/2
     b <- sqrt( (l^2 + l^2) - (2 * l^2) * cos(a_theta))
-    edges$arrowSize1[idx] <- b + edges$linewidth[idx]/4
+    edges$arrowSize1[idx] <- b + lw[idx]/4
   }
   idx <- edges$arrowAngleEnd==90
   if(any(idx, na.rm = TRUE)){
     l <- edges$arrowSize2[idx]/2
     b <- sqrt( (l^2 + l^2) - (2 * l^2) * cos(a_theta))
-    edges$arrowSize2[idx] <- b + edges$linewidth[idx]/4
+    edges$arrowSize2[idx] <- b + lw[idx]/4
   }
   return(edges)
 }
@@ -550,7 +621,7 @@ GeomEdgeSpace <- ggproto(
 }
 
 ################################################################################
-### Construct arrows
+### Arrow constructor
 ################################################################################
 .get_arrows <- function(edges, size_unit = "mm"){
   emode <- .get_emode(edges$arrowType)

@@ -124,8 +124,13 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   # print(fl) #for debug only
   
   if(!is_compatible){
-    warning("`inject_nodespace()` failed to detect compatible edge/node layers.",
-      call. = FALSE)
+    rlang::warn(
+      message = c(
+        "!" = "`inject_nodespace()` failed to detect compatible edge/node layers.",
+        "i" = "Both layers must originate from the same source graph.",
+        "*" = "Check 'Interoperability' in the vignette for integration examples."
+      )
+    )
     return(plot)
   }
   
@@ -142,6 +147,15 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
       has_aes <- TRUE
       p_pars$size_aes <- m
     }
+  }
+  if(!has_aes){
+    rlang::warn(
+      message = c(
+        "!" = "`inject_nodespace()` could not find a 'size' aesthetic.",
+        "i" = "Fixed node 'size' scales with the viewport.",
+        "*" = "Use aes(size = ...) for data-driven scaling."
+      )
+    )
   }
   # Extract params
   if(is.list(p_layers$nodes$aes_params)){
@@ -181,9 +195,13 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   }
   
   if(has_aes && !has_scales){
-    warning("`inject_nodespace()` could not find a size scale; ",
-      "clipping might be inaccurate.",
-      call. = FALSE)
+    rlang::warn(
+      message = c(
+        "!" = "`inject_nodespace()` could not find a 'size' scale.",
+        "i" = "Clipping may be inaccurate without data-driven dimensions.",
+        "*" = "Ensure a `scale_size()` is provided."
+      )
+    )
   }
   
   ##--- APPLY SCALES TO NODE DATA
@@ -211,11 +229,18 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   ##--- INJECT NODE METADATA INTO EDGE LAYERS
   check_idx <- !is.null(p_layers$e_idx) && p_layers$e_idx <= length(plot@layers)
   has_clipping_cols <- any(c("size", "stroke") %in% colnames(node_data))
-  if(check_idx && has_clipping_cols){
-    plot@layers[[p_layers$e_idx]]$geom_params$.size_unit <- p_pars$size_unit
-    plot@layers[[p_layers$e_idx]]$geom_params$.nodes <- node_data 
+  has_unit <- !is.null(p_pars$size_unit)
+  if(check_idx && (has_clipping_cols || has_unit)){
+    if(has_clipping_cols){
+      plot@layers[[p_layers$e_idx]]$geom_params$.nodes <- node_data 
+    }
+    if(has_unit){
+      plot@layers[[p_layers$e_idx]]$geom_params$.size_unit <- p_pars$size_unit
+    }
   } else {
-    message("`inject_nodespace()` did not find edge clipping adjustments.")
+    rlang::warn(
+      message =  "`inject_nodespace()` found no clipping adjustments."
+    )
   }
   
   return(plot)
@@ -266,8 +291,13 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   id_edges <- as.character(unique(id_edges))
   is_topo_ok <- all(id_edges %in% id_nodes) 
   if(is_topo_ok){
-    message("`inject_nodespace()`: layers synchronized ", 
-      "via vertex IDs (UUID mismatch).")
+    rlang::message_cnd(
+      message = c(
+        "`inject_nodespace()`: layers synced via vertex IDs.",
+        "i" = "Fallback triggered by UUID mismatch between edge and node data.",
+        "*" = "Ensure graph objects remain identical across all plot layers."
+      )
+    )
   }
   
   return( is_topo_ok )
@@ -280,7 +310,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   inner_f <- environment(f)$data
   if ( is.null(inner_f) ) return(FALSE)
   b1 <- identical(attr(inner_f, "gs_handler_type"), type)
-  b2 <- inherits(inner_f, paste0("gs_", type, "_handler"))
+  b2 <- inherits(inner_f, paste0(type, "space_handler"))
   return( b1 || b2 )
 }
 
@@ -313,8 +343,6 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   
   if (!is.null(size_aes) && !inherits(size_aes, "uneval")) {
     size_aes <- NULL
-    # warning("Argument 'size_aes' must be a mapping created with aes().", 
-    #   call. = FALSE)
   }
   
   for(att in names(eval_att)){

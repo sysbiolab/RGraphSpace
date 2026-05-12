@@ -161,15 +161,43 @@ setMethod("GraphSpace", signature(g = "ANY"),
       deprecate_soft("1.1.1", "GraphSpace(image)", 
         "normalizeGraphSpace(image)")
     }
-    if (!inherits(g, "igraph")) {
-      stop("Input 'g' must inherit 'igraph' class.", call. = FALSE)
-    }
-    .validate_gs_args("singleLogical", "verbose", verbose)
+    ###
     #--- validate argument values
+    .validate_gs_args("singleLogical", "verbose", verbose)
+    if(inherits(g, "layout_ggraph")){
+      if (!inherits(attr(g, "graph"), "igraph")) {
+        rlang::abort(
+          message = c(
+            "x" = "The 'layout_ggraph' object is missing a valid 'graph' attribute.",
+            "i" = "RGraphSpace requires an 'igraph' object to be embedded in the layout.",
+            "*" = "Ensure you are using a standard `ggraph::create_layout()` object."
+          )
+        )
+      }
+      layout <- tryCatch(
+        as.matrix(g[, c("x", "y")]),
+        error = function(e) NULL
+      )
+      g <- attr(g, "graph")
+    } else if (!inherits(g, "igraph")) {
+      rlang::abort(
+        message = c(
+          "x" = "Input 'g' must inherit from the 'igraph' class.",
+          "i" = paste("Received an object of class:", paste(class(g), collapse = "/")),
+          "*" = "Did you mean to use `tidygraph::as_tbl_graph()`?"
+        )
+      )
+    }
     if(!is.null(layout)){
       .validate_gs_args("numeric_mtx", "layout", layout)
       if (ncol(layout) != 2) {
-        stop("'layout' matrix should have two columns.", call. = FALSE)
+        rlang::abort(
+          message = c(
+            "x" = "The 'layout' matrix must have exactly two columns.",
+            "i" = paste("Received a matrix with", ncol(layout), "columns."),
+            "*" = "Ensure 'layout' represents (x, y) coordinates."
+          )
+        )
       } 
     }
     #--- validate igraph and build a gs object
@@ -179,12 +207,6 @@ setMethod("GraphSpace", signature(g = "ANY"),
   }
 )
 
-#' @importFrom igraph as.igraph
-#' @export
-as.igraph.GraphSpace <- function(x, ...) {
-  return(x@graph)
-}
-
 #' @rdname GraphSpace-methods
 #' @export
 setMethod("GraphSpace", signature(g = "data.frame"),
@@ -193,7 +215,7 @@ setMethod("GraphSpace", signature(g = "data.frame"),
     if(!all(c("x", "y") %in% colnames(g))){
       ms_i <- c("i" = "GraphSpace requires x/y columns for 'data.frame' initialization.")
       rlang::abort(
-        message = "Input 'g' is missing 'x' and 'y' coordinates.",
+        message = c("x" = "Input 'g' is missing 'x' and 'y' coordinates."),
         body = ms_i
       )
     }
@@ -421,6 +443,8 @@ plot.GraphSpace <- function(x, ...) {
 #' Options: "graph", "nodes", "edges", "pars", "misc", and "image".
 #' @return Content from slots in the \linkS4class{GraphSpace} object.
 #' @examples
+#' library(igraph)
+#' 
 #' # Load a demo igraph
 #' data('gtoy1', package = 'RGraphSpace')
 #'
@@ -478,10 +502,11 @@ setMethod("show", "GraphSpace", function(object) {
 #' @param x A \linkS4class{GraphSpace} class object
 #' @param name Name of the attribute.
 #' @param value The new value of the attribute.
-#' @param ... Additional arguments passed to igraph methods.
+#' @param ... Additional arguments passed to igraph and extraction methods.
 #' @return Updated \linkS4class{GraphSpace} object.
 #' @seealso \code{\link[igraph]{vertex_attr}}, \code{\link[igraph]{edge_attr}}
 #' @examples
+#' library(igraph)
 #' # Load a demo igraph
 #' data('gtoy1', package = 'RGraphSpace')
 #' 
@@ -526,11 +551,12 @@ setMethod("show", "GraphSpace", function(object) {
 #' # Replace an entire edge attribute
 #' gs_edge_attr(gs, "edgeLineWidth") <- 1
 #' 
-#'  # Alternative syntax using `$` for edge attributes
+#' # Alternative syntax using `$` for edge attributes
 #' gs_edge_attr(gs)$edgeLineWidth <- 3
 #' 
 #' @aliases names
 #' @aliases names<-
+#' @aliases gs_graph
 #' @aliases gs_nodes
 #' @aliases gs_edges
 #' @aliases gs_vcount
@@ -544,6 +570,7 @@ setMethod("show", "GraphSpace", function(object) {
 setMethod("gs_nodes", "GraphSpace", function(x) {
   x <- x@nodes
   attr(x, "gs_handler_type") <- "node"
+  class(x) <- c("gs_nodes", class(x))
   return(x)
 })
 
@@ -552,7 +579,17 @@ setMethod("gs_nodes", "GraphSpace", function(x) {
 setMethod("gs_edges", "GraphSpace", function(x) {
   x <- .gs_edges(x)
   attr(x, "gs_handler_type") <- "edge"
+  class(x) <- c("gs_edges", class(x))
   return(x)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_graph", "GraphSpace", function(x) {
+  g <- x@graph
+  attr(g, "gs_handler_type") <- "graph"
+  class(g) <- c("gs_graph", class(g))
+  return(g)
 })
 
 #' @rdname GraphSpace-accessors
@@ -632,7 +669,11 @@ setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
 #' @export
 setMethod("gs_edge_attr", "GraphSpace", function(x, name, ...) {
     g <- x@graph
-    att <- igraph::edge_attr(graph = g, name = name, ...=...)
+    if(missing(name)){
+      att <- igraph::edge_attr(graph = g, ...=...)
+    } else {
+      att <- igraph::edge_attr(graph = g, name = name, ...=...)
+    }
     return(att)
 })
 
@@ -693,5 +734,69 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
     return(x)
 }
 
+#' @rdname GraphSpace-accessors
+#' @aliases $,GraphSpace-method
+#' @export
+setMethod("$", "GraphSpace", function(x, name) {
+  
+  nodes <- gs_nodes(x)
+  
+  if (!(name %in% names(nodes))) {
+    rlang::warn(paste0("Column '", name, "' not found in nodes."))
+    return(NULL)
+  }
+  
+  nodes[[name]]
+})
 
+#' @rdname GraphSpace-accessors
+#' @aliases $<-,GraphSpace-method [[<-,GraphSpace-method
+#' @export
+setReplaceMethod("$", "GraphSpace", function(x, name, value) {
+  
+  protected <- c("vertex", "name")
+  
+  if (name %in% protected) {
+    rlang::abort(
+      message = c(
+        "x" = paste0("Column '", name, "' is read-only."),
+        "i" = "Modifying vertex identifiers directly would break node-edge coherence.",
+        "*" = "To change the graph structure, please modify the underlying igraph object."
+      )
+    )
+  }
+  
+  gs_vertex_attr(x, name) <- value
+  x
+})
 
+#' @rdname GraphSpace-accessors
+#' @importFrom igraph as.igraph
+#' @export
+as.igraph.GraphSpace <- function(x, ...) {
+  return(x@graph)
+}
+
+################################################################################
+### Internal for GraphSpace objects
+################################################################################
+#' Internal methods for GraphSpace
+#' 
+#' @description 
+#' Exported solely to enable RStudio auto-completion 
+#' and should not be called directly by the user.
+#' 
+#' @param x,pattern Internal arguments.
+#' @keywords internal
+#' @name GraphSpace-internal
+NULL
+
+#' @rdname GraphSpace-internal
+#' @importFrom utils .DollarNames
+#' @method .DollarNames GraphSpace
+#' @keywords internal
+#' @export
+.DollarNames.GraphSpace <- function(x, pattern = "") {
+  nodes <- gs_nodes(x)
+  grep(pattern, names(nodes), value = TRUE)
+}

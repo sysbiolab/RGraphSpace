@@ -2,13 +2,13 @@
 % Please edit documentation in R/geom-nodespace.R
 \name{geom_nodespace}
 \alias{geom_nodespace}
-\alias{gs_node_handler}
+\alias{nodespace_handler}
 \title{Draw node elements in a 2D graph layout}
 \usage{
 geom_nodespace(
   mapping = NULL,
-  data = gs_node_handler(),
-  stat = "identity",
+  data = nodespace_handler(),
+  stat = StatNodeSpace,
   position = "identity",
   ...,
   na.rm = FALSE,
@@ -16,7 +16,7 @@ geom_nodespace(
   inherit.aes = FALSE
 )
 
-gs_node_handler()
+nodespace_handler()
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}.
@@ -25,7 +25,7 @@ from the top-level plot.}
 
 \item{data}{The data to be displayed in this layer. It can be a
 \link{GraphSpace} object, an \link[igraph]{igraph} object, or the
-\code{gs_node_handler()} handler (default).}
+\code{nodespace_handler()} handler (default).}
 
 \item{stat}{The statistical transformation to use on the data.
 Defaults to \code{identity}.}
@@ -99,7 +99,7 @@ For example: \code{fill = "red"}, \code{stroke = 3}, \code{alpha = 0.5}, or \cod
 
 
 \code{geom_nodespace} is compatible with the \code{ggraph} methods.
-When used within a \code{ggraph()} call, the default \code{gs_node_handler()}
+When used within a \code{ggraph()} call, the default \code{nodespace_handler()}
 handler automatically:
 \itemize{
 \item Identifies the current \code{layout_ggraph}.
