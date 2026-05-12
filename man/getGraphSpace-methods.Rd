@@ -23,6 +23,7 @@ Content from slots in the \linkS4class{GraphSpace} object.
 individual slots available in a GraphSpace object.
 }
 \examples{
+library(RGraphSpace)
 library(igraph)
 
 # Load a demo igraph

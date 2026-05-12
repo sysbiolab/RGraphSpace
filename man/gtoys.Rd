@@ -23,6 +23,7 @@ Small 'igraph' objects used for workflow demonstrations.
 All graphs include 'x', 'y', and 'name' vertex attributes.
 }
 \examples{
+library(RGraphSpace)
 data(gtoy1)
 data(gtoy2)
 }

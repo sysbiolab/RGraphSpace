@@ -123,6 +123,7 @@
 #' @seealso \code{\link{geom_graphspace}}, \code{\link{plotGraphSpace}}
 #' 
 #' @examples
+#' library(RGraphSpace)
 #' library(igraph)
 #' 
 #' # Create a star graph
@@ -291,6 +292,7 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' @author Sysbiolab.
 #' @seealso \code{\link{GraphSpace}}
 #' @examples
+#' library(RGraphSpace)
 #' library(igraph)
 #' 
 #' # Load a demo igraph
@@ -443,6 +445,7 @@ plot.GraphSpace <- function(x, ...) {
 #' Options: "graph", "nodes", "edges", "pars", "misc", and "image".
 #' @return Content from slots in the \linkS4class{GraphSpace} object.
 #' @examples
+#' library(RGraphSpace)
 #' library(igraph)
 #' 
 #' # Load a demo igraph
@@ -506,7 +509,9 @@ setMethod("show", "GraphSpace", function(object) {
 #' @return Updated \linkS4class{GraphSpace} object.
 #' @seealso \code{\link[igraph]{vertex_attr}}, \code{\link[igraph]{edge_attr}}
 #' @examples
+#' library(RGraphSpace)
 #' library(igraph)
+#' 
 #' # Load a demo igraph
 #' data('gtoy1', package = 'RGraphSpace')
 #' 

@@ -29,6 +29,8 @@ color. If \code{x} is a matrix, the resulting raster preserves the same
 dimensions.
 }
 \examples{
+library(RGraphSpace)
+
 # Convert the volcano matrix to a color raster
 img <- as_colorraster(volcano)
 plot(img)

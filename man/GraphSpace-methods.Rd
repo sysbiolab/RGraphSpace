@@ -148,6 +148,7 @@ backward, or bidirectional arrowheads.
 }
 
 \examples{
+library(RGraphSpace)
 library(igraph)
 
 # Create a star graph

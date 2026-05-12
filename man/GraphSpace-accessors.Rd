@@ -76,7 +76,9 @@ object. Selected 'igraph' methods are applied to the 'graph' slot and
 propagated to downstream components.
 }
 \examples{
+library(RGraphSpace)
 library(igraph)
+
 # Load a demo igraph
 data('gtoy1', package = 'RGraphSpace')
 

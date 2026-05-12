@@ -107,6 +107,9 @@
 #' \link[ggplot2]{geom_segment}
 #'
 #' @examples
+#' library(RGraphSpace)
+#' library(igraph)
+#' library(ggplot2)
 #' 
 #' # Load a demo igraph
 #' data('gtoy1', package = 'RGraphSpace')

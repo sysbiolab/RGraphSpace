@@ -37,7 +37,7 @@ used by the nodes, even if scales are defined after the layers.
 allow the function to correctly scan all previously added layers and scales.
 }
 \examples{
-
+library(RGraphSpace)
 library(igraph)
 library(ggplot2)
 

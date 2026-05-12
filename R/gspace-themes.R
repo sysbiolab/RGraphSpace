@@ -42,6 +42,7 @@
 #' @seealso \link[ggplot2]{ggtheme}, \link[ggplot2]{theme}
 #' 
 #' @examples
+#' library(RGraphSpace)
 #' library(ggplot2)
 #' 
 #' ggplot(mtcars, aes(wt, mpg)) +
@@ -311,6 +312,9 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
 #' \code{theme_gspace_legend()} returns a list of theme and guide components.
 #' 
 #' @examples
+#' library(RGraphSpace)
+#' library(ggplot2)
+#' 
 #' # Small scale legends
 #' ggplot(mtcars, aes(wt, mpg, fill = factor(cyl))) + 
 #'   geom_point(shape = 21) + 

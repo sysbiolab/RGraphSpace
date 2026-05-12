@@ -44,6 +44,7 @@
 #' @aliases gtoy1 gtoy2
 #' @return A pre-processed igraph object.
 #' @examples
+#' library(RGraphSpace)
 #' data(gtoy1)
 #' data(gtoy2)
 NULL
@@ -69,6 +70,8 @@ NULL
 #' @return A raster object as produced by \code{as.raster()}.
 #'
 #' @examples
+#' library(RGraphSpace)
+#' 
 #' # Convert the volcano matrix to a color raster
 #' img <- as_colorraster(volcano)
 #' plot(img)

@@ -34,7 +34,7 @@
 #' \link{geom_edgespace}, \link{geom_nodespace}
 #' 
 #' @examples
-#' 
+#' library(RGraphSpace)
 #' library(igraph)
 #' library(ggplot2)
 #' 

@@ -121,6 +121,7 @@ to the interval \code{[0, 1]}.
 title, and key sizes by a single scaling factor.
 }
 \examples{
+library(RGraphSpace)
 library(ggplot2)
 
 ggplot(mtcars, aes(wt, mpg)) +
@@ -133,6 +134,9 @@ ggplot(mtcars,
   geom_point() +
   theme_gspace_coords("th2", is_norm = TRUE)
   
+library(RGraphSpace)
+library(ggplot2)
+
 # Small scale legends
 ggplot(mtcars, aes(wt, mpg, fill = factor(cyl))) + 
   geom_point(shape = 21) + 

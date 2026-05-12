@@ -73,6 +73,7 @@ A ggplot-class object.
 \code{igraph} and \code{GraphSpace} data objects into \code{ggplot2} layers.
 }
 \examples{
+library(RGraphSpace)
 library(igraph)
 
 # Load a demo igraph

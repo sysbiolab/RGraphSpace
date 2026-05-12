@@ -127,6 +127,9 @@ metadata and user-chosen \code{ggraph} layout.
 }
 
 \examples{
+library(RGraphSpace)
+library(igraph)
+library(ggplot2)
 
 # Load a demo igraph
 data('gtoy1', package = 'RGraphSpace')

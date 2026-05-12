@@ -93,6 +93,7 @@ This is an accessory function typically called during
 the preprocessing of \code{GraphSpace} objects before rendering.
 }
 \examples{
+library(RGraphSpace)
 library(igraph)
 
 # Create a star graph

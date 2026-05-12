@@ -94,9 +94,11 @@
 #' \link[ggplot2]{geom_point}
 #'
 #' @examples
+#' library(RGraphSpace)
+#' library(igraph)
+#' library(ggplot2)
 #' 
 #' # Make a demo igraph
-#' library(igraph)
 #' gtoy1 <- make_star(15, mode="out")
 #' 
 #' # Set some node attributes
