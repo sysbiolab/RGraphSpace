@@ -51,7 +51,8 @@
         }
     }
     if (!igraph::is_simple(g)) {
-        if (verbose && igraph::any_loop(g)) message("Removing loops...")
+        if (verbose && igraph::any_loop(g)) 
+            message("Removing loops...")
         if (verbose && igraph::any_multiple(g))
             message("Merging duplicated edges...")
         g <- igraph::simplify(g, remove.loops = TRUE, remove.multiple = TRUE,
@@ -69,6 +70,11 @@
         } else {
             igraph::E(g)$arrowType <- 0
         }
+    }
+    if(verbose && any(which_mutual(g))){
+        message("Mutual edges detected: Simplified for data frame...")
+        message("Arrows recoded to bidirectional display")
+        message("Edge attributes retained from the first occurrence")
     }
     g <- .validate_attributes(g)
     return(g)

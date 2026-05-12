@@ -317,7 +317,7 @@ V(gtoy_star)$nodeSize <- seq_len(vcount(gtoy_star)) * 2
 V(gtoy_star)$nodeColor <- adjustcolor("blue", 0.1)
 E(gtoy_star)$edgeLineColor <- "darkred"
 
-# Assign arrow types, either '-->' or '--|'
+# Assign random arrow types, either '-->' or '--|'
 E(gtoy_star)$arrowType <- sample(c(1, -1), ecount(gtoy_star), replace = T)
 
 # Make a 'GraphSpace'
@@ -357,9 +357,12 @@ While `geom_graphspace()` is convenient for quick, coordinated plots, it has a l
 However, since these layers are now independent, they no longer "talk" to each other by default. If we change the node size scale, the edge layer won't know it needs to adjust its offsets to accommodate the new node boundaries. The solution is `inject_nodespace()`. This function acts as a post-processing synchronizer: it intercepts the calculated sizes from the node layer and "injects" them into the edge layer.
 
 ```{r Adjusting scales - 4, eval=TRUE, message=FALSE, out.width="80%"}
+# We shuffle 'num_var' to demonstrate that edges still 
+# find their specific boundaries
+gs_star$num_var2 <- sample(gs_star$num_var)
 ggplot(data = gs_star) + 
   geom_edgespace(arrow_offset = 0.03) + 
-  geom_nodespace(mapping = aes(size = num_var)) + 
+  geom_nodespace(mapping = aes(size = num_var2 )) + 
   scale_size(range = c(2, 40)) +
   inject_nodespace() +
   theme_gspace_coords() +
