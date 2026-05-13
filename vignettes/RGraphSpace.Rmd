@@ -355,11 +355,13 @@ While `geom_graphspace()` is convenient for quick, coordinated plots, it has a l
 However, because these layers are now independent, they no longer "talk" to each other by default. If we change the node size scale, the edge layer won't know it needs to adjust its offsets to accommodate the new node boundaries. To address this, `inject_nodespace()` acts as a post-processing synchronizer: it intercepts the calculated sizes from the node layer, derive the scaling rules, and "injects" them into the edge layer.
 
 ```{r Adjusting scales - 4, eval=TRUE, message=FALSE, out.width="80%"}
-# We shuffle 'num_var' to demonstrate that edges still find their specific boundaries
+# We shuffle 'num_var' to demonstrate that edges 
+# still find their specific boundaries
 set.seed(234)
 gs_star$num_var2 <- sample(gs_star$num_var)
 
-# Execute the plot, calling 'inject_nodespace' last to capture the final layer states
+# Execute the plot, calling 'inject_nodespace' last 
+# to capture the final layer states
 ggplot(data = gs_star) + 
   geom_edgespace(arrow_offset = 0.03) + 
   geom_nodespace(mapping = aes(size = num_var2 )) + 
@@ -392,9 +394,9 @@ To provide a final note of customization, these scaling trade-offs only apply wh
 
 # Mapping graphs to images
 
-Images can be used as spatial references for graphs. When a raster image is provided, pixel coordinates define where nodes are positioned, supporting the construction of graphs from image features.
+Images can be used as spatial references for graphs. When a raster image is provided, the pixel coordinates define where nodes are positioned, supporting the construction of graphs from image features.
 
-As an example, next we extract topographic features from the `volcano` matrix and map these features to graph nodes. The graph is then visualized over the image matrix.
+As an example, next we extract features from the `volcano` matrix and map them to graph nodes. The graph is then visualized over the image matrix.
 
 ```{r Mapping images to graph space, eval=TRUE, message=FALSE, out.width="80%"}
 # Extract pixel coordinates for a specific intensity quantile.
@@ -434,11 +436,11 @@ plotGraphSpace(gs, add.image = TRUE)
 
 # Interoperability with other packages
 
-*RGraphSpace* is designed to be a seamless extension for existing network analysis workflows, not a replacement for it. Whether using *igraph* for heavy-duty computations or *tidygraph* for tidy data manipulation, *RGraphSpace* `geoms` automatically recognize these objects and project them into the graphic space on the fly.
+*RGraphSpace* is designed to be a seamless extension for existing network analysis workflows, not a replacement for it. Whether using *igraph* for heavy-duty computations or *tidygraph* for tidy data manipulation, *RGraphSpace* `geoms` automatically recognize these objects on the fly.
 
 **Why use *RGraphSpace* with *ggraph*?**
 
-While *ggraph* is a wonderful framework for relational data, it often struggles with precise edge-node alignment when node sizes vary dynamically. *RGraphSpace* enhances this through specialized `geoms` for edge clipping that automatically account for dynamic node scaling. The trade-off for this higher level of automation is that the user has fewer customization options compared to the *ggraph* approach. This is exactly why using *RGraphSpace* alongside *ggraph* makes sense: it provides precise alignment between the graph and a reference background while preserving interoperability with the vast layout and styling flexibility of the *ggraph* grammar.
+While *ggraph* is a wonderful framework for relational data, it often struggles with precise edge-node alignment when node sizes vary dynamically. *RGraphSpace* enhances this through specialized `geoms` for edge clipping that automatically account for node scaling. The trade-off for this higher level of automation is that the user has fewer customization options compared to the *ggraph* approach. This is exactly why using *RGraphSpace* alongside *ggraph* makes sense: it provides precise alignment between the graph and a reference background while preserving interoperability with the vast layout and styling flexibility of the *ggraph* grammar.
 
 The following example demonstrates the interoperability between *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects, and managing spatial data with *sf*, the standard infrastructure for spatial data analysis in `R` [@Pebesma2023]. 
 
@@ -466,7 +468,7 @@ if(!require("ggraph", quietly = TRUE)){
 }
 ```
 
-Next, we build a spatial network of cities with *RGraphSpace* `geoms` plugged into *ggraph* and *sf* workflows.
+Next, we build a spatial network of cities; then *RGraphSpace* `geoms` are plugged into *ggraph* and *sf* workflows.
 
 ```{r Interoperability - 1, eval=FALSE, message=FALSE, out.width="80%"}
 library("RGraphSpace")
@@ -510,7 +512,7 @@ igraph::V(igraph_cities)$`Population (M)` <- cities$pop/1000000
 igraph::E(igraph_cities)$arrowType <- 3
 ```
 
-... and now plot; all the options below produce the same visual output to demonstrate how the package handles different types of input data.
+... and now we plot; the options below all produce the same visual output to demonstrate how the packages handle different types of input data.
 
 ```{r Interoperability - 2, eval=FALSE, message=FALSE, out.width="80%"}
 # Option 1: Passing an 'igraph' object directly to the geoms
