@@ -116,7 +116,7 @@
 #' 
 #' # Example 1: Nodes scaling with the legend
 #' # When 'size' is mapped inside aes(), it follows
-#' # ggplot2 default behavior: sizes are translated 
+#' # ggplot2 default behavior: size is translated 
 #' # to absolute units (mm) via 'scale_size()'.
 #' 
 #' ggplot() + 
@@ -128,9 +128,9 @@
 #'   
 #' # Example 2: Nodes scaling with the viewport
 #' # When 'size' is passed as a node attribute, 
-#' # as inherited from the igraph object, it is
-#' # interpreted as a percentage of the plot area
-#' # and translated to NPC units.
+#' # inherited from the igraph object, it is 
+#' # interpreted as a percentage of the plotting 
+#' # area and translated to NPC units.
 #' 
 #' ggplot() + 
 #' geom_edgespace(data = gs, arrow_offset = 0.01) +

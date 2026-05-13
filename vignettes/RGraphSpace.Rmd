@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016], optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including colors, shapes, and line types. Three specialized `geoms` translate graph data into geometric layers (see [*using geoms*](#using-geoms)). These `geoms` use a dual-anchor normalization approach to align layers, which is critical for analysis where network elements must be accurately referenced to a spatial map. Section [*mapping graphs to images*](#mapping-graphs-to-images) illustrates how this alignment achieves pixel-level precision. In what follows, this tutorial demonstrates how to use *RGraphSpace* for side-by-side visualization of multiple graphs.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016], optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including colors, shapes, and line types. Three specialized `geoms` translate graph data into geometric layers (see [*using geoms*](#using-geoms)). These `geoms` use a dual-anchor normalization approach to align layers, which is critical for analysis where network elements must stay accurately referenced to a spatial map. Section [*mapping graphs to images*](#mapping-graphs-to-images) illustrates how this alignment achieves pixel-level precision. In what follows, this tutorial demonstrates how to use *RGraphSpace* for side-by-side visualization of multiple graphs.
 
 # Quick start
 
@@ -88,7 +88,7 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 
 # *RGraphSpace* attributes
 
-Next, we will demonstrate all vertex and edge attributes that can be passed to *RGraphSpace* methods.
+Next, we list all vertex and edge attributes that can be passed to *RGraphSpace* methods.
 
 ## Vertex attributes
 
@@ -123,7 +123,7 @@ V(gtoy1)$nodeAlpha <- 1
 
 ## Edge attributes
 
-Given a list of edges, *RGraphSpace* represents only one edge for each pair of connected vertices. If there are multiple edges connecting the same vertex pairs, it will display the line attributes of the first edge in the list.
+Given a list of edges, *RGraphSpace* represents only one edge for each pair of connected vertices. If there are multiple edges connecting the same node pair, it will display the attributes of the first occurrence in the data.
 
 ```{r Edge attributes - 1, eval=TRUE, message=FALSE}
 # Edge width (as in 'lwd' standard graphics; see 'help(gpar)')
@@ -141,7 +141,7 @@ E(gtoy1)$edgeAlpha <- 1
 
 ## Arrowhead attributes
 
-**Arrowhead in directed graphs**: By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
+**Arrowhead in directed graphs**: By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`). If there are mutual connections, the package will recode the mutual edges to represent a bidirectional flow.
 
 ```{r Edge attributes - 2, eval=TRUE, message=FALSE}
 # Arrowhead types in directed graphs (integer code or character)
@@ -149,7 +149,7 @@ E(gtoy1)$edgeAlpha <- 1
 E(gtoy1)$arrowType <- 1
 ``` 
 
-**Arrowhead in undirected graphs**: By default, no arrow will be drawn in undirected graphs.
+**Arrowhead in undirected graphs**: By default, no arrow will be drawn for undirected graphs. However, arrowheads may be assigned according to the coding below.
 
 ```{r Edge attributes - 3, eval=TRUE, message=FALSE}
 # Arrowhead types in undirected graphs (integer or character code)
@@ -157,8 +157,7 @@ E(gtoy1)$arrowType <- 1
 ##  1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->",
 ## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|", 
 E(gtoy1)$arrowType <- 1
-# Note: in undirected graphs, this attribute overrides the 
-# edge's orientation in the edge list
+# Note: in undirected graphs, this attribute overrides the edge's orientation in the edge list
 ```
 
 ... and plot the updated *igraph* object with *RGraphSpace*:
@@ -185,9 +184,9 @@ To facilitate this integration, *RGraphSpace* implements three specialized `geom
 
 1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call. 
 2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states. It can be used with the `inject_nodespace()` function to adjust edge offsets when the `size` aesthetic is applied to nodes.
-3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically calibrates start and end points to connected nodes. 
+3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically calibrates start and end points. 
 
-In the following example, we create a small modular graph containing variables of different types in order to demonstrate these *geoms*.
+In the following example, we create a small modular graph containing variables of different types in order to demonstrate these `geoms`.
 
 ```{r Load a toy graph, eval=TRUE, message=FALSE, out.width="80%"}
 # Make a toy modular graph
@@ -217,7 +216,7 @@ gs <- GraphSpace(gtoy2)
 
 ## Plotting identity values
 
-In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is particularly useful when nodes have been pre-processed with specific color schemes and you want the visual output without further mapping.
+In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is useful when nodes have been pre-processed with specific color schemes and you want the visual output without further mapping.
 
 ```{r, eval=TRUE, message=FALSE, include = FALSE}
 edge_var <- node_var <- nodeColor <- node_group <- NULL
@@ -229,7 +228,7 @@ ggplot() +
   theme(aspect.ratio = 1)
 ```
 
-The trade-off on this approach is that, on one hand, all attributes reflect the original data directly, but no legend is accessible. This is because identity scales bypass the scaling and guide-building process of **ggplot2**. If a legend is required to explain the meaning of these colors, the attribute should be mapped as a variable (e.g., `aes(fill = attribute)`) using standard discrete or continuous scales.
+The trade-off on this approach is that, on one hand, all attributes reflect the original data directly, but no legend is accessible. This is because identity scales bypass the legend-building process of **ggplot2**. If a legend is required to explain the meaning of these colors, the attribute should be mapped via aesthetics (e.g., `aes(fill = attribute)`) and modified by a `scale_*()` function.
 
 ## Mapping categorical variables
 
@@ -260,7 +259,7 @@ ggplot() +
 
 ## Using separate colour scales
 
-When multiple geoms use the same aesthetic (for example `colour`) but require mapping to different variables with independent scales, the *ggnewscale* package can be used to introduce a new scale [@Campitelli2025].
+If you need to map different variables to the same aesthetic (such as `colour`) with independent scales, the *ggnewscale* package offers an elegant solution to introduce additional scales within the same plot [@Campitelli2025]; for example:
 
 ```{r Map aesthetics to separate colour scales, eval=FALSE, message=FALSE, out.width="70%"}
 if (!require("ggnewscale", quietly = TRUE)) {
@@ -296,9 +295,9 @@ knitr::include_graphics("figs/toy_newscale.png")
 
 # Adjusting size scales and offsets
 
-A seemingly simple yet technically challenging aspect of network visualization is ensuring that edges terminate exactly at the node boundary, regardless of the node sizes. This becomes more complex when node size is mapped to aesthetics and transformed by a `scale_size()` function, which is only evaluated within the layer where it takes effect.
+A seemingly simple yet technically challenging aspect of network visualization is ensuring that edges terminate exactly at the node boundary, regardless of the node sizes. This becomes more complex when node size is mapped to aesthetics and transformed by a `scale_size_*` function, which is only evaluated within the layer where it takes effect.
 
-The `geom_graphspace()` is designed to handle these adjustments automatically by rendering nodes and edges within a single, unified layer for internal synchronization. Below, we construct a star-like network with varying node sizes to show how the geometries stay  synchronized even across a wide range of `scale_size()` values.
+The `geom_graphspace()` is designed to handle these adjustments automatically by rendering nodes and edges within a single, unified layer for internal synchronization. Below, we construct a star-like network with varying node sizes to show how the geometries stay synchronized across a wide range values.
 
 ```{r Adjusting scales - 1, eval=TRUE, message=FALSE, out.width="70%"}
 # Make a toy graph
@@ -328,7 +327,7 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 **The problem: static vs. dynamic sizes**
 
-In the first example, we use the default attributes stored in the `GraphSpace` object. The arrow offsets fit perfectly when node sizes are predefined, as we can rely on `npc` (Normalized Parent Coordinates) units for all network elements. This ensures that no matter how the graphical space is rescaled or the window is resized, nodes, edges, and arrows remain proportional to the viewport. This behavior is especially useful when overlaying networks on top of reference images (such as photomicrography or medical scans), where nodes must stay locked to specific pixel positions regardless of the output resolution.
+In the first example, the `GraphSpace` object provides all graph attributes. Using predefined node sizes allows for consistent arrow offsets, as all network elements are scaled to `npc` (Normalized Parent Coordinates) units. No matter how the plotting area is resized, nodes, edges, and arrows will remain proportional to the viewport. This behavior is especially useful when overlaying networks on top of reference images (such as photomicrography or medical scans), where nodes must stay locked to specific pixel positions regardless of the output resolution.
 
 ```{r Adjusting scales - 2, eval=TRUE, message=FALSE, out.width="80%"}
 ggplot() + 
@@ -336,12 +335,11 @@ ggplot() +
   theme_gspace_coords()
 ```
 
-When we map node size to a variable (like `num_var`), *ggplot2* rescales these values into a target range (e.g., `c(2, 40)`). This provides all the standard advantages of the *ggplot2* ecosystem, such as flexible graphical scaling and automatically coordinated legends.
+When we map node size to a variable (like the `num_var`), *ggplot2* rescales these values into a target range (e.g., `c(2, 40)`). This provides all the advantages of the *ggplot2* ecosystem, such as flexible graphical scaling and coordinated legends.
 
-There is, however, a subtle trade-off to keep in mind. When node size is mapped via `aes()`, *ggplot2* treats it as a fixed physical dimension (usually in `mm`) to maintain consistency with the legends. This means the node size will stay locked to the legends and will no longer scale proportionally if plotting area is resized.
+There is, however, a subtle trade-off to keep in mind. When node size is mapped via `aes()`, *ggplot2* treats it as a fixed physical dimension (usually in `mm`) to maintain consistency with the legends. This means the node size will stay locked to the legends and will no longer scale proportionally if the plotting area is resized.
 
-In the example below, `geom_graphspace()` handles the bulk of the edge adjustment,
-with the `arrow_offset` parameter providing additional manual fine-tuning.
+In the example below, `geom_graphspace()` handles the bulk of the edge adjustment, with the `arrow_offset` parameter providing additional manual fine-tuning.
 
 ```{r Adjusting scales - 3, eval=TRUE, message=FALSE, out.width="80%"}
 ggplot() + 
@@ -352,14 +350,16 @@ ggplot() +
   theme(legend.position = "none")
 ```
 
-While `geom_graphspace()` is convenient for quick, coordinated plots, it has a limitation: the `mapping` argument is reserved for node aesthetics. To overcome the limitations, we can call `geom_edgespace()` and `geom_nodespace()` as independent layers. This allows for total flexibility, such as mapping different variables to edges and nodes simultaneously.
+While `geom_graphspace()` is convenient for quick, coordinated plots, it has a limitation: the `mapping` argument is reserved for node aesthetics. To overcome this limitation, we can call `geom_edgespace()` and `geom_nodespace()` as independent layers. This allows for total flexibility for mapping different variables to edges and nodes.
 
-However, since these layers are now independent, they no longer "talk" to each other by default. If we change the node size scale, the edge layer won't know it needs to adjust its offsets to accommodate the new node boundaries. The solution is `inject_nodespace()`. This function acts as a post-processing synchronizer: it intercepts the calculated sizes from the node layer and "injects" them into the edge layer.
+However, because these layers are now independent, they no longer "talk" to each other by default. If we change the node size scale, the edge layer won't know it needs to adjust its offsets to accommodate the new node boundaries. To address this, `inject_nodespace()` acts as a post-processing synchronizer: it intercepts the calculated sizes from the node layer, derive the scaling rules, and "injects" them into the edge layer.
 
 ```{r Adjusting scales - 4, eval=TRUE, message=FALSE, out.width="80%"}
-# We shuffle 'num_var' to demonstrate that edges still 
-# find their specific boundaries
+# We shuffle 'num_var' to demonstrate that edges still find their specific boundaries
+set.seed(234)
 gs_star$num_var2 <- sample(gs_star$num_var)
+
+# Execute the plot, calling 'inject_nodespace' last to capture the final layer states
 ggplot(data = gs_star) + 
   geom_edgespace(arrow_offset = 0.03) + 
   geom_nodespace(mapping = aes(size = num_var2 )) + 
@@ -369,7 +369,7 @@ ggplot(data = gs_star) +
   theme(legend.position = "none")
 ```
 
-To provide a final note of customization, these "physical size" trade-offs only apply when node size is passed as an aesthetic mapping. If no `size` aesthetic is defined, *RGraphSpace* defaults to using `npc` units for all network elements. This allows you to choose between the legend-coordinated scaling of *ggplot2* or the viewport-relative stability of `npc` units, depending on specific needs.
+To provide a final note of customization, these scaling trade-offs only apply when `size` is passed as a node aesthetic mapping. Otherwise, *RGraphSpace* defaults to using `npc` units for all network elements.
  
 ```{r internal checks, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
 # ggplot() + 
@@ -394,7 +394,7 @@ To provide a final note of customization, these "physical size" trade-offs only 
 
 Images can be used as spatial references for graphs. When a raster image is provided, pixel coordinates define where nodes are positioned, supporting the construction of graphs from image features.
 
-As an example, topographic features extracted from the `volcano` matrix are mapped to graph nodes and visualized over a raster image.
+As an example, next we extract topographic features from the `volcano` matrix and map these features to graph nodes. The graph is then visualized over the image matrix.
 
 ```{r Mapping images to graph space, eval=TRUE, message=FALSE, out.width="80%"}
 # Extract pixel coordinates for a specific intensity quantile.
@@ -438,13 +438,11 @@ plotGraphSpace(gs, add.image = TRUE)
 
 **Why use *RGraphSpace* with *ggraph*?**
 
-While *ggraph* is a wonderful framework for relational data, it often struggles with precise edge-node alignment when node sizes vary dynamically. *RGraphSpace* enhances this through specialized `geoms` for edge clipping that automatically account for dynamic node scaling. Furthermore, edge construction is fully automated for both directed and undirected graphs, derived from graph interaction rules without the need for manual adjustments.
+While *ggraph* is a wonderful framework for relational data, it often struggles with precise edge-node alignment when node sizes vary dynamically. *RGraphSpace* enhances this through specialized `geoms` for edge clipping that automatically account for dynamic node scaling. The trade-off for this higher level of automation is that the user has fewer customization options compared to the *ggraph* approach. This is exactly why using *RGraphSpace* alongside *ggraph* makes sense: it provides precise alignment between the graph and a reference background while preserving interoperability with the vast layout and styling flexibility of the *ggraph* grammar.
 
-The trade-off for this higher level of automation is that the user has fewer customization options compared to the *ggraph* approach. This is exactly why using *RGraphSpace* alongside *ggraph* makes sense: it provides precise alignment between the graph and a reference background while preserving interoperability with the vast layout and styling flexibility of the *ggraph* grammar.
+The following example demonstrates the interoperability between *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects, and managing spatial data with *sf*, the standard infrastructure for spatial data analysis in `R` [@Pebesma2023]. 
 
-## Geospatial networks
-
-Integrating network structures with geographic data often involves a clash of coordinate systems and scale units. The following example demonstrates the interoperability between *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects, and managing spatial data with *sf*, the standard infrastructure for spatial data analysis in `R` [@Pebesma2023]. 
+Integrating network structures with spatial data often creates a headache with mismatched coordinate systems and scales, which makes this example particularly interesting to showcase how these packages handle that complexity.
 
 ```{r Check required packages, eval=FALSE, message=FALSE}
 # Check for required packages before running the example
@@ -468,7 +466,7 @@ if(!require("ggraph", quietly = TRUE)){
 }
 ```
 
-Next, we build a spatial network of cities to show how *RGraphSpace* `geoms` can be plugged into *ggraph* and *sf* workflows.
+Next, we build a spatial network of cities with *RGraphSpace* `geoms` plugged into *ggraph* and *sf* workflows.
 
 ```{r Interoperability - 1, eval=FALSE, message=FALSE, out.width="80%"}
 library("RGraphSpace")
@@ -512,7 +510,7 @@ igraph::V(igraph_cities)$`Population (M)` <- cities$pop/1000000
 igraph::E(igraph_cities)$arrowType <- 3
 ```
 
-... and now plot; all the options below will produce the same visual output, demonstrating *RGraphSpace* geoms for different input workflows:
+... and now plot; all the options below produce the same visual output to demonstrate how the package handles different types of input data.
 
 ```{r Interoperability - 2, eval=FALSE, message=FALSE, out.width="80%"}
 # Option 1: Passing an 'igraph' object directly to the geoms
@@ -579,7 +577,7 @@ knitr::include_graphics("figs/toy_sf.png")
 ```
 
 
-## Interactive visualization
+# Interactive visualization
 
 The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, an R/Bioconductor package for interactive network visualization and manipulation.
 
