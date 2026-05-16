@@ -1,0 +1,16 @@
+pandoc: 3.8.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  building-graphspace: building-graphspace.html
+  get-started: get-started.html
+  install: install.html
+  interactive: interactive.html
+  interoperability: interoperability.html
+  mapping-images: mapping-images.html
+  scales-and-offsets: scales-and-offsets.html
+  using-geoms: using-geoms.html
+last_built: 2026-05-16T22:27Z
+urls:
+  reference: https://sysbiolab.github.io/RGraphSpace/reference
+  article: https://sysbiolab.github.io/RGraphSpace/articles

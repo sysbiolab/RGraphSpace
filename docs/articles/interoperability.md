@@ -1,0 +1,194 @@
+# Interoperability with 'ggraph' and 'sf'
+
+  
+**Package**: RGraphSpace 1.2.3
+
+## Overview
+
+*RGraphSpace* is designed to be a seamless extension for existing
+network analysis workflows, not a replacement for it. Whether using
+*igraph* for heavy-duty computations or *tidygraph* for tidy data
+manipulation, *RGraphSpace* `geoms` automatically recognize these
+objects on the fly.
+
+**Why use *RGraphSpace* with *ggraph*?**
+
+While *ggraph* is a wonderful framework for relational data, it often
+struggles with precise edge-node alignment when node sizes vary
+dynamically. *RGraphSpace* enhances this through specialized `geoms` for
+edge clipping that automatically account for node scaling. The trade-off
+for this higher level of automation is that the user has fewer
+customization options compared to the *ggraph* approach. This is exactly
+why using *RGraphSpace* alongside *ggraph* makes sense: it provides
+precise alignment between the graph and a reference background while
+preserving interoperability with the vast layout and styling flexibility
+of the *ggraph* grammar.
+
+The following example demonstrates the interoperability between
+*RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects,
+and managing spatial data with *sf*, the standard infrastructure for
+spatial data analysis in `R` (Pebesma and Bivand 2023).
+
+Integrating network structures with spatial data often creates a
+headache with mismatched coordinate systems and scales, which makes this
+example particularly interesting to showcase how these packages handle
+that complexity.
+
+``` r
+
+# Check for required packages before running the example
+if(!require("sf", quietly = TRUE)){
+  install.packages("sf")
+}
+if(!require("maps", quietly = TRUE)){
+  install.packages("maps")
+}
+if(!require("geometry", quietly = TRUE)){
+  install.packages("geometry")
+}
+if(!require("rnaturalearth", quietly = TRUE)){
+  install.packages("rnaturalearth")
+}
+if(!require("tidygraph", quietly = TRUE)){
+  install.packages("tidygraph")
+}
+if(!require("ggraph", quietly = TRUE)){
+  install.packages("ggraph")
+}
+```
+
+Next, we build a spatial network of cities; then *RGraphSpace* `geoms`
+are plugged into *ggraph* and *sf* workflows.
+
+``` r
+
+library("RGraphSpace")
+library("igraph")
+library("sf")
+library("maps")
+library("geometry")
+library("rnaturalearth")
+library("tidygraph")
+library("ggraph")
+
+# Load a map and transform projection
+map_sf <- ne_countries(country = "Brazil", returnclass = "sf")
+map_proj <- st_transform(map_sf)
+
+# Filter major cities by regional capitals
+data(world.cities, package = "maps")
+r_capitals <- c(
+  "Aracaju", "Belem", "Belo Horizonte", "Boa Vista", "Brasilia", 
+  "Campo Grande", "Cuiaba", "Curitiba", "Florianopolis", "Fortaleza", 
+  "Goiania", "Joao Pessoa", "Macapa", "Maceio", "Manaus", "Natal", 
+  "Palmas", "Porto Alegre", "Porto Velho", "Recife", "Rio Branco", 
+  "Rio de Janeiro", "Salvador", "Sao Luis", "Sao Paulo", "Teresina", 
+  "Vitoria"
+)
+cities <- subset(world.cities, country.etc == "Brazil" & 
+    name %in% r_capitals & pop > 1200000)
+
+# Create Delaunay triangulation edges
+# Note: the edges hold no particular meaning beyond
+# demonstrating integration between coordinate systems
+tri <- delaunayn(cities[,c("lat","long")])
+edges <- unique(rbind(tri[,c(1,2)], tri[,c(2,3)], tri[,c(1,3)] ))
+
+# Build an 'igraph' using city coordinates
+igraph_cities <- igraph::graph_from_edgelist(edges, directed = FALSE)
+igraph::V(igraph_cities)$x <- cities$long
+igraph::V(igraph_cities)$y <- cities$lat
+igraph::V(igraph_cities)$Cities <- cities$name
+igraph::V(igraph_cities)$`Population (M)` <- cities$pop/1000000
+igraph::E(igraph_cities)$arrowType <- 3
+```
+
+… and now we plot; the options below all produce the same visual output
+to demonstrate how the packages handle different types of input data.
+
+``` r
+
+# Option 1: Passing an 'igraph' object directly to the geoms
+ggplot() +
+  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_edgespace(color = "grey40", arrow_size = 0.5, data = igraph_cities) +
+  geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = igraph_cities) +
+  scale_size(range = c(3, 9)) +
+  inject_nodespace() + 
+  theme_gray() +
+  theme_gspace_legend(key_fill = TRUE)
+
+# Option 2: Passing a 'tbl_graph' object
+gr <- as_tbl_graph(igraph_cities)
+ggplot() +
+  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_edgespace(color = "grey40", arrow_size = 0.5, data = gr) +
+  geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = gr) +
+  scale_size(range = c(3, 9)) +
+  inject_nodespace() + 
+  theme_gray() +
+  theme_gspace_legend(key_fill = TRUE)
+
+# Option 3: Integration within a 'ggraph' workflow
+gr <- as_tbl_graph(igraph_cities)
+ggraph(graph = gr, x= gr$x, y = gr$y) +
+  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_edgespace(color = "grey40", arrow_size = 0.5) +
+  geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
+  scale_size(range = c(3, 9)) +
+  inject_nodespace() + 
+  theme_gray() +
+  theme_gspace_legend(key_fill = TRUE)
+
+# Option 4: Passing a native 'GraphSpace' object
+gs <- GraphSpace(igraph_cities)
+ggplot(gs) +
+  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_edgespace(color = "grey40", arrow_size = 0.5) +
+  geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
+  scale_size(range = c(3, 9)) +
+  inject_nodespace() + 
+  theme_gray() +
+  theme_gspace_legend(key_fill = TRUE)
+```
+
+![](cards/interoperability.png)
+
+## Session information
+
+    #> R version 4.6.0 (2026-04-24)
+    #> Platform: x86_64-pc-linux-gnu
+    #> Running under: Ubuntu 24.04.4 LTS
+    #> 
+    #> Matrix products: default
+    #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+    #> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+    #> 
+    #> locale:
+    #>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+    #>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+    #>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+    #>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+    #>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+    #> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+    #> 
+    #> time zone: America/Sao_Paulo
+    #> tzcode source: system (glibc)
+    #> 
+    #> attached base packages:
+    #> [1] stats     graphics  grDevices utils     datasets  methods   base     
+    #> 
+    #> loaded via a namespace (and not attached):
+    #>  [1] digest_0.6.39     desc_1.4.3        R6_2.6.1          fastmap_1.2.0    
+    #>  [5] xfun_0.57         cachem_1.1.0      knitr_1.51        htmltools_0.5.9  
+    #>  [9] rmarkdown_2.31    lifecycle_1.0.5   cli_3.6.6         sass_0.4.10      
+    #> [13] pkgdown_2.2.0     textshaping_1.0.5 jquerylib_0.1.4   systemfonts_1.3.2
+    #> [17] compiler_4.6.0    rstudioapi_0.18.0 tools_4.6.0       ragg_1.5.2       
+    #> [21] bslib_0.10.0      evaluate_1.0.5    yaml_2.3.12       otel_0.2.0       
+    #> [25] jsonlite_2.0.0    htmlwidgets_1.6.4 rlang_1.2.0       fs_2.1.0
+
+## References
+
+Pebesma, Edzer, and Roger Bivand. 2023. *Spatial Data Science: With
+Applications in R*. Chapman; Hall/CRC.
+<https://doi.org/10.1201/9780429459016>.
