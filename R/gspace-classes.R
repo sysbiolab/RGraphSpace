@@ -1,6 +1,13 @@
-setOldClass("igraph")
+#' @importFrom methods setOldClass setClass
+#' @importFrom grDevices as.raster
+#' @importFrom igraph empty_graph
+#' @importFrom tidygraph tbl_graph
 setOldClass("raster")
+setOldClass("igraph")
+setOldClass("tbl_graph")
+setOldClass("gs_graph")
 
+#-------------------------------------------------------------------------------
 #' @title GraphSpace: An S4 class for igraph objects
 #'
 #' @slot nodes A data frame with xy-vertex coordinates.

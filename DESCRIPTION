@@ -1,6 +1,6 @@
 Package: RGraphSpace
 Type: Package
-Version: 1.2.2
+Version: 1.2.3
 Title: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics
 Description: An interface to integrate 'igraph' and 'ggplot2' graphics 
     within a normalized coordinate system. 'RGraphSpace' implements 

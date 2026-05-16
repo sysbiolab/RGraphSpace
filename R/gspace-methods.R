@@ -180,7 +180,10 @@ setMethod("GraphSpace", signature(g = "ANY"),
         error = function(e) NULL
       )
       g <- attr(g, "graph")
-    } else if (!inherits(g, "igraph")) {
+    }
+    if (inherits(g, "igraph")) {
+      class(g) <- "igraph"
+    } else {
       rlang::abort(
         message = c(
           "x" = "Input 'g' must inherit from the 'igraph' class.",
@@ -405,6 +408,12 @@ setMethod("plotGraphSpace", "GraphSpace",
 )
 
 #-------------------------------------------------------------------------------
+.plot_graph_wrapper <- function(gs, ...) {
+  gs <- GraphSpace(gs, verbose = FALSE)
+  gs <- normalizeGraphSpace(gs)
+  plotGraphSpace(gs = gs, ...)
+}
+
 #' @param ... Additional arguments passed to the 
 #' \code{\link{plotGraphSpace}} function.
 #' @import methods
@@ -412,14 +421,19 @@ setMethod("plotGraphSpace", "GraphSpace",
 #' @rdname plotGraphSpace-methods
 #' @aliases plotGraphSpace
 #' @export
-setMethod("plotGraphSpace", "igraph", 
-    function(gs, ...) {
-        gs <- GraphSpace(gs, verbose=FALSE)
-        gs <- normalizeGraphSpace(gs)
-        plotGraphSpace(gs = gs, ...)
-    }
-)
+setMethod("plotGraphSpace", signature(gs = "igraph"), .plot_graph_wrapper)
 
+#' @rdname plotGraphSpace-methods
+#' @aliases plotGraphSpace
+#' @export
+setMethod("plotGraphSpace", signature(gs = "tbl_graph"), .plot_graph_wrapper)
+
+#' @rdname plotGraphSpace-methods
+#' @aliases plotGraphSpace
+#' @export
+setMethod("plotGraphSpace", signature(gs = "gs_graph"), .plot_graph_wrapper)
+
+#-------------------------------------------------------------------------------
 #' Plot GraphSpace objects
 #' 
 #' @param x A \linkS4class{GraphSpace} class object.

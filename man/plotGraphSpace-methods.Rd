@@ -5,6 +5,8 @@
 \alias{plotGraphSpace,GraphSpace-method}
 \alias{plotGraphSpace}
 \alias{plotGraphSpace,igraph-method}
+\alias{plotGraphSpace,tbl_graph-method}
+\alias{plotGraphSpace,gs_graph-method}
 \title{Wrapper function to plot GraphSpace objects in ggplot2}
 \usage{
 \S4method{plotGraphSpace}{GraphSpace}(
@@ -25,6 +27,10 @@
 )
 
 \S4method{plotGraphSpace}{igraph}(gs, ...)
+
+\S4method{plotGraphSpace}{tbl_graph}(gs, ...)
+
+\S4method{plotGraphSpace}{gs_graph}(gs, ...)
 }
 \arguments{
 \item{gs}{Either an \code{igraph} or \linkS4class{GraphSpace} class object.
