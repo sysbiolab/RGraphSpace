@@ -65,9 +65,10 @@ demonstrates manual graph layout refinement.
 
 ###### Interactive Visualization
 
-## Other examples
+## Advanced workflows
 
-Vignettes illustrating how *RGraphSpace* can be used in combination with
-*PathwaySpace* to project network signals.
+These tutorials illustrate how *RGraphSpace* integrates with
+*PathwaySpace* to project and visualize network signals in a
+high-dimensional context.
 
-- <https://sysbiolab.github.io/PathwaySpace/>
+- [https://sysbiolab.github.io/PathwaySpace/](https://sysbiolab.github.io/PathwaySpace/)
