@@ -100,16 +100,25 @@ plotGraphSpace(gtoy1_2, add.labels = TRUE)
 
 ![](figs/toy_reder.png)
 
+------------------------------------------------------------------------
+
+  
+
 ## Fine-tuning large graphs
 
-Large networks frequently present layout challenges. In such scenarios,
+Large networks often present layout challenges. In such scenarios,
 automated static layouts may not resolve visual clutter, making
 interactive adjustments essential for graph clarity and spatial
 organization.
 
-The following example demonstrates how to project a large modular graph
-into `RGraphSpace` using a combination of automated layouts and
-interactive refinement.
+The following example demonstrates how to layout a large modular graph
+using a combination of automated and interactive refinement.
+
+#### Graph initialization
+
+We start by generating a sample network with predefined modules to
+simulate a clustered system. This provides a baseline to evaluate the
+combination of global layout algorithms and local manual adjustments.
 
 ``` r
 
@@ -129,13 +138,16 @@ V(gtoy2)$module <- rep(seq_len(nmod), each = size)
 V(gtoy2)$nodeColor <- rainbow(nmod)[V(gtoy2)$module]
 V(gtoy2)$nodeSize <- 2
   
-# Assign numeric variables to nodes and edges
+# Initialize a 'GraphSpace', using 'layout_with_kk' to 
+# generate initial global coordinates
 gs_gtoy2 <- GraphSpace(gtoy2, layout = layout_with_kk(gtoy2))
 
 plotGraphSpace(gs_gtoy2)
 ```
 
 ![](interactive_files/figure-html/Plot%20large%20igraph%20-%201-1.png)
+
+#### Interactive refinement
 
 The layout can then be fine-tuned interactively:
 
@@ -155,7 +167,7 @@ addGraphToRedeR(gs_graph(gs_gtoy2), unit="npc")
 relaxRedeR(p1 = 10, p2 = 50, p5 = 1)
 
 # Update the graph layout
-gtoy2_2 <- updateLayoutFromRedeR(g=gs_graph(gs_gtoy2))
+gtoy2_2 <- updateLayoutFromRedeR(g = gs_graph(gs_gtoy2))
 
 # ...check the updated layout
 plotGraphSpace(gtoy2_2, add.labels = FALSE)

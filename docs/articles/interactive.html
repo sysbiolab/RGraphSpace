@@ -170,17 +170,25 @@ retrieval process:</p>
 <span><span class="co"># ...check the updated layout</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1_2</span>, add.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figs/toy_reder.png" class="r-plt" alt="" width="95%" style="display: block; margin: auto;"></p>
+<hr>
+<p><br></p>
 </div>
 <div class="section level2">
 <h2 id="fine-tuning-large-graphs">Fine-tuning large graphs<a class="anchor" aria-label="anchor" href="#fine-tuning-large-graphs"></a>
 </h2>
-<p>Large networks frequently present layout challenges. In such
-scenarios, automated static layouts may not resolve visual clutter,
-making interactive adjustments essential for graph clarity and spatial
+<p>Large networks often present layout challenges. In such scenarios,
+automated static layouts may not resolve visual clutter, making
+interactive adjustments essential for graph clarity and spatial
 organization.</p>
-<p>The following example demonstrates how to project a large modular
-graph into <code>RGraphSpace</code> using a combination of automated
-layouts and interactive refinement.</p>
+<p>The following example demonstrates how to layout a large modular
+graph using a combination of automated and interactive refinement.</p>
+<div class="section level4">
+<h4 id="graph-initialization">Graph initialization<a class="anchor" aria-label="anchor" href="#graph-initialization"></a>
+</h4>
+<p>We start by generating a sample network with predefined modules to
+simulate a clustered system. This provides a baseline to evaluate the
+combination of global layout algorithms and local manual
+adjustments.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a large modular graph</span></span>
 <span><span class="va">nmod</span> <span class="op">=</span> <span class="fl">20</span></span>
@@ -198,11 +206,16 @@ layouts and interactive refinement.</p>
 <span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy2</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="va">nmod</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy2</span><span class="op">)</span><span class="op">$</span><span class="va">module</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy2</span><span class="op">)</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
 <span>  </span>
-<span><span class="co"># Assign numeric variables to nodes and edges</span></span>
+<span><span class="co"># Initialize a 'GraphSpace', using 'layout_with_kk' to </span></span>
+<span><span class="co"># generate initial global coordinates</span></span>
 <span><span class="va">gs_gtoy2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy2</span>, layout <span class="op">=</span> <span class="fu"><a href="https://r.igraph.org/reference/layout_with_kk.html" class="external-link">layout_with_kk</a></span><span class="op">(</span><span class="va">gtoy2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gs_gtoy2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interactive_files/figure-html/Plot%20large%20igraph%20-%201-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level4">
+<h4 id="interactive-refinement">Interactive refinement<a class="anchor" aria-label="anchor" href="#interactive-refinement"></a>
+</h4>
 <p>The layout can then be fine-tuned interactively:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Launch the RedeR application</span></span>
@@ -219,11 +232,12 @@ layouts and interactive refinement.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/relaxRedeR.html" class="external-link">relaxRedeR</a></span><span class="op">(</span>p1 <span class="op">=</span> <span class="fl">10</span>, p2 <span class="op">=</span> <span class="fl">50</span>, p5 <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Update the graph layout</span></span>
-<span><span class="va">gtoy2_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/updateLayoutFromRedeR.html" class="external-link">updateLayoutFromRedeR</a></span><span class="op">(</span>g<span class="op">=</span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_graph</a></span><span class="op">(</span><span class="va">gs_gtoy2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">gtoy2_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/updateLayoutFromRedeR.html" class="external-link">updateLayoutFromRedeR</a></span><span class="op">(</span>g <span class="op">=</span> <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_graph</a></span><span class="op">(</span><span class="va">gs_gtoy2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># ...check the updated layout</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy2_2</span>, add.labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cards/interactive.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
