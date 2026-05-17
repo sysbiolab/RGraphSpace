@@ -1,13 +1,15 @@
 # Mapping graphs to images
 
   
-**Package**: RGraphSpace 1.2.3
+**Package**: RGraphSpace 1.2.4
 
 ## Overview
 
 Images can be used as spatial references for graphs. When a raster image
 is provided, the pixel coordinates define where nodes are positioned,
 supporting the construction of graphs from image features.
+
+## Setting basic input data
 
 As an example, next we extract features from the `volcano` matrix and
 map them to graph nodes. The graph is then visualized over the image
@@ -39,6 +41,11 @@ igraph::V(gtoy3)$x <- coords[,2]
 igraph::V(gtoy3)$nodeColor <- NA
 bottom_row <- which.max(igraph::V(gtoy3)$y)
 igraph::V(gtoy3)$nodeColor[bottom_row] <- adjustcolor("red", 0.4)
+```
+
+## Initialize, normalize, and plot
+
+``` r
 
 # Initialize a GraphSpace object
 gs <- GraphSpace(gtoy3)
@@ -46,12 +53,23 @@ gs <- GraphSpace(gtoy3)
 # Map graph coordinates to the image space; by default,
 # 'y' row indices will be flipped (see comments below).
 gs <- normalizeGraphSpace(gs, image = as_colorraster(volcano2) )
+```
+
+Observe that the nodes (open circles) are precisely aligned with the
+pixels (dark squares) to which they were mapped. In this plot, nodes
+remain proportional to the viewport regardless of the final output
+resolution. This behavior is especially critical when the network
+elements represent image features at specific positions and must stay
+anchored to those features, preventing overlap into adjacent, unrelated
+areas.
+
+``` r
 
 # Render the graph with the raster as background
 plotGraphSpace(gs, add.image = TRUE)
 ```
 
-![](mapping-images_files/figure-html/Mapping%20images%20to%20graph%20space-1.png)
+![](mapping-images_files/figure-html/Mapping%20images%20-%203-1.png)
 
 **Note on image alignment**: Proper spatial alignment between nodes and
 the background image requires consistent coordinate conventions. Spatial
@@ -90,7 +108,7 @@ directly to the background image.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.2.3 ggplot2_4.0.3     igraph_2.3.1     
+    #> [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    

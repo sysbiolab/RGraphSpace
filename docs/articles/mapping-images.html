@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
-    <li><a class="dropdown-item" href="../articles/using-geoms.html">Customizing aesthetics</a></li>
+    <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-05-16</h4>
+            <h4 data-toc-skip class="date">2026-05-17</h4>
       
 
       <div class="d-none name"><code>mapping-images.Rmd</code></div>
@@ -87,7 +87,7 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.2.3</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.2.4</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -95,6 +95,10 @@ Team</h4>
 image is provided, the pixel coordinates define where nodes are
 positioned, supporting the construction of graphs from image
 features.</p>
+</div>
+<div class="section level2">
+<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
+</h2>
 <p>As an example, next we extract features from the <code>volcano</code>
 matrix and map them to graph nodes. The graph is then visualized over
 the image matrix.</p>
@@ -122,18 +126,29 @@ the image matrix.</p>
 <span><span class="co"># between matrix and plot coordinate systems.</span></span>
 <span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span><span class="va">bottom_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
-<span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span><span class="op">[</span><span class="va">bottom_row</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/adjustcolor.html" class="external-link">adjustcolor</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="fl">0.4</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Initialize a GraphSpace object</span></span>
+<span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span><span class="op">[</span><span class="va">bottom_row</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/adjustcolor.html" class="external-link">adjustcolor</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="initialize-normalize-and-plot">Initialize, normalize, and plot<a class="anchor" aria-label="anchor" href="#initialize-normalize-and-plot"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Initialize a GraphSpace object</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Map graph coordinates to the image space; by default,</span></span>
 <span><span class="co"># 'y' row indices will be flipped (see comments below).</span></span>
-<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, image <span class="op">=</span> <span class="fu"><a href="../reference/as_colorraster.html">as_colorraster</a></span><span class="op">(</span><span class="va">volcano2</span><span class="op">)</span> <span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Render the graph with the raster as background</span></span>
+<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, image <span class="op">=</span> <span class="fu"><a href="../reference/as_colorraster.html">as_colorraster</a></span><span class="op">(</span><span class="va">volcano2</span><span class="op">)</span> <span class="op">)</span></span></code></pre></div>
+<p>Observe that the nodes (open circles) are precisely aligned with the
+pixels (dark squares) to which they were mapped. In this plot, nodes
+remain proportional to the viewport regardless of the final output
+resolution. This behavior is especially critical when the network
+elements represent image features at specific positions and must stay
+anchored to those features, preventing overlap into adjacent, unrelated
+areas.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Render the graph with the raster as background</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, add.image <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="mapping-images_files/figure-html/Mapping%20images%20to%20graph%20space-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="mapping-images_files/figure-html/Mapping%20images%20-%203-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p><strong>Note on image alignment</strong>: Proper spatial alignment
 between nodes and the background image requires consistent coordinate
 conventions. Spatial misalignment may occur if the input image and node
@@ -172,7 +187,7 @@ to apply flipping directly to the background image.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] RGraphSpace_1.2.3 ggplot2_4.0.3     igraph_2.3.1     </span></span>
+<span><span class="co">#&gt; [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    </span></span>

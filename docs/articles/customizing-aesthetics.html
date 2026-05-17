@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
-    <li><a class="dropdown-item" href="../articles/using-geoms.html">Customizing aesthetics</a></li>
+    <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
@@ -79,15 +79,15 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-05-16</h4>
+            <h4 data-toc-skip class="date">2026-05-17</h4>
       
 
-      <div class="d-none name"><code>using-geoms.Rmd</code></div>
+      <div class="d-none name"><code>customizing-aesthetics.Rmd</code></div>
     </div>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.2.3</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.2.4</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -130,7 +130,7 @@ dynamically calibrates start and end points.</li>
 </ol>
 </div>
 <div class="section level2">
-<h2 id="setting-a-basic-input-data">Setting a basic input data<a class="anchor" aria-label="anchor" href="#setting-a-basic-input-data"></a>
+<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
 </h2>
 <p>In the following example, we create a small modular graph containing
 variables of different types to demonstrate how <em>RGraphSpace</em>
@@ -176,7 +176,7 @@ mapping.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_graphspace.html">geom_graphspace</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"grey"</span>, data <span class="op">=</span> <span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using-geoms_files/figure-html/Plot%20identity%20values-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="customizing-aesthetics_files/figure-html/Plot%20identity%20values-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 <p>The trade-off on this approach is that, on one hand, all attributes
 reflect the original data directly, but no legend is accessible. This is
 because identity scales bypass the legend-building process of
@@ -198,7 +198,7 @@ aesthetics with legends.</p>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">node_group</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_d</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"viridis"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using-geoms_files/figure-html/Map%20aesthetics%20to%20categorical%20variables-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="customizing-aesthetics_files/figure-html/Map%20aesthetics%20to%20categorical%20variables-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="mapping-numeric-variables">Mapping numeric variables<a class="anchor" aria-label="anchor" href="#mapping-numeric-variables"></a>
@@ -213,7 +213,7 @@ aesthetics with legends.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_colour_continuous.html" class="external-link">scale_colour_continuous</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cyan"</span>,<span class="st">"blue"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_colour_continuous.html" class="external-link">scale_fill_continuous</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>,<span class="st">"purple"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using-geoms_files/figure-html/Map%20aesthetics%20to%20numeric%20variables-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="customizing-aesthetics_files/figure-html/Map%20aesthetics%20to%20numeric%20variables-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="using-separate-colour-scales">Using separate colour scales<a class="anchor" aria-label="anchor" href="#using-separate-colour-scales"></a>
@@ -264,7 +264,7 @@ example:</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] RGraphSpace_1.2.3 ggplot2_4.0.3     igraph_2.3.1     </span></span>
+<span><span class="co">#&gt; [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    </span></span>

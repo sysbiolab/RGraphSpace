@@ -1,7 +1,7 @@
 # Fine-tuning scales and offsets
 
   
-**Package**: RGraphSpace 1.2.3
+**Package**: RGraphSpace 1.2.4
 
 ## Overview
 
@@ -12,10 +12,11 @@ node size is mapped to aesthetics and transformed by a `scale_size_*`
 function, which is only evaluated within the layer where it takes
 effect.
 
-The
-[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
-is designed to handle these adjustments automatically by rendering nodes
-and edges within a single, unified layer for internal synchronization.
+The *RGraphSpace* `geoms` are designed to handle these adjustments
+automatically by rendering nodes and edges within synchronized layers.
+
+## Setting basic input data
+
 Below, we construct a star-like network with varying node sizes to show
 how the geometries stay synchronized across a wide range values.
 
@@ -45,7 +46,7 @@ E(gtoy_star)$arrowType <- sample(c(1, -1), ecount(gtoy_star), replace = T)
 gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 ```
 
-**The problem: static vs. dynamic sizes**
+## The problem: static vs. dynamic sizes
 
 In the first example, the `GraphSpace` object provides all graph
 attributes. Using predefined node sizes allows for consistent arrow
@@ -94,6 +95,8 @@ ggplot() +
 ```
 
 ![](scales-and-offsets_files/figure-html/Adjusting%20scales%20-%203-1.png)
+
+## Mapping independent layers
 
 While
 [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
@@ -164,7 +167,7 @@ apply when `size` is passed as a node aesthetic mapping. Otherwise,
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.2.3 ggplot2_4.0.3     igraph_2.3.1     
+    #> [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    

@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
-    <li><a class="dropdown-item" href="../articles/using-geoms.html">Customizing aesthetics</a></li>
+    <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-05-16</h4>
+            <h4 data-toc-skip class="date">2026-05-17</h4>
       
 
       <div class="d-none name"><code>interoperability.Rmd</code></div>
@@ -87,7 +87,7 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.2.3</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.2.4</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -109,6 +109,10 @@ approach. This is exactly why using <em>RGraphSpace</em> alongside
 graph and a reference background while preserving interoperability with
 the vast layout and styling flexibility of the <em>ggraph</em>
 grammar.</p>
+</div>
+<div class="section level2">
+<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
+</h2>
 <p>The following example demonstrates the interoperability between
 <em>RGraphSpace</em> and <em>ggraph</em> using both <em>igraph</em> and
 <em>tidygraph</em> objects, and managing spatial data with <em>sf</em>,
@@ -181,8 +185,12 @@ workflows.</p>
 <span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">igraph_cities</span><span class="op">)</span><span class="op">$</span><span class="va">Cities</span> <span class="op">&lt;-</span> <span class="va">cities</span><span class="op">$</span><span class="va">name</span></span>
 <span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">igraph_cities</span><span class="op">)</span><span class="op">$</span><span class="va">`Population (M)`</span> <span class="op">&lt;-</span> <span class="va">cities</span><span class="op">$</span><span class="va">pop</span><span class="op">/</span><span class="fl">1000000</span></span>
 <span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">igraph_cities</span><span class="op">)</span><span class="op">$</span><span class="va">arrowType</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></code></pre></div>
-<p>… and now we plot; the options below all produce the same visual
-output to demonstrate how the packages handle different types of input
+</div>
+<div class="section level2">
+<h2 id="different-input-same-output">Different input, same output<a class="anchor" aria-label="anchor" href="#different-input-same-output"></a>
+</h2>
+<p>The following options all produce the same visual output,
+demonstrating how these packages integrate different types of input
 data.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Option 1: Passing an 'igraph' object directly to the geoms</span></span>

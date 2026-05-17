@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.2.3
+**Package**: RGraphSpace 1.2.4
 
 ## Overview
 
@@ -23,6 +23,8 @@ why using *RGraphSpace* alongside *ggraph* makes sense: it provides
 precise alignment between the graph and a reference background while
 preserving interoperability with the vast layout and styling flexibility
 of the *ggraph* grammar.
+
+## Setting basic input data
 
 The following example demonstrates the interoperability between
 *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects,
@@ -103,8 +105,10 @@ igraph::V(igraph_cities)$`Population (M)` <- cities$pop/1000000
 igraph::E(igraph_cities)$arrowType <- 3
 ```
 
-… and now we plot; the options below all produce the same visual output
-to demonstrate how the packages handle different types of input data.
+## Different input, same output
+
+The following options all produce the same visual output, demonstrating
+how these packages integrate different types of input data.
 
 ``` r
 

@@ -1,7 +1,7 @@
 # Customizing aesthetics
 
   
-**Package**: RGraphSpace 1.2.3
+**Package**: RGraphSpace 1.2.4
 
 ## Overview
 
@@ -39,7 +39,7 @@ elements must stay accurately referenced to a spatial map or image.
     aesthetic mappings; unlike standard segments, it is “node-aware” and
     dynamically calibrates start and end points.
 
-## Setting a basic input data
+## Setting basic input data
 
 In the following example, we create a small modular graph containing
 variables of different types to demonstrate how *RGraphSpace* `geoms`
@@ -92,7 +92,7 @@ ggplot() +
   theme(aspect.ratio = 1)
 ```
 
-![](using-geoms_files/figure-html/Plot%20identity%20values-1.png)
+![](customizing-aesthetics_files/figure-html/Plot%20identity%20values-1.png)
 
 The trade-off on this approach is that, on one hand, all attributes
 reflect the original data directly, but no legend is accessible. This is
@@ -119,7 +119,7 @@ ggplot(gs) + geom_edgespace() +
   theme_gspace_coords()
 ```
 
-![](using-geoms_files/figure-html/Map%20aesthetics%20to%20categorical%20variables-1.png)
+![](customizing-aesthetics_files/figure-html/Map%20aesthetics%20to%20categorical%20variables-1.png)
 
 ## Mapping numeric variables
 
@@ -137,7 +137,7 @@ ggplot(gs) +
   theme_gspace_coords()
 ```
 
-![](using-geoms_files/figure-html/Map%20aesthetics%20to%20numeric%20variables-1.png)
+![](customizing-aesthetics_files/figure-html/Map%20aesthetics%20to%20numeric%20variables-1.png)
 
 ## Using separate colour scales
 
@@ -189,7 +189,7 @@ ggplot(data = gs) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.2.3 ggplot2_4.0.3     igraph_2.3.1     
+    #> [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    

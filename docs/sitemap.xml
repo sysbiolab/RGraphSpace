@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/404.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/get-started.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/index.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/install.html</loc></url>
@@ -8,7 +9,6 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/interoperability.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.html</loc></url>
-<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/using-geoms.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/authors.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/index.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.html</loc></url>

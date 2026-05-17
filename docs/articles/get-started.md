@@ -1,7 +1,7 @@
 # Getting started with RGraphSpace
 
   
-**Package**: RGraphSpace 1.2.3
+**Package**: RGraphSpace 1.2.4
 
 ## Introductory vignettes
 
@@ -9,7 +9,7 @@ These tutorials introduce *RGraphSpace* using simple toy examples:
 [*building a graph
 space*](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md)
 walks through basic graph conventions; [*customizing
-aesthetics*](https://sysbiolab.github.io/RGraphSpace/articles/using-geoms.md)
+aesthetics*](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md)
 demonstrates how to set up `geoms` to handle graph data types; and
 [*fine-tuning
 scales*](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md)
@@ -21,9 +21,9 @@ describes the trade-offs involved in synchronizing node and edge layers.
 
 ###### Building GraphSpace
 
-[![](cards/using_geoms.png)](https://sysbiolab.github.io/RGraphSpace/articles/using-geoms.md)
+[![](cards/using_geoms.png)](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md)
 
-[](https://sysbiolab.github.io/RGraphSpace/articles/using-geoms.md)
+[](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md)
 
 ###### Customizing Aesthetics
 

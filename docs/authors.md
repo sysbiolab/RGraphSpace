@@ -20,13 +20,13 @@
 ## Citation
 
 Sysbiolab Team (2026). RGraphSpace: A lightweight interface between
-'igraph' and 'ggplot2' graphics. R package version 1.2.3. Doi:
+'igraph' and 'ggplot2' graphics. R package version 1.2.4. Doi:
 10.32614/CRAN.package.RGraphSpace
 
     @Manual{,
       author = {{Sysbiolab Team}},
       title = {RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics},
       year = {2026},
-      note = {R package version 1.2.3 (Doi: 10.32614/CRAN.package.RGraphSpace)},
+      note = {R package version 1.2.4 (Doi: 10.32614/CRAN.package.RGraphSpace)},
       url = {https://CRAN.R-project.org/package=RGraphSpace},
     }

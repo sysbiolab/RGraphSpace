@@ -4,6 +4,8 @@
 
 - [Building a graph
   space](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md):
+- [Customizing
+  aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md):
 - [Getting started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/get-started.md):
 - [Installation
@@ -16,5 +18,3 @@
   images](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md):
 - [Fine-tuning scales and
   offsets](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md):
-- [Customizing
-  aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/using-geoms.md):

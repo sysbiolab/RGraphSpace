@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
-    <li><a class="dropdown-item" href="../articles/using-geoms.html">Customizing aesthetics</a></li>
+    <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-05-16</h4>
+            <h4 data-toc-skip class="date">2026-05-17</h4>
       
 
       <div class="d-none name"><code>scales-and-offsets.Rmd</code></div>
@@ -87,7 +87,7 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.2.3</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.2.4</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -97,11 +97,16 @@ boundary, regardless of the node sizes. This becomes more complex when
 node size is mapped to aesthetics and transformed by a
 <code>scale_size_*</code> function, which is only evaluated within the
 layer where it takes effect.</p>
-<p>The <code><a href="../reference/geom_graphspace.html">geom_graphspace()</a></code> is designed to handle these
-adjustments automatically by rendering nodes and edges within a single,
-unified layer for internal synchronization. Below, we construct a
-star-like network with varying node sizes to show how the geometries
-stay synchronized across a wide range values.</p>
+<p>The <em>RGraphSpace</em> <code>geoms</code> are designed to handle
+these adjustments automatically by rendering nodes and edges within
+synchronized layers.</p>
+</div>
+<div class="section level2">
+<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
+</h2>
+<p>Below, we construct a star-like network with varying node sizes to
+show how the geometries stay synchronized across a wide range
+values.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
@@ -126,7 +131,10 @@ stay synchronized across a wide range values.</p>
 <span><span class="co"># Make a 'GraphSpace'</span></span>
 <span><span class="va">gs_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy_star</span>, layout <span class="op">=</span> <span class="fu"><a href="https://r.igraph.org/reference/layout_as_star.html" class="external-link">layout_as_star</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p></p>
-<p><strong>The problem: static vs. dynamic sizes</strong></p>
+</div>
+<div class="section level2">
+<h2 id="the-problem-static-vs--dynamic-sizes">The problem: static vs. dynamic sizes<a class="anchor" aria-label="anchor" href="#the-problem-static-vs--dynamic-sizes"></a>
+</h2>
 <p>In the first example, the <code>GraphSpace</code> object provides all
 graph attributes. Using predefined node sizes allows for consistent
 arrow offsets, as all network elements are scaled to <code>npc</code>
@@ -163,6 +171,10 @@ providing additional manual fine-tuning.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%203-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="mapping-independent-layers">Mapping independent layers<a class="anchor" aria-label="anchor" href="#mapping-independent-layers"></a>
+</h2>
 <p>While <code><a href="../reference/geom_graphspace.html">geom_graphspace()</a></code> is convenient for quick,
 coordinated plots, it has a limitation: the <code>mapping</code>
 argument is reserved for node aesthetics. To overcome this limitation,
@@ -224,7 +236,7 @@ for all network elements.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] RGraphSpace_1.2.3 ggplot2_4.0.3     igraph_2.3.1     </span></span>
+<span><span class="co">#&gt; [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    </span></span>

@@ -1,7 +1,7 @@
 # Building a graph space
 
   
-**Package**: RGraphSpace 1.2.3
+**Package**: RGraphSpace 1.2.4
 
 ## Quick start
 
@@ -185,8 +185,8 @@ ggplot(gs) +
 ![](building-graphspace_files/figure-html/Using%20geoms-1.png)
 
 For detailed integration with the *ggplot2* ecosystem and other spatial
-packages, see [*using
-geoms*](https://sysbiolab.github.io/RGraphSpace/articles/using-geoms.md)
+packages, see [*customizing
+aesthetics*](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md)
 and [*interoperability with ggraph &
 sf*](https://sysbiolab.github.io/RGraphSpace/articles/interoperability.md)
 vignettes.
@@ -216,7 +216,7 @@ vignettes.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.2.3 ggplot2_4.0.3     igraph_2.3.1     
+    #> [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    

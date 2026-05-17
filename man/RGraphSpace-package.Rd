@@ -24,7 +24,7 @@ from the menu.
 
 \references{
 Sysbiolab Team (2026). \emph{RGraphSpace: A lightweight interface between
-'igraph' and 'ggplot2' graphics}. R package version 1.2.2 (Doi:
+'igraph' and 'ggplot2' graphics}. R package version 1.3.0 (Doi:
 10.32614/CRAN.package.RGraphSpace),
 \url{https://CRAN.R-project.org/package=RGraphSpace}.
 }

@@ -1,7 +1,7 @@
 # Interactive visualization
 
   
-**Package**: RGraphSpace 1.2.3
+**Package**: RGraphSpace 1.2.4
 
 ## Overview
 
@@ -116,9 +116,9 @@ using a combination of automated and interactive refinement.
 
 #### Graph initialization
 
-We start by generating a sample network with predefined modules to
-simulate a clustered system. This provides a baseline to evaluate the
-combination of global layout algorithms and local manual adjustments.
+We first generate a sample network with predefined modules to simulate a
+cluttered system. This provides a baseline to evaluate the combination
+of global layout algorithms and local manual adjustments.
 
 ``` r
 
@@ -200,7 +200,7 @@ plotGraphSpace(gtoy2_2, add.labels = FALSE)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.1      RGraphSpace_1.2.3 ggplot2_4.0.3     RedeR_3.8.0      
+    #> [1] igraph_2.3.1      RGraphSpace_1.2.4 ggplot2_4.0.3     RedeR_3.8.0      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    
