@@ -1,4 +1,4 @@
-## *RGraphSpace*: A lightweight interface between 'igraph' and 'ggplot2' graphics
+### *RGraphSpace*: A lightweight interface between 'igraph' and 'ggplot2' graphics
   <!-- badges: start -->
   [![](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
   [![](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
