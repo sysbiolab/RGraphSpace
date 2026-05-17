@@ -189,7 +189,9 @@ ggplot(gs) +
   theme_gspace_coords(is_norm = TRUE)
 ```
 
-For detailed integration with the *ggplot2* ecosystem and other spatial packages, see the online tutorials, available at:
+# Online tutorials
+
+For detailed integration with the *ggplot2* ecosystem, see the online documentation available at:
 
 * https://sysbiolab.github.io/RGraphSpace/
 
