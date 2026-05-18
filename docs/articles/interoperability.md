@@ -9,8 +9,8 @@
 analysis workflows, not a replacement. Whether using *igraph* for
 heavy-duty computations or *tidygraph* for tidy data manipulation,
 *RGraphSpace* `geoms` automatically recognize these objects on the fly.
-The main motivation behind *RGraphSpace* was to address how network
-elements can be scaled while preserving alignment with adjacent image
+The main motivation behind *RGraphSpace* was to address the challenge of
+scaling network elements without disrupting alignment with image
 features. For practical examples, see [*mapping graphs to
 images*](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md);
 see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/)
@@ -26,26 +26,14 @@ physical legend representation, causing node dimensions to depend on
 device scaling rather than the normalized coordinate space. For most
 applications this is not an issue, but it becomes critical when graphs
 must be spatially aligned with reference images. *RGraphSpace* addresses
-this through specialized `geoms` for edge clipping that automatically
-account for node scaling. The trade-off for this higher level of
-automation is that the user has fewer customization options compared to
-the *ggraph* approach. This is exactly why using *RGraphSpace* alongside
-*ggraph* makes sense: it provides precise spatial alignment between
-graph elements and reference backgrounds while preserving
-interoperability with the extensive layout and styling flexibility of
-the *ggraph* grammar.
-
-## Setting basic input data
-
-The following example demonstrates the interoperability between
-*RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects,
-and managing spatial data with *sf*, the standard infrastructure for
-spatial data analysis in `R` (Pebesma and Bivand 2023).
-
-Integrating network structures with spatial data often creates a
-headache with mismatched coordinate systems and scales, which makes this
-example particularly interesting to showcase how these packages handle
-that complexity.
+this through specialized `geoms` that automatically compensate for
+alignment shifts introduced by node scaling. The trade-off for this
+higher level of automation is that the user has fewer customization
+options compared to the *ggraph* approach. This is exactly why using
+*RGraphSpace* alongside *ggraph* makes sense: it provides precise
+spatial alignment between graph elements and reference backgrounds while
+preserving interoperability with the extensive layout and styling
+flexibility of the *ggraph* grammar.
 
 ``` r
 
@@ -69,6 +57,17 @@ if(!require("ggraph", quietly = TRUE)){
   install.packages("ggraph")
 }
 ```
+
+## Setting basic input data
+
+The following example demonstrates the interoperability between
+*RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects,
+and managing spatial data with *sf*, the standard infrastructure for
+spatial data analysis in `R` (Pebesma and Bivand 2023). Integrating
+network structures with spatial data often creates a headache with
+mismatched coordinate systems and scales, which makes this example
+particularly interesting to showcase how these packages handle that
+complexity.
 
 Next, we build a spatial network of cities; then *RGraphSpace* `geoms`
 are plugged into *ggraph* and *sf* workflows.

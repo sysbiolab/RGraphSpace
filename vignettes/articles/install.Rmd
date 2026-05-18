@@ -1,0 +1,44 @@
+---
+title: "Installation Instructions"
+date: "`r Sys.Date()`"
+---
+
+To install *RGraphSpace*, R version [4.5](https://www.r-project.org/) or greater is required.
+
+## Release version
+
+```r
+# Release version from CRAN
+install.packages("RGraphSpace")
+```
+
+## Development version
+
+```r
+# Dependencies to build the vignettes
+install.packages("knitr")
+install.packages("rmarkdown")
+install.packages("remotes")
+
+# Package source
+remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
+
+# Other packages used in the tutorials
+install.packages("sf")
+install.packages("maps")
+install.packages("geometry")
+install.packages("rnaturalearth")
+install.packages("tidygraph")
+install.packages("ggraph")
+install.packages("BiocManager")
+BiocManager::install("RedeR")
+install.packages("ggnewscale")
+```
+
+## Citation
+
+* Sysbiolab Team. "RGraphSpace: A lightweight interface between igraph and ggplot2 graphics." R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
+
+## Licenses
+
+The *PathwaySpace* package is distributed under [Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)

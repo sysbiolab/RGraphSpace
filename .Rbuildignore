@@ -2,7 +2,14 @@
 ^\.Rproj\.user$
 ^_pkgdown\.yml$
 ^docs$
+^doc$
 ^pkgdown$
 ^\.github$
 ^\.positai$
 ^\.claude$
+^renv$
+^renv\.lock$
+^vignettes/articles$
+^vignettes/articles/.*$
+^\.zip$
+^\.lintr$

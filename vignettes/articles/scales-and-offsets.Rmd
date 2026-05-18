@@ -1,0 +1,144 @@
+---
+title: "Fine-tuning scales and offsets"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+bibliography: ../bibliography.bib
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5
+  )
+```
+
+<br/>
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+
+# Overview
+
+A seemingly simple yet technically challenging aspect of network visualization is ensuring that edges terminate exactly at the node boundary, regardless of the node sizes. This becomes more complex when node size is mapped to aesthetics and transformed by a `scale_size_*` function, which is only evaluated within the layer where it takes effect.
+
+The *RGraphSpace* `geoms` are designed to handle these adjustments automatically by rendering nodes and edges within synchronized layers.
+
+# Setting basic input data
+
+Below, we construct a star-like network with varying node sizes to show how the geometries stay synchronized across a wide range values.
+
+```{r Adjusting scales - 1, eval=TRUE, message=FALSE, out.width="70%"}
+library("igraph")
+library("ggplot2")
+library("RGraphSpace")
+
+# Make a toy graph
+gtoy_star <- make_star(20, mode="out")
+
+# Add a numeric variable
+V(gtoy_star)$num_var <- seq_len(vcount(gtoy_star)) / 2
+
+# Set the 'nodeSize' attribute
+V(gtoy_star)$nodeSize <- seq_len(vcount(gtoy_star)) * 2
+
+# Set node and edge colors
+V(gtoy_star)$nodeColor <- adjustcolor("blue", 0.1)
+E(gtoy_star)$edgeLineColor <- "darkred"
+
+# Assign random arrow types, either '-->' or '--|'
+E(gtoy_star)$arrowType <- sample(c(1, -1), ecount(gtoy_star), replace = T)
+
+# Make a 'GraphSpace'
+gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
+```
+
+</br>
+
+# The problem: static vs. dynamic sizes
+
+In the first example, the `GraphSpace` object provides all graph attributes. Using predefined node sizes allows for consistent arrow offsets, as all network elements are scaled to `npc` (Normalized Parent Coordinates) units. No matter how the plotting area is resized, nodes, edges, and arrows will remain proportional to the viewport. This behavior is especially useful when overlaying networks on top of reference images (such as photomicrography or medical scans), where nodes must stay locked to specific pixel positions regardless of the output resolution.
+
+```{r Adjusting scales - 2, eval=TRUE, message=FALSE, out.width="80%"}
+ggplot() + 
+  geom_graphspace(data = gs_star) + 
+  theme_gspace_coords()
+```
+
+```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+p <- ggplot() + geom_graphspace(data = gs_star) + 
+  theme_gspace_coords()
+ggsave(filename = "./vignettes/cards/scales_and_offsets.png", height=4, width=4,
+  units="in", device="png", dpi=200, plot = p)
+```
+
+When we map node size to a variable (like the `num_var`), *ggplot2* rescales these values into a target range (e.g., `c(2, 40)`). This provides all the advantages of the *ggplot2* ecosystem, such as flexible graphical scaling and coordinated legends.
+
+There is, however, a subtle trade-off to keep in mind. When node size is mapped via `aes()`, *ggplot2* treats it as a fixed physical dimension (usually in `mm`) to maintain consistency with the legends. This means the node size will stay locked to the legends and will no longer scale proportionally if the plotting area is resized.
+
+In the example below, `geom_graphspace()` handles the bulk of the edge adjustment, with the `arrow_offset` parameter providing additional manual fine-tuning.
+
+```{r Adjusting scales - 3, eval=TRUE, message=FALSE, out.width="80%"}
+ggplot() + 
+  geom_graphspace(mapping = aes(size = num_var),
+    data = gs_star,  arrow_offset = 0.03) + 
+  scale_size(range = c(2, 40)) + 
+  theme_gspace_coords() + 
+  theme(legend.position = "none")
+```
+
+# Mapping independent layers
+
+While `geom_graphspace()` is convenient for quick, coordinated plots, it has a limitation: the `mapping` argument is reserved for node aesthetics. To overcome this limitation, we can call `geom_edgespace()` and `geom_nodespace()` as independent layers. This allows for total flexibility for mapping different variables to edges and nodes.
+
+However, because these layers are now independent, they no longer "talk" to each other by default. If we change the node size scale, the edge layer won't know it needs to adjust its offsets to accommodate the new node boundaries. To address this, `inject_nodespace()` acts as a post-processing synchronizer: it intercepts the calculated sizes from the node layer, derive the scaling rules, and "injects" them into the edge layer.
+
+```{r Adjusting scales - 4, eval=TRUE, message=FALSE, out.width="80%"}
+# We shuffle 'num_var' to demonstrate that edges 
+# still find their specific boundaries
+set.seed(234)
+gs_star$num_var2 <- sample(gs_star$num_var)
+
+# Execute the plot, calling 'inject_nodespace' last 
+# to capture the final layer states
+ggplot(data = gs_star) + 
+  geom_edgespace(arrow_offset = 0.03) + 
+  geom_nodespace(mapping = aes(size = num_var2 )) + 
+  scale_size(range = c(2, 40)) +
+  inject_nodespace() +
+  theme_gspace_coords() +
+  theme(legend.position = "none")
+```
+
+To provide a final note of customization, these scaling trade-offs only apply when `size` is passed as a node aesthetic mapping. Otherwise, *RGraphSpace* defaults to using `npc` units for all network elements.
+ 
+```{r internal checks, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# ggplot() + 
+#   geom_edgespace(data = gs_star,  arrow_offset = 0.01) + 
+#   geom_nodespace(mapping = aes(size = num_var), data = gs_star) + 
+#   scale_size(range = c(2, 30)) + 
+#   inject_nodespace() + 
+#   theme_gspace_coords() + 
+#   theme(legend.position = "none")
+# library(ggraph)
+# ggraph(graph = gs_star, x= gs_star$x, y = gs_star$y) +
+#   geom_edgespace(arrow_offset = 0.01) +
+#   geom_nodespace(mapping = aes(size = num_var)) +
+#   scale_size(range = c(2, 30)) +
+#   inject_nodespace() +
+#   theme_gspace_coords() +
+#   theme(legend.position = "none")
+```
+
+
+# Session information
+```{r label='Session information', eval=TRUE, echo=FALSE}
+sessionInfo()
+```
+

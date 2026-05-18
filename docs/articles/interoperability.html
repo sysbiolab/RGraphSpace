@@ -81,7 +81,7 @@ Team</h4>
             
             <h4 data-toc-skip class="date">2026-05-18</h4>
       
-
+      <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/interoperability.Rmd" class="external-link"><code>vignettes/articles/interoperability.Rmd</code></a></small>
       <div class="d-none name"><code>interoperability.Rmd</code></div>
     </div>
 
@@ -96,8 +96,8 @@ existing network analysis workflows, not a replacement. Whether using
 <em>igraph</em> for heavy-duty computations or <em>tidygraph</em> for
 tidy data manipulation, <em>RGraphSpace</em> <code>geoms</code>
 automatically recognize these objects on the fly. The main motivation
-behind <em>RGraphSpace</em> was to address how network elements can be
-scaled while preserving alignment with adjacent image features. For
+behind <em>RGraphSpace</em> was to address the challenge of scaling
+network elements without disrupting alignment with image features. For
 practical examples, see <a href="mapping-images.html"><em>mapping graphs
 to images</em></a>; see also <a href="https://sysbiolab.github.io/PathwaySpace/" class="external-link"><em>PathwaySpace</em></a>
 tutorials for use-case scenarios involving reference image
@@ -113,27 +113,14 @@ depend on device scaling rather than the normalized coordinate space.
 For most applications this is not an issue, but it becomes critical when
 graphs must be spatially aligned with reference images.
 <em>RGraphSpace</em> addresses this through specialized
-<code>geoms</code> for edge clipping that automatically account for node
-scaling. The trade-off for this higher level of automation is that the
-user has fewer customization options compared to the <em>ggraph</em>
-approach. This is exactly why using <em>RGraphSpace</em> alongside
-<em>ggraph</em> makes sense: it provides precise spatial alignment
-between graph elements and reference backgrounds while preserving
-interoperability with the extensive layout and styling flexibility of
-the <em>ggraph</em> grammar.</p>
-</div>
-<div class="section level2">
-<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
-</h2>
-<p>The following example demonstrates the interoperability between
-<em>RGraphSpace</em> and <em>ggraph</em> using both <em>igraph</em> and
-<em>tidygraph</em> objects, and managing spatial data with <em>sf</em>,
-the standard infrastructure for spatial data analysis in <code>R</code>
-<span class="citation">(Pebesma and Bivand 2023)</span>.</p>
-<p>Integrating network structures with spatial data often creates a
-headache with mismatched coordinate systems and scales, which makes this
-example particularly interesting to showcase how these packages handle
-that complexity.</p>
+<code>geoms</code> that automatically compensate for alignment shifts
+introduced by node scaling. The trade-off for this higher level of
+automation is that the user has fewer customization options compared to
+the <em>ggraph</em> approach. This is exactly why using
+<em>RGraphSpace</em> alongside <em>ggraph</em> makes sense: it provides
+precise spatial alignment between graph elements and reference
+backgrounds while preserving interoperability with the extensive layout
+and styling flexibility of the <em>ggraph</em> grammar.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check for required packages before running the example</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
@@ -154,6 +141,19 @@ that complexity.</p>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://ggraph.data-imaginist.com" class="external-link">"ggraph"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ggraph"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
+</h2>
+<p>The following example demonstrates the interoperability between
+<em>RGraphSpace</em> and <em>ggraph</em> using both <em>igraph</em> and
+<em>tidygraph</em> objects, and managing spatial data with <em>sf</em>,
+the standard infrastructure for spatial data analysis in <code>R</code>
+<span class="citation">(Pebesma and Bivand 2023)</span>. Integrating
+network structures with spatial data often creates a headache with
+mismatched coordinate systems and scales, which makes this example
+particularly interesting to showcase how these packages handle that
+complexity.</p>
 <p>Next, we build a spatial network of cities; then <em>RGraphSpace</em>
 <code>geoms</code> are plugged into <em>ggraph</em> and <em>sf</em>
 workflows.</p>

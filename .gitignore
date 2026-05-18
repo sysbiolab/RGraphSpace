@@ -1,16 +1,31 @@
+# Histórico e Workspace do R (Local)
 .Rhistory
+.Rapp.history
 .RData
 .Ruserdata
-renv
-.Rprofile
-/Meta/
-/doc/
-doc
-.DS_Store
-.Rproj.user
-PathwaySpace.Rcheck
-..Rcheck
-*.tar.gz
-*.zip
-.positai
+.Renviron
 
+# Configurações da IDE (RStudio / Posit)
+.Rproj.user/
+*.Rproj
+
+# Subprodutos de Compilação e Checagem do Pacote (CRAN/devtools)
+*-Ex.R
+/*.tar.gz
+/*.Rcheck/
+
+# Previews locais de Vinhetas e Cadernos RMarkdown
+vignettes/*.html
+vignettes/*.pdf
+*.utf8.md
+*.knit.md
+*_cache/
+/cache/
+
+# Cache de desenvolvimento local do pkgdown
+.pkgdown/
+
+# Conexões e Autenticações (Segurança)
+.httr-oauth
+rsconnect/
+.positai

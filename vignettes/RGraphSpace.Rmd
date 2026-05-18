@@ -31,11 +31,6 @@ knitr::opts_chunk$set(
 <br/>
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 
-# Highlights
-* Native *ggplot2* interface for *igraph* objects
-* Optimized *geoms* for large-scale network visualization
-* Spatial alignment of networks with reference backgrounds
-
 # Overview
 
 *RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016], optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including colors, shapes, and line types. For extended documentation and use cases, see the [online tutorials](https://sysbiolab.github.io/RGraphSpace/).

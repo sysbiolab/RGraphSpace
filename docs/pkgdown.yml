@@ -2,15 +2,16 @@ pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  building-graphspace: building-graphspace.html
-  customizing-aesthetics: customizing-aesthetics.html
-  get-started: get-started.html
-  install: install.html
-  interactive: interactive.html
-  interoperability: interoperability.html
-  mapping-images: mapping-images.html
-  scales-and-offsets: scales-and-offsets.html
-last_built: 2026-05-18T15:09Z
+  articles/building-graphspace: building-graphspace.html
+  articles/customizing-aesthetics: customizing-aesthetics.html
+  articles/get-started: get-started.html
+  articles/install: install.html
+  articles/interactive: interactive.html
+  articles/interoperability: interoperability.html
+  articles/mapping-images: mapping-images.html
+  RGraphSpace: RGraphSpace.html
+  articles/scales-and-offsets: scales-and-offsets.html
+last_built: 2026-05-18T20:43Z
 urls:
   reference: https://sysbiolab.github.io/RGraphSpace/reference
   article: https://sysbiolab.github.io/RGraphSpace/articles

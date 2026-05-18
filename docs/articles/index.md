@@ -16,5 +16,7 @@
   'sf'](https://sysbiolab.github.io/RGraphSpace/articles/interoperability.md):
 - [Mapping graphs to
   images](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md):
+- [Getting started with
+  RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md):
 - [Fine-tuning scales and
   offsets](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md):

@@ -1,0 +1,182 @@
+---
+title: "Interactive visualization"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+bibliography: ../bibliography.bib
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5
+  )
+```
+
+<br/>
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+
+# Overview
+
+While static plots are essential for documentation and publication, interactive visualization allows us to explore the local neighborhoods and global architecture of a network in real-time. By connecting *RGraphSpace* with specialized interactive tools, we can move beyond fixed layouts to dynamic manipulation.
+
+The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, an R/Bioconductor package for interactive network visualization and manipulation.
+
+```{r Install RedeR, eval=FALSE, message=FALSE}
+# Install RedeR, a graph package for interactive visualization
+if(!require("BiocManager", quietly = TRUE)){
+  install.packages("BiocManager")
+}
+if(!require("RedeR", quietly = TRUE)){
+  BiocManager::install("RedeR")
+}
+```
+
+# System requirements 
+
+*RedeR* will need the Java Runtime Environment (JRE; version >=11). To ensure your environment is ready, you can check the installed Java version directly from R:
+
+```{r System requirements, eval=FALSE, message=FALSE}
+library("RedeR")
+RedPort(checkJava=TRUE)
+# RedeR will need Java Runtime Environment (Java >=11)
+# Checking Java version installed on this system...
+# openjdk version "21.0.10" 2026-01-20
+# OpenJDK Runtime Environment (build 21.0.10+7-Ubuntu-124.04)
+# OpenJDK 64-Bit Server VM (build 21.0.10+7-Ubuntu-124.04, mixed mode, sharing)
+
+# Note: The output may vary, but ensure your system meets the minimum requirement.
+```
+
+
+# A 'round-trip' workflow
+
+Before jumping into the interactive interface, we can use a standard *RGraphSpace* call to verify the graph's structure and current layout. This provides a baseline for comparison once we start modifying the network dynamically.
+
+```{r Plot gtoy1, eval=TRUE, message=FALSE, out.width="70%"}
+library("RedeR")
+library("RGraphSpace")
+library("igraph")
+data(gtoy1, package = "RGraphSpace")
+plotGraphSpace(gtoy1, add.labels = TRUE)
+```
+
+The main advantage of this interoperability comes from the "round-trip" workflow. You can send a graph space to *RedeR*, use its force-directed algorithms to manually refine the layout, and then pull that updated geometry back into **R** for further analysis and plotting with *ggplot2*.
+
+The following steps demonstrate the launch, manipulation, and retrieval process:
+
+```{r A shortcut for RedeR, eval=FALSE, message=FALSE}
+# Launch the RedeR application
+startRedeR()
+resetRedeR()
+
+# Send 'gtoy1' to the RedeR interface
+addGraphToRedeR(gtoy1, unit="npc")
+relaxRedeR()
+
+# Fetch 'gtoy1' with a fresh layout
+gtoy1_2 <- getGraphFromRedeR(unit="npc")
+
+# Check the round trip...
+plotGraphSpace(gtoy1_2, add.labels = TRUE)
+
+## Note that for the round trip, shapes and line types are
+## partially compatible between ggplot2 and RedeR.
+
+# ...alternatively, just update the graph layout
+gtoy1_2 <- updateLayoutFromRedeR(g=gtoy1)
+
+# ...check the updated layout
+plotGraphSpace(gtoy1_2, add.labels = TRUE)
+```
+
+```{r toygraph, echo=FALSE, out.width = '95%', purl=FALSE}
+knitr::include_graphics("figs/toy_reder.png")
+```
+
+---
+
+<br>
+
+# Fine-tuning large graphs
+
+Large networks often present layout challenges. In such scenarios, automated static layouts may not resolve visual clutter, making interactive adjustments essential for graph clarity and spatial organization.
+
+The following example demonstrates how to layout a large modular graph using a combination of automated and interactive refinement. 
+
+### Graph initialization
+
+We first generate a sample network with predefined modules to simulate a cluttered system. This provides a baseline to evaluate the combination of global layout algorithms and local manual adjustments.
+
+```{r Plot large igraph - 1, eval=TRUE, message=FALSE, out.width="90%"}
+# Make a large modular graph
+nmod = 20
+size = 50
+gtoy2 <- sample_islands(
+  islands.n = nmod,     # number of modules
+  islands.size = size,  # nodes per module
+  islands.pin = 0.25,   # edges within modules (prob)
+  n.inter = 5)          # edges between modules
+
+# Assign module membership
+V(gtoy2)$module <- rep(seq_len(nmod), each = size)
+
+# Assign colors and node size
+V(gtoy2)$nodeColor <- rainbow(nmod)[V(gtoy2)$module]
+V(gtoy2)$nodeSize <- 2
+  
+# Initialize a 'GraphSpace', using 'layout_with_kk' to 
+# generate initial global coordinates
+gs_gtoy2 <- GraphSpace(gtoy2, layout = layout_with_kk(gtoy2))
+
+plotGraphSpace(gs_gtoy2)
+```
+
+### Interactive refinement
+
+The layout can then be fine-tuned interactively:
+
+```{r Plot large igraph - 2, eval=FALSE, message=FALSE, out.width="90%"}
+# Launch the RedeR application
+startRedeR()
+resetRedeR()
+
+# Send 'gtoy2' to the RedeR interface
+addGraphToRedeR(gs_graph(gs_gtoy2), unit="npc")
+
+#--- Fine-tune the force-directed layout:
+# p1: edge target length (default = 100)
+# p2: edge stiffness (default = 100)
+# p5: node movement limit (default = 100)
+relaxRedeR(p1 = 10, p2 = 50, p5 = 1)
+
+# Update the graph layout
+gtoy2_2 <- updateLayoutFromRedeR(g = gs_graph(gs_gtoy2))
+
+# ...check the updated layout
+plotGraphSpace(gtoy2_2, add.labels = FALSE)
+```
+
+```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# p <- plotGraphSpace(gtoy2_2, add.labels = FALSE)
+# ggsave(filename = "./vignettes/cards/interactive.png", height=4, width=4,
+#   units="in", device="png", dpi=200, plot = p)
+```
+
+```{r Large toygraph, echo=FALSE, out.width = '70%', purl=FALSE}
+knitr::include_graphics("cards/interactive.png")
+```
+
+# Session information
+```{r label='Session information', eval=TRUE, echo=FALSE}
+sessionInfo()
+```
+

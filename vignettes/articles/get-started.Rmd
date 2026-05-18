@@ -1,0 +1,87 @@
+---
+title: "Getting started with RGraphSpace"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+bibliography: ../bibliography.bib
+output: 
+  html_document:
+    toc: false
+---
+
+```{css, echo=FALSE}
+.card-title {
+  text-align: center !important;
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(bs4cards)
+```
+
+<br/>
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+
+# Introductory vignettes
+
+These tutorials introduce *RGraphSpace* using simple toy examples: [*building a graph space*](building-graphspace.html) walks through basic graph conventions; [*customizing aesthetics*](customizing-aesthetics.html) demonstrates how to set up `geoms` to handle graph data types; and [*fine-tuning scales*](scales-and-offsets.html) describes the trade-offs involved in synchronizing node and edge layers.
+
+```{r, include=FALSE}
+title <- c("Building GraphSpace", "Customizing Aesthetics", 
+  "Fine-tuning Scales")
+image <- c("cards/building_gspace.png", "cards/using_geoms.png", "cards/scales_and_offsets.png")
+link <- c("building-graphspace.html","customizing-aesthetics.html",
+  "scales-and-offsets.html")
+ps_cards1 <- data.frame(title = title, image = image, link = link)
+```
+
+
+```{r, echo=FALSE}
+ps_cards1 %>% 
+  cards(
+      title = title,
+      image = image,
+      link = link,
+      layout = "label-below", 
+      width = 3,
+      border_radius = 5
+  )
+```
+
+---
+
+<div class="mt-5 mb-4"></div>
+
+
+# General applications
+
+These tutorials showcase *RGraphSpace* applied to real-world scenarios: [*mapping graphs to images*](mapping-images.html) illustrates the use of images as spatial references; [*interoperability with ggraph & sf*](interoperability.html) details integration strategies; and [*interactive visualization*](interactive.html) demonstrates manual graph layout refinement.
+
+```{r, include=FALSE}
+title <- c("Graphs to Images", "Interoperability", "Interactive Visualization")
+image <- c("cards/mapping_images.png", "cards/interoperability.png", "cards/interactive.png")
+link <- c("mapping-images.html","interoperability.html","interactive.html")
+ps_cards2 <- data.frame(title = title, image = image, link = link)
+```
+
+
+```{r, echo=FALSE}
+ps_cards2 %>% 
+  cards(
+      title = title,
+      image = image,
+      link = link,
+      layout = "label-below", 
+      width = 3,
+      border_radius = 5
+  )
+```
+
+<div class="mt-5 mb-4"></div>
+
+# Advanced workflows
+
+These tutorials illustrate how *RGraphSpace* integrates with *PathwaySpace* to project and visualize network signals in a high-dimensional context.
+
+* <a href="https://sysbiolab.github.io/PathwaySpace/" target="_blank">https://sysbiolab.github.io/PathwaySpace/</a>
+

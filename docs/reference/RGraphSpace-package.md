@@ -19,9 +19,10 @@ reference maps and images.
 | [plotGraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.md): | Wrapper function to plot GraphSpace objects in ggplot2. |
 
 Further information is available in the vignettes by typing
-`vignette('RGraphSpace')`. Documented topics are also available in HTML
-by typing [`help.start()`](https://rdrr.io/r/utils/help.start.html) and
-selecting the RGraphSpace package from the menu.
+[`vignette('RGraphSpace')`](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md).
+Documented topics are also available in HTML by typing
+[`help.start()`](https://rdrr.io/r/utils/help.start.html) and selecting
+the RGraphSpace package from the menu.
 
 ## References
 
