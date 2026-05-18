@@ -19,7 +19,7 @@
 ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a unit space. 
 The package implements new *ggplot2* prototypes ([Wickham 2016](#ref-wickham)), 
 optimized for representing large networks. This enables extensive customization 
-of aesthetics and visual style, including integration with *ggraph* and 
+of aesthetics and visual style, including interoperability with *ggraph* and 
 *tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized 
 `geoms` translate graph data into geometric layers.
 

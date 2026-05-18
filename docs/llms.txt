@@ -24,7 +24,7 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 and edges to a unit space. The package implements new *ggplot2*
 prototypes ([Wickham 2016](#ref-wickham)), optimized for representing
 large networks. This enables extensive customization of aesthetics and
-visual style, including integration with *ggraph* and *tidygraph*
+visual style, including interoperability with *ggraph* and *tidygraph*
 workflows ([Pedersen 2024](#ref-pedersen)). Three specialized `geoms`
 translate graph data into geometric layers.
 
