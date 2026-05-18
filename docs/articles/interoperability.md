@@ -35,9 +35,11 @@ spatial alignment between graph elements and reference backgrounds while
 preserving interoperability with the extensive layout and styling
 flexibility of the *ggraph* grammar.
 
+## Required packages
+
 ``` r
 
-# Check for required packages before running the example
+# Check required packages for this vignette
 if(!require("sf", quietly = TRUE)){
   install.packages("sf")
 }
@@ -58,6 +60,19 @@ if(!require("ggraph", quietly = TRUE)){
 }
 ```
 
+``` r
+
+# Load packages
+library("RGraphSpace")
+library("igraph")
+library("sf")
+library("maps")
+library("geometry")
+library("rnaturalearth")
+library("tidygraph")
+library("ggraph")
+```
+
 ## Setting basic input data
 
 The following example demonstrates the interoperability between
@@ -73,15 +88,6 @@ Next, we build a spatial network of cities; then *RGraphSpace* `geoms`
 are plugged into *ggraph* and *sf* workflows.
 
 ``` r
-
-library("RGraphSpace")
-library("igraph")
-library("sf")
-library("maps")
-library("geometry")
-library("rnaturalearth")
-library("tidygraph")
-library("ggraph")
 
 # Load a map and transform projection
 map_sf <- ne_countries(country = "Brazil", returnclass = "sf")
@@ -192,14 +198,30 @@ ggplot(gs) +
     #> attached base packages:
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
+    #> other attached packages:
+    #> [1] ggraph_2.2.2        tidygraph_1.3.1     rnaturalearth_1.2.0
+    #> [4] geometry_0.5.2      maps_3.4.3          sf_1.1-0           
+    #> [7] igraph_2.3.1        RGraphSpace_1.2.4   ggplot2_4.0.3      
+    #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] digest_0.6.39     desc_1.4.3        R6_2.6.1          fastmap_1.2.0    
-    #>  [5] xfun_0.57         cachem_1.1.0      knitr_1.51        htmltools_0.5.9  
-    #>  [9] rmarkdown_2.31    lifecycle_1.0.5   cli_3.6.6         sass_0.4.10      
-    #> [13] pkgdown_2.2.0     textshaping_1.0.5 jquerylib_0.1.4   systemfonts_1.3.2
-    #> [17] compiler_4.6.0    rstudioapi_0.18.0 tools_4.6.0       ragg_1.5.2       
-    #> [21] bslib_0.10.0      evaluate_1.0.5    yaml_2.3.12       otel_0.2.0       
-    #> [25] jsonlite_2.0.0    htmlwidgets_1.6.4 rlang_1.2.0       fs_2.1.0
+    #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.57          bslib_0.10.0      
+    #>  [5] htmlwidgets_1.6.4  ggrepel_0.9.8      vctrs_0.7.3        tools_4.6.0       
+    #>  [9] generics_0.1.4     tibble_3.3.1       proxy_0.4-29       pkgconfig_2.0.3   
+    #> [13] KernSmooth_2.23-26 RColorBrewer_1.1-3 S7_0.2.2           desc_1.4.3        
+    #> [17] lifecycle_1.0.5    compiler_4.6.0     farver_2.1.2       textshaping_1.0.5 
+    #> [21] ggforce_0.5.0      graphlayouts_1.2.3 vipor_0.4.7        htmltools_0.5.9   
+    #> [25] class_7.3-23       sass_0.4.10        yaml_2.3.12        pillar_1.11.1     
+    #> [29] pkgdown_2.2.0      jquerylib_0.1.4    tidyr_1.3.2        MASS_7.3-65       
+    #> [33] classInt_0.4-11    cachem_1.1.0       viridis_0.6.5      abind_1.4-8       
+    #> [37] tidyselect_1.2.1   digest_0.6.39      dplyr_1.2.1        purrr_1.2.2       
+    #> [41] magic_1.6-1        polyclip_1.10-7    fastmap_1.2.0      grid_4.6.0        
+    #> [45] cli_3.6.6          magrittr_2.0.5     e1071_1.7-17       withr_3.0.2       
+    #> [49] scales_1.4.0       ggbeeswarm_0.7.3   rmarkdown_2.31     otel_0.2.0        
+    #> [53] gridExtra_2.3      ragg_1.5.2         memoise_2.0.1      evaluate_1.0.5    
+    #> [57] knitr_1.51         ggrastr_1.0.2      viridisLite_0.4.3  rlang_1.2.0       
+    #> [61] Rcpp_1.1.1-1.1     glue_1.8.1         DBI_1.3.0          tweenr_2.0.3      
+    #> [65] rstudioapi_0.18.0  jsonlite_2.0.0     R6_2.6.1           systemfonts_1.3.2 
+    #> [69] fs_2.1.0           units_1.0-1
 
 ## References
 

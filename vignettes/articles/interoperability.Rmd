@@ -32,8 +32,10 @@ knitr::opts_chunk$set(
 
 While *ggraph* is a wonderful framework for relational data, it may struggle with precise edge-node alignment when node sizes vary dynamically. This limitation arises from a fundamental trade-off in *ggplot2*: scaling the point `size` aesthetic is tied to a fixed physical legend representation, causing node dimensions to depend on device scaling rather than the normalized coordinate space. For most applications this is not an issue, but it becomes critical when graphs must be spatially aligned with reference images. *RGraphSpace* addresses this through specialized `geoms` that automatically compensate for alignment shifts introduced by node scaling. The trade-off for this higher level of automation is that the user has fewer customization options compared to the *ggraph* approach. This is exactly why using *RGraphSpace* alongside *ggraph* makes sense: it provides precise spatial alignment between graph elements and reference backgrounds while preserving interoperability with the extensive layout and styling flexibility of the *ggraph* grammar.
 
+# Required packages
+
 ```{r Check required packages, eval=FALSE, message=FALSE}
-# Check for required packages before running the example
+# Check required packages for this vignette
 if(!require("sf", quietly = TRUE)){
   install.packages("sf")
 }
@@ -54,13 +56,8 @@ if(!require("ggraph", quietly = TRUE)){
 }
 ```
 
-# Setting basic input data
-
-The following example demonstrates the interoperability between *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects, and managing spatial data with *sf*, the standard infrastructure for spatial data analysis in `R` [@Pebesma2023]. Integrating network structures with spatial data often creates a headache with mismatched coordinate systems and scales, which makes this example particularly interesting to showcase how these packages handle that complexity.
-
-Next, we build a spatial network of cities; then *RGraphSpace* `geoms` are plugged into *ggraph* and *sf* workflows.
-
-```{r Interoperability - 1, eval=FALSE, message=FALSE, out.width="80%"}
+```{r Load packages, eval=TRUE, message=FALSE}
+# Load packages
 library("RGraphSpace")
 library("igraph")
 library("sf")
@@ -69,7 +66,15 @@ library("geometry")
 library("rnaturalearth")
 library("tidygraph")
 library("ggraph")
+```
 
+# Setting basic input data
+
+The following example demonstrates the interoperability between *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects, and managing spatial data with *sf*, the standard infrastructure for spatial data analysis in `R` [@Pebesma2023]. Integrating network structures with spatial data often creates a headache with mismatched coordinate systems and scales, which makes this example particularly interesting to showcase how these packages handle that complexity.
+
+Next, we build a spatial network of cities; then *RGraphSpace* `geoms` are plugged into *ggraph* and *sf* workflows.
+
+```{r Interoperability - 1, eval=FALSE, message=FALSE, out.width="80%"}
 # Load a map and transform projection
 map_sf <- ne_countries(country = "Brazil", returnclass = "sf")
 map_proj <- st_transform(map_sf)
