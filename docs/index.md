@@ -15,6 +15,7 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 - Native *ggplot2* interface for *igraph* objects
 - Optimized *geoms* for large-scale network visualization
 - Aligns networks with background spatial references
+- Integrated with *ggraph* and *tidygraph* workflows
 
 ### Overview
 
@@ -23,8 +24,9 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 and edges to a unit space. The package implements new *ggplot2*
 prototypes ([Wickham 2016](#ref-wickham)), optimized for representing
 large networks. This enables extensive customization of aesthetics and
-visual style, including colors, shapes, and line types. Three
-specialized `geoms` translate graph data into geometric layers.
+visual style, including integration with *ggraph* and *tidygraph*
+workflows ([Pedersen 2024](#ref-pedersen)). Three specialized `geoms`
+translate graph data into geometric layers.
 
 1.  **[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)**:
     A high-level convenience layer that processes both nodes and edges
@@ -74,3 +76,7 @@ The *RGraphSpace* package is distributed under
 - Csardi G, Nepusz T: The igraph software package for complex network
   research. *InterJournal, Complex Systems* 1695. 2006.
   <https://igraph.org>
+
+- Pedersen T: *tidygraph: A Tidy API for Graph Manipulation*. R package
+  version 1.3.1. 2024.
+  [doi:10.32614/CRAN.package.tidygraph](https://doi.org/10.32614/CRAN.package.tidygraph)

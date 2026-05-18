@@ -60,7 +60,7 @@ pixels (dark squares) to which they were mapped. In this plot, nodes
 remain proportional to the viewport regardless of the final output
 resolution. This behavior is especially critical when the network
 elements represent image features at specific positions and must stay
-anchored to those features, preventing overlap into adjacent, unrelated
+anchored to those features, avoiding overlap with adjacent, unrelated
 areas.
 
 ``` r
