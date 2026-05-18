@@ -10,8 +10,8 @@
 ### Highlights
 * Native *ggplot2* interface for *igraph* objects
 * Optimized *geoms* for large-scale network visualization
-* Aligns networks with reference spatial backgrounds
-* Integrated with *ggraph* and *tidygraph* workflows
+* Spatial alignment of networks with reference backgrounds
+* Interoperability with *ggraph* and *tidygraph* workflows
 
 ### Overview
 
