@@ -15,8 +15,8 @@
 ### Overview
 
 *RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects 
-[[Csardi and Nepusz 2006](#ref-nepusz)], scaling nodes and edges to a unit space. 
-The package implements new *ggplot2* prototypes [[Wickham 2016](#ref-wickham)], 
+([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a unit space. 
+The package implements new *ggplot2* prototypes ([Wickham 2016](#ref-wickham)), 
 optimized for representing large networks. This enables extensive customization 
 of aesthetics and visual style, including colors, shapes, and line types. Three 
 specialized `geoms` translate graph data into geometric layers.
