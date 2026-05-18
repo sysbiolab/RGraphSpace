@@ -32,15 +32,12 @@ and dynamically calibrates start and end points to connected nodes.
 ### Installation in R (>=4.5)
 
 ##### Dependencies to build the vignettes
-
 ```r
 install.packages("knitr")
 install.packages("rmarkdown")
 install.packages("remotes")
 ```
-
 ##### Development version
-
 ```r
 remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 ```
@@ -52,6 +49,8 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 * https://sysbiolab.github.io/PathwaySpace
 
 ### Citation
+
+If you use *RGraphSpace*, please cite:
 
 * Sysbiolab Team (2026). RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics. R package version 1.2.0. Doi: 10.32614/CRAN.package.RGraphSpace
 
