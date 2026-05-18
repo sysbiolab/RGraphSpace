@@ -5,24 +5,35 @@
 
 ## Overview
 
-*RGraphSpace* is designed to be a seamless extension for existing
-network analysis workflows, not a replacement for it. Whether using
-*igraph* for heavy-duty computations or *tidygraph* for tidy data
-manipulation, *RGraphSpace* `geoms` automatically recognize these
-objects on the fly.
+*RGraphSpace* is designed to be a seamless extension to existing network
+analysis workflows, not a replacement. Whether using *igraph* for
+heavy-duty computations or *tidygraph* for tidy data manipulation,
+*RGraphSpace* `geoms` automatically recognize these objects on the fly.
+The main motivation behind *RGraphSpace* was to address how network
+elements can be scaled while preserving alignment with adjacent image
+features. For practical examples, see [*mapping graphs to
+images*](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md);
+see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/)
+tutorials for use-case scenarios involving reference image backgrounds.
 
 **Why use *RGraphSpace* with *ggraph*?**
 
-While *ggraph* is a wonderful framework for relational data, it often
-struggles with precise edge-node alignment when node sizes vary
-dynamically. *RGraphSpace* enhances this through specialized `geoms` for
-edge clipping that automatically account for node scaling. The trade-off
-for this higher level of automation is that the user has fewer
-customization options compared to the *ggraph* approach. This is exactly
-why using *RGraphSpace* alongside *ggraph* makes sense: it provides
-precise alignment between the graph and a reference background while
-preserving interoperability with the vast layout and styling flexibility
-of the *ggraph* grammar.
+While *ggraph* is a wonderful framework for relational data, it may
+struggle with precise edge-node alignment when node sizes vary
+dynamically. This limitation arises from a fundamental trade-off in
+*ggplot2*: scaling the point `size` aesthetic is tied to a fixed
+physical legend representation, causing node dimensions to depend on
+device scaling rather than the normalized coordinate space. For most
+applications this is not an issue, but it becomes critical when graphs
+must be spatially aligned with reference images. *RGraphSpace* addresses
+this through specialized `geoms` for edge clipping that automatically
+account for node scaling. The trade-off for this higher level of
+automation is that the user has fewer customization options compared to
+the *ggraph* approach. This is exactly why using *RGraphSpace* alongside
+*ggraph* makes sense: it provides precise spatial alignment between
+graph elements and reference backgrounds while preserving
+interoperability with the extensive layout and styling flexibility of
+the *ggraph* grammar.
 
 ## Setting basic input data
 

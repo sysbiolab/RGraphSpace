@@ -83,6 +83,13 @@ try combinations of these parameters to correct the alignment.
 Alternatively, try `flip.v` and `flip.h` arguments to apply flipping
 directly to the background image.
 
+## Advanced workflows
+
+See *PathwaySpace* tutorials for use-case examples involving reference
+image backgrounds.
+
+- [https://sysbiolab.github.io/PathwaySpace/](https://sysbiolab.github.io/PathwaySpace/)
+
 ## Session information
 
     #> R version 4.6.0 (2026-04-24)

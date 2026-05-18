@@ -14,7 +14,7 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 
 - Native *ggplot2* interface for *igraph* objects
 - Optimized *geoms* for large-scale network visualization
-- Aligns networks with background spatial references
+- Aligns networks with reference spatial backgrounds
 - Integrated with *ggraph* and *tidygraph* workflows
 
 ### Overview

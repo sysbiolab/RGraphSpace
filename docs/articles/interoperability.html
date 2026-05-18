@@ -91,24 +91,36 @@ Team</h4>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><em>RGraphSpace</em> is designed to be a seamless extension for
-existing network analysis workflows, not a replacement for it. Whether
-using <em>igraph</em> for heavy-duty computations or <em>tidygraph</em>
-for tidy data manipulation, <em>RGraphSpace</em> <code>geoms</code>
-automatically recognize these objects on the fly.</p>
+<p><em>RGraphSpace</em> is designed to be a seamless extension to
+existing network analysis workflows, not a replacement. Whether using
+<em>igraph</em> for heavy-duty computations or <em>tidygraph</em> for
+tidy data manipulation, <em>RGraphSpace</em> <code>geoms</code>
+automatically recognize these objects on the fly. The main motivation
+behind <em>RGraphSpace</em> was to address how network elements can be
+scaled while preserving alignment with adjacent image features. For
+practical examples, see <a href="mapping-images.html"><em>mapping graphs
+to images</em></a>; see also <a href="https://sysbiolab.github.io/PathwaySpace/" class="external-link"><em>PathwaySpace</em></a>
+tutorials for use-case scenarios involving reference image
+backgrounds.</p>
 <p><strong>Why use <em>RGraphSpace</em> with
 <em>ggraph</em>?</strong></p>
 <p>While <em>ggraph</em> is a wonderful framework for relational data,
-it often struggles with precise edge-node alignment when node sizes vary
-dynamically. <em>RGraphSpace</em> enhances this through specialized
+it may struggle with precise edge-node alignment when node sizes vary
+dynamically. This limitation arises from a fundamental trade-off in
+<em>ggplot2</em>: scaling the point <code>size</code> aesthetic is tied
+to a fixed physical legend representation, causing node dimensions to
+depend on device scaling rather than the normalized coordinate space.
+For most applications this is not an issue, but it becomes critical when
+graphs must be spatially aligned with reference images.
+<em>RGraphSpace</em> addresses this through specialized
 <code>geoms</code> for edge clipping that automatically account for node
 scaling. The trade-off for this higher level of automation is that the
 user has fewer customization options compared to the <em>ggraph</em>
 approach. This is exactly why using <em>RGraphSpace</em> alongside
-<em>ggraph</em> makes sense: it provides precise alignment between the
-graph and a reference background while preserving interoperability with
-the vast layout and styling flexibility of the <em>ggraph</em>
-grammar.</p>
+<em>ggraph</em> makes sense: it provides precise spatial alignment
+between graph elements and reference backgrounds while preserving
+interoperability with the extensive layout and styling flexibility of
+the <em>ggraph</em> grammar.</p>
 </div>
 <div class="section level2">
 <h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
