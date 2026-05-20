@@ -18,8 +18,8 @@ tutorials for use-case scenarios involving reference image backgrounds.
 
 **Why use *RGraphSpace* with *ggraph*?**
 
-While *ggraph* is a wonderful framework for relational data, it may
-struggle with precise edge-node alignment when node sizes vary
+While *ggraph* is a wonderful framework for relational data, precise
+edge-node alignment requires additional handling when node sizes vary
 dynamically. This limitation arises from a fundamental trade-off in
 *ggplot2*: scaling the point `size` aesthetic is tied to a fixed
 physical legend representation, causing node dimensions to depend on
