@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.2.4
+**Package**: RGraphSpace 1.3.0
 
 ## Overview
 
@@ -201,7 +201,7 @@ ggplot(gs) +
     #> other attached packages:
     #> [1] ggraph_2.2.2        tidygraph_1.3.1     rnaturalearth_1.2.0
     #> [4] geometry_0.5.2      maps_3.4.3          sf_1.1-0           
-    #> [7] igraph_2.3.1        RGraphSpace_1.2.4   ggplot2_4.0.3      
+    #> [7] igraph_2.3.1        RGraphSpace_1.3.0   ggplot2_4.0.3      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.57          bslib_0.10.0      

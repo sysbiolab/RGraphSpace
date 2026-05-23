@@ -1,7 +1,7 @@
 # Fine-tuning scales and offsets
 
   
-**Package**: RGraphSpace 1.2.4
+**Package**: RGraphSpace 1.3.0
 
 ## Overview
 
@@ -167,7 +167,7 @@ apply when `size` is passed as a node aesthetic mapping. Otherwise,
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.2.4 ggplot2_4.0.3     igraph_2.3.1     
+    #> [1] RGraphSpace_1.3.0 ggplot2_4.0.3     igraph_2.3.1     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    
