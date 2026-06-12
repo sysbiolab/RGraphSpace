@@ -8,13 +8,19 @@
   : GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods
 - [`GeomNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.md)
   : GeomNodeSpace: a ggplot2 prototype for GraphSpace-class methods
-- [`gs_nodes(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+- [`names(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_names(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_nodes(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_edges(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_image(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`` `gs_image<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_graph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_fdata(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`` `gs_fdata<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_nfeatures(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_features(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_vcount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_ecount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`names(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`` `names<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_vertex_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_vertex_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_edge_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
@@ -22,8 +28,7 @@
   [`` `$`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `$<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`as.igraph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  : Accessors for applying essential igraph methods to modify attributes
-  of GraphSpace objects.
+  : Accessors and attribute utilities for GraphSpace objects
 - [`GraphSpace-class`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-class.md)
   : GraphSpace: An S4 class for igraph objects
 - [`GraphSpace(`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
@@ -33,6 +38,11 @@
   : Attribute Processing for GeomEdgeSpace
 - [`StatNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/StatNodeSpace.md)
   : Attribute Processing for GeomNodeSpace
+- [`annotation_gspace()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace.md)
+  [`annotation_gspace_image()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace.md)
+  : Annotate a GraphSpace Plot
+- [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
+  : Convert objects to GraphSpace
 - [`as_colorraster()`](https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.md)
   : Map numeric values to a color raster
 - [`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
@@ -45,11 +55,16 @@
   : Draw node elements in a 2D graph layout
 - [`getGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/getGraphSpace-methods.md)
   : Accessors for fetching slots from a GraphSpace object
+- [`ggplot(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/ggplot-GraphSpace.md)
+  : Using ggplot2 with GraphSpace objects
+- [`gs_fetch_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
+  [`gs_add_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
+  : Manipulate node features in a GraphSpace object
 - [`gtoy1`](https://sysbiolab.github.io/RGraphSpace/reference/gtoys.md)
   : Toy 'igraph' objects
 - [`inject_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/inject_nodespace.md)
   : Dynamic Scale Injection for Edge Clipping
-- [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+- [`normalizeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   : Normalize node coordinates to graph and image spaces
 - [`plot(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/plot.GraphSpace.md)

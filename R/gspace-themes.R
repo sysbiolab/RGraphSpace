@@ -6,10 +6,10 @@
 #' 
 #' @param txt_size Numeric value to scale plot- and axis-related text elements.
 #' @param leg_size Numeric value to scale legend-related elements.
-#' @param bg_color A color name or hex code specifying the panel background.
-#' @param key_fill Logical; if TRUE, treats the fill legend as discrete 
+#' @param bg_colour A color name or hex code specifying the panel background.
+#' @param discrete_fill Logical; if TRUE, treats the fill legend as discrete 
 #' to adjust key size.
-#' @param key_colour Logical; if TRUE, treats the colour legend as discrete 
+#' @param discrete_colour Logical; if TRUE, treats the colour legend as discrete 
 #' to adjust key size.
 #' @param ... Additional arguments passed to \code{theme_gspace_th*} and
 #' \link[ggplot2]{ggtheme}.
@@ -55,12 +55,12 @@
 #'   geom_point() +
 #'   theme_gspace_coords("th2", is_norm = TRUE)
 #'   
-#' @importFrom ggplot2 "%+replace%"
+#' @importFrom ggplot2 "%+replace%" 
 #' @name theme_gspace
 #' @export
 theme_gspace_th0 <- function(txt_size = 1, leg_size = 1, 
-  bg_color = "grey95", key_fill = FALSE,
-  key_colour = FALSE, ...) {
+  bg_colour = "grey95", discrete_fill = FALSE,
+  discrete_colour = FALSE, ...) {
   
   et0 <- ggplot2::element_text(size = 14 * txt_size)
   et1 <- ggplot2::element_text(size = 12 * txt_size)
@@ -70,23 +70,24 @@ theme_gspace_th0 <- function(txt_size = 1, leg_size = 1,
   et1s <- ggplot2::element_text(size = 12 * txt_size, hjust = 0)
   
   l_th <- list()
-  l_th[[1]] <- ggplot2::theme_gray(...) %+replace%
-  ggplot2::theme(
-    plot.title = et0, plot.subtitle = et1s,
-    axis.title = et1, axis.text = et2,
-    
-    legend.title = et3, legend.text = et4,
-    legend.key.spacing = unit(leg_size, "mm"),
-    legend.spacing = unit(leg_size, "mm"),
-    legend.key.size = unit(4 * leg_size, "mm"),
-    legend.margin = margin(leg_size, leg_size, leg_size, leg_size),
-    legend.background = element_blank(),
-    legend.box.background = element_blank(),
-    
-    panel.background = element_rect(fill = bg_color, colour = NA),
-    aspect.ratio = 1, complete = TRUE)
+  l_th[[1]] <- ggplot2::theme_gray() %+replace%
+    ggplot2::theme(
+      plot.title = et0, plot.subtitle = et1s,
+      axis.title = et1, axis.text = et2,
+      legend.title = et3, legend.text = et4,
+      legend.key.spacing = unit(leg_size, "mm"),
+      legend.spacing = unit(leg_size, "mm"),
+      legend.key.size = unit(4 * leg_size, "mm"),
+      legend.margin = ggplot2::margin(leg_size, leg_size, 
+        leg_size, leg_size),
+      legend.background = element_blank(),
+      legend.box.background = element_blank(),
+      panel.background = element_rect(fill = bg_colour, colour = NA),
+      aspect.ratio = 1, complete = TRUE) +
+    do.call(ggplot2::theme, .clean_args(...))
   
-  l_args <- .guide_args(leg_size, key_fill, key_colour)
+  l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
+  
   if (length(l_args) > 0) {
     l_th[[2]] <- do.call(guides, l_args)
   }
@@ -99,8 +100,8 @@ theme_gspace_th0 <- function(txt_size = 1, leg_size = 1,
 #' @rdname theme_gspace
 #' @export
 theme_gspace_th1 <- function(txt_size = 1, leg_size = 1, 
-  bg_color = "grey95", key_fill = FALSE,
-  key_colour = FALSE, ...) {
+  bg_colour = "grey95", discrete_fill = FALSE,
+  discrete_colour = FALSE, ...) {
   
   et0 <- ggplot2::element_text(size = 14 * txt_size)
   et1 <- ggplot2::element_text(size = 12 * txt_size)
@@ -110,42 +111,44 @@ theme_gspace_th1 <- function(txt_size = 1, leg_size = 1,
   et1s <- ggplot2::element_text(size = 12 * txt_size, hjust = 0)
   
   l_th <- list()
-  l_th[[1]] <- ggplot2::theme_gray(...) %+replace%
+  l_th[[1]] <- ggplot2::theme_gray() %+replace%
     ggplot2::theme(
       plot.title = et0, plot.subtitle = et1s,
       axis.title = et1, axis.text = et2,
-      
       legend.title = et3, legend.text = et4,
       legend.key.spacing = unit(leg_size, "mm"),
       legend.spacing = unit(leg_size, "mm"),
       legend.key.size = unit(4 * leg_size, "mm"),
-      legend.margin = margin(leg_size, leg_size, leg_size, leg_size),
+      legend.margin = ggplot2::margin(leg_size, leg_size, 
+        leg_size, leg_size),
       legend.background = element_blank(),
       legend.box.background = element_blank(),
-      
-      panel.background = element_rect(fill = bg_color, colour = NA),
+      panel.background = element_rect(fill = bg_colour, colour = NA),
       panel.grid.minor = element_line(linewidth = 0.7),
       panel.grid.major = element_line(linewidth = 0.7),
       panel.border = element_rect(linewidth = 1.2),
-      
       axis.ticks = element_line(linewidth = 0.7),
       axis.line = element_blank(),
-      plot.margin = margin(1, 1, 1, 1), 
-      aspect.ratio = 1, complete = TRUE)
+      plot.margin = ggplot2::margin(1, 1, 1, 1), 
+      aspect.ratio = 1, complete = TRUE) +
+    do.call(ggplot2::theme, .clean_args(...))
   
-  l_args <- .guide_args(leg_size, key_fill, key_colour)
+  l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
+  
   if (length(l_args) > 0) {
     l_th[[2]] <- do.call(guides, l_args)
   }
+  
   return(l_th)
+  
 }
 
 #-------------------------------------------------------------------------------
 #' @rdname theme_gspace
 #' @export
 theme_gspace_th2 <- function(txt_size = 1, leg_size = 1, 
-  bg_color = "grey95", key_fill = FALSE, 
-  key_colour = FALSE, ...) {
+  bg_colour = "grey95", discrete_fill = FALSE, 
+  discrete_colour = FALSE, ...) {
   
   et0 <- ggplot2::element_text(size = 14 * txt_size)
   et1 <- ggplot2::element_text(size = 12 * txt_size)
@@ -155,41 +158,43 @@ theme_gspace_th2 <- function(txt_size = 1, leg_size = 1,
   et1s <- ggplot2::element_text(size = 12 * txt_size, hjust = 0)
   
   l_th <- list()
-  l_th[[1]] <- ggplot2::theme_gray(...) %+replace%
+  l_th[[1]] <- ggplot2::theme_gray() %+replace%
     ggplot2::theme(
       plot.title = et0, plot.subtitle = et1s,
       axis.title = et1, axis.text = et2,
-      
       legend.title = et3, legend.text = et4,
       legend.key.spacing = unit(leg_size, "mm"),
       legend.spacing = unit(leg_size, "mm"),
       legend.key.size = unit(4 * leg_size, "mm"),
-      legend.margin = margin(leg_size, leg_size, leg_size, leg_size),
+      legend.margin = ggplot2::margin(leg_size, leg_size, 
+        leg_size, leg_size),
       legend.background = element_blank(),
       legend.box.background = element_blank(),
-      
-      panel.background = element_rect(fill = bg_color, colour = NA),
+      panel.background = element_rect(fill = bg_colour, colour = NA),
       panel.grid.minor = element_blank(),
       panel.grid.major = element_line(linewidth = 0.75),
       axis.ticks = element_line(linewidth = 0.7),
-      
       axis.line = element_blank(), panel.border = element_blank(),
-      plot.margin = margin(5, 10, 0, 10), 
-      aspect.ratio = 1, complete = TRUE)
+      plot.margin = ggplot2::margin(5, 10, 0, 10), 
+      aspect.ratio = 1, complete = TRUE) +
+    do.call(ggplot2::theme, .clean_args(...))
   
-  l_args <- .guide_args(leg_size, key_fill, key_colour)
+  l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
+  
   if (length(l_args) > 0) {
     l_th[[2]] <- do.call(guides, l_args)
   }
+  
   return(l_th)
+  
 }
 
 #-------------------------------------------------------------------------------
 #' @rdname theme_gspace
 #' @export
 theme_gspace_th3 <- function(txt_size = 1, leg_size = 1, 
-  bg_color = "grey95", key_fill = FALSE, 
-  key_colour = FALSE, ...) {
+  bg_colour = "grey95", discrete_fill = FALSE, 
+  discrete_colour = FALSE, ...) {
   
   et0 <- ggplot2::element_text(size = 14 * txt_size)
   et1 <- ggplot2::element_text(size = 12 * txt_size)
@@ -199,35 +204,38 @@ theme_gspace_th3 <- function(txt_size = 1, leg_size = 1,
   et1s <- ggplot2::element_text(size = 12 * txt_size, hjust = 0)
   
   l_th <- list()
-  l_th[[1]] <- ggplot2::theme_gray(...) %+replace%
+  l_th[[1]] <- ggplot2::theme_gray() %+replace%
     ggplot2::theme(
       plot.title = et0, plot.subtitle = et1s,
       axis.title = et1, axis.text = et2,
-      
       legend.title = element_text(size = 9 * leg_size, vjust = 1), 
       legend.text = element_text(size = 8 * leg_size, vjust = 1),
       legend.key.spacing = unit(leg_size, "mm"), 
       legend.spacing = unit(leg_size, "mm"),
       legend.key.size = unit(4 * leg_size, "mm"),
-      legend.margin = margin(leg_size, leg_size, leg_size, leg_size),
+      legend.margin = ggplot2::margin(leg_size, leg_size, 
+        leg_size, leg_size),
       legend.background = element_blank(),
       legend.box.background = element_blank(),
-      legend.box.margin = margin(0, 0, 0, 0),
-      
-      panel.background = element_rect(fill = bg_color, colour = NA),
+      legend.box.margin = ggplot2::margin(0, 0, 0, 0), 
+      legend.position = "bottom",
+      panel.background = element_rect(fill = bg_colour, colour = NA),
       panel.grid.minor = element_blank(),
       panel.grid.major = element_line(linewidth = 0.75),
-      
       axis.ticks = element_line(linewidth = 0.5),
       axis.line = element_blank(), panel.border = element_blank(),
-      plot.margin = margin(5, 5, 5, 5),
-      aspect.ratio = 1, complete = TRUE)
+      plot.margin = ggplot2::margin(5, 5, 5, 5),
+      aspect.ratio = 1, complete = TRUE) +
+    do.call(ggplot2::theme, .clean_args(...))
   
-  l_args <- .guide_args(leg_size, key_fill, key_colour)
+  l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
+  
   if (length(l_args) > 0) {
     l_th[[2]] <- do.call(guides, l_args)
   }
+  
   return(l_th)
+  
 }
 
 #' @param theme Character string specifying the GraphSpace theme variant. 
@@ -312,10 +320,7 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
 #' \code{theme_gspace_legend()} returns a list of theme and guide components.
 #' 
 #' @examples
-#' library(RGraphSpace)
-#' library(ggplot2)
-#' 
-#' # Small scale legends
+#' # Reduce legend element sizes
 #' ggplot(mtcars, aes(wt, mpg, fill = factor(cyl))) + 
 #'   geom_point(shape = 21) + 
 #'   theme_gspace_legend(0.8)
@@ -324,44 +329,54 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
 #' @rdname theme_gspace
 #' @export
 theme_gspace_legend <- function(leg_size = 1, 
-  key_fill = FALSE, key_colour = FALSE, ...) {
+  discrete_fill = FALSE, discrete_colour = FALSE, ...) {
   
   et1 <- ggplot2::element_text(size = 9 * leg_size)
   et2 <- ggplot2::element_text(size = 8 * leg_size)
   
-  l_th <- list(
-    theme(
-      legend.title = et1, legend.text = et2,
-      legend.key.spacing = unit(2*leg_size, "mm"),
-      legend.spacing = unit(leg_size, "mm"),
-      legend.key.size = unit(4 * leg_size, "mm"),
-      legend.margin = margin(2*leg_size, 2*leg_size, 2*leg_size, 2*leg_size), 
-      legend.background = element_blank(),
-      legend.box.background = element_blank(),
-      legend.box.margin = margin(0, 0, 0, 0), 
-    )
-  )
+  l_th <- list()
+  l_th[[1]] <- ggplot2::theme(
+    legend.title = et1, legend.text = et2,
+    legend.key.spacing = unit(2*leg_size, "mm"),
+    legend.spacing = unit(leg_size, "mm"),
+    legend.key.size = unit(4 * leg_size, "mm"),
+    legend.margin = ggplot2::margin(2*leg_size, 2*leg_size, 
+      2*leg_size, 2*leg_size), 
+    legend.background = element_blank(),
+    legend.box.background = element_blank(),
+    legend.box.margin = ggplot2::margin(0, 0, 0, 0)) + 
+    ggplot2::theme(...)
   
-  l_args <- .guide_args(leg_size, key_fill, key_colour)
+  l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
+  
   if (length(l_args) > 0) {
     l_th[[length(l_th)+1]] <- do.call(guides, l_args)
   }
+  
   return(l_th)
   
 }
 
 #-------------------------------------------------------------------------------
-.guide_args <- function(leg_size = 1, key_fill = FALSE, key_colour = FALSE) {
+.guide_args <- function(leg_size = 1, discrete_fill = FALSE, 
+  discrete_colour = FALSE) {
   l_args <- list()
   l_args$shape <- guide_legend(override.aes = list(size = 3 * leg_size))
   l_args$linetype <- guide_legend(
     theme = theme(legend.key.width = unit(10 * leg_size, "mm")),
     override.aes = list(size = 3 * leg_size))
-  if (key_fill) {
-    l_args$fill <- guide_legend(override.aes = list(size = 3 * leg_size))
+  if (discrete_fill) {
+    l_args$fill <- guide_legend(override.aes = list(size = 4 * leg_size))
   }
-  if (key_colour) {
-    l_args$colour <- guide_legend(override.aes = list(size = 3 * leg_size))
+  if (discrete_colour) {
+    l_args$colour <- guide_legend(override.aes = list(size = 4 * leg_size))
   }
   l_args
+}
+
+
+.clean_args <- function(...) {
+  args <- list(...)
+  args[c("key_fill", "key_colour", "bg_color")] <- NULL
+  args
 }

@@ -24,6 +24,14 @@ knitr::opts_chunk$set(
 <br/>
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 
+```{r Check required version, eval=TRUE, message=FALSE}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
 # Overview
 
 *RGraphSpace* is designed to be a seamless extension to existing network analysis workflows, not a replacement. Whether using *igraph* for heavy-duty computations or *tidygraph* for tidy data manipulation, *RGraphSpace* `geoms` automatically recognize these objects on the fly. The main motivation behind *RGraphSpace* was to address the challenge of scaling network elements without disrupting alignment with image features. For practical examples, see [*mapping graphs to images*](mapping-images.html); see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/) tutorials for use-case scenarios involving reference image backgrounds.
@@ -112,7 +120,17 @@ igraph::E(igraph_cities)$arrowType <- 3
 The following options all produce the same visual output, demonstrating how these packages integrate different types of input data.
 
 ```{r Interoperability - 2, eval=FALSE, message=FALSE, out.width="80%"}
-# Option 1: Passing an 'igraph' object directly to the geoms
+# Option 1: Passing a 'GraphSpace' object directly to ggplot()
+gs <- GraphSpace(igraph_cities)
+ggplot(gs) +
+  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_edgespace(color = "grey40", arrow_size = 0.5) +
+  geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
+  scale_size(range = c(3, 9)) +
+  theme_gray() +
+  theme_gspace_legend(discrete_fill = TRUE)
+
+# Option 2: Passing an 'igraph' object to RGraphSpace geoms
 ggplot() +
   geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5, data = igraph_cities) +
@@ -120,9 +138,9 @@ ggplot() +
   scale_size(range = c(3, 9)) +
   inject_nodespace() + 
   theme_gray() +
-  theme_gspace_legend(key_fill = TRUE)
+  theme_gspace_legend(discrete_fill = TRUE)
 
-# Option 2: Passing a 'tbl_graph' object
+# Option 3: Passing a 'tbl_graph' object to RGraphSpace geoms
 gr <- as_tbl_graph(igraph_cities)
 ggplot() +
   geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
@@ -131,30 +149,21 @@ ggplot() +
   scale_size(range = c(3, 9)) +
   inject_nodespace() + 
   theme_gray() +
-  theme_gspace_legend(key_fill = TRUE)
+  theme_gspace_legend(discrete_fill = TRUE)
 
-# Option 3: Integration within a 'ggraph' workflow
+# Option 4: Integrating RGraphSpace geoms into a ggraph workflow
 gr <- as_tbl_graph(igraph_cities)
 ggraph(graph = gr, x= gr$x, y = gr$y) +
   geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
-  inject_nodespace() + 
+  inject_nodespace() +
   theme_gray() +
-  theme_gspace_legend(key_fill = TRUE)
-
-# Option 4: Passing a native 'GraphSpace' object
-gs <- GraphSpace(igraph_cities)
-ggplot(gs) +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", arrow_size = 0.5) +
-  geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
-  scale_size(range = c(3, 9)) +
-  inject_nodespace() + 
-  theme_gray() +
-  theme_gspace_legend(key_fill = TRUE)
+  theme_gspace_legend(discrete_fill = TRUE)
 ```
+
+Although all four approaches produce the same visualization, only *Option 1* provides automatic node-edge synchronization. When a *GraphSpace* object is supplied directly to `ggplot()`, clipping metadata are propagated automatically between the node and edge layers. In all other workflows, `inject_nodespace()` must be called explicitly to synchronize clipping offsets.
 
 ```{r toy_sf.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
 # gs <- GraphSpace(igraph_cities)
@@ -167,9 +176,7 @@ ggplot(gs) +
 #   scale_size(range = c(3, 9)) +
 #   scale_fill_discrete() +
 #   inject_nodespace() +
-#   theme_gspace_legend(key_fill = TRUE)
-# ggsave(filename = "./figs/toy_sf.png", height=5, width=6,
-#   units="in", device="png", dpi=200, plot=p)
+#   theme_gspace_legend(discrete_fill = TRUE)
 # ggsave(filename = "./vignettes/cards/interoperability.png",
 #   height=5, width=5, units="in", device="png", dpi=200, plot = p)
 ```

@@ -1,7 +1,16 @@
-# Customizing aesthetics
+# Customizing Aesthetics
 
   
-**Package**: RGraphSpace 1.3.0
+**Package**: RGraphSpace 1.3.1
+
+``` r
+
+# Check required version
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
 
 ## Overview
 
@@ -29,11 +38,7 @@ elements must stay accurately referenced to a spatial map or image.
     in a single call.
 2.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
     Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic
-    mappings, modified to inform the edge layer on node states. It can
-    be used with the
-    [`inject_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/inject_nodespace.md)
-    function to adjust edge offsets when the `size` aesthetic is applied
-    to nodes.
+    mappings, modified to inform the edge layer on node states.
 3.  **[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)**:
     Handles the relational data between nodes. Inherits `GeomSegment`
     aesthetic mappings; unlike standard segments, it is “node-aware” and
@@ -113,7 +118,8 @@ aesthetics with legends.
 
 ``` r
 
-ggplot(gs) + geom_edgespace() +
+ggplot(gs) + 
+  geom_edgespace() +
   geom_nodespace(aes(fill = node_group), colour = "grey") +
   scale_fill_viridis_d(option = "viridis") +
   theme_gspace_coords()
@@ -162,7 +168,7 @@ ggplot(data = gs) +
   theme_gspace_coords()
 ```
 
-![](figs/toy_newscale.png)
+![](figs_intro/toy_newscale.png)
 
 ## Session information
 
@@ -189,23 +195,23 @@ ggplot(data = gs) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.3.0 ggplot2_4.0.3     igraph_2.3.1     
+    #> [1] RGraphSpace_1.3.1 ggplot2_4.0.3     igraph_2.3.2     
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    
-    #>  [5] tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2        jquerylib_0.1.4   
-    #>  [9] systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5  yaml_2.3.12       
-    #> [13] fastmap_1.2.0      R6_2.6.1           labeling_0.4.3     generics_0.1.4    
-    #> [17] knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1       desc_1.4.3        
-    #> [21] bslib_0.10.0       pillar_1.11.1      RColorBrewer_1.1-3 rlang_1.2.0       
-    #> [25] cachem_1.1.0       xfun_0.57          fs_2.1.0           sass_0.4.10       
-    #> [29] S7_0.2.2           otel_0.2.0         viridisLite_0.4.3  cli_3.6.6         
-    #> [33] withr_3.0.2        pkgdown_2.2.0      magrittr_2.0.5     digest_0.6.39     
-    #> [37] grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5   
-    #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
-    #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
-    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3   
-    #> [53] htmltools_0.5.9
+    #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    
+    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.0        
+    #>  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-5      
+    #> [13] ggrastr_1.0.2      purrr_1.2.2        viridisLite_0.4.3  scales_1.4.0      
+    #> [17] textshaping_1.0.5  jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0       
+    #> [21] tidygraph_1.3.1    withr_3.0.2        cachem_1.1.0       yaml_2.3.12       
+    #> [25] otel_0.2.0         ggbeeswarm_0.7.3   tools_4.6.0        dplyr_1.2.1       
+    #> [29] vctrs_0.7.3        R6_2.6.1           lifecycle_1.0.5    fs_2.1.0          
+    #> [33] htmlwidgets_1.6.4  vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3   
+    #> [37] beeswarm_0.4.0     desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1     
+    #> [41] bslib_0.11.0       gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2 
+    #> [45] xfun_0.58          tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.18.0 
+    #> [49] knitr_1.51         farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31    
+    #> [53] labeling_0.4.3     compiler_4.6.0     S7_0.2.2
 
 ## References
 

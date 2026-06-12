@@ -1,5 +1,5 @@
 ---
-title: "Customizing aesthetics"
+title: "Customizing Aesthetics"
 author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: ../bibliography.bib
@@ -24,6 +24,14 @@ knitr::opts_chunk$set(
 <br/>
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 
+```{r Check required version, eval=TRUE, message=FALSE}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
 # Overview
 
 This section illustrates how *RGraphSpace* integrates with the *ggplot2* using `geoms` building blocks [@Wickham2016]. Graph attributes stored within the `GraphSpace` object can be handled in two ways:
@@ -35,7 +43,7 @@ This section illustrates how *RGraphSpace* integrates with the *ggplot2* using `
 To facilitate this integration, *RGraphSpace* implements three specialized `geoms` designed to handle graph data types within a *ggplot2* workflow. These `geoms` use a dual-anchor normalization approach to align layers, which is critical for analysis where network elements must stay accurately referenced to a spatial map or image.
 
 1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call. 
-2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states. It can be used with the `inject_nodespace()` function to adjust edge offsets when the `size` aesthetic is applied to nodes.
+2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states.
 3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically calibrates start and end points. 
 
 # Setting basic input data
@@ -93,7 +101,8 @@ In this example, the node categorical variable `node_group` is mapped to the `fi
 to provide maximum flexibility when mapping aesthetics with legends.
 
 ```{r Map aesthetics to categorical variables, eval=TRUE, message=FALSE, out.width="70%"}
-ggplot(gs) + geom_edgespace() +
+ggplot(gs) + 
+  geom_edgespace() +
   geom_nodespace(aes(fill = node_group), colour = "grey") +
   scale_fill_viridis_d(option = "viridis") +
   theme_gspace_coords()
@@ -150,12 +159,12 @@ ggplot(data = gs) +
 #     data = gs, stroke = 2, fill = NA) +
 #   scale_colour_continuous(palette = c("white","purple")) +
 #   theme_gspace_coords()
-# ggsave(filename = "./figs/toy_newscale.png", height=NA, width=NA,
+# ggsave(filename = "./figs_intro/toy_newscale.png", height=NA, width=NA,
 #   units="in", device="png", dpi=200, plot=gg)
 ```
 
 ```{r toy_newscale, echo=FALSE, out.width = '70%', purl=FALSE}
-knitr::include_graphics("figs/toy_newscale.png")
+knitr::include_graphics("figs_intro/toy_newscale.png")
 ```
 
 # Session information

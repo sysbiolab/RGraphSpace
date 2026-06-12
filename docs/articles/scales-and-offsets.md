@@ -1,7 +1,17 @@
-# Fine-tuning scales and offsets
+# Fine-Tuning Scales and Offsets
 
   
-**Package**: RGraphSpace 1.3.0
+
+**Package**: RGraphSpace 1.3.1
+
+``` r
+
+# Check required version
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
 
 ## Overview
 
@@ -10,10 +20,9 @@ visualization is ensuring that edges terminate exactly at the node
 boundary, regardless of the node sizes. This becomes more complex when
 node size is mapped to aesthetics and transformed by a `scale_size_*`
 function, which is only evaluated within the layer where it takes
-effect.
-
-The *RGraphSpace* `geoms` are designed to handle these adjustments
-automatically by rendering nodes and edges within synchronized layers.
+effect. The *RGraphSpace* `geoms` are designed to handle these
+adjustments automatically by rendering nodes and edges within
+synchronized layers.
 
 ## Setting basic input data
 
@@ -110,13 +119,13 @@ as independent layers. This allows for total flexibility for mapping
 different variables to edges and nodes.
 
 However, because these layers are now independent, they no longer “talk”
-to each other by default. If we change the node size scale, the edge
-layer won’t know it needs to adjust its offsets to accommodate the new
-node boundaries. To address this,
-[`inject_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/inject_nodespace.md)
-acts as a post-processing synchronizer: it intercepts the calculated
-sizes from the node layer, derive the scaling rules, and “injects” them
-into the edge layer.
+to each other by default. For example, if node sizes are modified
+through a scale transformation, the edge layer has no direct way to
+determine the resulting node boundaries needed for clipping
+calculations. To address this, *RGraphSpace* performs a post-processing
+synchronization step during plot construction, intercepting the
+calculated sizes from the node layer and “injecting” the corresponding
+clipping information into the edge layer.
 
 ``` r
 
@@ -125,13 +134,11 @@ into the edge layer.
 set.seed(234)
 gs_star$num_var2 <- sample(gs_star$num_var)
 
-# Execute the plot, calling 'inject_nodespace' last 
-# to capture the final layer states
+# Execute independent node and edge layers
 ggplot(data = gs_star) + 
   geom_edgespace(arrow_offset = 0.03) + 
   geom_nodespace(mapping = aes(size = num_var2 )) + 
   scale_size(range = c(2, 40)) +
-  inject_nodespace() +
   theme_gspace_coords() +
   theme(legend.position = "none")
 ```
@@ -167,19 +174,20 @@ apply when `size` is passed as a node aesthetic mapping. Otherwise,
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.3.0 ggplot2_4.0.3     igraph_2.3.1     
+    #> [1] RGraphSpace_1.3.1 ggplot2_4.0.3     igraph_2.3.2     
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    
-    #>  [5] tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2        jquerylib_0.1.4   
-    #>  [9] systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5  yaml_2.3.12       
-    #> [13] fastmap_1.2.0      R6_2.6.1           labeling_0.4.3     generics_0.1.4    
-    #> [17] knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1       desc_1.4.3        
-    #> [21] bslib_0.10.0       pillar_1.11.1      RColorBrewer_1.1-3 rlang_1.2.0       
-    #> [25] cachem_1.1.0       xfun_0.57          fs_2.1.0           sass_0.4.10       
-    #> [29] S7_0.2.2           otel_0.2.0         cli_3.6.6          withr_3.0.2       
-    #> [33] pkgdown_2.2.0      magrittr_2.0.5     digest_0.6.39      grid_4.6.0        
-    #> [37] rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5    vipor_0.4.7       
-    #> [41] ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5     glue_1.8.1        
-    #> [45] farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1    purrr_1.2.2       
-    #> [49] rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3    htmltools_0.5.9
+    #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    
+    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.0        
+    #>  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-5      
+    #> [13] ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
+    #> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        tidygraph_1.3.1   
+    #> [21] withr_3.0.2        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        
+    #> [25] ggbeeswarm_0.7.3   tools_4.6.0        dplyr_1.2.1        vctrs_0.7.3       
+    #> [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 
+    #> [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    
+    #> [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      
+    #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.58         
+    #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.18.0  knitr_1.51        
+    #> [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    
+    #> [53] compiler_4.6.0     S7_0.2.2

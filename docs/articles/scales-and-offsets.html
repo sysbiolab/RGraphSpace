@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Fine-tuning scales and offsets • RGraphSpace</title>
+<title>Fine-Tuning Scales and Offsets • RGraphSpace</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fine-tuning scales and offsets">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fine-Tuning Scales and Offsets">
 <style>
   .contents h1, .page-header h1 {
     font-size: 2.2rem !important;
@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,6 +54,10 @@
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
     <li><a class="dropdown-item" href="../articles/interoperability.html">Interoperability: ggraph &amp; sf</a></li>
     <li><a class="dropdown-item" href="../articles/interactive.html">Interactive visualization</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced workflows</h6></li>
+    <li><a class="dropdown-item" href="../articles/high-dimensional.html">High-dimensional data</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial transcriptomics data</a></li>
   </ul>
 </li>
       </ul>
@@ -75,11 +79,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Fine-tuning scales and offsets</h1>
+      <h1>Fine-Tuning Scales and Offsets</h1>
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-05-23</h4>
+            <h4 data-toc-skip class="date">2026-06-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/scales-and-offsets.Rmd" class="external-link"><code>vignettes/articles/scales-and-offsets.Rmd</code></a></small>
       <div class="d-none name"><code>scales-and-offsets.Rmd</code></div>
@@ -87,7 +91,14 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.3.0</p>
+<p><br></p>
+<p><strong>Package</strong>: RGraphSpace 1.3.1</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Check required version</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.3.1"</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
+<span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -96,10 +107,9 @@ visualization is ensuring that edges terminate exactly at the node
 boundary, regardless of the node sizes. This becomes more complex when
 node size is mapped to aesthetics and transformed by a
 <code>scale_size_*</code> function, which is only evaluated within the
-layer where it takes effect.</p>
-<p>The <em>RGraphSpace</em> <code>geoms</code> are designed to handle
-these adjustments automatically by rendering nodes and edges within
-synchronized layers.</p>
+layer where it takes effect. The <em>RGraphSpace</em> <code>geoms</code>
+are designed to handle these adjustments automatically by rendering
+nodes and edges within synchronized layers.</p>
 </div>
 <div class="section level2">
 <h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
@@ -107,7 +117,7 @@ synchronized layers.</p>
 <p>Below, we construct a star-like network with varying node sizes to
 show how the geometries stay synchronized across a wide range
 values.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">"RGraphSpace"</a></span><span class="op">)</span></span>
@@ -144,7 +154,7 @@ viewport. This behavior is especially useful when overlaying networks on
 top of reference images (such as photomicrography or medical scans),
 where nodes must stay locked to specific pixel positions regardless of
 the output resolution.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_graphspace.html">geom_graphspace</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -163,7 +173,7 @@ resized.</p>
 <p>In the example below, <code><a href="../reference/geom_graphspace.html">geom_graphspace()</a></code> handles the bulk
 of the edge adjustment, with the <code>arrow_offset</code> parameter
 providing additional manual fine-tuning.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_graphspace.html">geom_graphspace</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">num_var</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="va">gs_star</span>,  arrow_offset <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -183,25 +193,24 @@ we can call <code><a href="../reference/geom_edgespace.html">geom_edgespace()</a
 total flexibility for mapping different variables to edges and
 nodes.</p>
 <p>However, because these layers are now independent, they no longer
-“talk” to each other by default. If we change the node size scale, the
-edge layer won’t know it needs to adjust its offsets to accommodate the
-new node boundaries. To address this, <code><a href="../reference/inject_nodespace.html">inject_nodespace()</a></code>
-acts as a post-processing synchronizer: it intercepts the calculated
-sizes from the node layer, derive the scaling rules, and “injects” them
-into the edge layer.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+“talk” to each other by default. For example, if node sizes are modified
+through a scale transformation, the edge layer has no direct way to
+determine the resulting node boundaries needed for clipping
+calculations. To address this, <em>RGraphSpace</em> performs a
+post-processing synchronization step during plot construction,
+intercepting the calculated sizes from the node layer and “injecting”
+the corresponding clipping information into the edge layer.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We shuffle 'num_var' to demonstrate that edges </span></span>
 <span><span class="co"># still find their specific boundaries</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">234</span><span class="op">)</span></span>
 <span><span class="va">gs_star</span><span class="op">$</span><span class="va">num_var2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">$</span><span class="va">num_var</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Execute the plot, calling 'inject_nodespace' last </span></span>
-<span><span class="co"># to capture the final layer states</span></span>
+<span><span class="co"># Execute independent node and edge layers</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span>arrow_offset <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">num_var2</span> <span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/inject_nodespace.html">inject_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%204-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
@@ -236,22 +245,23 @@ for all network elements.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] RGraphSpace_1.3.0 ggplot2_4.0.3     igraph_2.3.1     </span></span>
+<span><span class="co">#&gt; [1] RGraphSpace_1.3.1 ggplot2_4.0.3     igraph_2.3.2     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1        compiler_4.6.0    </span></span>
-<span><span class="co">#&gt;  [5] tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2        jquerylib_0.1.4   </span></span>
-<span><span class="co">#&gt;  [9] systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5  yaml_2.3.12       </span></span>
-<span><span class="co">#&gt; [13] fastmap_1.2.0      R6_2.6.1           labeling_0.4.3     generics_0.1.4    </span></span>
-<span><span class="co">#&gt; [17] knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1       desc_1.4.3        </span></span>
-<span><span class="co">#&gt; [21] bslib_0.10.0       pillar_1.11.1      RColorBrewer_1.1-3 rlang_1.2.0       </span></span>
-<span><span class="co">#&gt; [25] cachem_1.1.0       xfun_0.57          fs_2.1.0           sass_0.4.10       </span></span>
-<span><span class="co">#&gt; [29] S7_0.2.2           otel_0.2.0         cli_3.6.6          withr_3.0.2       </span></span>
-<span><span class="co">#&gt; [33] pkgdown_2.2.0      magrittr_2.0.5     digest_0.6.39      grid_4.6.0        </span></span>
-<span><span class="co">#&gt; [37] rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5    vipor_0.4.7       </span></span>
-<span><span class="co">#&gt; [41] ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5     glue_1.8.1        </span></span>
-<span><span class="co">#&gt; [45] farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1    purrr_1.2.2       </span></span>
-<span><span class="co">#&gt; [49] rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3    htmltools_0.5.9</span></span></code></pre>
+<span><span class="co">#&gt;  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    </span></span>
+<span><span class="co">#&gt;  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.0        </span></span>
+<span><span class="co">#&gt;  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-5      </span></span>
+<span><span class="co">#&gt; [13] ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 </span></span>
+<span><span class="co">#&gt; [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        tidygraph_1.3.1   </span></span>
+<span><span class="co">#&gt; [21] withr_3.0.2        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        </span></span>
+<span><span class="co">#&gt; [25] ggbeeswarm_0.7.3   tools_4.6.0        dplyr_1.2.1        vctrs_0.7.3       </span></span>
+<span><span class="co">#&gt; [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 </span></span>
+<span><span class="co">#&gt; [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    </span></span>
+<span><span class="co">#&gt; [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      </span></span>
+<span><span class="co">#&gt; [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.58         </span></span>
+<span><span class="co">#&gt; [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.18.0  knitr_1.51        </span></span>
+<span><span class="co">#&gt; [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    </span></span>
+<span><span class="co">#&gt; [53] compiler_4.6.0     S7_0.2.2</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

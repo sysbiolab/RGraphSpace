@@ -9,14 +9,7 @@ rendering in RGraphSpace.
 
 ``` r
 # S4 method for class 'ANY'
-GraphSpace(
-  g,
-  layout = NULL,
-  verbose = TRUE,
-  mar = deprecated(),
-  image = deprecated(),
-  ...
-)
+GraphSpace(g, layout = NULL, verbose = TRUE, ...)
 
 # S4 method for class 'data.frame'
 GraphSpace(g, verbose = TRUE, ...)
@@ -45,18 +38,6 @@ GraphSpace(g, verbose = TRUE, ...)
 - verbose:
 
   A logical value. If `TRUE`, displays detailed messages.
-
-- mar:
-
-  **\[deprecated\]** Deprecated since RGraphSpace 1.1.1; use
-  [normalizeGraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
-  instead.
-
-- image:
-
-  **\[deprecated\]** Deprecated since RGraphSpace 1.1.1; use
-  [normalizeGraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
-  instead.
 
 - ...:
 

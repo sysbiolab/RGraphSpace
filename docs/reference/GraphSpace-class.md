@@ -10,19 +10,27 @@ An S4 class object.
 
 - `nodes`:
 
-  A data frame with xy-vertex coordinates.
+  A data frame containing node coordinates, attributes, and metadata.
 
 - `edges`:
 
-  A data frame with edges.
+  A data frame containing edge relationships and attributes.
 
 - `graph`:
 
-  An igraph object.
+  An [`igraph`](https://r.igraph.org/reference/aaa-igraph-package.html)
+  object representing the graph structure.
 
 - `image`:
 
-  A raster background image matrix.
+  A `raster` object (see
+  [`as.raster`](https://rdrr.io/r/grDevices/as.raster.html)) used as
+  background image.
+
+- `fdata`:
+
+  A [`Matrix`](https://rdrr.io/pkg/Matrix/man/Matrix.html) object
+  storing high-dimensional feature data associated with graph nodes.
 
 - `pars`:
 
@@ -34,7 +42,7 @@ An S4 class object.
 
 - `uuid`:
 
-  An Universally Unique Identifier (UUID).
+  A Universally Unique Identifier (UUID) for the object instance.
 
 ## Constructor
 

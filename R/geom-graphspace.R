@@ -42,6 +42,17 @@
 #' @param arrow_offset Numeric value controlling the base offset of arrows  
 #' at edge endpoints (see 'drawing' section).
 #' 
+#' @param raster Logical. Should node glyphs be rasterized? 
+#' Rasterization support is based on \code{\link[ggrastr]{rasterise}}.
+#' 
+#' @param dpi Numeric. Rasterization resolution.
+#' 
+#' @param dev Character. Rasterization backend. One of `"cairo"`,
+#' `"ragg"`, `"ragg_png"`, or `"cairo_png"`.
+#' 
+#' @param scale Numeric. Rasterization scaling factor
+#' (see \code{\link[ggrastr]{rasterise}}).
+#' 
 #' @return A ggplot2 layer that renders node glyphs defined by
 #' \link{GeomGraphSpace}.
 #'
@@ -168,7 +179,8 @@
 geom_graphspace <- function(mapping = NULL, data, 
   stat = "identity", position = "identity", ...,
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE,
-  arrow_size = 1, arrow_offset = 0.01) {
+  arrow_size = 1, arrow_offset = 0.01,
+  raster = FALSE, dpi = NULL, dev = "cairo", scale = 1) {
   
   if (missing(data) || is.null(data)){
     rlang::warn(
@@ -187,11 +199,15 @@ geom_graphspace <- function(mapping = NULL, data,
     na.rm = na.rm,
     arrow_size = arrow_size,
     arrow_offset = arrow_offset,
+    raster = raster, 
+    dpi = dpi, 
+    dev = dev, 
+    scale = scale,
     ...)
   
   data <- .graphspace_handler(data)
   edges <- gs_edges(data)
-  data <- gs_nodes(data)
+  data <- gs_nodes(data, vars = .detect_mapping_vars(mapping))
   params <- .params_graphspace(params, mapping, data, edges)
   
   ggplot2::layer(
@@ -348,8 +364,9 @@ GeomGraphSpace <- ggproto(
   draw_panel = function(self, data, panel_params, coord, 
     edge_colour = "grey80", edge_alpha = NA, edge_linewidth = 0.5, 
     edge_linetype = "solid", arrow_size = 1, arrow_offset = 0.01, 
-    arrow_lineend = "butt", arrow_linejoin = "mitre", 
-    na.rm = FALSE, .size_unit = "mm", .edges = NULL) {
+    arrow_lineend = "butt", arrow_linejoin = "mitre", na.rm = FALSE, 
+    raster = FALSE, dpi = NULL, dev = "cairo", scale = 1, 
+    .size_unit = "mm", .edges = NULL) {
     
     data$shape <- translate_shape_string(data$shape)
     
@@ -398,10 +415,17 @@ GeomGraphSpace <- ggproto(
       
     }
     
-    grid::gTree(
+    graph_grob <- grid::gTree(
       children = grid::gList(edge_grobs, node_grobs),
       name = grid::grobName(prefix = "geom_graphspace")
     )
+    
+    if (raster) {
+      graph_grob <- .as_rasteriser(graph_grob, 
+        dpi = dpi, dev = dev, scale = scale)
+    }
+    
+    graph_grob
     
   },
   

@@ -20,7 +20,7 @@
   node.labels = NULL,
   label.size = 3,
   label.color = "grey20",
-  add.image = FALSE,
+  add.image = TRUE,
   raster = FALSE,
   dpi = 300,
   dev = "cairo_png"

@@ -18,7 +18,8 @@
 #' 
 #' @param data The data to be displayed in this layer. It can be a 
 #' \link{GraphSpace} object, an \link[igraph]{igraph} object, or the 
-#' \code{nodespace_handler()} handler (default).
+#' \code{nodespace_handler()} closure. When \code{NULL} (default),
+#' a handler is created internally from the \code{mapping} argument.
 #' 
 #' @param stat The statistical transformation to use on the data.
 #' Defaults to \code{identity}.
@@ -37,6 +38,17 @@
 #'
 #' @param inherit.aes Logical. If \code{FALSE} (default), the layer will use 
 #' aesthetics defined in \code{mapping}.
+#' 
+#' @param raster Logical. Should node glyphs be rasterized? 
+#' Rasterization support is based on \code{\link[ggrastr]{rasterise}}.
+#' 
+#' @param dpi Numeric. Rasterization resolution.
+#' 
+#' @param dev Character. Rasterization backend. One of `"cairo"`,
+#' `"ragg"`, `"ragg_png"`, or `"cairo_png"`.
+#' 
+#' @param scale Numeric. Rasterization scaling factor
+#' (see \code{\link[ggrastr]{rasterise}}).
 #' 
 #' @return A ggplot2 layer that renders node glyphs defined by
 #' \link{GeomNodeSpace}.
@@ -68,7 +80,7 @@
 #' 
 #' \code{geom_nodespace} is compatible with the \code{ggraph} methods.
 #' When used within a \code{ggraph()} call, the default \code{nodespace_handler()} 
-#' handler automatically:
+#' automatically:
 #' \itemize{
 #'   \item Identifies the current \code{layout_ggraph}.
 #'   \item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
@@ -140,11 +152,14 @@
 #' }
 #' 
 #' @export
-geom_nodespace <- function(mapping = NULL, data = nodespace_handler(), 
+geom_nodespace <- function(mapping = NULL, data = NULL, 
   stat = StatNodeSpace, position = "identity", ...,
-  na.rm = FALSE, show.legend = NA, inherit.aes = FALSE) {
+  na.rm = FALSE, show.legend = NA, inherit.aes = FALSE,  
+  raster = FALSE, dpi = NULL, dev = "cairo", scale = 1) {
   
-  if (!inherits(data, "nodespace_handler")){
+  if (is.null(data)) {
+    data <- nodespace_handler(mapping)
+  } else if (!inherits(data, "nodespace_handler")){
     if (is.function(data)){
       rlang::abort(
         message = c(
@@ -153,12 +168,18 @@ geom_nodespace <- function(mapping = NULL, data = nodespace_handler(),
         )
       )
     }
-    data <- nodespace_handler()(data)
+    data <- nodespace_handler(mapping)(data)
   }
   
   mapping <- .mapping_nodespace(mapping)
   
-  params <- rlang::list2(na.rm = na.rm, ...)
+  params <- rlang::list2(
+    na.rm = na.rm, 
+    raster = raster, 
+    dpi = dpi, 
+    dev = dev, 
+    scale = scale, 
+    ...)
   
   params$.size_unit <- if("size" %in% names(mapping)) "mm" else "npc"
   
@@ -200,7 +221,8 @@ geom_nodespace <- function(mapping = NULL, data = nodespace_handler(),
 #' @export
 StatNodeSpace <- ggproto(
   "StatNodeSpace", ggplot2::Stat,
-  optional_aes = c("nodeSize", "nodeShape", "nodeLineWidth", "nodeColor", "nodeAlpha"),
+  optional_aes = c("nodeSize", "nodeShape", "nodeLineWidth", 
+    "nodeColor", "nodeLineColor", "nodeAlpha"),
   setup_data = function(data, params) {
     data <- .params_nodespace(params, data)
     return(data)
@@ -213,20 +235,29 @@ StatNodeSpace <- ggproto(
 #-------------------------------------------------------------------------------
 #' @rdname geom_nodespace
 #' @export
-nodespace_handler <- function() {
+nodespace_handler <- function(mapping = NULL) {
+  
   fn <- function(data) {
+    if (is_waiver(data)) return(NULL)
+    vars <- .detect_mapping_vars(mapping)
     if ( inherits(data, c("igraph", "layout_ggraph")) ) {
       data <- gs_nodes(GraphSpace(data, verbose = FALSE))
     } else if (inherits(data, "GraphSpace")){
-      data <- gs_nodes(data)
-    } else if (!inherits(data, "gs_nodes")){
+      data <- gs_nodes(data, vars = vars)
+    } else if (inherits(data, "gs_nodes")){
+      graph <- attr(data, ".gs_graph")
+      if(inherits(graph, "GraphSpace")){
+        data <- gs_nodes(graph, vars = vars)
+      }
+    } else {
       rlang::abort(
         message = c(
           "x" = "`nodespace_handler()` received an unsupported object type.",
-          "i" = "Input must be a 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout."
+          "i" = "Input must be a 'GraphSpace', 'gs_nodes', 'igraph', 'tidygraph', or 'ggraph' layout."
         )
       )
     }
+    
     return(data)
   }
   attr(fn, "gs_handler_type") <- "node"
@@ -235,28 +266,32 @@ nodespace_handler <- function() {
 }
 
 #-------------------------------------------------------------------------------
-#' @importFrom ggplot2 fortify
-#' @export
-fortify.GraphSpace <- function(model, data, ...) {
-  res <- gs_nodes(model)
-  attr(res, ".edges") <- gs_edges(model)
-  return(model)
+.detect_mapping_vars <- function(mapping){
+  if(is.null(mapping)){
+    return(mapping)
+  }
+  vars <- unique(unlist(
+    lapply(mapping, function(x) {
+      tryCatch(all.vars(x), error = function(e) character())
+    })
+  ))
+  return(vars)
 }
 
 #-------------------------------------------------------------------------------
 .mapping_nodespace <- function(mapping) {
   
   x <- y <- NULL
-  
-  nodeColor <- nodeSize <- nodeShape <- nodeLineWidth <- nodeAlpha <- NULL
-  
   default_mapping <- ggplot2::aes(x = x, y = y)
   
+  nodeColor <- nodeSize <- nodeShape <- nodeLineWidth <- 
+    nodeLineColor <- nodeAlpha <- NULL
   optional_mapping <- ggplot2::aes(
     nodeColor = nodeColor, 
     nodeSize = nodeSize,
     nodeShape = nodeShape,
     nodeLineWidth = nodeLineWidth,
+    nodeLineColor = nodeLineColor,
     nodeAlpha = nodeAlpha)
   
   if (is.null(mapping)) {
@@ -274,6 +309,10 @@ fortify.GraphSpace <- function(model, data, ...) {
 #-------------------------------------------------------------------------------
 .params_nodespace <- function(params, nodes, mapping){
   
+  # Note: 'mapping' is read from colnames(nodes) because, at this
+  # stage, ggplot2 has already evaluated aes() and pruned unmapped
+  # columns. Any standard aesthetic name present here (e.g. "size",
+  # "fill") was explicitly mapped by the user.
   if(missing(mapping)){
     mapping <- colnames(nodes)
   } else {
@@ -338,14 +377,14 @@ fortify.GraphSpace <- function(model, data, ...) {
 #' @seealso
 #' \link{geom_nodespace}, \link[ggplot2]{geom_point}
 #'
-#' @importFrom ggplot2 scale_colour_identity draw_key_point from_theme zeroGrob
+#' @importFrom ggplot2 scale_colour_identity zeroGrob
 #' @importFrom ggplot2 geom_point geom_segment aes Geom .pt geom_text gg_par
 #' @importFrom ggplot2 element_rect margin element_blank layer theme_bw
 #' @importFrom ggplot2 element_line element_text ggproto theme theme_gray
 #' @importFrom ggplot2 scale_linetype_manual annotation_raster coord_fixed
 #' @importFrom ggplot2 scale_x_continuous scale_y_continuous expansion labs
 #' @importFrom ggplot2 expansion translate_shape_string is_waiver 
-#' @importFrom ggplot2 remove_missing geom_blank
+#' @importFrom ggplot2 remove_missing geom_blank draw_key_point
 #' @importFrom grid gpar arrow unit pointsGrob segmentsGrob
 #' @importFrom grid grobTree gList grobName
 #' @importFrom scales alpha squish
@@ -370,7 +409,8 @@ GeomNodeSpace <- ggproto(
   ),
   
   draw_panel = function(self, data, panel_params, coord, 
-    na.rm = FALSE, .size_unit = "mm") {
+    na.rm = FALSE, .size_unit = "mm", raster = FALSE, 
+    dpi = NULL, dev = "cairo", scale = 1) {
     
     data$shape <- translate_shape_string(data$shape)
     
@@ -381,6 +421,12 @@ GeomNodeSpace <- ggproto(
     # Create node grobs
     grobs <- .get_node_grobs(coords, .size_unit)
     grobs$name  <- grobName(grobs, "geom_nodespace")
+    
+    if(raster){
+      grobs <- .as_rasteriser(grobs, dpi = dpi, 
+        dev = dev, scale = scale)
+    }
+    
     grobs
     
   },
@@ -408,9 +454,7 @@ GeomNodeSpace <- ggproto(
         "Node 'size' outside the expected range of [0, 100].",
         "i" = "Passed as a parameter, 'size' scales with the viewport (%).",
         "*" = "Use aes(size = ...) for data-driven scaling."
-      ),
-      .frequency = "always",
-      .frequency_id = "graphspace_node_size_range"
+      )
     )
   }
 }
@@ -420,22 +464,57 @@ GeomNodeSpace <- ggproto(
 .get_node_grobs <- function(coords, size_unit){
   
   if(size_unit == "npc"){
-    # For 'npc', 'size' is in [0, 100], here transformed by a 0.01 factor
-    # For 'pch' in 0:25, 'size' is about 75% of the character height
-    # (see 'points()' graphics); here rectified by a 1/0.75 factor
-    coords$size <- coords$size * 0.01 * 1/0.75
+    coords$size <- coords$size * .gs_pch_to_npc()
+    grob <- grid::pointsGrob(
+      x = coords$x,
+      y = coords$y,
+      pch = coords$shape,
+      size = grid::unit(coords$size, size_unit),
+      gp = ggplot2::gg_par(
+        fill = scales::alpha(coords$fill, coords$alpha),
+        col = scales::alpha(coords$colour, coords$alpha),
+        stroke = coords$stroke
+      )
+    )
+  } else {
+    grob <- grid::pointsGrob(
+      x = coords$x,
+      y = coords$y,
+      pch = coords$shape,
+      gp = ggplot2::gg_par(
+        fill = scales::alpha(coords$fill, coords$alpha),
+        col = scales::alpha(coords$colour, coords$alpha),
+        pointsize = coords$size, stroke = coords$stroke
+      )
+    )
   }
   
-  grid::pointsGrob(
-    x = coords$x,
-    y = coords$y,
-    pch = coords$shape,
-    size = grid::unit(coords$size, size_unit),
-    gp = ggplot2::gg_par(
-      fill = scales::alpha(coords$fill, coords$alpha),
-      col = scales::alpha(coords$colour, coords$alpha),
-      stroke = coords$stroke
-    )
-  )
-  
+  grob
+
+}
+
+#-------------------------------------------------------------------------------
+# For gspace, node 'size' is defined on a [0, 100] scale and converted
+# to NPC units using a 0.01 factor.
+# For plotting symbols ('pch') in 0:25, the effective symbol diameter is
+# approximately 75% of the character height (see graphics::points()); 
+# a 1/0.75 correction is applied to recover the intended size.
+.gs_pch_to_npc <- function(){
+  .gs_nsz_to_npc() * (1/0.75)
+}
+.gs_nsz_to_npc <- function(){
+  0.01
+}
+
+#-------------------------------------------------------------------------------
+# Internal rasterization adapter
+# Currently delegates to the ggrastr rasteriser mechanism.
+# Isolated here so GraphSpace can switch to a native implementation
+# without requiring changes to geoms.
+.as_rasteriser <- function(grob, dpi = NULL, dev = "cairo", scale = 1){
+  class(grob) <- unique( c("rasteriser", class(grob)) )
+  grob$dpi <- dpi
+  grob$dev <- dev
+  grob$scale <- scale
+  grob
 }

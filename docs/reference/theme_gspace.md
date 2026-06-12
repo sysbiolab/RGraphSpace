@@ -8,36 +8,36 @@ A set of ggplot2 themes used by RGraphSpace plots.
 theme_gspace_th0(
   txt_size = 1,
   leg_size = 1,
-  bg_color = "grey95",
-  key_fill = FALSE,
-  key_colour = FALSE,
+  bg_colour = "grey95",
+  discrete_fill = FALSE,
+  discrete_colour = FALSE,
   ...
 )
 
 theme_gspace_th1(
   txt_size = 1,
   leg_size = 1,
-  bg_color = "grey95",
-  key_fill = FALSE,
-  key_colour = FALSE,
+  bg_colour = "grey95",
+  discrete_fill = FALSE,
+  discrete_colour = FALSE,
   ...
 )
 
 theme_gspace_th2(
   txt_size = 1,
   leg_size = 1,
-  bg_color = "grey95",
-  key_fill = FALSE,
-  key_colour = FALSE,
+  bg_colour = "grey95",
+  discrete_fill = FALSE,
+  discrete_colour = FALSE,
   ...
 )
 
 theme_gspace_th3(
   txt_size = 1,
   leg_size = 1,
-  bg_color = "grey95",
-  key_fill = FALSE,
-  key_colour = FALSE,
+  bg_colour = "grey95",
+  discrete_fill = FALSE,
+  discrete_colour = FALSE,
   ...
 )
 
@@ -50,7 +50,12 @@ theme_gspace_coords(
   ...
 )
 
-theme_gspace_legend(leg_size = 1, key_fill = FALSE, key_colour = FALSE, ...)
+theme_gspace_legend(
+  leg_size = 1,
+  discrete_fill = FALSE,
+  discrete_colour = FALSE,
+  ...
+)
 ```
 
 ## Arguments
@@ -63,16 +68,16 @@ theme_gspace_legend(leg_size = 1, key_fill = FALSE, key_colour = FALSE, ...)
 
   Numeric value to scale legend-related elements.
 
-- bg_color:
+- bg_colour:
 
   A color name or hex code specifying the panel background.
 
-- key_fill:
+- discrete_fill:
 
   Logical; if TRUE, treats the fill legend as discrete to adjust key
   size.
 
-- key_colour:
+- discrete_colour:
 
   Logical; if TRUE, treats the colour legend as discrete to adjust key
   size.
@@ -161,10 +166,7 @@ ggplot(mtcars,
   theme_gspace_coords("th2", is_norm = TRUE)
 
   
-library(RGraphSpace)
-library(ggplot2)
-
-# Small scale legends
+# Reduce legend element sizes
 ggplot(mtcars, aes(wt, mpg, fill = factor(cyl))) + 
   geom_point(shape = 21) + 
   theme_gspace_legend(0.8)

@@ -19,16 +19,20 @@ This geom is designed to map node-level attributes (e.g., `fill`,
 ``` r
 geom_nodespace(
   mapping = NULL,
-  data = nodespace_handler(),
+  data = NULL,
   stat = StatNodeSpace,
   position = "identity",
   ...,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = FALSE
+  inherit.aes = FALSE,
+  raster = FALSE,
+  dpi = NULL,
+  dev = "cairo",
+  scale = 1
 )
 
-nodespace_handler()
+nodespace_handler(mapping = NULL)
 ```
 
 ## Arguments
@@ -46,7 +50,8 @@ nodespace_handler()
   [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
   object, an
   [igraph](https://r.igraph.org/reference/aaa-igraph-package.html)
-  object, or the `nodespace_handler()` handler (default).
+  object, or the `nodespace_handler()` closure. When `NULL` (default), a
+  handler is created internally from the `mapping` argument.
 
 - stat:
 
@@ -76,6 +81,26 @@ nodespace_handler()
 
   Logical. If `FALSE` (default), the layer will use aesthetics defined
   in `mapping`.
+
+- raster:
+
+  Logical. Should node glyphs be rasterized? Rasterization support is
+  based on
+  [`rasterise`](https://rdrr.io/pkg/ggrastr/man/rasterise.html).
+
+- dpi:
+
+  Numeric. Rasterization resolution.
+
+- dev:
+
+  Character. Rasterization backend. One of `"cairo"`, `"ragg"`,
+  `"ragg_png"`, or `"cairo_png"`.
+
+- scale:
+
+  Numeric. Rasterization scaling factor (see
+  [`rasterise`](https://rdrr.io/pkg/ggrastr/man/rasterise.html)).
 
 ## Value
 
@@ -130,7 +155,7 @@ layer. For example: `fill = "red"`, `stroke = 3`, `alpha = 0.5`, or
 ## Integration with ggraph
 
 `geom_nodespace` is compatible with the `ggraph` methods. When used
-within a `ggraph()` call, the default `nodespace_handler()` handler
+within a `ggraph()` call, the default `nodespace_handler()`
 automatically:
 
 - Identifies the current `layout_ggraph`.

@@ -24,11 +24,21 @@ knitr::opts_chunk$set(
 <br/>
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 
+```{r Check required version, eval=TRUE, message=FALSE}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
 # Overview
 
 While static plots are essential for documentation and publication, interactive visualization allows us to explore the local neighborhoods and global architecture of a network in real-time. By connecting *RGraphSpace* with specialized interactive tools, we can move beyond fixed layouts to dynamic manipulation.
 
 The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, an R/Bioconductor package for interactive network visualization and manipulation.
+
+# Required packages
 
 ```{r Install RedeR, eval=FALSE, message=FALSE}
 # Install RedeR, a graph package for interactive visualization
@@ -99,7 +109,7 @@ plotGraphSpace(gtoy1_2, add.labels = TRUE)
 ```
 
 ```{r toygraph, echo=FALSE, out.width = '95%', purl=FALSE}
-knitr::include_graphics("figs/toy_reder.png")
+knitr::include_graphics("figs_intro/toy_reder.png")
 ```
 
 ---

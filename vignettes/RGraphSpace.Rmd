@@ -1,6 +1,6 @@
 ---
 title: "Getting started with RGraphSpace"
-author: "Sysbiolab - Bioinformatics and Systems Biology Laboratory"
+author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: bibliography.bib
 output: 
@@ -176,11 +176,13 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 Alternatively, the `igraph` object can be transformed into a `GraphSpace` container and passed to the underlying `geoms`:
 
 ```{r Using geoms, eval=TRUE, message=FALSE, out.width="80%"}
+data('gtoy1', package = 'RGraphSpace')
 gs <- GraphSpace(gtoy1)
 gs <- normalizeGraphSpace(gs)
 ggplot(gs) + 
-  geom_edgespace() +
-  geom_nodespace() +
+  geom_edgespace() + 
+  geom_nodespace() + 
+  geom_text(aes(x = x, y = y, label = nodeLabel), size = 2) + 
   theme_gspace_coords(is_norm = TRUE)
 ```
 

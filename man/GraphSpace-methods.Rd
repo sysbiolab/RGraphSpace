@@ -6,14 +6,7 @@
 \alias{GraphSpace,data.frame-method}
 \title{Create a GraphSpace object}
 \usage{
-\S4method{GraphSpace}{ANY}(
-  g,
-  layout = NULL,
-  verbose = TRUE,
-  mar = deprecated(),
-  image = deprecated(),
-  ...
-)
+\S4method{GraphSpace}{ANY}(g, layout = NULL, verbose = TRUE, ...)
 
 \S4method{GraphSpace}{data.frame}(g, verbose = TRUE, ...)
 }
@@ -32,12 +25,6 @@ vertex attributes. For graphs requiring edge definitions, use the
 \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.}
 
 \item{verbose}{A logical value. If \code{TRUE}, displays detailed messages.}
-
-\item{mar}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Deprecated since
-RGraphSpace 1.1.1; use \link{normalizeGraphSpace} instead.}
-
-\item{image}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Deprecated since
-RGraphSpace 1.1.1; use \link{normalizeGraphSpace} instead.}
 
 \item{...}{Additional arguments passed to the \code{GraphSpace} constructor.}
 }

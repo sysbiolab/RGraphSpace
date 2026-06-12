@@ -19,7 +19,7 @@ and `linewidth`, or any custom aesthetics defined in
 ``` r
 geom_edgespace(
   mapping = NULL,
-  data = edgespace_handler(),
+  data = NULL,
   stat = StatEdgeSpace,
   position = "identity",
   ...,
@@ -29,7 +29,11 @@ geom_edgespace(
   arrow_size = 1,
   arrow_offset = 0.01,
   lineend = "butt",
-  linejoin = "mitre"
+  linejoin = "mitre",
+  raster = FALSE,
+  dpi = NULL,
+  dev = "cairo",
+  scale = 1
 )
 
 edgespace_handler()
@@ -50,7 +54,8 @@ edgespace_handler()
   [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
   object, an
   [igraph](https://r.igraph.org/reference/aaa-igraph-package.html)
-  object, or the `edgespace_handler()` handler (default).
+  object, or the `edgespace_handler()` closure. When `NULL` (default), a
+  handler is created internally.
 
 - stat:
 
@@ -101,6 +106,26 @@ edgespace_handler()
   Line join style (round, mitre, bevel). Supplied for compatibility with
   [geom_segment](https://ggplot2.tidyverse.org/reference/geom_segment.html).
 
+- raster:
+
+  Logical. Should node glyphs be rasterized? Rasterization support is
+  based on
+  [`rasterise`](https://rdrr.io/pkg/ggrastr/man/rasterise.html).
+
+- dpi:
+
+  Numeric. Rasterization resolution.
+
+- dev:
+
+  Character. Rasterization backend. One of `"cairo"`, `"ragg"`,
+  `"ragg_png"`, or `"cairo_png"`.
+
+- scale:
+
+  Numeric. Rasterization scaling factor (see
+  [`rasterise`](https://rdrr.io/pkg/ggrastr/man/rasterise.html)).
+
 ## Value
 
 A ggplot2 layer that renders edge segments defined by
@@ -136,7 +161,7 @@ object.
 |  |  |
 |----|----|
 | **`x`, `y`, `xend`, `yend`** | Required (automatically supplied). |
-| `colour` | Node border colour (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
+| `colour` | Edge colour (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
 | `alpha` | Transparency (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
 | `linetype` | Edge line type (see [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
 | `linewidth` | Edge line width (see [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
@@ -154,8 +179,8 @@ arguments (see *details*).
 
 ## Integration with ggraph
 
-`geom_nodespace` is compatible with the `ggraph` methods. When used
-within a `ggraph()` call, the default `edgespace_handler()` handler
+`geom_edgespace` is compatible with the `ggraph` methods. When used
+within a `ggraph()` call, the default `edgespace_handler()`
 automatically:
 
 - Identifies the current `layout_ggraph`.

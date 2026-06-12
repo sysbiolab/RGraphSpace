@@ -10,8 +10,6 @@
     
     if(verbose) message("Creating a 'GraphSpace' object...")
     instance_id <- .generate_gs_uuid()
-    attr(nodes, "gs_id") <- instance_id
-    attr(edges, "gs_id") <- instance_id
     pars <- list(is.directed = is_directed(gg), 
         is.normalized = FALSE, image.layer = FALSE)
     gs <- new(Class = "GraphSpace", 
@@ -65,8 +63,7 @@
         edges$name2 <- vertex[edges$vertex2]
         atts <- .get_eatt(g)
         if(!all(atts[,c(1,2)]==edges[,c(1,2)])){
-            stop("unexpected indexing during edge attribute combination.", 
-                call. = FALSE)
+            rlang::abort("unexpected indexing during edge attribute combination.")
         }
         edges <- cbind(edges, atts[,-c(1,2), drop = FALSE])
         edges <- edges[order(edges$vertex1,edges$vertex2), ]
@@ -127,8 +124,7 @@
         edges$ut <- as.numeric(upper.tri(e))
         edges$lt <- as.numeric(lower.tri(e))
         if (!all(atts[, c(1, 2)] == edges[, c(1, 2)])) {
-            stop("unexpected indexing during edge attribute combination.", 
-                call. = FALSE)
+            rlang::abort("unexpected indexing during edge attribute combination.")
         }
         edges <- cbind(edges, atts[, -c(1, 2), drop=FALSE])
         eid <- unique(edges$eid[edges$e > 0])
@@ -242,10 +238,12 @@
         )
     
     n_offsets <- nodes[["nodeSize"]]
-    emode <- .get_emode(edges[["arrowType"]])
-    coord$offset_start <- ifelse(emode %in% c(0,1), 0, n_offsets[edges[["vertex1"]]])
-    coord$offset_end <- ifelse(emode %in% c(0,2), 0, n_offsets[edges[["vertex2"]]])
-    
+    #emode <- .get_emode(edges[["arrowType"]])
+    #coord$offset_start <- ifelse(emode %in% c(0,1), 0, n_offsets[edges[["vertex1"]]])
+    #coord$offset_end <- ifelse(emode %in% c(0,2), 0, n_offsets[edges[["vertex2"]]])
+    coord$offset_start <- n_offsets[edges[["vertex1"]]]
+    coord$offset_end <- n_offsets[edges[["vertex2"]]]
+
     gs_id <- attr(edges, "gs_id")
     edges <- cbind(coord, edges)
     attr(edges, "gs_id") <- gs_id

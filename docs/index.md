@@ -1,4 +1,4 @@
-## *RGraphSpace*: A lightweight interface between ‘igraph’ and ‘ggplot2’ graphics
+## *RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
@@ -38,24 +38,6 @@ translate graph data into geometric layers.
     Handles the relational data between nodes. Inherits `GeomSegment`
     aesthetic mappings; unlike standard segments, it is “node-aware” and
     dynamically calibrates start and end points to connected nodes.
-
-### Installation in R (\>=4.5)
-
-##### Dependencies to build the vignettes
-
-``` r
-
-install.packages("knitr")
-install.packages("rmarkdown")
-install.packages("remotes")
-```
-
-##### Development version
-
-``` r
-
-remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
-```
 
 ### Citation
 

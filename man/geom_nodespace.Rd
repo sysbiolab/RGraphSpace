@@ -7,16 +7,20 @@
 \usage{
 geom_nodespace(
   mapping = NULL,
-  data = nodespace_handler(),
+  data = NULL,
   stat = StatNodeSpace,
   position = "identity",
   ...,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = FALSE
+  inherit.aes = FALSE,
+  raster = FALSE,
+  dpi = NULL,
+  dev = "cairo",
+  scale = 1
 )
 
-nodespace_handler()
+nodespace_handler(mapping = NULL)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}.
@@ -25,7 +29,8 @@ from the top-level plot.}
 
 \item{data}{The data to be displayed in this layer. It can be a
 \link{GraphSpace} object, an \link[igraph]{igraph} object, or the
-\code{nodespace_handler()} handler (default).}
+\code{nodespace_handler()} closure. When \code{NULL} (default),
+a handler is created internally from the \code{mapping} argument.}
 
 \item{stat}{The statistical transformation to use on the data.
 Defaults to \code{identity}.}
@@ -44,6 +49,17 @@ whether this layer should be included in legends.}
 
 \item{inherit.aes}{Logical. If \code{FALSE} (default), the layer will use
 aesthetics defined in \code{mapping}.}
+
+\item{raster}{Logical. Should node glyphs be rasterized?
+Rasterization support is based on \code{\link[ggrastr]{rasterise}}.}
+
+\item{dpi}{Numeric. Rasterization resolution.}
+
+\item{dev}{Character. Rasterization backend. One of \code{"cairo"},
+\code{"ragg"}, \code{"ragg_png"}, or \code{"cairo_png"}.}
+
+\item{scale}{Numeric. Rasterization scaling factor
+(see \code{\link[ggrastr]{rasterise}}).}
 }
 \value{
 A ggplot2 layer that renders node glyphs defined by
@@ -100,7 +116,7 @@ For example: \code{fill = "red"}, \code{stroke = 3}, \code{alpha = 0.5}, or \cod
 
 \code{geom_nodespace} is compatible with the \code{ggraph} methods.
 When used within a \code{ggraph()} call, the default \code{nodespace_handler()}
-handler automatically:
+automatically:
 \itemize{
 \item Identifies the current \code{layout_ggraph}.
 \item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.

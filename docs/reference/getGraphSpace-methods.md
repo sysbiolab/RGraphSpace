@@ -20,9 +20,9 @@ getGraphSpace(gs, what = "graph")
 
 - what:
 
-  A single character value specifying which slot to retrieve from the
+  A single character value specifying which slot to retrieve from a
   'GraphSpace' object. Options: "graph", "nodes", "edges", "pars",
-  "misc", and "image".
+  "misc", "image", and "fdata".
 
 ## Value
 

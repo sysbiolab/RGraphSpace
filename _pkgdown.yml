@@ -47,7 +47,13 @@ navbar:
         href: articles/interoperability.html
       - text: "Interactive visualization"
         href: articles/interactive.html
-
+      - text: -------
+      - text: "Advanced workflows"
+        header: true
+      - text: "High-dimensional data"
+        href: articles/high-dimensional.html
+      - text: "Spatial transcriptomics data"
+        href: articles/spatial-data.html 
 home:
   sidebar:
     structure: [links, license, community, citation, dev]

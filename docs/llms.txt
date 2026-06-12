@@ -1,4 +1,4 @@
-## *RGraphSpace*: A lightweight interface between ‘igraph’ and ‘ggplot2’ graphics
+## *RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
@@ -39,24 +39,6 @@ translate graph data into geometric layers.
     aesthetic mappings; unlike standard segments, it is “node-aware” and
     dynamically calibrates start and end points to connected nodes.
 
-### Installation in R (\>=4.5)
-
-##### Dependencies to build the vignettes
-
-``` r
-
-install.packages("knitr")
-install.packages("rmarkdown")
-install.packages("remotes")
-```
-
-##### Development version
-
-``` r
-
-remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
-```
-
 ### Citation
 
 - Sysbiolab Team (2026). RGraphSpace: A lightweight interface between
@@ -91,13 +73,19 @@ The *RGraphSpace* package is distributed under
   : GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods
 - [`GeomNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.md)
   : GeomNodeSpace: a ggplot2 prototype for GraphSpace-class methods
-- [`gs_nodes(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+- [`names(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_names(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_nodes(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_edges(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_image(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`` `gs_image<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_graph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_fdata(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`` `gs_fdata<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_nfeatures(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_features(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_vcount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_ecount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`names(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`` `names<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_vertex_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_vertex_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_edge_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
@@ -105,8 +93,7 @@ The *RGraphSpace* package is distributed under
   [`` `$`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `$<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`as.igraph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  : Accessors for applying essential igraph methods to modify attributes
-  of GraphSpace objects.
+  : Accessors and attribute utilities for GraphSpace objects
 - [`GraphSpace-class`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-class.md)
   : GraphSpace: An S4 class for igraph objects
 - [`GraphSpace(`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
@@ -116,6 +103,11 @@ The *RGraphSpace* package is distributed under
   : Attribute Processing for GeomEdgeSpace
 - [`StatNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/StatNodeSpace.md)
   : Attribute Processing for GeomNodeSpace
+- [`annotation_gspace()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace.md)
+  [`annotation_gspace_image()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace.md)
+  : Annotate a GraphSpace Plot
+- [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
+  : Convert objects to GraphSpace
 - [`as_colorraster()`](https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.md)
   : Map numeric values to a color raster
 - [`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
@@ -128,11 +120,16 @@ The *RGraphSpace* package is distributed under
   : Draw node elements in a 2D graph layout
 - [`getGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/getGraphSpace-methods.md)
   : Accessors for fetching slots from a GraphSpace object
+- [`ggplot(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/ggplot-GraphSpace.md)
+  : Using ggplot2 with GraphSpace objects
+- [`gs_fetch_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
+  [`gs_add_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
+  : Manipulate node features in a GraphSpace object
 - [`gtoy1`](https://sysbiolab.github.io/RGraphSpace/reference/gtoys.md)
   : Toy 'igraph' objects
 - [`inject_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/inject_nodespace.md)
   : Dynamic Scale Injection for Edge Clipping
-- [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+- [`normalizeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   : Normalize node coordinates to graph and image spaces
 - [`plot(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/plot.GraphSpace.md)
@@ -154,21 +151,25 @@ The *RGraphSpace* package is distributed under
 
 ### All vignettes
 
-- [Building a graph
-  space](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md):
+- [Building a Graph
+  Space](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md):
 - [Customizing
-  aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md):
-- [Getting started with
+  Aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md):
+- [Getting Started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/get-started.md):
+- [Extending ggplot2 Grammar to High-Dimensional
+  Data](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md):
 - [Installation
   Instructions](https://sysbiolab.github.io/RGraphSpace/articles/install.md):
 - [Interactive
   visualization](https://sysbiolab.github.io/RGraphSpace/articles/interactive.md):
 - [Interoperability with 'ggraph' and
   'sf'](https://sysbiolab.github.io/RGraphSpace/articles/interoperability.md):
-- [Mapping graphs to
-  images](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md):
+- [Mapping Graphs to
+  Images](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md):
 - [Getting started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md):
-- [Fine-tuning scales and
-  offsets](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md):
+- [Fine-Tuning Scales and
+  Offsets](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md):
+- [Extending ggplot2 Grammar to Spatial Transcriptomics
+  Data](https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.md):

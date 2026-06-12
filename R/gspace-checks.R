@@ -18,16 +18,13 @@
   } else if (check == "image_mtx") {
     msg1 <- paste0("Invalid '", name, "' input. Expected a raster object\n")
     msg2 <- c("or a numeric matrix with values in the range [0, 1]")
-    if (!is.raster(para) || !is.matrix(para) || !is.array(para))
-      stop(msg1, msg2, call. = FALSE)
-    if(!is.raster(para)){
-      if(!is.numeric(para)){
+    if (!is.raster(para)){
+      if (!is.matrix(para) || !is.numeric(para)) {
         stop(msg1, msg2, call. = FALSE)
-      } else {
-        rg <- range(para, na.rm = TRUE)
-        if(rg[1]<0 || rg[2]>1){
-          stop(msg1, msg2, call. = FALSE)
-        }
+      }
+      rg <- range(para, na.rm = TRUE)
+      if (rg[1] < 0 || rg[2] > 1) {
+        stop(msg1, msg2, call. = FALSE)
       }
     }
   } else if (check == "allCharacter") {

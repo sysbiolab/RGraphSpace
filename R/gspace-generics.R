@@ -1,6 +1,4 @@
 
-setOldClass("igraph")
-
 setGeneric("GraphSpace", function(g, ...) standardGeneric("GraphSpace"))
 
 setGeneric("plotGraphSpace", function(gs, ...)
@@ -13,9 +11,8 @@ setGeneric("getGraphSpace", function(gs, what = "summary")
   package = "RGraphSpace"
 )
 
-setGeneric("normalizeGraphSpace", function(gs, image = NULL, ...) 
+setGeneric("normalizeGraphSpace", function(gs, ...) 
   standardGeneric("normalizeGraphSpace"),
-  signature = c("gs", "image"),
   package = "RGraphSpace"
 )
 
@@ -29,13 +26,48 @@ setGeneric("gs_graph", function(x)
   package = "RGraphSpace"
 )
 
-setGeneric("gs_nodes", function(x) 
+setGeneric("gs_names", function(x) 
+  standardGeneric("gs_names"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_nodes", function(x, ...) 
   standardGeneric("gs_nodes"),
   package = "RGraphSpace"
 )
 
 setGeneric("gs_edges", function(x) 
   standardGeneric("gs_edges"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_image", function(x) 
+  standardGeneric("gs_image"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_image<-", function(x, value) 
+  standardGeneric("gs_image<-"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_fdata", function(x) 
+  standardGeneric("gs_fdata"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_fdata<-", function(x, value)
+  standardGeneric("gs_fdata<-"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_nfeatures", function(x) 
+  standardGeneric("gs_nfeatures"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_features", function(x) 
+  standardGeneric("gs_features"),
   package = "RGraphSpace"
 )
 

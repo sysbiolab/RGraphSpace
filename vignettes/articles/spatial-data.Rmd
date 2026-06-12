@@ -1,0 +1,280 @@
+---
+title: "Extending ggplot2 Grammar to Spatial Transcriptomics Data"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+bibliography: ../bibliography.bib
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5
+  )
+```
+
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+<br/>
+
+
+# Overview
+
+This vignette demonstrates how *RGraphSpace* extends the *ggplot2* grammar
+to spatial transcriptomics data. We use spatial data from the
+*SeuratData* package to show how spatial variables can be mapped directly
+to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
+
+# Before you start
+
+This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/){target="_blank" rel="noopener"} [@Yuhan2024], particularly for handling spatial transcriptomics data.
+
+`r fontawesome::fa("exclamation-triangle", fill = "orange")` **Note:** If you are new to *Seurat*, we recommend reviewing its [spatial analysis tutorials](https://satijalab.org/seurat/articles/spatial_vignette){target="_blank" rel="noopener"} before proceeding.
+
+**Computational requirement:**
+
+* Hardware: RAM >= 16 GB
+
+* Software: R (>=4.5) and RStudio
+
+# Required packages
+
+The code below checks and installs all dependencies. These steps are only required once.
+
+```{r Check required packages, eval=TRUE, message=FALSE}
+if (!require("remotes", quietly = TRUE)){
+  install.packages("remotes")
+}
+if (!require("RGraphSpace", quietly = TRUE)){
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+if (!require("Seurat", quietly = TRUE)){
+  remotes::install_github("satijalab/seurat-data")
+}
+if (!require("SeuratData", quietly = TRUE)){
+  remotes::install_github("satijalab/seurat-data")
+}
+```
+
+```{r Check required versions, eval=TRUE, message=FALSE}
+# Check versions
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+if (packageVersion("Seurat") < "5.5.0"){
+  message("Need to update 'Seurat' for this vignette")
+  remotes::install_github("satijalab/Seurat")
+}
+```
+
+```{r Intall dataset, eval=FALSE, message=FALSE, results='hide'}
+# Install a Seurat dataset (required only once)
+SeuratData::InstallData("stxBrain")
+```
+
+# Setting input data
+
+```{r Load packages, eval=TRUE, message=FALSE}
+# Load packages
+library("RGraphSpace")
+library("Seurat")
+library("SeuratObject")
+library("SeuratData")
+library("scales")
+```
+
+## Loading the dataset
+
+We will use the `stxBrain` dataset from the *SeuratData* package, consisting of spatial transcriptomics data from sagittal mouse brain sections generated with Visium v1 technology. This dataset is commonly used to demonstrate *Seurat* spatial workflows [@Yuhan2024]. Here, we apply `as.GraphSpace()` to a `Seurat` object and demonstrate how spatial high-dimensional variables can be mapped directly to *ggplot2* aesthetics.
+
+```{r Load dataset, eval=FALSE, message=FALSE, results='hide'}
+# Check manifest of installed datasets
+# SeuratData::InstalledData()
+
+# Load the 'stxBrain' dataset
+seurat_obj <- LoadData("stxBrain", type = "anterior1")
+```
+
+## Preprocessing
+
+The `stxBrain` dataset is normalized as suggested in *Seurat*'s [spatial_vignette](https://satijalab.org/seurat/articles/spatial_vignette){target="_blank" rel="noopener"}, either using the `SCTransform()` and `NormalizeData()` functions.
+
+```{r preprocessing workflow - 1, eval=FALSE, message=FALSE, results='hide'}
+# NOTE: Seurat recommends using SCTransform() for processing this 
+# spatial dataset, which may require more computation time. Here,
+# we use log-normalization for demonstration purposes.
+seurat_obj <- NormalizeData(seurat_obj)
+```
+
+## Creating a GraphSpace object
+
+Next, we create a `GraphSpace` from the `Seurat` object; the `as.GraphSpace()` converts the *Seurat* object into a `GraphSpace`, exposing its spatial coordinates and feature data to the *ggplot2* grammar. We then attach the tissue image and normalize node coordinates to the image space.
+
+```{r Create a GraphSpace, eval=FALSE, message=FALSE, results='hide'}
+# Create a GraphSpace from 'seurat_obj'
+gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
+
+# If available, add tissue image 
+gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
+
+# Normalize node coordinates to the image space
+gs <- normalizeGraphSpace(gs, use_image = TRUE)
+
+# Inspect the 'gs' object
+gs
+# A GraphSpace-class object for:
+# IGRAPH c4b5fdf UN-- 2696 0 -- 
+# + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), cell (v/c),
+# | orig.ident (v/x), nCount_Spatial (v/n), nFeature_Spatial (v/n), slice (v/n), region
+# | (v/c), arrowType (e/n)
+# + features: 31053 (Xkr4, Gm1992, Gm37381, Rp1, ...)
+```
+
+# Spatial feature visualization
+
+With the `GraphSpace` object ready, we can reproduce a typical *Seurat* spatial feature plot using standard *ggplot2* syntax. Here we map expression of the `Ttr` gene to the colour aesthetic and overlay the tissue image as background.
+
+```{r Feature plot, eval=FALSE, message=FALSE, results='hide'}
+cpal <- hcl.colors(100, palette = "Spectral", rev = TRUE)
+
+# Reproduce a typical Seurat's spatial feature visualization
+ggplot(gs) + 
+  annotation_gspace(gs) +
+  geom_nodespace(mapping = aes(colour = Ttr), size = 1, pch = 19) +
+  scale_colour_continuous(palette = cpal) +
+  theme_gspace_coords(theme = "th3", is_norm = TRUE, 
+    xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
+```
+
+```{r ggplot_seurat3.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# p <- ggplot(gs) +
+#   annotation_gspace(gs) +
+#   geom_nodespace(mapping = aes(colour = Ttr), size = 0.7, pch = 19) +
+#   scale_colour_continuous(palette = cpal) +
+#   theme_gspace_coords(theme = "th3", is_norm = TRUE,
+#     xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
+# ggsave(filename = "./vignettes/articles/cards/spatial_data.png",
+#   height=3.5, width=3.5, units="in", device="png", dpi=200, plot=p)
+# p <- ggplot(gs) +
+#   annotation_gspace(gs) +
+#   geom_nodespace(mapping = aes(colour = Ttr), size = 1, pch = 19) +
+#   scale_colour_continuous(palette = cpal) +
+#   theme_gspace_coords(theme = "th3", is_norm = TRUE,
+#     xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
+# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat3.png",
+#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
+```
+
+```{r ggplot_seurat3, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/ggplot_seurat3.png")
+```
+
+**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
+
+# Spatial cluster visualization
+
+This section requires additional preprocessing of the `stxBrain` dataset, including normalization with `SCTransform()` and Seurat's clustering workflow. We recommend installing the *glmGamPoi* package beforehand, as it substantially speeds up the `SCTransform()` estimation step.
+
+## Preprocessing
+
+```{r preprocessing workflow - 2, eval=FALSE, message=FALSE, results='hide'}
+if (!require("glmGamPoi", quietly = TRUE)){
+  BiocManager::install("glmGamPoi")
+}
+# Run vst normalization on counts
+seurat_obj <- SCTransform(seurat_obj, assay = "Spatial", verbose = FALSE)
+seurat_obj <- RunPCA(seurat_obj, assay = "SCT", verbose = FALSE)
+seurat_obj <- FindNeighbors(seurat_obj, reduction = "pca", dims = 1:30)
+seurat_obj <- FindClusters(seurat_obj, verbose = FALSE)
+```
+
+## Spatial cluster visualization
+
+With clusters assigned, we rebuild the `GraphSpace` object from the updated `seurat_obj` and reproduce a typical Seurat spatial cluster plot, mapping cluster identity to the `fill` aesthetic and overlaying the tissue image as a dimmed background.
+
+```{r Metadata plot, eval=FALSE, message=FALSE, results='hide'}
+# Re-create a GraphSpace from the updated 'seurat_obj'
+gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
+gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
+gs <- normalizeGraphSpace(gs, use_image = TRUE)
+
+# Reproduce a typical Seurat cluster visualization
+cpal <- DiscretePalette(nlevels(gs$seurat_clusters), palette = "polychrome")
+ggplot(gs) + 
+  annotation_gspace(gs, opacity = 0.5) +
+  geom_nodespace(mapping = aes(fill = seurat_clusters),
+    size = 1.3, color = "grey90", stroke = 0.3) +
+  scale_fill_manual(values = cpal) +
+  theme_gspace_coords(theme = "th2", is_norm = TRUE, 
+    xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2") +
+  theme_gspace_legend(discrete_fill = TRUE)
+```
+
+```{r ggplot_seurat4.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+p <- ggplot(gs) +
+  annotation_gspace(gs, opacity = 0.5) +
+  geom_nodespace(mapping = aes(fill = seurat_clusters),
+    size = 1.3, color = "grey90", stroke = 0.3) +
+  scale_fill_manual(values = cpal) +
+  theme_gspace_coords(theme = "th2", is_norm = TRUE,
+    xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2") +
+  theme_gspace_legend(discrete_fill = TRUE)
+ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat4.png",
+  height=5, width=6, units="in", device="png", dpi=200, plot=p)
+```
+
+```{r ggplot_seurat4, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/ggplot_seurat4.png")
+```
+
+<br/>
+
+# Coercing spatial data into a *GraphSpace* object {#sp-coercion}
+
+Below, we show how to access the relevant components of a `Seurat` object and use them to construct a `GraphSpace` manually, without relying on `as.GraphSpace()`. For another coercion example, see the [*high-dimensional data*](high-dimensional.html#hd-coercion) tutorial.
+
+```{r GraphSpace from high-dimensional data, eval=FALSE, message=FALSE, results='hide'}
+# Extract tissue coordinates
+coords <- SeuratObject::GetTissueCoordinates(object = seurat_obj, 
+  scale = "lowres")
+coords <- coords |> as.data.frame()
+all(c("x", "y") %in% colnames(coords))
+# [1] TRUE
+
+# Extract cell metadata
+metadata <- seurat_obj[[]]
+
+# Merge coordinates and metadata using common cell identifiers
+ids <- intersect(rownames(coords), rownames(metadata))
+coords <- cbind(coords[ids, ], metadata[ids, ])
+
+# Construct a GraphSpace object
+# Metadata become node attributes
+gs <- GraphSpace(coords)
+
+# Add high-dimensional feature data
+# Stored separately for lazy aesthetic mapping
+gs_fdata(gs) <- SeuratObject::LayerData(seurat_obj, layer = "data")
+
+# If available, add tissue image 
+gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
+
+# Normalize node coordinates to the image space
+gs <- normalizeGraphSpace(gs, use_image = TRUE)
+```
+
+
+# Session information
+```{r label='Session information', eval=TRUE, echo=FALSE}
+sessionInfo()
+```
+
+

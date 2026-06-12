@@ -1,4 +1,4 @@
-## *RGraphSpace*: A lightweight interface between 'igraph' and 'ggplot2' graphics
+## *RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics
   <!-- badges: start -->
   [![CRAN status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
   [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
@@ -15,27 +15,17 @@
 
 ### Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a unit space. The package implements new *ggplot2* prototypes ([Wickham 2016](#ref-wickham)), optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including interoperability with *ggraph* and *tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized `geoms` translate graph data into geometric layers.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* 
+objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a 
+unit space. The package implements new *ggplot2* prototypes ([Wickham 2016](#ref-wickham)), 
+optimized for representing large networks. This enables extensive customization of 
+aesthetics and visual style, including interoperability with *ggraph* and *tidygraph* 
+workflows ([Pedersen 2024](#ref-pedersen)). Three specialized `geoms` translate graph 
+data into geometric layers.
 
 1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call. 
 2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states. 
 3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically calibrates start and end points to connected nodes. 
-
-### Installation in R (>=4.5)
-
-##### Dependencies to build the vignettes
-
-```r
-install.packages("knitr")
-install.packages("rmarkdown")
-install.packages("remotes")
-```
-
-##### Development version
-
-```r
-remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
-```
 
 ### Citation
 

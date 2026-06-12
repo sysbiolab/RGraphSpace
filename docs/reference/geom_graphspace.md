@@ -27,7 +27,11 @@ geom_graphspace(
   show.legend = NA,
   inherit.aes = FALSE,
   arrow_size = 1,
-  arrow_offset = 0.01
+  arrow_offset = 0.01,
+  raster = FALSE,
+  dpi = NULL,
+  dev = "cairo",
+  scale = 1
 )
 ```
 
@@ -84,6 +88,26 @@ geom_graphspace(
 
   Numeric value controlling the base offset of arrows at edge endpoints
   (see 'drawing' section).
+
+- raster:
+
+  Logical. Should node glyphs be rasterized? Rasterization support is
+  based on
+  [`rasterise`](https://rdrr.io/pkg/ggrastr/man/rasterise.html).
+
+- dpi:
+
+  Numeric. Rasterization resolution.
+
+- dev:
+
+  Character. Rasterization backend. One of `"cairo"`, `"ragg"`,
+  `"ragg_png"`, or `"cairo_png"`.
+
+- scale:
+
+  Numeric. Rasterization scaling factor (see
+  [`rasterise`](https://rdrr.io/pkg/ggrastr/man/rasterise.html)).
 
 ## Value
 

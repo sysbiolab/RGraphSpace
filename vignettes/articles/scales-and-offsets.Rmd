@@ -1,5 +1,5 @@
 ---
-title: "Fine-tuning scales and offsets"
+title: "Fine-Tuning Scales and Offsets"
 author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: ../bibliography.bib
@@ -22,13 +22,20 @@ knitr::opts_chunk$set(
 ```
 
 <br/>
+
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+
+```{r Check required version, eval=TRUE, message=FALSE}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
 
 # Overview
 
-A seemingly simple yet technically challenging aspect of network visualization is ensuring that edges terminate exactly at the node boundary, regardless of the node sizes. This becomes more complex when node size is mapped to aesthetics and transformed by a `scale_size_*` function, which is only evaluated within the layer where it takes effect.
-
-The *RGraphSpace* `geoms` are designed to handle these adjustments automatically by rendering nodes and edges within synchronized layers.
+A seemingly simple yet technically challenging aspect of network visualization is ensuring that edges terminate exactly at the node boundary, regardless of the node sizes. This becomes more complex when node size is mapped to aesthetics and transformed by a `scale_size_*` function, which is only evaluated within the layer where it takes effect. The *RGraphSpace* `geoms` are designed to handle these adjustments automatically by rendering nodes and edges within synchronized layers.
 
 # Setting basic input data
 
@@ -97,7 +104,7 @@ ggplot() +
 
 While `geom_graphspace()` is convenient for quick, coordinated plots, it has a limitation: the `mapping` argument is reserved for node aesthetics. To overcome this limitation, we can call `geom_edgespace()` and `geom_nodespace()` as independent layers. This allows for total flexibility for mapping different variables to edges and nodes.
 
-However, because these layers are now independent, they no longer "talk" to each other by default. If we change the node size scale, the edge layer won't know it needs to adjust its offsets to accommodate the new node boundaries. To address this, `inject_nodespace()` acts as a post-processing synchronizer: it intercepts the calculated sizes from the node layer, derive the scaling rules, and "injects" them into the edge layer.
+However, because these layers are now independent, they no longer "talk" to each other by default. For example, if node sizes are modified through a scale transformation, the edge layer has no direct way to determine the resulting node boundaries needed for clipping calculations. To address this, *RGraphSpace* performs a post-processing synchronization step during plot construction, intercepting the calculated sizes from the node layer and "injecting" the corresponding clipping information into the edge layer.
 
 ```{r Adjusting scales - 4, eval=TRUE, message=FALSE, out.width="80%"}
 # We shuffle 'num_var' to demonstrate that edges 
@@ -105,37 +112,16 @@ However, because these layers are now independent, they no longer "talk" to each
 set.seed(234)
 gs_star$num_var2 <- sample(gs_star$num_var)
 
-# Execute the plot, calling 'inject_nodespace' last 
-# to capture the final layer states
+# Execute independent node and edge layers
 ggplot(data = gs_star) + 
   geom_edgespace(arrow_offset = 0.03) + 
   geom_nodespace(mapping = aes(size = num_var2 )) + 
   scale_size(range = c(2, 40)) +
-  inject_nodespace() +
   theme_gspace_coords() +
   theme(legend.position = "none")
 ```
 
 To provide a final note of customization, these scaling trade-offs only apply when `size` is passed as a node aesthetic mapping. Otherwise, *RGraphSpace* defaults to using `npc` units for all network elements.
- 
-```{r internal checks, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# ggplot() + 
-#   geom_edgespace(data = gs_star,  arrow_offset = 0.01) + 
-#   geom_nodespace(mapping = aes(size = num_var), data = gs_star) + 
-#   scale_size(range = c(2, 30)) + 
-#   inject_nodespace() + 
-#   theme_gspace_coords() + 
-#   theme(legend.position = "none")
-# library(ggraph)
-# ggraph(graph = gs_star, x= gs_star$x, y = gs_star$y) +
-#   geom_edgespace(arrow_offset = 0.01) +
-#   geom_nodespace(mapping = aes(size = num_var)) +
-#   scale_size(range = c(2, 30)) +
-#   inject_nodespace() +
-#   theme_gspace_coords() +
-#   theme(legend.position = "none")
-```
-
 
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}

@@ -7,14 +7,15 @@
 #' or by mapping them to pixel coordinates of a background image.
 #' 
 #' @param gs A \code{GraphSpace} object to be normalized.
-#' @param image An optional background image. When provided, \code{x} and 
-#' \code{y} coordinates must represent pixel positions in the image matrix.
-#' @param ... Additional arguments passed to specific normalization workflows.
 #' @param mar A single numeric value in \code{[0, 0.5]} controlling the size of
 #' the outer margins around the graph. Without an image, \code{mar} specifies
 #' symmetric margins as a fraction of the graph space. With an image,
 #' \code{mar} is interpreted as a fraction of the available image margins
 #' surrounding the graph.
+#' @param use_image Logical; if an image is available, whether to use it as 
+#' a background reference map. When enabled, \code{x} and \code{y} graph 
+#' coordinates are interpreted as pixel coordinates in the image matrix. 
+#' Images can be inspected and assigned with \code{\link{gs_image}}.
 #' @param flip.y Logical; whether to flip the node coordinates along the y-axis. 
 #' Useful for aligning nodes with image backgrounds, which often use an 
 #' inverted coordinate system.
@@ -29,27 +30,27 @@
 #' coordinates \code{[0,1]}.
 #' @param verbose A single logical value specifying to display detailed 
 #' messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).
-#' 
-#' @usage
-#' normalizeGraphSpace(gs, image = NULL, ...)
+#' @param image Deprecated from RGraphSpace 1.3.0; use \link{gs_image} instead.
 #' 
 #' @details 
 #' These functions provide different strategies for coordinate transformation:
 #' \itemize{
 #'   \item \bold{normalizeGraphSpace}: Re-scales node coordinates to a 
 #'   \code{[0, 1]} unit square based on the graph's bounding box (when 
-#'   \code{image} is missing) or maps them to pixel coordinates (when 
-#'   \code{image} is provided). It handles image-to-graph alignment via 
-#'   \code{flip.} and \code{rotate.} arguments, used to adjust the graph 
-#'   origin with the image matrix layout. Users should be aware of the 
-#'   potential discrepancy between image matrix orientation (top-down) and
-#'   graph coordinates (bottom-up). The function attempts to automatically 
-#'   adjust the y-axis to align the graph's bottom-up coordinates with the 
-#'   image's top-down layout, but further manual adjustments might be required.
+#'   \code{use_image = FALSE}) or maps them to pixel coordinates (when 
+#'   \code{use_image = TRUE} and an image is provided; see \link{gs_image}). 
+#'   It handles image-to-graph alignment via \code{flip.\*} and 
+#'   \code{rotate.\*} arguments, used to adjust the graph origin with the 
+#'   image matrix layout. Users should be aware of the potential discrepancy 
+#'   between image matrix orientation (top-down) and graph coordinates 
+#'   (bottom-up). The function attempts to automatically adjust the y-axis to 
+#'   align the graph's bottom-up coordinates with the image's top-down layout, 
+#'   but further manual adjustments might be required. 
 #'   \item \bold{cropGraphSpace}: Subsets the normalized graph space into a 
-#'   specific region defined by \code{crop.coord}. It recalculates node positions 
-#'   and background image boundaries to maintain spatial consistency after cropping. 
-#'   This function requires a previously normalized \code{GraphSpace} object.
+#'   specific region defined by \code{crop.coord}. 
+#'   It recalculates node positions and background image boundaries to maintain 
+#'   spatial consistency after cropping. This function requires a previously 
+#'   normalized \code{GraphSpace} object.
 #' }
 #' 
 #' @return A \code{GraphSpace} object with updated \code{nodes} 
@@ -57,84 +58,39 @@
 #' 
 #' @note This is an accessory function typically called during 
 #' the preprocessing of \code{GraphSpace} objects before rendering.
-#'
+#' 
+#' @seealso \code{\link{gs_image}}
+#' 
 #' @examples
 #' library(RGraphSpace)
 #' library(igraph)
 #' 
 #' # Create a star graph
-#' gtoy1 <- make_full_graph(15)
+#' gtoy1 <- make_full_graph(30)
 #' 
 #' # Create a GraphSpace
 #' gs <- GraphSpace(gtoy1)
 #' 
 #' gs <- normalizeGraphSpace(gs)
 #' 
+#' gs_crop <- cropGraphSpace(gs, 
+#'          crop.coord = c(0, 0.75, 0, 0.75))
+#' 
 #' @aliases normalizeGraphSpace
 #' @rdname normalizeGraphSpace-methods
 #' @export
-setMethod("normalizeGraphSpace",
-  signature = c(gs = "GraphSpace", image = "missing"),
-  function(gs, image, ...,  mar = 0.1, flip.x = FALSE, flip.y = FALSE, 
-    rotate.xy = FALSE, crop_method = "", verbose = TRUE){
+setMethod("normalizeGraphSpace", "GraphSpace",
+  function(gs, mar = 0.1, use_image = FALSE, flip.x = FALSE, flip.y = FALSE, 
+    rotate.xy = FALSE, flip.v = FALSE, flip.h = FALSE, verbose = TRUE, 
+    image = deprecated()){
     
-    if(gs@pars$image.layer) {
-      gs@pars$image.layer <- FALSE
+    if (lifecycle::is_present(image)) {
+      deprecate_soft("1.3.0", "normalizeGraphSpace(image)", I("'gs_image(gs)<-image'"))
+      gs_image(gs) <- image
+      use_image <- TRUE
     }
     
-    extra_args <- list(...)
-    if(length(extra_args) > 0 && verbose) {
-      warning("Arguments ignored: ", paste(names(extra_args), collapse = ", "))
-    }
-    
-    .validate_gs_args("singleLogical", "flip.x", flip.x)
-    .validate_gs_args("singleLogical", "flip.y", flip.y)
-    .validate_gs_args("singleLogical", "rotate.xy", rotate.xy)
-    .validate_gs_args("singleLogical", "verbose", verbose)
-    .validate_gs_args("singleNumber", "mar", mar)
-    
-    if (mar < 0 || mar > 0.5) {
-      warning("'mar' should be in [0, 0.5]", call. = FALSE)
-      mar <- max(0, min(mar, 0.5))
-    }
-    
-    nodes <- .get_nodes(gs@graph)
-    if(nrow(nodes)>0){
-      nodes <- .setCoordToGraph(nodes, flip.x, flip.y, rotate.xy, verbose)
-      if(verbose) message("Normalizing node coordinates to graph space...")
-      gs@nodes <- .fit_graph_space(nodes, mar)
-      gs@pars$is.normalized <- TRUE
-      gs@pars$flip.x <- flip.x
-      gs@pars$flip.y <- flip.y
-      gs@pars$rotate.xy <- rotate.xy
-      gs@pars$mar <- mar
-    }
-    
-  return(gs)
-    
-})
-
-#-------------------------------------------------------------------------------
-#' @aliases normalizeGraphSpace
-#' @rdname normalizeGraphSpace-methods
-#' @export
-setMethod("normalizeGraphSpace", 
-  signature = c(gs = "GraphSpace", image = "ANY"),
-  function(gs, image, ..., mar = 0.1, flip.x = FALSE, flip.y = FALSE, 
-    rotate.xy = FALSE, flip.v = FALSE, flip.h = FALSE, verbose = TRUE){
-    
-    if(is.null(image)) {
-      return(normalizeGraphSpace(gs = gs, mar = mar, 
-        flip.x = flip.x, flip.y = flip.y, 
-        rotate.xy = rotate.xy, verbose = verbose))
-    }
-    
-    extra_args <- list(...)
-    if(length(extra_args) > 0 && verbose) {
-      warning("Arguments ignored: ", paste(names(extra_args), collapse = ", "))
-    }
-    
-    .validate_gs_args("image_mtx", "image", image)
+    .validate_gs_args("singleLogical", "use_image", use_image)
     .validate_gs_args("singleLogical", "flip.v", flip.v)
     .validate_gs_args("singleLogical", "flip.h", flip.h)
     .validate_gs_args("singleLogical", "flip.x", flip.x)
@@ -144,43 +100,87 @@ setMethod("normalizeGraphSpace",
     .validate_gs_args("singleNumber", "mar", mar)
     
     if (mar < 0 || mar > 0.5) {
-      warning("'mar' should be in [0, 0.5]", call. = FALSE)
+      rlang::warn("'mar' should be in [0, 0.5]")
       mar <- max(0, min(mar, 0.5))
     }
+    if(use_image && !gs@pars$image.layer){
+      rlang::warn(
+        message = c(
+          "!" = "'use_image = TRUE' requested, but no image is available.",
+          "i" = "Proceeding without the image layer.",
+          "*" = "Use `gs_image()` to inspect the image slot.",
+          "*" = "Use `gs_image()<-` to add an image."
+        )
+      )
+      use_image <- FALSE
+    }
     
-    nodes <- .get_nodes(gs@graph)
-    if(nrow(nodes)>0){
-      if(verbose) message("Normalizing node coordinates to image space...")
-      image_adj <- image
-      if(!is.raster(image_adj)) image_adj <- as.raster(image_adj)
-      if(flip.v){
-        if(verbose) message("Flipping image top-to-bottom...")  
-        image_adj <- image_adj[rev(seq_len(nrow(image_adj))), , drop = FALSE]
-      } 
-      if(flip.h){
-        if(verbose) message("Flipping image left-to-right...")  
-        image_adj <- image_adj[, rev(seq_len(ncol(image_adj))), drop = FALSE]
-      } 
-      
-      nodes <- .setCoordToImage(nodes, image_adj, flip.x, flip.y, rotate.xy, verbose)
-      
-      l_temp <- .fitImageNodes(nodes, image_adj, mar)
-      
-      gs@image <- l_temp$image
-      gs@nodes <- l_temp$nodes
-      gs@pars$is.normalized <- TRUE
-      gs@pars$image.layer <- TRUE
-      gs@pars$flip.v <- flip.v
-      gs@pars$flip.x <- flip.x
-      gs@pars$flip.y <- flip.y
-      gs@pars$rotate.xy <- rotate.xy
-      gs@pars$mar <- mar
-      gs@misc$image <- image
+    if(gs_vcount(gs)>0){
+      if(use_image){
+        gs <- .normalizeGraphSpace.image(gs, mar, flip.x, flip.y, 
+          rotate.xy, flip.v, flip.h, verbose)
+      } else {
+        gs <- .normalizeGraphSpace.graph(gs, mar, flip.x, flip.y, 
+          rotate.xy, verbose)
+      }
     }
     
     return(gs)
     
   })
+
+.normalizeGraphSpace.graph <- function(gs, mar, flip.x, flip.y, 
+  rotate.xy, verbose){
+  
+  nodes <- .get_nodes(gs@graph)
+  nodes <- .setCoordToGraph(nodes, flip.x, flip.y, rotate.xy, verbose)
+  if(verbose) message("Normalizing node coordinates to graph space...")
+  gs@nodes <- .fit_graph_space(nodes, mar)
+  gs@pars$is.normalized <- TRUE
+  gs@pars$flip.x <- flip.x
+  gs@pars$flip.y <- flip.y
+  gs@pars$rotate.xy <- rotate.xy
+  gs@pars$mar <- mar
+  
+  return(gs)
+  
+}
+
+.normalizeGraphSpace.image <- function(gs, mar, flip.x, flip.y, 
+  rotate.xy, flip.v, flip.h, verbose){
+  
+  nodes <- .get_nodes(gs@graph)
+  image <- gs@misc$image
+  
+  if(verbose) message("Normalizing node coordinates to image space...")
+  
+  if(!is.raster(image)) image <- as.raster(image)
+  
+  if(flip.v){
+    if(verbose) message("Flipping image top-to-bottom...")  
+    image <- image[rev(seq_len(nrow(image))), , drop = FALSE]
+  } 
+  
+  if(flip.h){
+    if(verbose) message("Flipping image left-to-right...")  
+    image <- image[, rev(seq_len(ncol(image))), drop = FALSE]
+  } 
+  
+  nodes <- .setCoordToImage(nodes, image, flip.x, flip.y, rotate.xy, verbose)
+  
+  l_temp <- .fitImageNodes(nodes, image, mar)
+  
+  gs@image <- l_temp$image
+  gs@nodes <- l_temp$nodes
+  gs@pars$is.normalized <- TRUE
+  gs@pars$flip.v <- flip.v
+  gs@pars$flip.x <- flip.x
+  gs@pars$flip.y <- flip.y
+  gs@pars$rotate.xy <- rotate.xy
+  gs@pars$mar <- mar
+  
+  return(gs)
+}
 
 #-------------------------------------------------------------------------------
 #' @aliases cropGraphSpace
@@ -190,14 +190,18 @@ setMethod("cropGraphSpace", "GraphSpace",
   function(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE){
     .validate_gs_args("numeric_vec", "crop.coord", crop.coord)
     if(length(crop.coord)!=4){
-      stop("'crop.coord' should be a numeric vector of length = 4.", 
-        call. = FALSE)
+      rlang::abort("'crop.coord' should be a numeric vector of length = 4.")
     }
     if(any(crop.coord < 0) || any(crop.coord > 1)){
-      stop("'crop.coord' should be in [0,1].", call. = FALSE)
+      rlang::abort("'crop.coord' should be in [0,1].")
     }
     if(!gs@pars$is.normalized){
-      stop("'GraphSpace' must be normalized.", call. = FALSE)
+      rlang::abort(
+        message = c(
+          "The 'GraphSpace' object must be normalized before cropping.",
+          "i" = "Please run 'normalizeGraphSpace(gs)' first."
+        )
+      )
     }
     
     gs <- .crop_gspace(gs, crop.coord)
@@ -482,27 +486,96 @@ setMethod("cropGraphSpace", "GraphSpace",
 ################################################################################
 ### Crop graph and image
 ################################################################################
-.crop_gspace <- function(gs, crop.coord){
+
+#-------------------------------------------------------------------------------
+.crop_gspace <- function(gs, crop.coord) {
+  if (gs@pars$image.layer) {
+    gs <- .crop_gspace_image(gs, crop.coord)
+  } else {
+    gs <- .crop_gspace_graph(gs, crop.coord)
+  }
+  return(gs)
+}
+
+#-------------------------------------------------------------------------------
+.crop_gspace_graph <- function(gs, crop.coord) {
   
-  # remove nodes
+  xmin <- crop.coord[1]; xmax <- crop.coord[2]
+  ymin <- crop.coord[3]; ymax <- crop.coord[4]
+  
+  # Filter nodes within the crop window
   nodes <- gs@nodes
-  cx <- nodes$x >= crop.coord[1] & nodes$x <= crop.coord[2]
-  cy <- nodes$y >= crop.coord[3] & nodes$y <= crop.coord[4]
-  nodes <- nodes[ which(cx & cy), ]
+  cx <- nodes$x >= xmin & nodes$x <= xmax
+  cy <- nodes$y >= ymin & nodes$y <= ymax
+  nodes <- nodes[which(cx & cy), ]
   
-  # remove edges
-  idx <- (gs@edges$name1 %in% gs@nodes$name) & 
-    (gs@edges$name2 %in% gs@nodes$name) 
-  gs@edges <- gs@edges[idx,]
+  # Rescale node coordinates relative to the crop window
+  # Maps [xmin, xmax] -> [0, 1] and [ymin, ymax] -> [0, 1]
+  nodes$x <- (nodes$x - xmin) / (xmax - xmin)
+  nodes$y <- (nodes$y - ymin) / (ymax - ymin)
   
-  # center nodes
-  nodes$x <- nodes$x - mean(range(nodes$x))
-  nodes$y <- nodes$y - mean(range(nodes$y))
-  from <- range(c(nodes$x, nodes$y))
-  nodes$x <- scales::rescale(nodes$x, from = from, to=c(0,1))
-  nodes$y <- scales::rescale(nodes$y, from = from, to=c(0,1))
+  gs <- .crop_update_graph(gs, nodes)
   
-  # update graph
+  return(gs)
+  
+}
+
+#-------------------------------------------------------------------------------
+.crop_gspace_image <- function(gs, crop.coord) {
+  
+  xmin <- crop.coord[1]; xmax <- crop.coord[2]
+  ymin <- crop.coord[3]; ymax <- crop.coord[4]
+  
+  # Filter nodes within the crop window
+  nodes <- gs@nodes
+  
+  # Compute image crop indices
+  nrow_mat <- nrow(gs@image)
+  ncol_mat <- ncol(gs@image)
+  col_s <- max(1L, ceiling(xmin * ncol_mat))
+  col_e <- min(ncol_mat, floor(xmax * ncol_mat))
+  row_s <- max(1L, ceiling((1 - ymax) * nrow_mat))
+  row_e <- min(nrow_mat, floor((1 - ymin) * nrow_mat))
+  d <- c(row_e - row_s + 1L, col_e - col_s + 1L)
+  
+  # Reverse pixel-center encoding to recover 1-based pixel indices
+  # x: shift to crop-window origin (left edge)
+  nodes$x <- .rescale_direct_inv(nodes$x, ncol_mat, 0.5 / ncol_mat) - (col_s - 1)
+  # y: shift to crop-window origin (top edge, image convention)
+  nodes$y <- .rescale_direct_inv(nodes$y, nrow_mat, 0.5 / nrow_mat) - (nrow_mat - row_e)
+  
+  # Re-encode to pixel centers in the cropped image
+  nodes$x <- .rescale_direct(nodes$x, d[2], 0.5 / d[2])
+  nodes$y <- .rescale_direct(nodes$y, d[1], 0.5 / d[1])
+  
+  # Crop nodes
+  cx <- nodes$x >= 0 & nodes$x <= 1
+  cy <- nodes$y >= 0 & nodes$y <= 1
+  nodes <- nodes[which(cx & cy), ]
+  
+  # Crop image
+  gs@image <- gs@image[row_s:row_e, col_s:col_e, drop = FALSE]
+  
+  gs <- .crop_update_graph(gs, nodes)
+  
+  return(gs)
+  
+}
+
+#-------------------------------------------------------------------------------
+.rescale_direct_inv <- function(x, n, half_pixel) {
+  ((x - half_pixel) / (1 - 2 * half_pixel)) * (n - 1) + 1
+}
+
+#-------------------------------------------------------------------------------
+.crop_update_graph <- function(gs, nodes) {
+  
+  # Remove edges whose endpoints are no longer in the node set
+  idx <- (gs@edges$name1 %in% nodes$name) &
+    (gs@edges$name2 %in% nodes$name)
+  gs@edges <- gs@edges[idx, ]
+  
+  # Update graph vertices
   idx <- V(gs@graph)$name %in% rownames(nodes)
   gs@graph <- igraph::delete_vertices(gs@graph, which(!idx))
   idx <- match(rownames(nodes), V(gs@graph)$name)
@@ -510,17 +583,9 @@ setMethod("cropGraphSpace", "GraphSpace",
   V(gs@graph)$y[idx] <- nodes$y
   gs@nodes <- nodes
   
-  # crop image
-  if(gs@pars$image.layer){
-    nrow_mat <- nrow(gs@image)
-    ncol_mat <- ncol(gs@image)
-    xmin <- max(1, floor(crop.coord[1] * ncol_mat) + 1)
-    xmax <- min(ncol_mat, ceiling(crop.coord[2] * ncol_mat))
-    ymin <- max(1, floor(crop.coord[3] * nrow_mat) + 1)
-    ymax <- min(nrow_mat, ceiling(crop.coord[4] * nrow_mat))
-    gs@image <- gs@image[ymin:ymax, xmin:xmax, drop = FALSE]
-  }
-  
   return(gs)
+  
 }
+
+
 

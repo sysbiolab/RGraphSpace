@@ -1,7 +1,7 @@
-# Getting started with RGraphSpace
+# Getting Started with RGraphSpace
 
   
-**Package**: RGraphSpace 1.3.0
+**Package**: RGraphSpace 1.3.1
 
 ## Introductory vignettes
 
@@ -66,6 +66,20 @@ demonstrates manual graph layout refinement.
 ###### Interactive Visualization
 
 ## Advanced workflows
+
+[![](cards/high_dim.png)](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md)
+
+[](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md)
+
+###### High-Dimensional Data
+
+[![](cards/spatial_data.png)](https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.md)
+
+[](https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.md)
+
+###### Spatial Data
+
+## *PathwaySpace* workflows
 
 These tutorials illustrate how *RGraphSpace* integrates with
 *PathwaySpace* to project and visualize network signals in a

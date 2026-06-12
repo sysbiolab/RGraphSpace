@@ -1,0 +1,286 @@
+---
+title: "Extending ggplot2 Grammar to High-Dimensional Data"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+bibliography: ../bibliography.bib
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5
+  )
+```
+
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+<br/>
+
+
+# Overview
+
+While developing *RGraphSpace*, the challenges of representing graph structures highlighted a core design assumption of the *ggplot2* ecosystem: that plotting data can be expressed in tabular form, typically as a single `data.frame` [@Wickham2016]. This approach works remarkably well for most applications, but becomes restrictive when dealing with data objects composed of multiple interdependent components.
+
+In this vignette, we explore how the `ggplot-GraphSpace` interface can be applied to high-dimensional data, enabling direct interaction with the *ggplot2* grammar and its aesthetic mapping mechanisms without repeated conversion into flat tabular representations. We demonstrate this approach using the *Seurat* package [@Yuhan2024]. `Seurat` objects encapsulate multiple coordinated representations of single-cell data, making them representative examples of high-dimensional data that cannot be naturally expressed as a single `data.frame`.
+
+# Before you start
+
+This vignette assumes prior experience with [*Seurat*](https://satijalab.org/seurat/){target="_blank" rel="noopener"} [@Yuhan2024], especially for handling transcriptomics data.
+
+`r fontawesome::fa("exclamation-triangle", fill = "orange")` **Note:** If you are new to *Seurat*, we recommend reviewing its [visualization tutorials](https://satijalab.org/seurat/articles/visualization_vignette){target="_blank" rel="noopener"} before proceeding.
+
+**Computational requirement:**
+
+* Hardware: RAM >= 16 GB
+
+* Software: R (>=4.5) and RStudio
+
+# Required packages
+
+The code below checks and installs all dependencies. These steps are only required once.
+
+```{r Check required packages, eval=TRUE, message=FALSE}
+if (!require("remotes", quietly = TRUE)){
+  install.packages("remotes")
+}
+if (!require("RGraphSpace", quietly = TRUE)){
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+if (!require("Seurat", quietly = TRUE)){
+  remotes::install_github("satijalab/seurat-data")
+}
+if (!require("SeuratData", quietly = TRUE)){
+  remotes::install_github("satijalab/seurat-data")
+}
+```
+
+```{r Check required versions, eval=TRUE, message=FALSE}
+# Check versions
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+if (packageVersion("Seurat") < "5.5.0"){
+  message("Need to update 'Seurat' for this vignette")
+  remotes::install_github("satijalab/Seurat")
+}
+```
+
+```{r Intall dataset, eval=FALSE, message=FALSE, results='hide'}
+# Install a Seurat dataset (required only once)
+SeuratData::InstallData("pbmc3k")
+```
+
+# Setting input data
+
+```{r Load packages, eval=TRUE, message=FALSE}
+# Load packages
+library("RGraphSpace")
+library("Seurat")
+library("SeuratObject")
+library("SeuratData")
+```
+
+## Loading the dataset
+
+We will use the `pbmc3k` dataset from the *SeuratData* package, consisting of single-cell transcriptomics data from peripheral blood mononuclear cells. This dataset is commonly used to showcase *Seurat* workflows [@Yuhan2024]. Here, we apply `as.GraphSpace()` to a `Seurat` object and demonstrate how high-dimensional variables can be mapped directly to *ggplot2* aesthetics.
+
+```{r Load dataset, eval=FALSE, message=FALSE, results='hide'}
+# Check manifest of installed datasets
+# SeuratData::InstalledData()
+
+# Load the 'pbmc3k' dataset
+seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
+```
+
+```{r preprocessing workflow, eval=FALSE, message=FALSE, results='hide'}
+## Common Seurat preprocessing workflow.
+## Shown for reference only, as the 'pbmc3k' 
+## dataset has already been preprocessed.
+# seurat_obj <- NormalizeData(seurat_obj)
+# seurat_obj <- ScaleData(seurat_obj)
+# seurat_obj <- FindVariableFeatures(seurat_obj)
+# seurat_obj <- RunPCA(seurat_obj)
+# seurat_obj <- RunUMAP(seurat_obj, dims = 1:30)
+```
+
+## Plotting baseline
+
+Before introducing the `ggplot-GraphSpace` interface, we first reproduce two common visualization patterns from *Seurat*: a cluster-level embedding (`DimPlot`) and a feature expression map (`FeaturePlot`). These examples provide a useful baseline for the corresponding visualizations constructed later with `ggplot-GraphSpace`.
+
+```{r Seurat reference plots - 1, eval=FALSE, message=FALSE, results='hide'}
+# Typical Seurat embedding visualization
+cpal <- adjustcolor(DiscretePalette(9, palette = "polychrome"), 0.5)
+DimPlot(seurat_obj, pt.size = 1, cols = cpal ) + 
+  theme_minimal() + theme(aspect.ratio = 1)
+```
+
+```{r Seurat_DimPlot.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# p <- DimPlot(seurat_obj, pt.size = 1, cols = palette ) +
+#   theme_minimal() + theme(aspect.ratio = 1)
+# ggsave(filename = "./vignettes/articles/figs_dev/Seurat_DimPlot.png", 
+#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
+```
+
+```{r Seurat_DimPlot, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/Seurat_DimPlot.png")
+```
+
+
+```{r Seurat reference plots - 2, eval=FALSE, message=FALSE, results='hide'}
+# Typical Seurat feature-expression visualization
+FeaturePlot(seurat_obj, features = "LYZ", 
+  cols = c("lightgrey", "blue"), pt.size = 1) + 
+  theme_minimal() + theme(aspect.ratio = 1)
+```
+
+```{r Seurat_FeaturePlot.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# p <- FeaturePlot(seurat_obj, features = "LYZ",
+#   cols = c("lightgrey", "blue"), pt.size = 1) +
+#   theme_minimal() + theme(aspect.ratio = 1)
+# ggsave(filename = "./vignettes/articles/figs_dev/Seurat_FeaturePlot.png", 
+#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
+```
+
+```{r Seurat_FeaturePlot, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/Seurat_FeaturePlot.png")
+```
+
+Note that these are high-level plotting functions. Internally, *Seurat* extracts the relevant data and generates `ggplot` objects. While this approach provides convenient and highly customizable visualizations, the underlying data structures are not directly exposed to the user, making advanced use of the *ggplot2* grammar less straightforward. For example, defining custom aesthetic mappings or interoperating with other visualization workflows often requires extra data extraction steps.
+
+## Creating a GraphSpace object
+
+Next, we create a `GraphSpace` from the `Seurat` object, exposing its underlying high-dimensional data to the *ggplot2* grammar.
+
+```{r Create a GraphSpace, eval=FALSE, message=FALSE, results='hide'}
+# Create a GraphSpace from 'seurat_obj'
+gs <- as.GraphSpace(seurat_obj, space = "embedding", reduction = "umap")
+
+# Inspect the 'gs' object
+gs
+# A GraphSpace-class object for:
+# IGRAPH 1393201 UN-- 2638 0 -- 
+# + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), orig.ident (v/x),
+# | nCount_RNA (v/n), nFeature_RNA (v/n), seurat_annotations (v/x), percent.mt (v/n),
+# | RNA_snn_res.0.5 (v/x), seurat_clusters (v/x), arrowType (e/n)
+# + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)
+```
+
+# Dimensional reduction and feature visualizations
+
+With the `GraphSpace` object ready, we can reproduce typical *Seurat* plots using standard *ggplot2* syntax.
+
+```{r Metadata plot, eval=FALSE, message=FALSE, results='hide'}
+cpal <- adjustcolor(DiscretePalette(9, palette = "polychrome"), 0.5)
+
+# Reproduce a typical Seurat cluster visualization
+ggplot(gs) + 
+  geom_nodespace(mapping = aes(fill = seurat_annotations),
+    size = 1.5, color = "grey90", stroke = 0.3) +
+  scale_fill_manual(values = cpal) +
+  labs(x = "UMAP_1", y = "UMAP_2") +
+  theme_minimal() + theme(aspect.ratio = 1) +
+  theme_gspace_legend(discrete_fill = TRUE)
+```
+
+```{r ggplot_seurat1.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# cpal <- adjustcolor(DiscretePalette(9, palette = "polychrome"), 0.75)
+# p <- ggplot(gs) +
+#   geom_nodespace(mapping = aes(fill = seurat_annotations),
+#     size = 2, color = adjustcolor("grey90",1), stroke = 0.2) +
+#   scale_fill_manual(values = cpal) +
+#   labs(x = "UMAP_1", y = "UMAP_2") +
+#   theme_minimal() +
+#   theme_gspace_legend(discrete_fill = TRUE, 
+#     aspect.ratio = 1,
+#     legend.title = element_blank())
+# ggsave(filename = "./vignettes/articles/cards/high_dim.png",
+#   height=3.5, width=3.5, units="in", device="png", dpi=200, plot=p)
+# ##---
+# p <- ggplot(gs) +
+#   geom_nodespace(mapping = aes(fill = seurat_annotations),
+#     size = 1.5, color = "grey90", stroke = 0.3) +
+#   scale_fill_manual(values = cpal) +
+#   labs(x = "UMAP_1", y = "UMAP_2") +
+#   theme_minimal() + theme(aspect.ratio = 1) +
+#   theme_gspace_legend(discrete_fill = TRUE)
+# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat1.png",
+#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
+```
+
+```{r ggplot_seurat1, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/ggplot_seurat1.png")
+```
+
+```{r Feature plot, eval=FALSE, message=FALSE, results='hide'}
+# Reproduce a typical Seurat feature visualization
+ggplot(gs) + 
+  geom_nodespace(mapping = aes(fill = LYZ), 
+    size = 1.5, color = "lightgrey", stroke = 0.3) +
+  scale_fill_continuous(palette = c("lightgrey", "blue")) +
+  labs(x = "UMAP_1", y = "UMAP_2", title = "LYZ")  +
+     theme_minimal() + theme(aspect.ratio = 1)
+```
+
+```{r ggplot_seurat2.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# p <- ggplot(gs) +
+#   geom_nodespace(mapping = aes(fill = LYZ),
+#     size = 1.5, color = "lightgrey", stroke = 0.3) +
+#   scale_fill_continuous(palette = c("lightgrey", "blue")) +
+#   labs(x = "UMAP_1", y = "UMAP_2", title = "LYZ")  +
+#      theme_minimal() + theme(aspect.ratio = 1)
+# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat2.png",
+#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
+```
+
+```{r ggplot_seurat2, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/ggplot_seurat2.png")
+```
+
+The resulting plots are essentially the same, but users now have full flexibility to interact directly with the *ggplot2* grammar and its rich ecosystem of extensions and companion packages.
+
+
+# Coercing high-dimensional data into a *GraphSpace* object {#hd-coercion}
+
+The `as.GraphSpace()` function provides a convenient way to coerce high-dimensional data into a `GraphSpace` object. However, no coercion method can anticipate every possible data structure. Below, we show how to access the relevant components of a `Seurat` object and use them to construct a `GraphSpace` manually. For another coercion example, see the [*spatial data*](spatial-data.html#sp-coercion) tutorial.
+
+```{r GraphSpace from high-dimensional data, eval=FALSE, message=FALSE, results='hide'}
+# Extract UMAP embeddings as node coordinates
+coords <- Embeddings(seurat_obj, reduction = "umap")
+coords <- coords[, seq_len(2)] |> as.data.frame()
+colnames(coords) <- c("x", "y")
+
+# Extract cell metadata
+metadata <- seurat_obj[[]]
+
+# Merge coordinates and metadata using common cell identifiers
+ids <- intersect(rownames(coords), rownames(metadata))
+coords <- cbind(coords[ids, ], metadata[ids, ])
+
+# Construct a GraphSpace object
+# Metadata become node attributes
+gs <- GraphSpace(coords)
+
+# Add high-dimensional feature data
+# Stored separately for lazy aesthetic mapping
+gs_fdata(gs) <- SeuratObject::LayerData(seurat_obj, layer = "data")
+
+# Optional: normalize node coordinates
+gs <- normalizeGraphSpace(gs, mar = 0.01)
+```
+
+
+# Session information
+```{r label='Session information', eval=TRUE, echo=FALSE}
+sessionInfo()
+```
+
+

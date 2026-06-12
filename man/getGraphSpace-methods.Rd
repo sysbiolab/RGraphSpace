@@ -12,8 +12,8 @@
 \item{gs}{A preprocessed \linkS4class{GraphSpace} class object}
 
 \item{what}{A single character value specifying which slot to
-retrieve from the 'GraphSpace' object.
-Options: "graph", "nodes", "edges", "pars", "misc", and "image".}
+retrieve from a 'GraphSpace' object.
+Options: "graph", "nodes", "edges", "pars", "misc", "image", and "fdata".}
 }
 \value{
 Content from slots in the \linkS4class{GraphSpace} object.

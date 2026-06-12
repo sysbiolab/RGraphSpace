@@ -13,7 +13,7 @@
     node.labels, names(node.labels))
   idx_df <- .label_idx(node.labels, nodes)
   if(any(is.na(idx_df$idx))){
-    stop("All 'node.labels' should be annotated in the 'PathwaySpace' object.",
+    stop("All 'node.labels' should be annotated in the 'GraphSpace' object.",
       call. = FALSE)
   }
   nodes_ft <- nodes[idx_df$idx, , drop = FALSE]

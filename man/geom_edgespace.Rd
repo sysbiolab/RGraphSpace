@@ -7,7 +7,7 @@
 \usage{
 geom_edgespace(
   mapping = NULL,
-  data = edgespace_handler(),
+  data = NULL,
   stat = StatEdgeSpace,
   position = "identity",
   ...,
@@ -17,7 +17,11 @@ geom_edgespace(
   arrow_size = 1,
   arrow_offset = 0.01,
   lineend = "butt",
-  linejoin = "mitre"
+  linejoin = "mitre",
+  raster = FALSE,
+  dpi = NULL,
+  dev = "cairo",
+  scale = 1
 )
 
 edgespace_handler()
@@ -29,7 +33,8 @@ from the top-level plot.}
 
 \item{data}{The data to be displayed in this layer. It can be a
 \link{GraphSpace} object, an \link[igraph]{igraph} object, or the
-\code{edgespace_handler()} handler (default).}
+\code{edgespace_handler()} closure. When \code{NULL} (default),
+a handler is created internally.}
 
 \item{stat}{The statistical transformation to use on the data.
 Defaults to \code{identity}.}
@@ -60,6 +65,17 @@ compatibility with \link[ggplot2]{geom_segment}.}
 
 \item{linejoin}{Line join style (round, mitre, bevel). Supplied for
 compatibility with \link[ggplot2]{geom_segment}.}
+
+\item{raster}{Logical. Should node glyphs be rasterized?
+Rasterization support is based on \code{\link[ggrastr]{rasterise}}.}
+
+\item{dpi}{Numeric. Rasterization resolution.}
+
+\item{dev}{Character. Rasterization backend. One of \code{"cairo"},
+\code{"ragg"}, \code{"ragg_png"}, or \code{"cairo_png"}.}
+
+\item{scale}{Numeric. Rasterization scaling factor
+(see \code{\link[ggrastr]{rasterise}}).}
 }
 \value{
 A ggplot2 layer that renders edge segments defined by
@@ -95,7 +111,7 @@ are automatically retrieved from the \link{GraphSpace} object.
 
 \tabular{ll}{
 \strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required (automatically supplied).\cr
-\code{colour} \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{colour} \tab Edge colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
 \code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
 \code{linetype} \tab Edge line type (see \link[ggplot2]{aes_linetype_size_shape}).\cr
 \code{linewidth} \tab Edge line width (see \link[ggplot2]{aes_linetype_size_shape}).
@@ -115,9 +131,9 @@ arguments (see \emph{details}).
 \section{Integration with ggraph}{
 
 
-\code{geom_nodespace} is compatible with the \code{ggraph} methods.
+\code{geom_edgespace} is compatible with the \code{ggraph} methods.
 When used within a \code{ggraph()} call, the default \code{edgespace_handler()}
-handler automatically:
+automatically:
 \itemize{
 \item Identifies the current \code{layout_ggraph}.
 \item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.

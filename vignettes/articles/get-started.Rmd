@@ -1,5 +1,5 @@
 ---
-title: "Getting started with RGraphSpace"
+title: "Getting Started with RGraphSpace"
 author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: ../bibliography.bib
@@ -52,7 +52,6 @@ ps_cards1 %>%
 
 <div class="mt-5 mb-4"></div>
 
-
 # General applications
 
 These tutorials showcase *RGraphSpace* applied to real-world scenarios: [*mapping graphs to images*](mapping-images.html) illustrates the use of images as spatial references; [*interoperability with ggraph & sf*](interoperability.html) details integration strategies; and [*interactive visualization*](interactive.html) demonstrates manual graph layout refinement.
@@ -80,6 +79,30 @@ ps_cards2 %>%
 <div class="mt-5 mb-4"></div>
 
 # Advanced workflows
+
+
+```{r, include=FALSE}
+title <- c("High-Dimensional Data", "Spatial Data")
+image <- c("cards/high_dim.png", "cards/spatial_data.png")
+link <- c("high-dimensional.html","spatial-data.html")
+ps_cards3 <- data.frame(title = title, image = image, link = link)
+```
+
+```{r, echo=FALSE}
+ps_cards3 %>% 
+  cards(
+      title = title,
+      image = image,
+      link = link,
+      layout = "label-below", 
+      width = 3,
+      border_radius = 5
+  )
+```
+
+<div class="mt-5 mb-4"></div>
+
+# *PathwaySpace* workflows
 
 These tutorials illustrate how *RGraphSpace* integrates with *PathwaySpace* to project and visualize network signals in a high-dimensional context.
 

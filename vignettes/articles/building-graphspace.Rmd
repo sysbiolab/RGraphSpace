@@ -1,5 +1,5 @@
 ---
-title: "Building a graph space"
+title: "Building a Graph Space"
 author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: ../bibliography.bib
@@ -23,6 +23,14 @@ knitr::opts_chunk$set(
 
 <br/>
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+
+```{r Check required version, eval=TRUE, message=FALSE}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.3.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
 
 # Quick start
 
@@ -92,7 +100,7 @@ V(gtoy1)$nodeLineWidth <- 1
 V(gtoy1)$nodeLineColor <- "grey20"
 
 # Node labels ('NA' will omit labels)
-V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
+V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", "V5")
 
 # Node label size (in pts)
 V(gtoy1)$nodeLabelSize <- 8
@@ -159,17 +167,18 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 #   units="in", device="png", dpi=200, plot = p)
 ```
 
-
 # Passing graphs to *geoms*
 
 Alternatively, the `igraph` object can be transformed into a `GraphSpace` container and passed to the underlying `geoms`:
 
 ```{r Using geoms, eval=TRUE, message=FALSE, out.width="80%"}
+data('gtoy1', package = 'RGraphSpace')
 gs <- GraphSpace(gtoy1)
 gs <- normalizeGraphSpace(gs)
 ggplot(gs) + 
-  geom_edgespace() +
-  geom_nodespace() +
+  geom_edgespace() + 
+  geom_nodespace() + 
+  geom_text(aes(x = x, y = y, label = nodeLabel), size = 2) + 
   theme_gspace_coords(is_norm = TRUE)
 ```
 

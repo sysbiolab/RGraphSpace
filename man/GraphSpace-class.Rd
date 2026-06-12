@@ -13,19 +13,24 @@ GraphSpace: An S4 class for igraph objects
 \section{Slots}{
 
 \describe{
-\item{\code{nodes}}{A data frame with xy-vertex coordinates.}
+\item{\code{nodes}}{A data frame containing node coordinates, attributes, and metadata.}
 
-\item{\code{edges}}{A data frame with edges.}
+\item{\code{edges}}{A data frame containing edge relationships and attributes.}
 
-\item{\code{graph}}{An igraph object.}
+\item{\code{graph}}{An \code{\link[igraph]{igraph}} object representing the graph
+structure.}
 
-\item{\code{image}}{A raster background image matrix.}
+\item{\code{image}}{A \code{raster} object (see \code{\link[grDevices]{as.raster}}) used
+as background image.}
+
+\item{\code{fdata}}{A \code{\link[Matrix]{Matrix}} object storing high-dimensional
+feature data associated with graph nodes.}
 
 \item{\code{pars}}{A list with parameters.}
 
 \item{\code{misc}}{A list with intermediate objects for downstream methods.}
 
-\item{\code{uuid}}{An Universally Unique Identifier (UUID).}
+\item{\code{uuid}}{A Universally Unique Identifier (UUID) for the object instance.}
 }}
 
 \section{Constructor}{

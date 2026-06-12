@@ -22,17 +22,25 @@ install.packages("remotes")
 
 # Package source
 remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
+```
 
-# Other packages used in the tutorials
+#### Other packages used in the tutorials
+
+``` r
+
+install.packages("ggraph")
 install.packages("sf")
 install.packages("maps")
 install.packages("geometry")
 install.packages("rnaturalearth")
-install.packages("tidygraph")
-install.packages("ggraph")
+install.packages("ggnewscale")
+
 install.packages("BiocManager")
 BiocManager::install("RedeR")
-install.packages("ggnewscale")
+BiocManager::install("glmGamPoi")
+
+install.packages("Seurat")
+remotes::install_github("satijalab/seurat-data")
 ```
 
 ## Citation

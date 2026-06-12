@@ -19,10 +19,6 @@
 #' \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.
 #' @param verbose A logical value. If \code{TRUE}, displays detailed messages.
 #' @param ... Additional arguments passed to the \code{GraphSpace} constructor.
-#' @param mar `r lifecycle::badge("deprecated")` Deprecated since
-#' RGraphSpace 1.1.1; use \link{normalizeGraphSpace} instead.
-#' @param image `r lifecycle::badge("deprecated")` Deprecated since
-#' RGraphSpace 1.1.1; use \link{normalizeGraphSpace} instead.
 #' 
 #' @return A \linkS4class{GraphSpace} class object.
 #' 
@@ -151,18 +147,8 @@
 #' @rdname GraphSpace-methods
 #' @export
 setMethod("GraphSpace", signature(g = "ANY"),
-  function(g, layout = NULL, verbose = TRUE,  
-    mar = deprecated(), image = deprecated(), ...) {
-    ### deprecate
-    if (lifecycle::is_present(mar)) {
-      deprecate_soft("1.1.1", "GraphSpace(mar)", 
-        "normalizeGraphSpace(mar)")
-    }
-    if (lifecycle::is_present(image)) {
-      deprecate_soft("1.1.1", "GraphSpace(image)", 
-        "normalizeGraphSpace(image)")
-    }
-    ###
+  function(g, layout = NULL, verbose = TRUE, ...) {
+    
     #--- validate argument values
     .validate_gs_args("singleLogical", "verbose", verbose)
     if(inherits(g, "layout_ggraph")){
@@ -181,6 +167,7 @@ setMethod("GraphSpace", signature(g = "ANY"),
       )
       g <- attr(g, "graph")
     }
+    
     if (inherits(g, "igraph")) {
       class(g) <- "igraph"
     } else {
@@ -204,6 +191,7 @@ setMethod("GraphSpace", signature(g = "ANY"),
         )
       } 
     }
+    
     #--- validate igraph and build a gs object
     gs <- .buildGraphSpace(g, layout, verbose)
     
@@ -261,7 +249,6 @@ setMethod("GraphSpace", signature(g = "data.frame"),
   return(g)
   
 }
-
 
 #-------------------------------------------------------------------------------
 #' @title Wrapper function to plot GraphSpace objects in ggplot2
@@ -334,7 +321,7 @@ setMethod("plotGraphSpace", "GraphSpace",
         ylab = "Graph coordinates 2", font.size = 1,
         bg.color = "grey95", add.labels = FALSE,
         node.labels = NULL, label.size = 3, 
-        label.color = "grey20", add.image = FALSE, 
+        label.color = "grey20", add.image = TRUE, 
         raster = FALSE, dpi = 300, dev = "cairo_png") {
         #--- validate the gs object and args
         .validate_gs_args("singleString", "xlab", xlab)
@@ -455,8 +442,8 @@ plot.GraphSpace <- function(x, ...) {
 #'
 #' @param gs A preprocessed \linkS4class{GraphSpace} class object
 #' @param what A single character value specifying which slot to 
-#' retrieve from the 'GraphSpace' object.
-#' Options: "graph", "nodes", "edges", "pars", "misc", and "image".
+#' retrieve from a 'GraphSpace' object.
+#' Options: "graph", "nodes", "edges", "pars", "misc", "image", and "fdata".
 #' @return Content from slots in the \linkS4class{GraphSpace} object.
 #' @examples
 #' library(RGraphSpace)
@@ -477,51 +464,51 @@ plot.GraphSpace <- function(x, ...) {
 #' @aliases getGraphSpace
 #' @export
 setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
-    opts <- c("graph", "nodes", "edges", "pars", "misc", "image")
-    if (!what %in% opts) {
-        opts <- paste0(opts, collapse = ", ")
-        stop("'what' must be one of:\n", opts, call. = FALSE)
-    }
-    if (what == "nodes") {
-        obj <- gs@nodes
-    } else if (what == "edges") {
-        obj <- gs@edges
-    } else if (what == "graph") {
-        obj <- gs@graph
-    } else if (what == "pars") {
-        obj <- gs@pars
-    } else if (what == "misc") {
-        obj <- gs@misc
-    } else if (what == "image") {
-        obj <- gs@image
-    } else {
-        obj <- gs@graph
-    }
-    return(obj)
+  .validate_gs_args("singleString", "what", what)
+  opts <- c("graph", "nodes", "edges", "pars", "misc", "image", "fdata")
+  if (!what %in% opts) {
+    opts <- paste0(opts, collapse = ", ")
+    stop("'what' must be one of:\n", opts, call. = FALSE)
+  }
+  if (what == "nodes") {
+    obj <- gs@nodes
+  } else if (what == "edges") {
+    obj <- gs@edges
+  } else if (what == "graph") {
+    obj <- gs@graph
+  } else if (what == "pars") {
+    obj <- gs@pars
+  } else if (what == "misc") {
+    obj <- gs@misc
+  } else if (what == "image") {
+    obj <- gs@image
+  } else if (what == "fdata") {
+    obj <- gs@fdata
+  } else {
+    obj <- gs@graph
+  }
+  return(obj)
 })
 
 #-------------------------------------------------------------------------------
-# show summary information on screen
-setMethod("show", "GraphSpace", function(object) {
-    message("A GraphSpace-class object for:")
-    obj <- getGraphSpace(object, what = "graph")
-    summary(obj)
-})
-
-#-------------------------------------------------------------------------------
-#' @title Accessors for applying essential igraph methods to modify
-#' attributes of GraphSpace objects.
+#' @title Accessors and attribute utilities for GraphSpace objects
 #' 
-#' @description Access and modify individual slots of a GraphSpace 
-#' object. Selected 'igraph' methods are applied to the 'graph' slot and 
-#' propagated to downstream components.
+#' @description Access and modify individual components of a
+#' \linkS4class{GraphSpace} object. Selected \pkg{igraph} methods are
+#' applied to the internal graph representation and propagated to
+#' downstream node and edge components.
 #' 
 #' @param x A \linkS4class{GraphSpace} class object
 #' @param name Name of the attribute.
-#' @param value The new value of the attribute.
-#' @param ... Additional arguments passed to igraph and extraction methods.
+#' @param value Replacement value for the selected slot or attribute.
+#' @param ... Additional arguments passed to extraction methods. 
+#' @details
+#' For \code{gs_nodes()}, the optional \code{vars} argument specifies
+#' node-associated features retrieved from the \code{fdata}
+#' container. See also \code{\link{gs_fetch_features}}.
 #' @return Updated \linkS4class{GraphSpace} object.
-#' @seealso \code{\link[igraph]{vertex_attr}}, \code{\link[igraph]{edge_attr}}
+#' @seealso \code{\link[igraph]{vertex_attr}}, \code{\link[igraph]{edge_attr}}, 
+#' \code{\link{gs_fetch_features}}
 #' @examples
 #' library(RGraphSpace)
 #' library(igraph)
@@ -533,11 +520,17 @@ setMethod("show", "GraphSpace", function(object) {
 #' gs <- GraphSpace(gtoy1)
 #' 
 #' #--- Usage of GraphSpace attribute accessors:
-#'
-#' # Get a data frame with nodes for plotting methods
+#' 
+#' # Vertex names
+#' names(gs)
+#' 
+#' # Vertex attribute names
+#' gs_names(gs)
+#' 
+#' # Get a data frame with nodes
 #' gs_nodes(gs)
 #' 
-#' # Get a data frame with edges for plotting methods
+#' # Get a data frame with edges
 #' gs_edges(gs)
 #' 
 #' # Get vertex count
@@ -545,9 +538,6 @@ setMethod("show", "GraphSpace", function(object) {
 #' 
 #' # Get edge count
 #' gs_ecount(gs)
-#' 
-#' # Get vertex names
-#' names(gs)
 #' 
 #' # Access all vertex attributes
 #' gs_vertex_attr(gs)
@@ -573,32 +563,117 @@ setMethod("show", "GraphSpace", function(object) {
 #' # Alternative syntax using `$` for edge attributes
 #' gs_edge_attr(gs)$edgeLineWidth <- 3
 #' 
+#' # Add an image and rescale graph coordinates to image space
+#' # Images may be provided as a raster or numeric matrix
+#' gs_image(gs) <- as_colorraster(volcano)
+#' gs <- normalizeGraphSpace(gs)
+#' 
 #' @aliases names
-#' @aliases names<-
-#' @aliases gs_graph
+#' @aliases gs_names
 #' @aliases gs_nodes
 #' @aliases gs_edges
+#' @aliases gs_graph
+#' @aliases gs_image
+#' @aliases gs_image<-
+#' @aliases gs_fdata
+#' @aliases gs_fdata<-
+#' @aliases gs_features
+#' @aliases gs_nfeatures
 #' @aliases gs_vcount
 #' @aliases gs_ecount
 #' @aliases gs_vertex_attr
-#' @aliases gs_edge_attr
 #' @aliases gs_vertex_attr<-
+#' @aliases gs_edge_attr
 #' @aliases gs_edge_attr<-
 #' @rdname GraphSpace-accessors
 #' @export
-setMethod("gs_nodes", "GraphSpace", function(x) {
-  x <- x@nodes
-  attr(x, "gs_handler_type") <- "node"
-  class(x) <- c("gs_nodes", class(x))
-  return(x)
+setMethod("names", "GraphSpace", function(x) {
+  x@nodes$name
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_names", "GraphSpace", function(x) {
+  colnames(x@nodes)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_nodes", "GraphSpace", function(x, ...) {
+  
+  args <- list(...)
+  
+  vars <- args$vars
+  
+  nodes <- x@nodes
+  
+  if (!is.null(vars) && .all_characterValues(vars)) {
+    
+    signal_df <- gs_fetch_features(x, vars = vars, as_df = TRUE)
+    
+    if (!is.null(signal_df)) {
+      
+      signal_vars <- setdiff(colnames(signal_df), colnames(nodes) )
+      
+      if (length(signal_vars) > 0) {
+        signal_df <- signal_df[ rownames(nodes), signal_vars, drop = FALSE]
+        nodes[, signal_vars] <- signal_df
+      }
+      
+    }
+    
+  }
+  
+  attr(nodes, "gs_handler_type") <- "node"
+  attr(nodes, "gs_id") <- x@uuid
+  class(nodes) <- c("gs_nodes", class(nodes))
+  return(nodes)
+  
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_edges", "GraphSpace", function(x) {
-  x <- .gs_edges(x)
-  attr(x, "gs_handler_type") <- "edge"
-  class(x) <- c("gs_edges", class(x))
+  edges <- .gs_edges(x)
+  attr(edges, "gs_id") <- x@uuid
+  attr(edges, "gs_handler_type") <- "edge"
+  class(edges) <- c("gs_edges", class(edges))
+  return(edges)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_image", "GraphSpace", function(x) {
+  x <- x@image
+  attr(x, "gs_handler_type") <- "image"
+  class(x) <- c("gs_image", class(x))
+  return(x)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
+
+  if(!is.raster(value)){
+    .validate_gs_args("numeric_mtx", "value", value)
+    rlang::inform(
+      c("i" = "Rasterizing numeric matrix.",
+        "*" = "Values outside [0,1] were rescaled before conversion.")
+    )
+    rng <- range(value, na.rm = TRUE)
+    if (diff(rng) == 0) {
+      if (rng[1] < 0 || rng[1] > 1) {
+        value[] <- 0
+      }
+    } else if (rng[1] < 0 || rng[2] > 1) {
+      value <- (value - rng[1]) / diff(rng)
+    }
+    value <- as.raster(value)
+  }
+  x@image <- value
+  x@misc$image <- value
+  x@pars$image.layer <- TRUE
+  
   return(x)
 })
 
@@ -613,6 +688,37 @@ setMethod("gs_graph", "GraphSpace", function(x) {
 
 #' @rdname GraphSpace-accessors
 #' @export
+setMethod("gs_fdata", "GraphSpace", function(x) {
+  x@fdata
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setReplaceMethod("gs_fdata", "GraphSpace", function(x, value) {
+  
+  x <- gs_add_features(x, value)
+  
+  validObject(x)
+  
+  return(x)
+  
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_nfeatures", "GraphSpace", function(x) {
+    ncol(x@fdata)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_features", "GraphSpace", function(x) {
+  colnames(x@fdata)
+})
+
+
+#' @rdname GraphSpace-accessors
+#' @export
 setMethod("gs_vcount", "GraphSpace", function(x) {
   igraph::vcount(x@graph)
 })
@@ -621,19 +727,6 @@ setMethod("gs_vcount", "GraphSpace", function(x) {
 #' @export
 setMethod("gs_ecount", "GraphSpace", function(x) {
     igraph::ecount(x@graph)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("names", "GraphSpace", function(x) {
-    x@nodes$name
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("names<-", "GraphSpace", function(x, value) {
-    gs_vertex_attr(x, "name") <- value
-    return(x)
 })
 
 #' @rdname GraphSpace-accessors
@@ -790,7 +883,7 @@ setReplaceMethod("$", "GraphSpace", function(x, name, value) {
 })
 
 #' @rdname GraphSpace-accessors
-#' @importFrom igraph as.igraph
+#' @method as.igraph GraphSpace
 #' @export
 as.igraph.GraphSpace <- function(x, ...) {
   return(x@graph)

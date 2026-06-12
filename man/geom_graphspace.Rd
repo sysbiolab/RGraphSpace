@@ -14,7 +14,11 @@ geom_graphspace(
   show.legend = NA,
   inherit.aes = FALSE,
   arrow_size = 1,
-  arrow_offset = 0.01
+  arrow_offset = 0.01,
+  raster = FALSE,
+  dpi = NULL,
+  dev = "cairo",
+  scale = 1
 )
 }
 \arguments{
@@ -47,6 +51,17 @@ geometry (see 'drawing' section).}
 
 \item{arrow_offset}{Numeric value controlling the base offset of arrows
 at edge endpoints (see 'drawing' section).}
+
+\item{raster}{Logical. Should node glyphs be rasterized?
+Rasterization support is based on \code{\link[ggrastr]{rasterise}}.}
+
+\item{dpi}{Numeric. Rasterization resolution.}
+
+\item{dev}{Character. Rasterization backend. One of \code{"cairo"},
+\code{"ragg"}, \code{"ragg_png"}, or \code{"cairo_png"}.}
+
+\item{scale}{Numeric. Rasterization scaling factor
+(see \code{\link[ggrastr]{rasterise}}).}
 }
 \value{
 A ggplot2 layer that renders node glyphs defined by

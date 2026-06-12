@@ -19,7 +19,8 @@
 #'
 #' @param data The data to be displayed in this layer. It can be a 
 #' \link{GraphSpace} object, an \link[igraph]{igraph} object, or the 
-#' \code{edgespace_handler()} handler (default).
+#' \code{edgespace_handler()} closure. When \code{NULL} (default),
+#' a handler is created internally.
 #'
 #' @param stat The statistical transformation to use on the data.
 #' Defaults to \code{identity}.
@@ -51,6 +52,17 @@
 #' @param linejoin Line join style (round, mitre, bevel). Supplied for 
 #' compatibility with \link[ggplot2]{geom_segment}.
 #' 
+#' @param raster Logical. Should node glyphs be rasterized? 
+#' Rasterization support is based on \code{\link[ggrastr]{rasterise}}.
+#' 
+#' @param dpi Numeric. Rasterization resolution.
+#' 
+#' @param dev Character. Rasterization backend. One of `"cairo"`,
+#' `"ragg"`, `"ragg_png"`, or `"cairo_png"`.
+#' 
+#' @param scale Numeric. Rasterization scaling factor
+#' (see \code{\link[ggrastr]{rasterise}}).
+#' 
 #' @return A ggplot2 layer that renders edge segments defined by
 #' \link{GeomEdgeSpace}.
 #' 
@@ -63,7 +75,7 @@
 #'
 #' \tabular{ll}{
 #'   \strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required (automatically supplied).\cr
-#'   \code{colour} \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{colour} \tab Edge colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
 #'   \code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
 #'   \code{linetype} \tab Edge line type (see \link[ggplot2]{aes_linetype_size_shape}).\cr
 #'   \code{linewidth} \tab Edge line width (see \link[ggplot2]{aes_linetype_size_shape}).
@@ -81,9 +93,9 @@
 #' 
 #' @section Integration with ggraph:
 #' 
-#' \code{geom_nodespace} is compatible with the \code{ggraph} methods.
+#' \code{geom_edgespace} is compatible with the \code{ggraph} methods.
 #' When used within a \code{ggraph()} call, the default \code{edgespace_handler()} 
-#' handler automatically:
+#' automatically:
 #' \itemize{
 #'   \item Identifies the current \code{layout_ggraph}.
 #'   \item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
@@ -127,11 +139,12 @@
 #' }
 #' 
 #' @export
-geom_edgespace <- function(mapping = NULL, data = edgespace_handler(),
+geom_edgespace <- function(mapping = NULL, data = NULL,
   stat = StatEdgeSpace, position = "identity", ..., 
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE,
   arrow_size = 1, arrow_offset = 0.01,
-  lineend = "butt", linejoin = "mitre") {
+  lineend = "butt", linejoin = "mitre",
+  raster = FALSE, dpi = NULL, dev = "cairo", scale = 1) {
   
   # Check custom params
   .validate_gs_args("singleLogical", "na.rm", na.rm)
@@ -140,7 +153,9 @@ geom_edgespace <- function(mapping = NULL, data = edgespace_handler(),
   .validate_gs_args("singleString", "lineend", lineend)
   .validate_gs_args("singleString", "linejoin", linejoin)
   
-  if (!inherits(data, "edgespace_handler")){
+  if (is.null(data)){
+    data <- edgespace_handler()
+  } else if (!inherits(data, "edgespace_handler")){
     if (is.function(data)){
       rlang::abort(
         message = c(
@@ -161,7 +176,11 @@ geom_edgespace <- function(mapping = NULL, data = edgespace_handler(),
     lineend = lineend,
     linejoin = linejoin,
     .size_unit = "mm",
-    .nodes = NULL,
+    .nodes = NULL, 
+    raster = raster, 
+    dpi = dpi, 
+    dev = dev, 
+    scale = scale,
     ...)
   
   ggplot2::layer(
@@ -216,35 +235,46 @@ StatEdgeSpace <- ggproto(
 #' @rdname geom_edgespace
 #' @export
 edgespace_handler <- function() {
+  
   fn <- function(data) {
+    
+    if (is_waiver(data)) return(NULL)
+    
     if ( inherits(data, c("igraph", "layout_ggraph")) ) {
       data <- gs_edges(GraphSpace(data, verbose = FALSE))
     } else if (inherits(data, "GraphSpace")){
       data <- gs_edges(data)
     } else if (inherits(data, "gs_nodes")){
-      data <- attr(data, ".edges")
-      if(!inherits(data, "gs_edges")){
+      if(inherits(attr(data, ".gs_graph"), "GraphSpace")){
+        data <- gs_edges(attr(data, ".gs_graph"))
+      } else {
         rlang::warn(
           message = c(
             "x" = "`edgespace_handler()` found no edges in the input data.",
-            "i" = "Input must be a 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout."
+            "i" = "Input must be a 'GraphSpace', 'gs_edges', 'igraph', 'tidygraph', or 'ggraph' layout."
           )
         )
         data <- NULL
       }
-    } else {
+    } else if (!inherits(data, "gs_edges")){
       rlang::abort(
         message = c(
           "x" = "`edgespace_handler()` received an unsupported object type.",
-          "i" = "Input must be a 'GraphSpace', 'igraph', 'tidygraph', or 'ggraph' layout."
+          "i" = "Input must be a 'GraphSpace', 'gs_edges', 'igraph', 'tidygraph', or 'ggraph' layout."
         )
       )
     }
+    
     return(data)
+    
   }
+  
   attr(fn, "gs_handler_type") <- "edge"
+  
   class(fn) <- c("edgespace_handler", class(fn))
+  
   return(fn)
+  
 }
 
 #-------------------------------------------------------------------------------
@@ -283,6 +313,10 @@ edgespace_handler <- function() {
 #-------------------------------------------------------------------------------
 .params_edgespace <- function(params, edges, mapping){
   
+  # Note: 'mapping' is read from colnames(edges) because, at this
+  # stage, ggplot2 has already evaluated aes() and pruned unmapped
+  # columns. Any standard aesthetic name present here (e.g. "colour") 
+  # was explicitly mapped by the user.
   if(missing(mapping)){
     mapping <- colnames(edges)
   } else {
@@ -335,6 +369,7 @@ edgespace_handler <- function() {
 #' @seealso
 #' \link{geom_edgespace}, \link[ggplot2]{geom_segment}
 #'
+#' @importFrom ggplot2 draw_key_path
 #' @export
 GeomEdgeSpace <- ggproto(
   
@@ -354,13 +389,15 @@ GeomEdgeSpace <- ggproto(
   
   draw_panel = function(self, data, panel_params, coord,   
     arrow_size = 1, arrow_offset = 0.01, lineend = "butt", 
-    linejoin = "mitre", na.rm = FALSE, .size_unit = "mm", 
+    linejoin = "mitre", na.rm = FALSE, raster = FALSE, 
+    dpi = NULL, dev = "cairo", scale = 1, .size_unit = "mm", 
     .nodes = NULL) {
     
-    if(is.null(.nodes)){
-      data <- .geom_adj_edge_offsets(data, size_unit = .size_unit)
-    } else {
+    required_att <- c("x", "y", "vertex", "size", "stroke")
+    if(!is.null(.nodes) && all(required_att %in% colnames(.nodes))){
       data <- .geom_remap_edge_offsets(data, .nodes, size_unit = .size_unit)
+    } else {
+      data <- .geom_adj_edge_offsets(data, size_unit = .size_unit)
     }
     
     data$arrow_size <- (arrow_size %||% 1)
@@ -376,87 +413,24 @@ GeomEdgeSpace <- ggproto(
     grobs <- .get_edge_grobs(coords, lineend = lineend, 
       linejoin = linejoin, size_unit = .size_unit)
     
-    grid::gTree(children = grobs,
+    edge_grob <- grid::gTree(children = grobs,
       name = grid::grobName(prefix = "geom_edgespace")
     )
+    
+    if (raster) {
+      edge_grob <- .as_rasteriser(edge_grob, dpi = dpi, 
+        dev = dev, scale = scale)
+    }
+    
+    edge_grob
     
   },
   draw_key = draw_key_path
 )
 
-#-------------------------------------------------------------------------------
-# --- Calculate Edge Offset ---
-# The offset is the effective node radius: (size/2) + (stroke/2).
-# 1. 'size' is the node diameter in points (mm * .pt). We use half for the radius.
-# 2. 'stroke' is approx. 0.75 mm per unit (see 'aes_linetype_size_shape');
-#    it's pre-processed by gg_par() as (stroke * .stroke / 2).
-# 3. Since the border sits half-in/half-out of the node's edge, we rectify 
-#    'stroke' to find the actual external thickness added to the radius.
-# 4. Final sum is converted to 'npc' for grid coordinate alignment.
-.geom_remap_edge_offsets <- function(edges, nodes, size_unit){
-  mm2npc <- grid::convertWidth(unit(1, "mm"), unitTo = "npc", valueOnly = T)
-  if(size_unit=="mm"){
-    # input 'size' in 'mm', scaled to 'npc' by mm2npc
-    n_offsets <- nodes[["size"]]/2 * mm2npc
-  } else {
-    # input 'size' in [0, 100], transformed to 'npc' by 0.01
-    n_offsets <- nodes[["size"]]/2 * 0.01
-  }
-  # input 'stroke' and 'linewidth' in 'mm', scaled to 'npc'
-  n_offsets <- n_offsets + ( nodes[["stroke"]]/2 * 0.75 * mm2npc )
-  e_offsets <-  edges[["linewidth"]] * 0.75 * mm2npc
-  
-  emode <- .get_emode(edges[["arrowType"]])
-  edges$offset_start <- ifelse(emode %in% c(0,1), 0, 
-    n_offsets[edges[["vertex1"]]] + e_offsets)
-  edges$offset_end <- ifelse(emode %in% c(0,2), 0, 
-    n_offsets[edges[["vertex2"]]] + e_offsets)
-  
-  return(edges)
-  
-}
-
-#-------------------------------------------------------------------------------
-# Adjust offsets to 'size_unit', add 'linewidth' and a default 'stroke'
-.geom_adj_edge_offsets <- function(edges, size_unit){
-  
-  if(size_unit=="mm"){
-    sz2npc <- grid::convertWidth(unit(1, "mm"), unitTo = "npc", valueOnly = T)
-  } else {
-    sz2npc <- 0.01
-  }
-  stroke <- 0.5 * 0.75 * sz2npc
-  linewidth <-  edges[["linewidth"]] * 0.75 * sz2npc
-  offset_start <- (edges[["offset_start"]]/2 * sz2npc) + linewidth + stroke
-  offset_end <- (edges[["offset_end"]]/2 * sz2npc) + linewidth + stroke
-  
-  emode <- .get_emode(edges[["arrowType"]])
-  edges$offset_start <- ifelse(emode %in% c(0,1), 0, offset_start)
-  edges$offset_end <- ifelse(emode %in% c(0,2), 0, offset_end)
-  
-  return(edges)
-  
-}
-
-#-------------------------------------------------------------------------------
-.geom_adj_arrow_offsets <- function(edges){
-  edges$offset_start <- edges[["offset_start"]] + edges[["arrow_offset"]]
-  edges$offset_end <- edges[["offset_end"]] + edges[["arrow_offset"]]
-  return(edges)
-}
-
-#-------------------------------------------------------------------------------
-.geom_adj_arrow_size <- function(edges, size_unit){
-  if(size_unit == "mm"){
-    edges$arrow_size <- edges[["arrow_size"]] * ggplot2::.pt
-  } else {
-    edges$arrow_size <- edges[["arrow_size"]] * ggplot2::.pt * 0.01
-  }
-  return(edges)
-}
-
-#-------------------------------------------------------------------------------
-# segmentsGrob
+################################################################################
+### segmentsGrob
+################################################################################
 .get_edge_grobs <- function(edges, lineend = "butt", 
   linejoin = "mitre", size_unit = "npc"){
   
@@ -532,6 +506,105 @@ GeomEdgeSpace <- ggproto(
 }
 
 ################################################################################
+### Edge Offsets
+################################################################################
+# Here, the final node sizes computed by ggplot2 are available.
+# Clipping offsets are adjusted using the effective node radius,
+# stroke, and linewidth;
+# The effective node radius is: (size / 2) + (stroke / 2); 'size' 
+# represents the node diameter in points (mm * .pt) and is converted
+# to 'npc' for alignment with grid coordinates;
+# For stroke, see .stroke_offset_estimate();
+# For linewidth, see .lwd_offset_estimate().
+.geom_remap_edge_offsets <- function(edges, nodes, size_unit){
+  
+  # size-to-npc conversion factor (1 mm expressed in npc units)
+  sz2npc <- grid::convertWidth(unit(1, "mm"), unitTo = "npc", valueOnly = T)
+  
+  if(size_unit=="mm"){
+    # ggplot2 node 'size' in 'mm', scaled to 'npc'
+    n_offsets <- nodes[["size"]]/2 * sz2npc
+  } else {
+    # gspace node 'size' in [0, 100], transformed to 'npc'
+    n_offsets <- nodes[["size"]]/2 * .gs_nsz_to_npc()
+  }
+  # 'stroke' and 'linewidth' in 'mm', scaled to 'npc'
+  n_offsets <- n_offsets + (nodes[["stroke"]] * .stroke_offset_estimate(sz2npc))
+  e_offsets <-  edges[["linewidth"]] * .lwd_offset_estimate(sz2npc)
+  
+  edges$offset_start <- n_offsets[edges[["vertex1"]]] + e_offsets
+  edges$offset_end <- n_offsets[edges[["vertex2"]]] + e_offsets
+  
+  return(edges)
+  
+}
+
+#-------------------------------------------------------------------------------
+# Here, the final node sizes computed by ggplot2 are not available;
+# Pre-computed clipping offsets are therefore adjusted using 
+# 'size_unit', together with linewidth and a default stroke estimate
+.geom_adj_edge_offsets <- function(edges, size_unit){
+  
+  # size-to-npc conversion factor (1 mm expressed in npc units)
+  sz2npc <- grid::convertWidth(unit(1, "mm"), unitTo = "npc", valueOnly = T)
+  
+  if(size_unit=="mm"){
+    # ggplot2 node 'size' in 'mm', scaled to 'npc'
+    n_offsets <- sz2npc
+  } else {
+    # gspace node 'size' in [0, 100], transformed to 'npc'
+    n_offsets <- .gs_nsz_to_npc()
+  }
+  stroke_offset <- .stroke_offset_estimate(sz2npc)
+  lwd_offset <- edges[["linewidth"]] * .lwd_offset_estimate(sz2npc)
+  
+  edges$offset_start <- (edges[["offset_start"]]/2 * n_offsets) + 
+    lwd_offset + stroke_offset
+  edges$offset_end <- (edges[["offset_end"]]/2 * n_offsets) + 
+    lwd_offset + stroke_offset
+
+  return(edges)
+  
+}
+
+#-------------------------------------------------------------------------------
+# Estimate the stroke thickness added to the node radius.
+# 1. 'stroke' is approximately 0.75 mm per unit (see 'aes_linetype_size_shape') 
+#     and is pre-processed by gg_par() as (stroke * .stroke / 2).
+# 2. Because the border is centered on the node boundary, only half of the
+#    stroke extends outward. This correction estimates the effective increase
+#    in node radius attributable to the stroke.
+# sz2npc: size-to-npc conversion factor used to calculate node size
+.stroke_offset_estimate <- function(sz2npc){
+  0.5 * 0.75 * sz2npc
+}
+# Full linewidth contribution to the clipping offset
+# Unlike 'stroke', no half-width correction is required.
+.lwd_offset_estimate <- function(sz2npc){
+  0.75 * sz2npc
+}
+
+#-------------------------------------------------------------------------------
+.geom_adj_arrow_offsets <- function(edges){
+  edges$offset_start <- edges[["offset_start"]] + edges[["arrow_offset"]]
+  edges$offset_end <- edges[["offset_end"]] + edges[["arrow_offset"]]
+  return(edges)
+}
+
+#-------------------------------------------------------------------------------
+.geom_adj_arrow_size <- function(edges, size_unit){
+  if(size_unit == "mm"){
+    # ggplot2 'size' in 'mm', scaled to 'npc'
+    edges$arrow_size <- edges[["arrow_size"]] * ggplot2::.pt
+  } else {
+    # gspace 'size' in [0, 100], transformed to 'npc'
+    edges$arrow_size <- edges[["arrow_size"]] * ggplot2::.pt * 
+      .gs_nsz_to_npc()
+  }
+  return(edges)
+}
+
+################################################################################
 ### Adjust arrows
 ################################################################################
 .set_arrows <- function(edges, size_unit){
@@ -563,11 +636,13 @@ GeomEdgeSpace <- ggproto(
   edges$arrowSize1 <- edges[["arrow_size"]]
   edges$arrowSize2 <- edges[["arrow_size"]]
   if(size_unit=="npc"){
-    lw <- edges$linewidth * 0.01
+    # gspace 'size' in [0, 100], transformed to 'npc'
+    lw <- edges$linewidth * .gs_nsz_to_npc()
   } else {
     lw <- edges$linewidth
   }
-  a_theta <- 60 #default angle to arrows (both sides)
+  a_theta <- 60 # default arrowhead opening angle;
+  # grid::arrow() expects the half-angle
   a_theta <- a_theta / 180 * pi
   idx <- edges$arrowAngleStart==90
   if(any(idx, na.rm = TRUE)){
@@ -647,6 +722,7 @@ GeomEdgeSpace <- ggproto(
 }
 .arrow_starts <- function(edges, size_unit){
   exy <- edges[,c("x", "y", "xend", "yend")]
+  # a tiny segment (0.01 npc) is used to anchor the arrowhead
   exy$xend <- exy$x + (edges$px * 0.01)
   exy$yend <- exy$y + (edges$py * 0.01)
   arrow <- grid::arrow(angle = edges$arrowAngleStart,
@@ -657,6 +733,7 @@ GeomEdgeSpace <- ggproto(
 }
 .arrow_ends <- function(edges, size_unit){
   exy <- edges[,c("x", "y", "xend", "yend")]
+  # a tiny segment (0.01 npc) is used to anchor the arrowhead
   exy$x <- exy$xend - (edges$px * 0.01)
   exy$y <- exy$yend - (edges$py * 0.01)
   arrow <- grid::arrow(angle = edges$arrowAngleEnd,
