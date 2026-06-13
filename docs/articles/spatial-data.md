@@ -157,7 +157,7 @@ cpal <- hcl.colors(100, palette = "Spectral", rev = TRUE)
 
 # Reproduce a typical Seurat's spatial feature visualization
 ggplot(gs) + 
-  annotation_gspace(gs) +
+  annotation_gspace_image(gs) +
   geom_nodespace(mapping = aes(colour = Ttr), size = 1, pch = 19) +
   scale_colour_continuous(palette = cpal) +
   theme_gspace_coords(theme = "th3", is_norm = TRUE, 
@@ -219,7 +219,7 @@ gs <- normalizeGraphSpace(gs, use_image = TRUE)
 # Reproduce a typical Seurat cluster visualization
 cpal <- DiscretePalette(nlevels(gs$seurat_clusters), palette = "polychrome")
 ggplot(gs) + 
-  annotation_gspace(gs, opacity = 0.5) +
+  annotation_gspace_image(gs, opacity = 0.5) +
   geom_nodespace(mapping = aes(fill = seurat_clusters),
     size = 1.3, color = "grey90", stroke = 0.3) +
   scale_fill_manual(values = cpal) +
