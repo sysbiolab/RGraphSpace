@@ -75,7 +75,6 @@ library("RGraphSpace")
 library("Seurat")
 library("SeuratObject")
 library("SeuratData")
-library("scales")
 ```
 
 ### Loading the dataset
@@ -165,7 +164,7 @@ ggplot(gs) +
     xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
 ```
 
-![](figs_dev/ggplot_seurat3.png)
+![](figs_dev/ggplot_seurat_3.png)
 
 **Note on image alignment**: Proper spatial alignment between nodes and
 the background image requires consistent coordinate conventions. Spatial
@@ -229,7 +228,7 @@ ggplot(gs) +
   theme_gspace_legend(discrete_fill = TRUE)
 ```
 
-![](figs_dev/ggplot_seurat4.png)
+![](figs_dev/ggplot_seurat_4.png)
 
   
 
@@ -299,12 +298,11 @@ gs <- normalizeGraphSpace(gs, use_image = TRUE)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #>  [1] scales_1.4.0              stxBrain.SeuratData_0.1.2
-    #>  [3] ssHippo.SeuratData_3.1.4  pbmc3k.SeuratData_3.1.4  
-    #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.0             
-    #>  [7] SeuratObject_5.4.0        sp_2.2-1                 
-    #>  [9] RGraphSpace_1.3.1         ggplot2_4.0.3            
-    #> [11] remotes_2.5.0            
+    #>  [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 
+    #>  [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    
+    #>  [5] Seurat_5.5.0              SeuratObject_5.4.0       
+    #>  [7] sp_2.2-1                  RGraphSpace_1.3.1        
+    #>  [9] ggplot2_4.0.3             remotes_2.5.0            
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.18.0      jsonlite_2.0.0        
@@ -347,8 +345,8 @@ gs <- normalizeGraphSpace(gs, use_image = TRUE)
     #> [112] spatstat.random_3.5-0  png_0.1-9              ggrastr_1.0.2         
     #> [115] spatstat.univar_3.2-0  parallel_4.6.0         pkgdown_2.2.0         
     #> [118] dotCall64_1.2          listenv_0.10.1         viridisLite_0.4.3     
-    #> [121] ggridges_0.5.7         crayon_1.5.3           purrr_1.2.2           
-    #> [124] rlang_1.2.0            cowplot_1.2.0
+    #> [121] scales_1.4.0           ggridges_0.5.7         crayon_1.5.3          
+    #> [124] purrr_1.2.2            rlang_1.2.0            cowplot_1.2.0
 
 Hao, Yuhan, Tim Stuart, Madeline H Kowalski, et al. 2024. “Dictionary
 Learning for Integrative, Multimodal and Scalable Single-Cell Analysis.”

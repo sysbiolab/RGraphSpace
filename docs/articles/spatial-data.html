@@ -156,8 +156,7 @@ only required once.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">"RGraphSpace"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://satijalab.org/seurat" class="external-link">"Seurat"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://satijalab.github.io/seurat-object/" class="external-link">"SeuratObject"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://www.satijalab.org/seurat" class="external-link">"SeuratData"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://scales.r-lib.org" class="external-link">"scales"</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://www.satijalab.org/seurat" class="external-link">"SeuratData"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="loading-the-dataset">Loading the dataset<a class="anchor" aria-label="anchor" href="#loading-the-dataset"></a>
 </h3>
@@ -236,7 +235,7 @@ background.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_colour_continuous.html" class="external-link">scale_colour_continuous</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="va">cpal</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"th3"</span>, is_norm <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>    xlab <span class="op">=</span> <span class="st">"Tissue coordinates 1"</span>, ylab <span class="op">=</span> <span class="st">"Tissue coordinates 2"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figs_dev/ggplot_seurat3.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="figs_dev/ggplot_seurat_3.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p><strong>Note on image alignment</strong>: Proper spatial alignment
 between nodes and the background image requires consistent coordinate
 conventions. Spatial misalignment may occur if the input image and node
@@ -294,7 +293,7 @@ aesthetic and overlaying the tissue image as a dimmed background.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="st">"th2"</span>, is_norm <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>    xlab <span class="op">=</span> <span class="st">"Tissue coordinates 1"</span>, ylab <span class="op">=</span> <span class="st">"Tissue coordinates 2"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_legend</a></span><span class="op">(</span>discrete_fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figs_dev/ggplot_seurat4.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="figs_dev/ggplot_seurat_4.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 </div>
@@ -361,12 +360,11 @@ data</em></a> tutorial.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] scales_1.4.0              stxBrain.SeuratData_0.1.2</span></span>
-<span><span class="co">#&gt;  [3] ssHippo.SeuratData_3.1.4  pbmc3k.SeuratData_3.1.4  </span></span>
-<span><span class="co">#&gt;  [5] SeuratData_0.2.2.9002     Seurat_5.5.0             </span></span>
-<span><span class="co">#&gt;  [7] SeuratObject_5.4.0        sp_2.2-1                 </span></span>
-<span><span class="co">#&gt;  [9] RGraphSpace_1.3.1         ggplot2_4.0.3            </span></span>
-<span><span class="co">#&gt; [11] remotes_2.5.0            </span></span>
+<span><span class="co">#&gt;  [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 </span></span>
+<span><span class="co">#&gt;  [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    </span></span>
+<span><span class="co">#&gt;  [5] Seurat_5.5.0              SeuratObject_5.4.0       </span></span>
+<span><span class="co">#&gt;  [7] sp_2.2-1                  RGraphSpace_1.3.1        </span></span>
+<span><span class="co">#&gt;  [9] ggplot2_4.0.3             remotes_2.5.0            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] RColorBrewer_1.1-3     rstudioapi_0.18.0      jsonlite_2.0.0        </span></span>
@@ -409,8 +407,8 @@ data</em></a> tutorial.</p>
 <span><span class="co">#&gt; [112] spatstat.random_3.5-0  png_0.1-9              ggrastr_1.0.2         </span></span>
 <span><span class="co">#&gt; [115] spatstat.univar_3.2-0  parallel_4.6.0         pkgdown_2.2.0         </span></span>
 <span><span class="co">#&gt; [118] dotCall64_1.2          listenv_0.10.1         viridisLite_0.4.3     </span></span>
-<span><span class="co">#&gt; [121] ggridges_0.5.7         crayon_1.5.3           purrr_1.2.2           </span></span>
-<span><span class="co">#&gt; [124] rlang_1.2.0            cowplot_1.2.0</span></span></code></pre>
+<span><span class="co">#&gt; [121] scales_1.4.0           ggridges_0.5.7         crayon_1.5.3          </span></span>
+<span><span class="co">#&gt; [124] purrr_1.2.2            rlang_1.2.0            cowplot_1.2.0</span></span></code></pre>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Yuhan2024" class="csl-entry">
 Hao, Yuhan, Tim Stuart, Madeline H Kowalski, et al. 2024.

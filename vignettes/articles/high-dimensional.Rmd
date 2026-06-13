@@ -87,6 +87,7 @@ library("RGraphSpace")
 library("Seurat")
 library("SeuratObject")
 library("SeuratData")
+library("patchwork")
 ```
 
 ## Loading the dataset
@@ -117,41 +118,28 @@ seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
 Before introducing the `ggplot-GraphSpace` interface, we first reproduce two common visualization patterns from *Seurat*: a cluster-level embedding (`DimPlot`) and a feature expression map (`FeaturePlot`). These examples provide a useful baseline for the corresponding visualizations constructed later with `ggplot-GraphSpace`.
 
 ```{r Seurat reference plots - 1, eval=FALSE, message=FALSE, results='hide'}
-# Typical Seurat embedding visualization
-cpal <- adjustcolor(DiscretePalette(9, palette = "polychrome"), 0.5)
-DimPlot(seurat_obj, pt.size = 1, cols = cpal ) + 
+cpal <- DiscretePalette(nlevels(seurat_obj$seurat_annotations), 
+  palette = "polychrome")
+
+# Left: Typical Seurat cluster visualization
+p1 <- DimPlot(seurat_obj, pt.size = 1, cols = cpal) + 
   theme_minimal() + theme(aspect.ratio = 1)
-```
 
-```{r Seurat_DimPlot.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# p <- DimPlot(seurat_obj, pt.size = 1, cols = palette ) +
-#   theme_minimal() + theme(aspect.ratio = 1)
-# ggsave(filename = "./vignettes/articles/figs_dev/Seurat_DimPlot.png", 
-#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
-```
-
-```{r Seurat_DimPlot, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/Seurat_DimPlot.png")
-```
-
-
-```{r Seurat reference plots - 2, eval=FALSE, message=FALSE, results='hide'}
-# Typical Seurat feature-expression visualization
-FeaturePlot(seurat_obj, features = "LYZ", 
+# Right: Typical Seurat feature-expression visualization
+p2 <- FeaturePlot(seurat_obj, features = "LYZ", 
   cols = c("lightgrey", "blue"), pt.size = 1) + 
   theme_minimal() + theme(aspect.ratio = 1)
+
+p1 + p2
 ```
 
 ```{r Seurat_FeaturePlot.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# p <- FeaturePlot(seurat_obj, features = "LYZ",
-#   cols = c("lightgrey", "blue"), pt.size = 1) +
-#   theme_minimal() + theme(aspect.ratio = 1)
-# ggsave(filename = "./vignettes/articles/figs_dev/Seurat_FeaturePlot.png", 
-#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
+# ggsave(filename = "./vignettes/articles/figs_dev/Seurat_DimFeaturePlot.png",
+#   height=4, width=10, units="in", device="png", dpi=400, plot= p1 + p2)
 ```
 
 ```{r Seurat_FeaturePlot, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/Seurat_FeaturePlot.png")
+knitr::include_graphics("figs_dev/Seurat_DimFeaturePlot.png")
 ```
 
 Note that these are high-level plotting functions. Internally, *Seurat* extracts the relevant data and generates `ggplot` objects. While this approach provides convenient and highly customizable visualizations, the underlying data structures are not directly exposed to the user, making advanced use of the *ggplot2* grammar less straightforward. For example, defining custom aesthetic mappings or interoperating with other visualization workflows often requires extra data extraction steps.
@@ -179,70 +167,49 @@ gs
 With the `GraphSpace` object ready, we can reproduce typical *Seurat* plots using standard *ggplot2* syntax.
 
 ```{r Metadata plot, eval=FALSE, message=FALSE, results='hide'}
-cpal <- adjustcolor(DiscretePalette(9, palette = "polychrome"), 0.5)
+cpal <- DiscretePalette(nlevels(gs$seurat_annotations), 
+  palette = "polychrome")
 
-# Reproduce a typical Seurat cluster visualization
-ggplot(gs) + 
+# Left: Reproduce a typical Seurat cluster visualization
+p3 <- ggplot(gs) + 
   geom_nodespace(mapping = aes(fill = seurat_annotations),
     size = 1.5, color = "grey90", stroke = 0.3) +
   scale_fill_manual(values = cpal) +
   labs(x = "UMAP_1", y = "UMAP_2") +
-  theme_minimal() + theme(aspect.ratio = 1) +
-  theme_gspace_legend(discrete_fill = TRUE)
+  theme_gspace_legend(discrete_fill = TRUE) +
+  theme_minimal() + theme(aspect.ratio = 1)
+
+# Right: Reproduce a typical Seurat feature visualization
+p4 <- ggplot(gs) + 
+  geom_nodespace(mapping = aes(fill = LYZ), 
+    size = 1.5, color = "lightgrey", stroke = 0.3) +
+  scale_fill_continuous(palette = c("lightgrey", "blue")) +
+  labs(x = "UMAP_1", y = "UMAP_2")  +
+  theme_minimal() + theme(aspect.ratio = 1)
+
+p3 + p4
 ```
 
 ```{r ggplot_seurat1.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# cpal <- adjustcolor(DiscretePalette(9, palette = "polychrome"), 0.75)
 # p <- ggplot(gs) +
 #   geom_nodespace(mapping = aes(fill = seurat_annotations),
 #     size = 2, color = adjustcolor("grey90",1), stroke = 0.2) +
 #   scale_fill_manual(values = cpal) +
 #   labs(x = "UMAP_1", y = "UMAP_2") +
 #   theme_minimal() +
-#   theme_gspace_legend(discrete_fill = TRUE, 
-#     aspect.ratio = 1,
+#   theme_gspace_legend(discrete_fill = TRUE, aspect.ratio = 1,
 #     legend.title = element_blank())
 # ggsave(filename = "./vignettes/articles/cards/high_dim.png",
 #   height=3.5, width=3.5, units="in", device="png", dpi=200, plot=p)
-# ##---
-# p <- ggplot(gs) +
-#   geom_nodespace(mapping = aes(fill = seurat_annotations),
-#     size = 1.5, color = "grey90", stroke = 0.3) +
-#   scale_fill_manual(values = cpal) +
-#   labs(x = "UMAP_1", y = "UMAP_2") +
-#   theme_minimal() + theme(aspect.ratio = 1) +
-#   theme_gspace_legend(discrete_fill = TRUE)
-# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat1.png",
-#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
+
+##---
+
+# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat_1_2.png",
+#   height=4, width=10, units="in", device="png", dpi=400, plot = p3 + p4)
 ```
 
 ```{r ggplot_seurat1, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/ggplot_seurat1.png")
-```
-
-```{r Feature plot, eval=FALSE, message=FALSE, results='hide'}
-# Reproduce a typical Seurat feature visualization
-ggplot(gs) + 
-  geom_nodespace(mapping = aes(fill = LYZ), 
-    size = 1.5, color = "lightgrey", stroke = 0.3) +
-  scale_fill_continuous(palette = c("lightgrey", "blue")) +
-  labs(x = "UMAP_1", y = "UMAP_2", title = "LYZ")  +
-     theme_minimal() + theme(aspect.ratio = 1)
-```
-
-```{r ggplot_seurat2.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# p <- ggplot(gs) +
-#   geom_nodespace(mapping = aes(fill = LYZ),
-#     size = 1.5, color = "lightgrey", stroke = 0.3) +
-#   scale_fill_continuous(palette = c("lightgrey", "blue")) +
-#   labs(x = "UMAP_1", y = "UMAP_2", title = "LYZ")  +
-#      theme_minimal() + theme(aspect.ratio = 1)
-# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat2.png",
-#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
-```
-
-```{r ggplot_seurat2, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/ggplot_seurat2.png")
+knitr::include_graphics("figs_dev/ggplot_seurat_1_2.png")
 ```
 
 The resulting plots are essentially the same, but users now have full flexibility to interact directly with the *ggplot2* grammar and its rich ecosystem of extensions and companion packages.

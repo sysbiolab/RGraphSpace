@@ -27,10 +27,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-This vignette demonstrates how *RGraphSpace* extends the *ggplot2* grammar
-to spatial transcriptomics data. We use spatial data from the
-*SeuratData* package to show how spatial variables can be mapped directly
-to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
+This vignette demonstrates how *RGraphSpace* extends the *ggplot2* grammar to spatial transcriptomics data. We use spatial data from the *SeuratData* package to show how spatial variables can be mapped directly to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
 
 # Before you start
 
@@ -88,7 +85,6 @@ library("RGraphSpace")
 library("Seurat")
 library("SeuratObject")
 library("SeuratData")
-library("scales")
 ```
 
 ## Loading the dataset
@@ -154,7 +150,7 @@ ggplot(gs) +
     xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
 ```
 
-```{r ggplot_seurat3.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+```{r ggplot_seurat_3.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
 # p <- ggplot(gs) +
 #   annotation_gspace(gs) +
 #   geom_nodespace(mapping = aes(colour = Ttr), size = 0.7, pch = 19) +
@@ -169,12 +165,12 @@ ggplot(gs) +
 #   scale_colour_continuous(palette = cpal) +
 #   theme_gspace_coords(theme = "th3", is_norm = TRUE,
 #     xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
-# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat3.png",
+# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat_3.png",
 #   height=5, width=6, units="in", device="png", dpi=200, plot=p)
 ```
 
-```{r ggplot_seurat3, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/ggplot_seurat3.png")
+```{r ggplot_seurat_3, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/ggplot_seurat_3.png")
 ```
 
 **Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
@@ -218,21 +214,21 @@ ggplot(gs) +
   theme_gspace_legend(discrete_fill = TRUE)
 ```
 
-```{r ggplot_seurat4.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-p <- ggplot(gs) +
-  annotation_gspace(gs, opacity = 0.5) +
-  geom_nodespace(mapping = aes(fill = seurat_clusters),
-    size = 1.3, color = "grey90", stroke = 0.3) +
-  scale_fill_manual(values = cpal) +
-  theme_gspace_coords(theme = "th2", is_norm = TRUE,
-    xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2") +
-  theme_gspace_legend(discrete_fill = TRUE)
-ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat4.png",
-  height=5, width=6, units="in", device="png", dpi=200, plot=p)
+```{r ggplot_seurat_4.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# p <- ggplot(gs) +
+#   annotation_gspace(gs, opacity = 0.5) +
+#   geom_nodespace(mapping = aes(fill = seurat_clusters),
+#     size = 1.3, color = "grey90", stroke = 0.3) +
+#   scale_fill_manual(values = cpal) +
+#   theme_gspace_coords(theme = "th2", is_norm = TRUE,
+#     xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2") +
+#   theme_gspace_legend(discrete_fill = TRUE)
+# ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat_4.png",
+#   height=5, width=6, units="in", device="png", dpi=200, plot=p)
 ```
 
-```{r ggplot_seurat4, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/ggplot_seurat4.png")
+```{r ggplot_seurat_4, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/ggplot_seurat_4.png")
 ```
 
 <br/>
