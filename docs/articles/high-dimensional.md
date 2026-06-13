@@ -1,6 +1,6 @@
 # Extending ggplot2 Grammar to High-Dimensional Data
 
-**Package**: RGraphSpace 1.3.1  
+**Package**: RGraphSpace 1.4.0  
 
 ## Overview
 
@@ -280,7 +280,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [3] ssHippo.SeuratData_3.1.4  pbmc3k.SeuratData_3.1.4  
     #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.0             
     #>  [7] SeuratObject_5.4.0        sp_2.2-1                 
-    #>  [9] RGraphSpace_1.3.1         ggplot2_4.0.3            
+    #>  [9] RGraphSpace_1.4.0         ggplot2_4.0.3            
     #> [11] remotes_2.5.0            
     #> 
     #> loaded via a namespace (and not attached):

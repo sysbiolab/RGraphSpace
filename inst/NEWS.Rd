@@ -2,6 +2,13 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
+\section{CHANGES IN VERSION 1.4.0 (2026-06-12)}{
+  \itemize{
+    \item Improved integration with ggplot2 ecosystem.
+    \item Added accessors and annotation functions for spatial data analysis.
+  }
+}
+
 \section{CHANGES IN VERSION 1.3.0 (2026-05-17)}{
   \itemize{
     \item Major updates to package vignettes and online documentation.

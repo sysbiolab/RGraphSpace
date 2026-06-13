@@ -91,7 +91,7 @@ plotGraphSpace(gs, add.image = TRUE)
 ```{r Mapping images - 4, eval=TRUE, message=FALSE, out.width="100%"}
 # Alternatively, passing to the underlying geoms
 ggplot(gs) +
-  annotation_gspace(gs) +
+  annotation_gspace_image(gs) +
   geom_nodespace() +
   theme_gspace_coords(is_norm = TRUE)
 ```

@@ -1,6 +1,6 @@
 # Extending ggplot2 Grammar to Spatial Transcriptomics Data
 
-**Package**: RGraphSpace 1.3.1  
+**Package**: RGraphSpace 1.4.0  
 
 ## Overview
 
@@ -301,7 +301,7 @@ gs <- normalizeGraphSpace(gs, use_image = TRUE)
     #>  [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 
     #>  [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    
     #>  [5] Seurat_5.5.0              SeuratObject_5.4.0       
-    #>  [7] sp_2.2-1                  RGraphSpace_1.3.1        
+    #>  [7] sp_2.2-1                  RGraphSpace_1.4.0        
     #>  [9] ggplot2_4.0.3             remotes_2.5.0            
     #> 
     #> loaded via a namespace (and not attached):

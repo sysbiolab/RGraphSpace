@@ -2,7 +2,7 @@
 
   
 
-**Package**: RGraphSpace 1.3.1
+**Package**: RGraphSpace 1.4.0
 
 ``` r
 
@@ -174,7 +174,7 @@ apply when `size` is passed as a node aesthetic mapping. Otherwise,
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.3.1 ggplot2_4.0.3     igraph_2.3.2     
+    #> [1] RGraphSpace_1.4.0 ggplot2_4.0.3     igraph_2.3.2     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    

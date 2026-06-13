@@ -122,8 +122,8 @@ annotation_gspace_image <- function(raster, interpolate = FALSE, opacity = 1,
     )))
   }
 
-  if (flip.v) raster <- raster[nrow(raster):1, , drop = FALSE]
-  if (flip.h) raster <- raster[, ncol(raster):1 , drop = FALSE]
+  if (flip.v) raster <- raster[rev(seq_len(nrow(raster))), , drop = FALSE]
+  if (flip.h) raster <- raster[, rev(seq_len(ncol(raster))), drop = FALSE]
 
   ggplot2::annotation_raster(
     raster      = raster,

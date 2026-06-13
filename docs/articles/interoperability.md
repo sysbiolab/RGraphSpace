@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.3.1
+**Package**: RGraphSpace 1.4.0
 
 ``` r
 
@@ -218,7 +218,7 @@ must be called explicitly to synchronize clipping offsets.
     #> other attached packages:
     #> [1] ggraph_2.2.2        tidygraph_1.3.1     rnaturalearth_1.2.0
     #> [4] geometry_0.5.2      maps_3.4.3          sf_1.1-1           
-    #> [7] igraph_2.3.2        RGraphSpace_1.3.1   ggplot2_4.0.3      
+    #> [7] igraph_2.3.2        RGraphSpace_1.4.0   ggplot2_4.0.3      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.58          bslib_0.11.0      

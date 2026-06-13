@@ -1,7 +1,7 @@
 # Interactive visualization
 
   
-**Package**: RGraphSpace 1.3.1
+**Package**: RGraphSpace 1.4.0
 
 ``` r
 
@@ -211,7 +211,7 @@ plotGraphSpace(gtoy2_2, add.labels = FALSE)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.2      RGraphSpace_1.3.1 ggplot2_4.0.3     RedeR_3.8.0      
+    #> [1] igraph_2.3.2      RGraphSpace_1.4.0 ggplot2_4.0.3     RedeR_3.8.0      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    
