@@ -6,8 +6,8 @@
 
 This vignette demonstrates how *RGraphSpace* extends the *ggplot2*
 grammar to spatial transcriptomics data. We use spatial data from the
-*SeuratData* package to show how spatial variables can be mapped
-directly to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
+*SeuratData* package to illustrate direct mapping of spatial variables
+to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
 
 ## Before you start
 
@@ -148,8 +148,8 @@ gs
 
 With the `GraphSpace` object ready, we can reproduce a typical *Seurat*
 spatial feature plot using standard *ggplot2* syntax. Here we map
-expression of the `Ttr` gene to the colour aesthetic and overlay the
-tissue image as background.
+expression of the `Ttr` gene to the colour aesthetic and display the
+tissue image as a background reference.
 
 ``` r
 

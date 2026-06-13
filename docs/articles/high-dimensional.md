@@ -4,13 +4,12 @@
 
 ## Overview
 
-While developing *RGraphSpace*, the challenges of representing graph
-structures highlighted a core design assumption of the *ggplot2*
-ecosystem: that plotting data can be expressed in tabular form,
-typically as a single `data.frame` (Wickham 2016). This approach works
-remarkably well for most applications, but becomes restrictive when
-dealing with data objects composed of multiple interdependent
-components.
+While developing *RGraphSpace*, the challenge of representing graph
+structures in *ggplot2* highlighted a core design restriction: that
+plotting data must be expressed in tabular form, typically as a single
+`data.frame` (Wickham 2016). This approach works remarkably well for
+most applications, but becomes too restrictive when dealing with data
+objects composed of multiple interdependent components.
 
 In this vignette, we explore how the `ggplot-GraphSpace` interface can
 be applied to high-dimensional data, enabling direct interaction with
@@ -95,10 +94,7 @@ library("patchwork")
 We will use the `pbmc3k` dataset from the *SeuratData* package,
 consisting of single-cell transcriptomics data from peripheral blood
 mononuclear cells. This dataset is commonly used to showcase *Seurat*
-workflows (Hao et al. 2024). Here, we apply
-[`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
-to a `Seurat` object and demonstrate how high-dimensional variables can
-be mapped directly to *ggplot2* aesthetics.
+workflows (Hao et al. 2024).
 
 ``` r
 
@@ -124,10 +120,10 @@ seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
 ### Plotting baseline
 
 Before introducing the `ggplot-GraphSpace` interface, we first reproduce
-two common visualization patterns from *Seurat*: a cluster-level
-embedding (`DimPlot`) and a feature expression map (`FeaturePlot`).
-These examples provide a useful baseline for the corresponding
-visualizations constructed later with `ggplot-GraphSpace`.
+two typical *Seurat* visualizations: a cluster-level embedding
+(`DimPlot`) and a feature expression map (`FeaturePlot`). These examples
+provide a useful baseline for the corresponding visualizations
+constructed later with `ggplot-GraphSpace`.
 
 ``` r
 
@@ -152,14 +148,19 @@ Note that these are high-level plotting functions. Internally, *Seurat*
 extracts the relevant data and generates `ggplot` objects. While this
 approach provides convenient and highly customizable visualizations, the
 underlying data structures are not directly exposed to the user, making
-advanced use of the *ggplot2* grammar less straightforward. For example,
+advanced use of the *ggplot2* grammar more difficult. For example,
 defining custom aesthetic mappings or interoperating with other
-visualization workflows often requires extra data extraction steps.
+visualization workflows would require extra data extraction steps.
 
 ### Creating a GraphSpace object
 
-Next, we create a `GraphSpace` from the `Seurat` object, exposing its
-underlying high-dimensional data to the *ggplot2* grammar.
+Next, we apply
+[`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
+to create a `GraphSpace` from the `Seurat` object, exposing its
+underlying high-dimensional data to the *ggplot2* grammar (for
+additional details, see the [*coercing high-dimensional
+data*](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.html#hd-coercion)
+section).
 
 ``` r
 
@@ -176,7 +177,7 @@ gs
 # + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)
 ```
 
-## Dimensional reduction and feature visualizations
+## Cluster and feature visualizations
 
 With the `GraphSpace` object ready, we can reproduce typical *Seurat*
 plots using standard *ggplot2* syntax.

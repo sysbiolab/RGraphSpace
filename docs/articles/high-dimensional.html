@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-06-12</h4>
+            <h4 data-toc-skip class="date">2026-06-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/high-dimensional.Rmd" class="external-link"><code>vignettes/articles/high-dimensional.Rmd</code></a></small>
       <div class="d-none name"><code>high-dimensional.Rmd</code></div>
@@ -95,12 +95,12 @@ Team</h4>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>While developing <em>RGraphSpace</em>, the challenges of representing
-graph structures highlighted a core design assumption of the
-<em>ggplot2</em> ecosystem: that plotting data can be expressed in
-tabular form, typically as a single <code>data.frame</code> <span class="citation">(Wickham 2016)</span>. This approach works remarkably
-well for most applications, but becomes restrictive when dealing with
-data objects composed of multiple interdependent components.</p>
+<p>While developing <em>RGraphSpace</em>, the challenge of representing
+graph structures in <em>ggplot2</em> highlighted a core design
+restriction: that plotting data must be expressed in tabular form,
+typically as a single <code>data.frame</code> <span class="citation">(Wickham 2016)</span>. This approach works remarkably
+well for most applications, but becomes too restrictive when dealing
+with data objects composed of multiple interdependent components.</p>
 <p>In this vignette, we explore how the <code>ggplot-GraphSpace</code>
 interface can be applied to high-dimensional data, enabling direct
 interaction with the <em>ggplot2</em> grammar and its aesthetic mapping
@@ -175,9 +175,7 @@ only required once.</p>
 <em>SeuratData</em> package, consisting of single-cell transcriptomics
 data from peripheral blood mononuclear cells. This dataset is commonly
 used to showcase <em>Seurat</em> workflows <span class="citation">(Hao
-et al. 2024)</span>. Here, we apply <code><a href="../reference/as.GraphSpace.html">as.GraphSpace()</a></code> to a
-<code>Seurat</code> object and demonstrate how high-dimensional
-variables can be mapped directly to <em>ggplot2</em> aesthetics.</p>
+et al. 2024)</span>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check manifest of installed datasets</span></span>
 <span><span class="co"># SeuratData::InstalledData()</span></span>
@@ -198,11 +196,11 @@ variables can be mapped directly to <em>ggplot2</em> aesthetics.</p>
 <h3 id="plotting-baseline">Plotting baseline<a class="anchor" aria-label="anchor" href="#plotting-baseline"></a>
 </h3>
 <p>Before introducing the <code>ggplot-GraphSpace</code> interface, we
-first reproduce two common visualization patterns from <em>Seurat</em>:
-a cluster-level embedding (<code>DimPlot</code>) and a feature
-expression map (<code>FeaturePlot</code>). These examples provide a
-useful baseline for the corresponding visualizations constructed later
-with <code>ggplot-GraphSpace</code>.</p>
+first reproduce two typical <em>Seurat</em> visualizations: a
+cluster-level embedding (<code>DimPlot</code>) and a feature expression
+map (<code>FeaturePlot</code>). These examples provide a useful baseline
+for the corresponding visualizations constructed later with
+<code>ggplot-GraphSpace</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cpal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/DiscretePalette.html" class="external-link">DiscretePalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels</a></span><span class="op">(</span><span class="va">seurat_obj</span><span class="op">$</span><span class="va">seurat_annotations</span><span class="op">)</span>, </span>
 <span>  palette <span class="op">=</span> <span class="st">"polychrome"</span><span class="op">)</span></span>
@@ -223,16 +221,18 @@ with <code>ggplot-GraphSpace</code>.</p>
 <code>ggplot</code> objects. While this approach provides convenient and
 highly customizable visualizations, the underlying data structures are
 not directly exposed to the user, making advanced use of the
-<em>ggplot2</em> grammar less straightforward. For example, defining
-custom aesthetic mappings or interoperating with other visualization
-workflows often requires extra data extraction steps.</p>
+<em>ggplot2</em> grammar more difficult. For example, defining custom
+aesthetic mappings or interoperating with other visualization workflows
+would require extra data extraction steps.</p>
 </div>
 <div class="section level3">
 <h3 id="creating-a-graphspace-object">Creating a GraphSpace object<a class="anchor" aria-label="anchor" href="#creating-a-graphspace-object"></a>
 </h3>
-<p>Next, we create a <code>GraphSpace</code> from the
-<code>Seurat</code> object, exposing its underlying high-dimensional
-data to the <em>ggplot2</em> grammar.</p>
+<p>Next, we apply <code><a href="../reference/as.GraphSpace.html">as.GraphSpace()</a></code> to create a
+<code>GraphSpace</code> from the <code>Seurat</code> object, exposing
+its underlying high-dimensional data to the <em>ggplot2</em> grammar
+(for additional details, see the <a href="high-dimensional.html#hd-coercion"><em>coercing high-dimensional
+data</em></a> section).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a GraphSpace from 'seurat_obj'</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as.GraphSpace.html">as.GraphSpace</a></span><span class="op">(</span><span class="va">seurat_obj</span>, space <span class="op">=</span> <span class="st">"embedding"</span>, reduction <span class="op">=</span> <span class="st">"umap"</span><span class="op">)</span></span>
@@ -248,7 +248,7 @@ data to the <em>ggplot2</em> grammar.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="dimensional-reduction-and-feature-visualizations">Dimensional reduction and feature visualizations<a class="anchor" aria-label="anchor" href="#dimensional-reduction-and-feature-visualizations"></a>
+<h2 id="cluster-and-feature-visualizations">Cluster and feature visualizations<a class="anchor" aria-label="anchor" href="#cluster-and-feature-visualizations"></a>
 </h2>
 <p>With the <code>GraphSpace</code> object ready, we can reproduce
 typical <em>Seurat</em> plots using standard <em>ggplot2</em>

@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-06-12</h4>
+            <h4 data-toc-skip class="date">2026-06-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/spatial-data.Rmd" class="external-link"><code>vignettes/articles/spatial-data.Rmd</code></a></small>
       <div class="d-none name"><code>spatial-data.Rmd</code></div>
@@ -97,8 +97,8 @@ Team</h4>
 </h2>
 <p>This vignette demonstrates how <em>RGraphSpace</em> extends the
 <em>ggplot2</em> grammar to spatial transcriptomics data. We use spatial
-data from the <em>SeuratData</em> package to show how spatial variables
-can be mapped directly to <em>ggplot2</em> aesthetics via the
+data from the <em>SeuratData</em> package to illustrate direct mapping
+of spatial variables to <em>ggplot2</em> aesthetics via the
 <code>ggplot-GraphSpace</code> interface.</p>
 </div>
 <div class="section level2">
@@ -223,8 +223,8 @@ space.</p>
 <p>With the <code>GraphSpace</code> object ready, we can reproduce a
 typical <em>Seurat</em> spatial feature plot using standard
 <em>ggplot2</em> syntax. Here we map expression of the <code>Ttr</code>
-gene to the colour aesthetic and overlay the tissue image as
-background.</p>
+gene to the colour aesthetic and display the tissue image as a
+background reference.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cpal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">100</span>, palette <span class="op">=</span> <span class="st">"Spectral"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
