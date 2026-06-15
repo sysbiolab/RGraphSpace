@@ -136,6 +136,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   nodes <- .setCoordToGraph(nodes, flip.x, flip.y, rotate.xy, verbose)
   if(verbose) message("Normalizing node coordinates to graph space...")
   gs@nodes <- .fit_graph_space(nodes, mar)
+  gs@pars$use_image <- FALSE
   gs@pars$is.normalized <- TRUE
   gs@pars$flip.x <- flip.x
   gs@pars$flip.y <- flip.y
@@ -172,6 +173,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   gs@image <- l_temp$image
   gs@nodes <- l_temp$nodes
+  gs@pars$use_image <- TRUE
   gs@pars$is.normalized <- TRUE
   gs@pars$flip.v <- flip.v
   gs@pars$flip.x <- flip.x

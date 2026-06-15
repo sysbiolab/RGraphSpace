@@ -673,7 +673,6 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
   x@image <- value
   x@misc$image <- value
   x@pars$image.layer <- TRUE
-  
   return(x)
 })
 
@@ -820,29 +819,12 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
 }
 .updateNodeSpace <- function(x, g) {
     x@graph <- .validate_igraph(g)
-    pars <- x@pars
-    if(pars$is.normalized){
-        if(pars$image.layer){
-            x <- normalizeGraphSpace(x, 
-                image = x@misc$image,
-                mar = pars$mar,
-                flip.x = pars$flip.x %||% FALSE, 
-                flip.y = pars$flip.y %||% FALSE, 
-                rotate.xy = pars$rotate.xy %||% FALSE, 
-                flip.v = pars$flip.v %||% TRUE, 
-                flip.h = pars$flip.h %||% FALSE,
-                verbose = FALSE)
-        } else {
-            x <- normalizeGraphSpace(x, 
-                mar = pars$mar,
-                flip.x = pars$flip.x %||% FALSE, 
-                flip.y = pars$flip.y %||% FALSE, 
-                rotate.xy = pars$rotate.xy %||% FALSE,
-                verbose = FALSE)
-        }
-    } else {
-      x@nodes <- .get_nodes(x@graph)
+    nodes   <- .get_nodes(x@graph)
+    if (x@pars$is.normalized) {
+      nodes$x <- x@nodes$x
+      nodes$y <- x@nodes$y
     }
+    x@nodes <- nodes
     return(x)
 }
 

@@ -1,7 +1,7 @@
 # Mapping Graphs to Images
 
   
-**Package**: RGraphSpace 1.4.0
+**Package**: RGraphSpace 1.4.1
 
 ``` r
 
@@ -136,7 +136,7 @@ image backgrounds.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.4.0 ggplot2_4.0.3     igraph_2.3.2     
+    #> [1] RGraphSpace_1.4.1 ggplot2_4.0.3     igraph_2.3.2     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
