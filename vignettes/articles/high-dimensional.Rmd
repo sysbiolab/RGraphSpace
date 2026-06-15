@@ -24,7 +24,6 @@ knitr::opts_chunk$set(
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 <br/>
 
-
 # Overview
 
 While developing *RGraphSpace*, the challenge of representing graph structures in *ggplot2* highlighted a core design restriction: that plotting data must be expressed in tabular form, typically as a single `data.frame` [@Wickham2016]. This approach works remarkably well for most applications, but becomes too restrictive when dealing with data objects composed of multiple interdependent components.
@@ -45,26 +44,11 @@ This vignette assumes prior experience with [*Seurat*](https://satijalab.org/seu
 
 # Required packages
 
-The code below checks and installs all dependencies. These steps are only required once.
-
-```{r Check required packages, eval=TRUE, message=FALSE}
-if (!require("remotes", quietly = TRUE)){
-  install.packages("remotes")
-}
-if (!require("RGraphSpace", quietly = TRUE)){
-  remotes::install_github("sysbiolab/RGraphSpace")
-}
-if (!require("Seurat", quietly = TRUE)){
-  remotes::install_github("satijalab/seurat-data")
-}
-if (!require("SeuratData", quietly = TRUE)){
-  remotes::install_github("satijalab/seurat-data")
-}
-```
+`r fontawesome::fa("exclamation-triangle", fill = "orange")` Before proceeding, ensure that all packages described in the [*Installation Instructions*](install.html) are installed.
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.3.1"){
+if (packageVersion("RGraphSpace") < "1.4.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -72,11 +56,6 @@ if (packageVersion("Seurat") < "5.5.0"){
   message("Need to update 'Seurat' for this vignette")
   remotes::install_github("satijalab/Seurat")
 }
-```
-
-```{r Intall dataset, eval=FALSE, message=FALSE, results='hide'}
-# Install a Seurat dataset (required only once)
-SeuratData::InstallData("pbmc3k")
 ```
 
 # Setting input data
@@ -94,9 +73,14 @@ library("patchwork")
 
 We will use the `pbmc3k` dataset from the *SeuratData* package, consisting of single-cell transcriptomics data from peripheral blood mononuclear cells. This dataset is commonly used to showcase *Seurat* workflows [@Yuhan2024].
 
+```{r Intall dataset, eval=FALSE, message=FALSE, results='hide'}
+# Install a Seurat dataset (required only once)
+SeuratData::InstallData("pbmc3k")
+```
+
 ```{r Load dataset, eval=FALSE, message=FALSE, results='hide'}
 # Check manifest of installed datasets
-# SeuratData::InstalledData()
+SeuratData::InstalledData()
 
 # Load the 'pbmc3k' dataset
 seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")

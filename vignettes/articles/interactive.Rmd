@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.3.1"){
+if (packageVersion("RGraphSpace") < "1.4.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -72,8 +72,8 @@ RedPort(checkJava=TRUE)
 Before jumping into the interactive interface, we can use a standard *RGraphSpace* call to verify the graph's structure and current layout. This provides a baseline for comparison once we start modifying the network dynamically.
 
 ```{r Plot gtoy1, eval=TRUE, message=FALSE, out.width="70%"}
-library("RedeR")
 library("RGraphSpace")
+library("RedeR")
 library("igraph")
 data(gtoy1, package = "RGraphSpace")
 plotGraphSpace(gtoy1, add.labels = TRUE)

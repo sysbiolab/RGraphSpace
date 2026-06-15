@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.3.1"){
+if (packageVersion("RGraphSpace") < "1.4.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -42,9 +42,9 @@ A seemingly simple yet technically challenging aspect of network visualization i
 Below, we construct a star-like network with varying node sizes to show how the geometries stay synchronized across a wide range values.
 
 ```{r Adjusting scales - 1, eval=TRUE, message=FALSE, out.width="70%"}
+library("RGraphSpace")
 library("igraph")
 library("ggplot2")
-library("RGraphSpace")
 
 # Make a toy graph
 gtoy_star <- make_star(20, mode="out")

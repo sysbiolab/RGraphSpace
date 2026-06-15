@@ -24,7 +24,6 @@ knitr::opts_chunk$set(
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 <br/>
 
-
 # Overview
 
 This vignette demonstrates how *RGraphSpace* extends the *ggplot2* grammar to spatial transcriptomics data. We use spatial data from the *SeuratData* package to illustrate direct mapping of spatial variables to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
@@ -43,26 +42,11 @@ This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/)
 
 # Required packages
 
-The code below checks and installs all dependencies. These steps are only required once.
-
-```{r Check required packages, eval=TRUE, message=FALSE}
-if (!require("remotes", quietly = TRUE)){
-  install.packages("remotes")
-}
-if (!require("RGraphSpace", quietly = TRUE)){
-  remotes::install_github("sysbiolab/RGraphSpace")
-}
-if (!require("Seurat", quietly = TRUE)){
-  remotes::install_github("satijalab/seurat-data")
-}
-if (!require("SeuratData", quietly = TRUE)){
-  remotes::install_github("satijalab/seurat-data")
-}
-```
+`r fontawesome::fa("exclamation-triangle", fill = "orange")` Before proceeding, ensure that all packages described in the [*Installation Instructions*](install.html) are installed.
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.3.1"){
+if (packageVersion("RGraphSpace") < "1.4.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -70,11 +54,6 @@ if (packageVersion("Seurat") < "5.5.0"){
   message("Need to update 'Seurat' for this vignette")
   remotes::install_github("satijalab/Seurat")
 }
-```
-
-```{r Intall dataset, eval=FALSE, message=FALSE, results='hide'}
-# Install a Seurat dataset (required only once)
-SeuratData::InstallData("stxBrain")
 ```
 
 # Setting input data
@@ -91,9 +70,14 @@ library("SeuratData")
 
 We will use the `stxBrain` dataset from the *SeuratData* package, consisting of spatial transcriptomics data from sagittal mouse brain sections generated with Visium v1 technology. This dataset is commonly used to demonstrate *Seurat* spatial workflows [@Yuhan2024]. Here, we apply `as.GraphSpace()` to a `Seurat` object and demonstrate how spatial high-dimensional variables can be mapped directly to *ggplot2* aesthetics.
 
+```{r Intall dataset, eval=FALSE, message=FALSE, results='hide'}
+# Install a Seurat dataset (required only once)
+SeuratData::InstallData("stxBrain")
+```
+
 ```{r Load dataset, eval=FALSE, message=FALSE, results='hide'}
 # Check manifest of installed datasets
-# SeuratData::InstalledData()
+SeuratData::InstalledData()
 
 # Load the 'stxBrain' dataset
 seurat_obj <- LoadData("stxBrain", type = "anterior1")

@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.3.1"){
+if (packageVersion("RGraphSpace") < "1.4.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -65,8 +65,8 @@ network dynamically.
 
 ``` r
 
-library("RedeR")
 library("RGraphSpace")
+library("RedeR")
 library("igraph")
 data(gtoy1, package = "RGraphSpace")
 plotGraphSpace(gtoy1, add.labels = TRUE)
@@ -211,7 +211,7 @@ plotGraphSpace(gtoy2_2, add.labels = FALSE)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3     RedeR_3.8.0      
+    #> [1] igraph_2.3.2      RedeR_3.8.0       RGraphSpace_1.4.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    

@@ -39,29 +39,16 @@ before proceeding.
 
 ## Required packages
 
-The code below checks and installs all dependencies. These steps are
-only required once.
-
-``` r
-
-if (!require("remotes", quietly = TRUE)){
-  install.packages("remotes")
-}
-if (!require("RGraphSpace", quietly = TRUE)){
-  remotes::install_github("sysbiolab/RGraphSpace")
-}
-if (!require("Seurat", quietly = TRUE)){
-  remotes::install_github("satijalab/seurat-data")
-}
-if (!require("SeuratData", quietly = TRUE)){
-  remotes::install_github("satijalab/seurat-data")
-}
-```
+![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB2aWV3Ym94PSIwIDAgNTEyIDUxMiIgc3R5bGU9ImhlaWdodDoxZW07d2lkdGg6MWVtO3ZlcnRpY2FsLWFsaWduOi0wLjEyNWVtO21hcmdpbi1sZWZ0OmF1dG87bWFyZ2luLXJpZ2h0OmF1dG87Zm9udC1zaXplOmluaGVyaXQ7ZmlsbDpvcmFuZ2U7b3ZlcmZsb3c6dmlzaWJsZTtwb3NpdGlvbjpyZWxhdGl2ZTsiPjxwYXRoIGQ9Ik0yNTYgMzJjMTQuMiAwIDI3LjMgNy41IDM0LjUgMTkuOGwyMTYgMzY4YzcuMyAxMi40IDcuMyAyNy43IC4yIDQwLjFTNDg2LjMgNDgwIDQ3MiA0ODBINDBjLTE0LjMgMC0yNy42LTcuNy0zNC43LTIwLjFzLTctMjcuOCAuMi00MC4xbDIxNi0zNjhDMjI4LjcgMzkuNSAyNDEuOCAzMiAyNTYgMzJ6bTAgMTI4Yy0xMy4zIDAtMjQgMTAuNy0yNCAyNFYyOTZjMCAxMy4zIDEwLjcgMjQgMjQgMjRzMjQtMTAuNyAyNC0yNFYxODRjMC0xMy4zLTEwLjctMjQtMjQtMjR6bTMyIDIyNGEzMiAzMiAwIDEgMCAtNjQgMCAzMiAzMiAwIDEgMCA2NCAweiIgLz48L3N2Zz4=)
+Before proceeding, ensure that all packages described in the
+[*Installation
+Instructions*](https://sysbiolab.github.io/RGraphSpace/articles/install.md)
+are installed.
 
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.3.1"){
+if (packageVersion("RGraphSpace") < "1.4.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -69,12 +56,6 @@ if (packageVersion("Seurat") < "5.5.0"){
   message("Need to update 'Seurat' for this vignette")
   remotes::install_github("satijalab/Seurat")
 }
-```
-
-``` r
-
-# Install a Seurat dataset (required only once)
-SeuratData::InstallData("pbmc3k")
 ```
 
 ## Setting input data
@@ -98,8 +79,14 @@ workflows (Hao et al. 2024).
 
 ``` r
 
+# Install a Seurat dataset (required only once)
+SeuratData::InstallData("pbmc3k")
+```
+
+``` r
+
 # Check manifest of installed datasets
-# SeuratData::InstalledData()
+SeuratData::InstalledData()
 
 # Load the 'pbmc3k' dataset
 seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
@@ -281,7 +268,6 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.0             
     #>  [7] SeuratObject_5.4.0        sp_2.2-1                 
     #>  [9] RGraphSpace_1.4.1         ggplot2_4.0.3            
-    #> [11] remotes_2.5.0            
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.18.0      jsonlite_2.0.0        

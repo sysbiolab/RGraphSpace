@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.3.1"){
+if (packageVersion("RGraphSpace") < "1.4.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -52,9 +52,9 @@ handle different mapping requirements.
 
 ``` r
 
+library("RGraphSpace")
 library("igraph")
 library("ggplot2")
-library("RGraphSpace")
 
 # Make a toy modular graph
 gtoy2 <- sample_islands(
@@ -195,7 +195,7 @@ ggplot(data = gs) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.4.1 ggplot2_4.0.3     igraph_2.3.2     
+    #> [1] igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    

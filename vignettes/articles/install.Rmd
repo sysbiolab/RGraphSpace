@@ -34,12 +34,12 @@ install.packages("geometry")
 install.packages("rnaturalearth")
 install.packages("ggnewscale")
 
+install.packages("Seurat")
+remotes::install_github("satijalab/seurat-data")
+
 install.packages("BiocManager")
 BiocManager::install("RedeR")
 BiocManager::install("glmGamPoi")
-
-install.packages("Seurat")
-remotes::install_github("satijalab/seurat-data")
 ```
 
 ## Citation
