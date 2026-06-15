@@ -62,7 +62,7 @@ The following example demonstrates the interoperability between *RGraphSpace* an
 
 Next, we build a spatial network of cities; then *RGraphSpace* `geoms` are plugged into *ggraph* and *sf* workflows.
 
-```{r Interoperability - 1, eval=FALSE, message=FALSE, out.width="80%"}
+```{r Interoperability - 1, eval=FALSE, message=FALSE}
 # Load a map and transform projection
 map_sf <- ne_countries(country = "Brazil", returnclass = "sf")
 map_proj <- st_transform(map_sf)
@@ -99,7 +99,7 @@ igraph::E(igraph_cities)$arrowType <- 3
 
 The following options all produce the same visual output, demonstrating how these packages integrate different types of input data.
 
-```{r Interoperability - 2, eval=FALSE, message=FALSE, out.width="80%"}
+```{r Interoperability - 2, eval=FALSE, message=FALSE}
 # Option 1: Passing a 'GraphSpace' object directly to ggplot()
 gs <- GraphSpace(igraph_cities)
 ggplot(gs) +

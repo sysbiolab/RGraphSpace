@@ -62,7 +62,7 @@ gs_image(gs) <- as_colorraster(volcano2)
 
 # Map graph coordinates to the image space; by default,
 # 'y' row indices will be flipped (see comments below).
-gs <- normalizeGraphSpace(gs, use_image = TRUE)
+gs <- normalizeGraphSpace(gs)
 ```
 
 Observe that the nodes (open circles) are precisely aligned with the

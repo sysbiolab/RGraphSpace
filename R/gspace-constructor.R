@@ -18,7 +18,7 @@
         graph = gg, 
         image = as.raster(matrix()), 
         pars = pars, 
-        misc = list(g = g),
+        misc = list(),
         uuid = instance_id
         )
     

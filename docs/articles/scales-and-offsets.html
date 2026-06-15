@@ -158,7 +158,7 @@ the output resolution.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_graphspace.html">geom_graphspace</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%202-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%202-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>When we map node size to a variable (like the <code>num_var</code>),
 <em>ggplot2</em> rescales these values into a target range (e.g.,
 <code>c(2, 40)</code>). This provides all the advantages of the
@@ -180,7 +180,7 @@ providing additional manual fine-tuning.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%203-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="mapping-independent-layers">Mapping independent layers<a class="anchor" aria-label="anchor" href="#mapping-independent-layers"></a>
@@ -213,7 +213,7 @@ the corresponding clipping information into the edge layer.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%204-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="scales-and-offsets_files/figure-html/Adjusting%20scales%20-%204-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>To provide a final note of customization, these scaling trade-offs
 only apply when <code>size</code> is passed as a node aesthetic mapping.
 Otherwise, <em>RGraphSpace</em> defaults to using <code>npc</code> units

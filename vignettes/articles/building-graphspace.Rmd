@@ -17,7 +17,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center",
   fig.width = 7,
-  fig.height = 5
+  fig.height = 5,
+  out.width="90%"
   )
 ```
 
@@ -72,7 +73,7 @@ V(gtoy1)$name <- paste0("n", 1:5)
 plot(gtoy1)
 ```
 
-```{r Toy igraph - 3, eval=TRUE, message=FALSE, out.width="80%"}
+```{r Toy igraph - 3, eval=TRUE, message=FALSE}
 # Plot the 'gtoy1' using RGraphSpace
 plotGraphSpace(gtoy1, add.labels = TRUE)
 ```
@@ -156,7 +157,7 @@ E(gtoy1)$arrowType <- 1
 
 ... and plot the updated `igraph` object. The most straightforward call simply passes an `igraph` directly to the wrapper `plotGraphSpace()` function.
  
-```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE, out.width="80%"}
+```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE}
 # Plot the updated 'gtoy1' using RGraphSpace
 plotGraphSpace(gtoy1, add.labels = TRUE)
 ```
@@ -171,7 +172,7 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 
 Alternatively, the `igraph` object can be transformed into a `GraphSpace` container and passed to the underlying `geoms`:
 
-```{r Using geoms, eval=TRUE, message=FALSE, out.width="80%"}
+```{r Using geoms, eval=TRUE, message=FALSE}
 data('gtoy1', package = 'RGraphSpace')
 gs <- GraphSpace(gtoy1)
 gs <- normalizeGraphSpace(gs)

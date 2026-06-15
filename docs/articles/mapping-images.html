@@ -148,7 +148,7 @@ the image matrix.</p>
 <span></span>
 <span><span class="co"># Map graph coordinates to the image space; by default,</span></span>
 <span><span class="co"># 'y' row indices will be flipped (see comments below).</span></span>
-<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, use_image <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></code></pre></div>
 <p>Observe that the nodes (open circles) are precisely aligned with the
 pixels (dark squares) to which they were mapped. In this plot, nodes
 remain proportional to the viewport regardless of the final output
@@ -159,7 +159,7 @@ areas.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Render the graph with the raster as background</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, add.image <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="mapping-images_files/figure-html/Mapping%20images%20-%203-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="mapping-images_files/figure-html/Mapping%20images%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p><strong>Note on image alignment</strong>: Proper spatial alignment
 between nodes and the background image requires consistent coordinate
 conventions. Spatial misalignment may occur if the input image and node
@@ -177,7 +177,7 @@ to apply flipping directly to the background image.</p>
 <span>  <span class="fu"><a href="../reference/annotation_gspace.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="mapping-images_files/figure-html/Mapping%20images%20-%204-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="mapping-images_files/figure-html/Mapping%20images%20-%204-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="advanced-workflows">Advanced workflows<a class="anchor" aria-label="anchor" href="#advanced-workflows"></a>

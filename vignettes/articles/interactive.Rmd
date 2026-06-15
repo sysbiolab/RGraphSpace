@@ -17,7 +17,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center",
   fig.width = 7,
-  fig.height = 5
+  fig.height = 5,
+  out.width="90%"
   )
 ```
 
@@ -71,7 +72,7 @@ RedPort(checkJava=TRUE)
 
 Before jumping into the interactive interface, we can use a standard *RGraphSpace* call to verify the graph's structure and current layout. This provides a baseline for comparison once we start modifying the network dynamically.
 
-```{r Plot gtoy1, eval=TRUE, message=FALSE, out.width="70%"}
+```{r Plot gtoy1, eval=TRUE, message=FALSE}
 library("RGraphSpace")
 library("RedeR")
 library("igraph")
@@ -126,7 +127,7 @@ The following example demonstrates how to layout a large modular graph using a c
 
 We first generate a sample network with predefined modules to simulate a cluttered system. This provides a baseline to evaluate the combination of global layout algorithms and local manual adjustments.
 
-```{r Plot large igraph - 1, eval=TRUE, message=FALSE, out.width="90%"}
+```{r Plot large igraph - 1, eval=TRUE, message=FALSE}
 # Make a large modular graph
 nmod = 20
 size = 50
@@ -154,7 +155,7 @@ plotGraphSpace(gs_gtoy2)
 
 The layout can then be fine-tuned interactively:
 
-```{r Plot large igraph - 2, eval=FALSE, message=FALSE, out.width="90%"}
+```{r Plot large igraph - 2, eval=FALSE, message=FALSE}
 # Launch the RedeR application
 startRedeR()
 resetRedeR()

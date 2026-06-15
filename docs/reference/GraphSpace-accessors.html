@@ -307,7 +307,7 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-in"><span><span class="co"># Add an image and rescale graph coordinates to image space</span></span></span>
 <span class="r-in"><span><span class="co"># Images may be provided as a raster or numeric matrix</span></span></span>
 <span class="r-in"><span><span class="fu">gs_image</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="as_colorraster.html">as_colorraster</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, image.space <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Normalizing node coordinates to graph space...</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

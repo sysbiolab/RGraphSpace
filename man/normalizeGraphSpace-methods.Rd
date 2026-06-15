@@ -10,14 +10,14 @@
 \S4method{normalizeGraphSpace}{GraphSpace}(
   gs,
   mar = 0.1,
-  use_image = FALSE,
+  image.space = .has_image(gs),
   flip.x = FALSE,
-  flip.y = FALSE,
+  flip.y = image.space,
   rotate.xy = FALSE,
   flip.v = FALSE,
   flip.h = FALSE,
   verbose = TRUE,
-  image = deprecated()
+  use_image = deprecated()
 )
 
 \S4method{cropGraphSpace}{GraphSpace}(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
@@ -31,7 +31,7 @@ symmetric margins as a fraction of the graph space. With an image,
 \code{mar} is interpreted as a fraction of the available image margins
 surrounding the graph.}
 
-\item{use_image}{Logical; if an image is available, whether to use it as
+\item{image.space}{Logical; if an image is available, whether to use it as
 a background reference map. When enabled, \code{x} and \code{y} graph
 coordinates are interpreted as pixel coordinates in the image matrix.
 Images can be inspected and assigned with \code{\link{gs_image}}.}
@@ -40,7 +40,7 @@ Images can be inspected and assigned with \code{\link{gs_image}}.}
 
 \item{flip.y}{Logical; whether to flip the node coordinates along the y-axis.
 Useful for aligning nodes with image backgrounds, which often use an
-inverted coordinate system.}
+inverted coordinate system. Defaults to \code{image.space}.}
 
 \item{rotate.xy}{Logical; whether to rotate x-y coordinates.}
 
@@ -53,7 +53,8 @@ matrix (left-to-right) to align with the graph coordinate system.}
 \item{verbose}{A single logical value specifying to display detailed
 messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).}
 
-\item{image}{Deprecated from RGraphSpace 1.3.0; use \link{gs_image} instead.}
+\item{use_image}{Deprecated from RGraphSpace 1.4.0; use
+\code{image.space} instead.}
 
 \item{crop.coord}{An optional numeric vector of length four specifying a
 cropping region (xmin, xmax, ymin, ymax), with values in normalized
@@ -73,8 +74,8 @@ These functions provide different strategies for coordinate transformation:
 \itemize{
 \item \bold{normalizeGraphSpace}: Re-scales node coordinates to a
 \code{[0, 1]} unit square based on the graph's bounding box (when
-\code{use_image = FALSE}) or maps them to pixel coordinates (when
-\code{use_image = TRUE} and an image is provided; see \link{gs_image}).
+\code{image.space = FALSE}) or maps them to pixel coordinates (when
+\code{image.space = TRUE} and an image is provided; see \link{gs_image}).
 It handles image-to-graph alignment via \code{flip.\*} and
 \code{rotate.\*} arguments, used to adjust the graph origin with the
 image matrix layout. Users should be aware of the potential discrepancy
@@ -105,8 +106,11 @@ gs <- GraphSpace(gtoy1)
 
 gs <- normalizeGraphSpace(gs)
 
-gs_crop <- cropGraphSpace(gs, 
-         crop.coord = c(0, 0.75, 0, 0.75))
+gs_crop <- cropGraphSpace(gs, crop.coord = c(0, 1, 0, 0.5))
+
+plotGraphSpace(gs, add.labels = TRUE)
+
+plotGraphSpace(gs_crop, add.labels = TRUE)
 
 }
 \seealso{

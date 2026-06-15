@@ -161,7 +161,7 @@ gs_edge_attr(gs)$edgeLineWidth <- 3
 # Add an image and rescale graph coordinates to image space
 # Images may be provided as a raster or numeric matrix
 gs_image(gs) <- as_colorraster(volcano)
-gs <- normalizeGraphSpace(gs)
+gs <- normalizeGraphSpace(gs, image.space = FALSE)
 
 }
 \seealso{

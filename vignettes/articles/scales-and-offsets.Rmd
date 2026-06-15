@@ -17,7 +17,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center",
   fig.width = 7,
-  fig.height = 5
+  fig.height = 5,
+  out.width = "90%"
   )
 ```
 
@@ -41,7 +42,7 @@ A seemingly simple yet technically challenging aspect of network visualization i
 
 Below, we construct a star-like network with varying node sizes to show how the geometries stay synchronized across a wide range values.
 
-```{r Adjusting scales - 1, eval=TRUE, message=FALSE, out.width="70%"}
+```{r Adjusting scales - 1, eval=TRUE, message=FALSE}
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
@@ -72,17 +73,17 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 In the first example, the `GraphSpace` object provides all graph attributes. Using predefined node sizes allows for consistent arrow offsets, as all network elements are scaled to `npc` (Normalized Parent Coordinates) units. No matter how the plotting area is resized, nodes, edges, and arrows will remain proportional to the viewport. This behavior is especially useful when overlaying networks on top of reference images (such as photomicrography or medical scans), where nodes must stay locked to specific pixel positions regardless of the output resolution.
 
-```{r Adjusting scales - 2, eval=TRUE, message=FALSE, out.width="80%"}
+```{r Adjusting scales - 2, eval=TRUE, message=FALSE}
 ggplot() + 
   geom_graphspace(data = gs_star) + 
   theme_gspace_coords()
 ```
 
 ```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-p <- ggplot() + geom_graphspace(data = gs_star) + 
-  theme_gspace_coords()
-ggsave(filename = "./vignettes/cards/scales_and_offsets.png", height=4, width=4,
-  units="in", device="png", dpi=200, plot = p)
+# p <- ggplot() + geom_graphspace(data = gs_star) + 
+#   theme_gspace_coords()
+# ggsave(filename = "./vignettes/cards/scales_and_offsets.png", height=4, width=4,
+#   units="in", device="png", dpi=200, plot = p)
 ```
 
 When we map node size to a variable (like the `num_var`), *ggplot2* rescales these values into a target range (e.g., `c(2, 40)`). This provides all the advantages of the *ggplot2* ecosystem, such as flexible graphical scaling and coordinated legends.
@@ -91,7 +92,7 @@ There is, however, a subtle trade-off to keep in mind. When node size is mapped 
 
 In the example below, `geom_graphspace()` handles the bulk of the edge adjustment, with the `arrow_offset` parameter providing additional manual fine-tuning.
 
-```{r Adjusting scales - 3, eval=TRUE, message=FALSE, out.width="80%"}
+```{r Adjusting scales - 3, eval=TRUE, message=FALSE}
 ggplot() + 
   geom_graphspace(mapping = aes(size = num_var),
     data = gs_star,  arrow_offset = 0.03) + 
@@ -106,7 +107,7 @@ While `geom_graphspace()` is convenient for quick, coordinated plots, it has a l
 
 However, because these layers are now independent, they no longer "talk" to each other by default. For example, if node sizes are modified through a scale transformation, the edge layer has no direct way to determine the resulting node boundaries needed for clipping calculations. To address this, *RGraphSpace* performs a post-processing synchronization step during plot construction, intercepting the calculated sizes from the node layer and "injecting" the corresponding clipping information into the edge layer.
 
-```{r Adjusting scales - 4, eval=TRUE, message=FALSE, out.width="80%"}
+```{r Adjusting scales - 4, eval=TRUE, message=FALSE}
 # We shuffle 'num_var' to demonstrate that edges 
 # still find their specific boundaries
 set.seed(234)

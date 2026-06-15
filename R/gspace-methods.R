@@ -566,7 +566,7 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
 #' # Add an image and rescale graph coordinates to image space
 #' # Images may be provided as a raster or numeric matrix
 #' gs_image(gs) <- as_colorraster(volcano)
-#' gs <- normalizeGraphSpace(gs)
+#' gs <- normalizeGraphSpace(gs, image.space = FALSE)
 #' 
 #' @aliases names
 #' @aliases gs_names
@@ -658,7 +658,7 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
     .validate_gs_args("numeric_mtx", "value", value)
     rlang::inform(
       c("i" = "Rasterizing numeric matrix.",
-        "*" = "Values outside [0,1] were rescaled before conversion.")
+        "*" = "Values outside [0,1] are rescaled before conversion.")
     )
     rng <- range(value, na.rm = TRUE)
     if (diff(rng) == 0) {
@@ -671,7 +671,6 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
     value <- as.raster(value)
   }
   x@image <- value
-  x@misc$image <- value
   x@pars$image.layer <- TRUE
   return(x)
 })

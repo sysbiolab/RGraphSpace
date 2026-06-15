@@ -17,7 +17,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.align = "center",
   fig.width = 7,
-  fig.height = 5
+  fig.height = 5,
+  out.width = "90%"
   )
 ```
 
@@ -40,7 +41,7 @@ Images can be used as spatial references for graphs. When a raster image is prov
 
 As an example, next we extract features from the `volcano` matrix and map them to graph nodes. The graph is then visualized over the image matrix.
 
-```{r Mapping images - 1, eval=TRUE, message=FALSE, out.width="100%"}
+```{r Mapping images - 1, eval=TRUE, message=FALSE}
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
@@ -69,26 +70,26 @@ igraph::V(gtoy3)$nodeColor[bottom_row] <- adjustcolor("red", 0.4)
 
 # Initialize, normalize, and plot
 
-```{r Mapping images - 2, eval=TRUE, message=FALSE, out.width="100%"}
+```{r Mapping images - 2, eval=TRUE, message=FALSE}
 # Initialize a GraphSpace object
 gs <- GraphSpace(gtoy3)
 gs_image(gs) <- as_colorraster(volcano2)
 
 # Map graph coordinates to the image space; by default,
 # 'y' row indices will be flipped (see comments below).
-gs <- normalizeGraphSpace(gs, use_image = TRUE)
+gs <- normalizeGraphSpace(gs)
 ```
 
 Observe that the nodes (open circles) are precisely aligned with the pixels (dark squares) to which they were mapped. In this plot, nodes remain proportional to the viewport regardless of the final output resolution. This behavior is especially critical when the network elements represent image features at specific positions and must stay anchored to those features, avoiding overlap with adjacent, unrelated areas.
 
-```{r Mapping images - 3, eval=TRUE, message=FALSE, out.width="100%"}
+```{r Mapping images - 3, eval=TRUE, message=FALSE}
 # Render the graph with the raster as background
 plotGraphSpace(gs, add.image = TRUE)
 ```
 
 **Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
 
-```{r Mapping images - 4, eval=TRUE, message=FALSE, out.width="100%"}
+```{r Mapping images - 4, eval=TRUE, message=FALSE}
 # Alternatively, passing to the underlying geoms
 ggplot(gs) +
   annotation_gspace_image(gs) +

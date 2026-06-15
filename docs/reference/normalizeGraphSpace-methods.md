@@ -11,14 +11,14 @@ pixel coordinates of a background image.
 normalizeGraphSpace(
   gs,
   mar = 0.1,
-  use_image = FALSE,
+  image.space = .has_image(gs),
   flip.x = FALSE,
-  flip.y = FALSE,
+  flip.y = image.space,
   rotate.xy = FALSE,
   flip.v = FALSE,
   flip.h = FALSE,
   verbose = TRUE,
-  image = deprecated()
+  use_image = deprecated()
 )
 
 # S4 method for class 'GraphSpace'
@@ -39,7 +39,7 @@ cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
   interpreted as a fraction of the available image margins surrounding
   the graph.
 
-- use_image:
+- image.space:
 
   Logical; if an image is available, whether to use it as a background
   reference map. When enabled, `x` and `y` graph coordinates are
@@ -55,7 +55,7 @@ cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
 
   Logical; whether to flip the node coordinates along the y-axis. Useful
   for aligning nodes with image backgrounds, which often use an inverted
-  coordinate system.
+  coordinate system. Defaults to `image.space`.
 
 - rotate.xy:
 
@@ -76,11 +76,9 @@ cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
   A single logical value specifying to display detailed messages (when
   `verbose=TRUE`) or not (when `verbose=FALSE`).
 
-- image:
+- use_image:
 
-  Deprecated from RGraphSpace 1.3.0; use
-  [gs_image](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  instead.
+  Deprecated from RGraphSpace 1.4.0; use `image.space` instead.
 
 - crop.coord:
 
@@ -98,9 +96,9 @@ These functions provide different strategies for coordinate
 transformation:
 
 - **normalizeGraphSpace**: Re-scales node coordinates to a `[0, 1]` unit
-  square based on the graph's bounding box (when `use_image = FALSE`) or
-  maps them to pixel coordinates (when `use_image = TRUE` and an image
-  is provided; see
+  square based on the graph's bounding box (when `image.space = FALSE`)
+  or maps them to pixel coordinates (when `image.space = TRUE` and an
+  image is provided; see
   [gs_image](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)).
   It handles image-to-graph alignment via `flip.\*` and `rotate.\*`
   arguments, used to adjust the graph origin with the image matrix
@@ -147,6 +145,11 @@ gs <- GraphSpace(gtoy1)
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to graph space...
 
-gs_crop <- cropGraphSpace(gs, 
-         crop.coord = c(0, 0.75, 0, 0.75))
+gs_crop <- cropGraphSpace(gs, crop.coord = c(0, 1, 0, 0.5))
+
+plotGraphSpace(gs, add.labels = TRUE)
+
+
+plotGraphSpace(gs_crop, add.labels = TRUE)
+
 ```

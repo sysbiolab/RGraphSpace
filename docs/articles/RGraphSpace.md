@@ -99,8 +99,8 @@ V(gtoy1)$nodeLineWidth <- 1
 # Node line color (Hexadecimal or color name)
 V(gtoy1)$nodeLineColor <- "grey20"
 
-# Node labels ('NA' will omit labels)
-V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
+# Node labels ('NA' will omit the label)
+V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", "V5")
 
 # Node label size (in pts)
 V(gtoy1)$nodeLabelSize <- 8
