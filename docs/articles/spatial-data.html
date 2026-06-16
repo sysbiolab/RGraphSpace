@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-06-15</h4>
+            <h4 data-toc-skip class="date">2026-06-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/spatial-data.Rmd" class="external-link"><code>vignettes/articles/spatial-data.Rmd</code></a></small>
       <div class="d-none name"><code>spatial-data.Rmd</code></div>
@@ -149,10 +149,11 @@ installed.</p>
 <em>SeuratData</em> package, consisting of spatial transcriptomics data
 from sagittal mouse brain sections generated with Visium v1 technology.
 This dataset is commonly used to demonstrate <em>Seurat</em> spatial
-workflows <span class="citation">(Hao et al. 2024)</span>. Here, we
-apply <code><a href="../reference/as.GraphSpace.html">as.GraphSpace()</a></code> to a <code>Seurat</code> object and
-demonstrate how spatial high-dimensional variables can be mapped
-directly to <em>ggplot2</em> aesthetics.</p>
+workflows <span class="citation">(Hao et al. 2024)</span>. We apply
+<code><a href="../reference/as.GraphSpace.html">as.GraphSpace()</a></code> to coerce the <code>Seurat</code> object
+into a <code>GraphSpace</code> and show how spatial high-dimensional
+variables can be mapped directly to <em>ggplot2</em> aesthetics,
+anchored to the tissue image from which the data were sampled.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install a Seurat dataset (required only once)</span></span>
 <span><span class="fu">SeuratData</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.org/seurat/reference/InstallData.html" class="external-link">InstallData</a></span><span class="op">(</span><span class="st">"stxBrain"</span><span class="op">)</span></span></code></pre></div>
@@ -286,7 +287,7 @@ aesthetic and overlaying the tissue image as a dimmed background.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="sp-coercion">Coercing spatial data into a <em>GraphSpace</em> object<a class="anchor" aria-label="anchor" href="#sp-coercion"></a>
+<h2 id="sp-coercion">Coercing spatial data<a class="anchor" aria-label="anchor" href="#sp-coercion"></a>
 </h2>
 <p>Below, we show how to access the relevant components of a
 <code>Seurat</code> object and use them to construct a

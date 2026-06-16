@@ -97,7 +97,7 @@ seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
 # seurat_obj <- RunUMAP(seurat_obj, dims = 1:30)
 ```
 
-## Plotting baseline
+# *Seurat* reference plots
 
 Before introducing the `ggplot-GraphSpace` interface, we first reproduce two typical *Seurat* visualizations: a cluster-level embedding (`DimPlot`) and a feature expression map (`FeaturePlot`). These examples provide a useful baseline for the corresponding visualizations constructed later with `ggplot-GraphSpace`.
 
@@ -105,11 +105,11 @@ Before introducing the `ggplot-GraphSpace` interface, we first reproduce two typ
 cpal <- DiscretePalette(nlevels(seurat_obj$seurat_annotations), 
   palette = "polychrome")
 
-# Left: Typical Seurat cluster visualization
+# Left: cluster-level embedding
 p1 <- DimPlot(seurat_obj, pt.size = 1, cols = cpal) + 
   theme_minimal() + theme(aspect.ratio = 1)
 
-# Right: Typical Seurat feature-expression visualization
+# Right: feature expression map
 p2 <- FeaturePlot(seurat_obj, features = "LYZ", 
   cols = c("lightgrey", "blue"), pt.size = 1) + 
   theme_minimal() + theme(aspect.ratio = 1)
@@ -126,17 +126,16 @@ p1 + p2
 knitr::include_graphics("figs_dev/Seurat_DimFeaturePlot.png")
 ```
 
-Note that these are high-level plotting functions. Internally, *Seurat* extracts the relevant data and generates `ggplot` objects. While this approach provides convenient and highly customizable visualizations, the underlying data structures are not directly exposed to the user, making advanced use of the *ggplot2* grammar more difficult. For example, defining custom aesthetic mappings or interoperating with other visualization workflows would require extra data extraction steps.
+Note that `DimPlot` and `FeaturePlot` are high-level functions. Internally, *Seurat* extracts the relevant data and generates `ggplot` objects. While convenient, the underlying data structures are not directly exposed to the user, making advanced use of the *ggplot2* grammar more difficult. For example, defining custom aesthetic mappings or interoperating with other visualization workflows would require extra data extraction steps.
 
-## Creating a GraphSpace object
+# Exposing the *ggplot2* grammar
 
-Next, we apply `as.GraphSpace()` to create a `GraphSpace` from the `Seurat` object, exposing its underlying high-dimensional data to the *ggplot2* grammar (for additional details, see the [*coercing high-dimensional data*](high-dimensional.html#hd-coercion) section).
+We now apply `as.GraphSpace()` to expose the `Seurat` object's underlying high-dimensional data directly to *ggplot2* (for additional details, see the [*coercing high-dimensional data*](high-dimensional.html#hd-coercion) section).
 
 ```{r Create a GraphSpace, eval=FALSE, message=FALSE, results='hide'}
 # Create a GraphSpace from 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "embedding", reduction = "umap")
 
-# Inspect the 'gs' object
 gs
 # A GraphSpace-class object for:
 # IGRAPH 1393201 UN-- 2638 0 -- 
@@ -146,15 +145,13 @@ gs
 # + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)
 ```
 
-# Cluster and feature visualizations
-
-With the `GraphSpace` object ready, we can reproduce typical *Seurat* plots using standard *ggplot2* syntax.
+With the `GraphSpace` object ready, we reproduce the same plots using *ggplot2* geoms and aesthetic mappings.
 
 ```{r Metadata plot, eval=FALSE, message=FALSE, results='hide'}
 cpal <- DiscretePalette(nlevels(gs$seurat_annotations), 
   palette = "polychrome")
 
-# Left: Reproduce a typical Seurat cluster visualization
+# Left: cluster-level embedding
 p3 <- ggplot(gs) + 
   geom_nodespace(mapping = aes(fill = seurat_annotations),
     size = 1.5, color = "grey90", stroke = 0.3) +
@@ -163,7 +160,7 @@ p3 <- ggplot(gs) +
   theme_gspace_legend(discrete_fill = TRUE) +
   theme_minimal() + theme(aspect.ratio = 1)
 
-# Right: Reproduce a typical Seurat feature visualization
+# Right: feature expression map
 p4 <- ggplot(gs) + 
   geom_nodespace(mapping = aes(fill = LYZ), 
     size = 1.5, color = "lightgrey", stroke = 0.3) +
@@ -198,8 +195,7 @@ knitr::include_graphics("figs_dev/ggplot_seurat_1_2.png")
 
 The resulting plots are essentially the same, but users now have full flexibility to interact directly with the *ggplot2* grammar and its rich ecosystem of extensions and companion packages.
 
-
-# Coercing high-dimensional data into a *GraphSpace* object {#hd-coercion}
+# Coercing high-dimensional data {#hd-coercion}
 
 The `as.GraphSpace()` function provides a convenient way to coerce high-dimensional data into a `GraphSpace` object. However, no coercion method can anticipate every possible data structure. Below, we show how to access the relevant components of a `Seurat` object and use them to construct a `GraphSpace` manually. For another coercion example, see the [*spatial data*](spatial-data.html#sp-coercion) tutorial.
 

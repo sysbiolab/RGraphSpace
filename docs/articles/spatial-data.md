@@ -63,11 +63,13 @@ library("SeuratData")
 We will use the `stxBrain` dataset from the *SeuratData* package,
 consisting of spatial transcriptomics data from sagittal mouse brain
 sections generated with Visium v1 technology. This dataset is commonly
-used to demonstrate *Seurat* spatial workflows (Hao et al. 2024). Here,
-we apply
+used to demonstrate *Seurat* spatial workflows (Hao et al. 2024). We
+apply
 [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
-to a `Seurat` object and demonstrate how spatial high-dimensional
-variables can be mapped directly to *ggplot2* aesthetics.
+to coerce the `Seurat` object into a `GraphSpace` and show how spatial
+high-dimensional variables can be mapped directly to *ggplot2*
+aesthetics, anchored to the tissue image from which the data were
+sampled.
 
 ``` r
 
@@ -219,7 +221,7 @@ ggplot(gs) +
 
   
 
-## Coercing spatial data into a *GraphSpace* object
+## Coercing spatial data
 
 Below, we show how to access the relevant components of a `Seurat`
 object and use them to construct a `GraphSpace` manually, without

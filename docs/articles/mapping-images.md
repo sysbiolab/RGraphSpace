@@ -106,10 +106,9 @@ ggplot(gs) +
 
 ## Advanced workflows
 
-See *PathwaySpace* tutorials for use-case examples involving reference
-image backgrounds.
-
-- [https://sysbiolab.github.io/PathwaySpace/](https://sysbiolab.github.io/PathwaySpace/)
+See the [*Spatial
+Data*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.md)
+tutorial for examples using a reference image.
 
 ## Session information
 

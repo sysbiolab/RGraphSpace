@@ -99,9 +99,7 @@ ggplot(gs) +
 
 # Advanced workflows
 
-See *PathwaySpace* tutorials for use-case examples involving reference image backgrounds.
-
-* <a href="https://sysbiolab.github.io/PathwaySpace/" target="_blank">https://sysbiolab.github.io/PathwaySpace/</a>
+See the [*Spatial Data*](spatial-data.html) tutorial for examples using a reference image.
 
 
 ```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}

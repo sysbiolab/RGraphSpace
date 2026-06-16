@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-06-15</h4>
+            <h4 data-toc-skip class="date">2026-06-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/high-dimensional.Rmd" class="external-link"><code>vignettes/articles/high-dimensional.Rmd</code></a></small>
       <div class="d-none name"><code>high-dimensional.Rmd</code></div>
@@ -180,9 +180,11 @@ et al. 2024)</span>.</p>
 <span><span class="co"># seurat_obj &lt;- RunPCA(seurat_obj)</span></span>
 <span><span class="co"># seurat_obj &lt;- RunUMAP(seurat_obj, dims = 1:30)</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="plotting-baseline">Plotting baseline<a class="anchor" aria-label="anchor" href="#plotting-baseline"></a>
-</h3>
+</div>
+<div class="section level2">
+<h2 id="seurat-reference-plots">
+<em>Seurat</em> reference plots<a class="anchor" aria-label="anchor" href="#seurat-reference-plots"></a>
+</h2>
 <p>Before introducing the <code>ggplot-GraphSpace</code> interface, we
 first reproduce two typical <em>Seurat</em> visualizations: a
 cluster-level embedding (<code>DimPlot</code>) and a feature expression
@@ -193,39 +195,36 @@ for the corresponding visualizations constructed later with
 <code class="sourceCode R"><span><span class="va">cpal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/DiscretePalette.html" class="external-link">DiscretePalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels</a></span><span class="op">(</span><span class="va">seurat_obj</span><span class="op">$</span><span class="va">seurat_annotations</span><span class="op">)</span>, </span>
 <span>  palette <span class="op">=</span> <span class="st">"polychrome"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Left: Typical Seurat cluster visualization</span></span>
+<span><span class="co"># Left: cluster-level embedding</span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html" class="external-link">DimPlot</a></span><span class="op">(</span><span class="va">seurat_obj</span>, pt.size <span class="op">=</span> <span class="fl">1</span>, cols <span class="op">=</span> <span class="va">cpal</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Right: Typical Seurat feature-expression visualization</span></span>
+<span><span class="co"># Right: feature expression map</span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html" class="external-link">FeaturePlot</a></span><span class="op">(</span><span class="va">seurat_obj</span>, features <span class="op">=</span> <span class="st">"LYZ"</span>, </span>
 <span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lightgrey"</span>, <span class="st">"blue"</span><span class="op">)</span>, pt.size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
 <p><img src="figs_dev/Seurat_DimFeaturePlot.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<p>Note that these are high-level plotting functions. Internally,
-<em>Seurat</em> extracts the relevant data and generates
-<code>ggplot</code> objects. While this approach provides convenient and
-highly customizable visualizations, the underlying data structures are
-not directly exposed to the user, making advanced use of the
-<em>ggplot2</em> grammar more difficult. For example, defining custom
-aesthetic mappings or interoperating with other visualization workflows
-would require extra data extraction steps.</p>
+<p>Note that <code>DimPlot</code> and <code>FeaturePlot</code> are
+high-level functions. Internally, <em>Seurat</em> extracts the relevant
+data and generates <code>ggplot</code> objects. While convenient, the
+underlying data structures are not directly exposed to the user, making
+advanced use of the <em>ggplot2</em> grammar more difficult. For
+example, defining custom aesthetic mappings or interoperating with other
+visualization workflows would require extra data extraction steps.</p>
 </div>
-<div class="section level3">
-<h3 id="creating-a-graphspace-object">Creating a GraphSpace object<a class="anchor" aria-label="anchor" href="#creating-a-graphspace-object"></a>
-</h3>
-<p>Next, we apply <code><a href="../reference/as.GraphSpace.html">as.GraphSpace()</a></code> to create a
-<code>GraphSpace</code> from the <code>Seurat</code> object, exposing
-its underlying high-dimensional data to the <em>ggplot2</em> grammar
-(for additional details, see the <a href="high-dimensional.html#hd-coercion"><em>coercing high-dimensional
+<div class="section level2">
+<h2 id="exposing-the-ggplot2-grammar">Exposing the <em>ggplot2</em> grammar<a class="anchor" aria-label="anchor" href="#exposing-the-ggplot2-grammar"></a>
+</h2>
+<p>We now apply <code><a href="../reference/as.GraphSpace.html">as.GraphSpace()</a></code> to expose the
+<code>Seurat</code> object’s underlying high-dimensional data directly
+to <em>ggplot2</em> (for additional details, see the <a href="high-dimensional.html#hd-coercion"><em>coercing high-dimensional
 data</em></a> section).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a GraphSpace from 'seurat_obj'</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as.GraphSpace.html">as.GraphSpace</a></span><span class="op">(</span><span class="va">seurat_obj</span>, space <span class="op">=</span> <span class="st">"embedding"</span>, reduction <span class="op">=</span> <span class="st">"umap"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Inspect the 'gs' object</span></span>
 <span><span class="va">gs</span></span>
 <span><span class="co"># A GraphSpace-class object for:</span></span>
 <span><span class="co"># IGRAPH 1393201 UN-- 2638 0 -- </span></span>
@@ -233,19 +232,13 @@ data</em></a> section).</p>
 <span><span class="co"># | nCount_RNA (v/n), nFeature_RNA (v/n), seurat_annotations (v/x), percent.mt (v/n),</span></span>
 <span><span class="co"># | RNA_snn_res.0.5 (v/x), seurat_clusters (v/x), arrowType (e/n)</span></span>
 <span><span class="co"># + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="cluster-and-feature-visualizations">Cluster and feature visualizations<a class="anchor" aria-label="anchor" href="#cluster-and-feature-visualizations"></a>
-</h2>
-<p>With the <code>GraphSpace</code> object ready, we can reproduce
-typical <em>Seurat</em> plots using standard <em>ggplot2</em>
-syntax.</p>
+<p>With the <code>GraphSpace</code> object ready, we reproduce the same
+plots using <em>ggplot2</em> geoms and aesthetic mappings.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cpal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/DiscretePalette.html" class="external-link">DiscretePalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels</a></span><span class="op">(</span><span class="va">gs</span><span class="op">$</span><span class="va">seurat_annotations</span><span class="op">)</span>, </span>
 <span>  palette <span class="op">=</span> <span class="st">"polychrome"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Left: Reproduce a typical Seurat cluster visualization</span></span>
+<span><span class="co"># Left: cluster-level embedding</span></span>
 <span><span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">seurat_annotations</span><span class="op">)</span>,</span>
 <span>    size <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="st">"grey90"</span>, stroke <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
@@ -254,7 +247,7 @@ syntax.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_legend</a></span><span class="op">(</span>discrete_fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Right: Reproduce a typical Seurat feature visualization</span></span>
+<span><span class="co"># Right: feature expression map</span></span>
 <span><span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">LYZ</span><span class="op">)</span>, </span>
 <span>    size <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="st">"lightgrey"</span>, stroke <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
@@ -269,8 +262,7 @@ flexibility to interact directly with the <em>ggplot2</em> grammar and
 its rich ecosystem of extensions and companion packages.</p>
 </div>
 <div class="section level2">
-<h2 id="hd-coercion">Coercing high-dimensional data into a <em>GraphSpace</em>
-object<a class="anchor" aria-label="anchor" href="#hd-coercion"></a>
+<h2 id="hd-coercion">Coercing high-dimensional data<a class="anchor" aria-label="anchor" href="#hd-coercion"></a>
 </h2>
 <p>The <code><a href="../reference/as.GraphSpace.html">as.GraphSpace()</a></code> function provides a convenient way
 to coerce high-dimensional data into a <code>GraphSpace</code> object.
