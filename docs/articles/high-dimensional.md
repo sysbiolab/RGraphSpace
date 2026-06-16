@@ -194,8 +194,8 @@ p3 + p4
 ![](figs_dev/ggplot_seurat_1_2.png)
 
 The resulting plots are essentially the same, but users now have full
-flexibility to interact directly with the *ggplot2* grammar and its rich
-ecosystem of extensions and companion packages.
+flexibility to interact directly with *ggplot2* and its rich ecosystem
+of extensions and companion packages.
 
 ## Coercing high-dimensional data
 
