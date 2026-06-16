@@ -124,7 +124,7 @@ Before proceeding, ensure that all packages described in the <a href="install.ht
 installed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check versions</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.0"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.1"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -193,7 +193,7 @@ space.</p>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">SeuratObject</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/GetImage.html" class="external-link">GetImage</a></span><span class="op">(</span><span class="va">seurat_obj</span>, mode <span class="op">=</span> <span class="st">"raster"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Normalize node coordinates to the image space</span></span>
-<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, use_image <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Inspect the 'gs' object</span></span>
 <span><span class="va">gs</span></span>
@@ -269,7 +269,7 @@ aesthetic and overlaying the tissue image as a dimmed background.</p>
 <code class="sourceCode R"><span><span class="co"># Re-create a GraphSpace from the updated 'seurat_obj'</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as.GraphSpace.html">as.GraphSpace</a></span><span class="op">(</span><span class="va">seurat_obj</span>, space <span class="op">=</span> <span class="st">"spatial"</span>, scale <span class="op">=</span> <span class="st">"lowres"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">SeuratObject</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/GetImage.html" class="external-link">GetImage</a></span><span class="op">(</span><span class="va">seurat_obj</span>, mode <span class="op">=</span> <span class="st">"raster"</span><span class="op">)</span></span>
-<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, use_image <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Reproduce a typical Seurat cluster visualization</span></span>
 <span><span class="va">cpal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/DiscretePalette.html" class="external-link">DiscretePalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels</a></span><span class="op">(</span><span class="va">gs</span><span class="op">$</span><span class="va">seurat_clusters</span><span class="op">)</span>, palette <span class="op">=</span> <span class="st">"polychrome"</span><span class="op">)</span></span>
@@ -320,7 +320,7 @@ data</em></a> tutorial.</p>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">SeuratObject</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/GetImage.html" class="external-link">GetImage</a></span><span class="op">(</span><span class="va">seurat_obj</span>, mode <span class="op">=</span> <span class="st">"raster"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Normalize node coordinates to the image space</span></span>
-<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, use_image <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>

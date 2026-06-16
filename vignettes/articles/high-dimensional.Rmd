@@ -48,7 +48,7 @@ This vignette assumes prior experience with [*Seurat*](https://satijalab.org/seu
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.0"){
+if (packageVersion("RGraphSpace") < "1.4.1"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }

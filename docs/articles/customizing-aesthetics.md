@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.0"){
+if (packageVersion("RGraphSpace") < "1.4.1"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }

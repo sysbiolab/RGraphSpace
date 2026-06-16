@@ -37,7 +37,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.0"){
+if (packageVersion("RGraphSpace") < "1.4.1"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -119,7 +119,7 @@ gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
 gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
 
 # Normalize node coordinates to the image space
-gs <- normalizeGraphSpace(gs, use_image = TRUE)
+gs <- normalizeGraphSpace(gs)
 
 # Inspect the 'gs' object
 gs
@@ -201,7 +201,7 @@ the tissue image as a dimmed background.
 # Re-create a GraphSpace from the updated 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
 gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
-gs <- normalizeGraphSpace(gs, use_image = TRUE)
+gs <- normalizeGraphSpace(gs)
 
 # Reproduce a typical Seurat cluster visualization
 cpal <- DiscretePalette(nlevels(gs$seurat_clusters), palette = "polychrome")
@@ -257,7 +257,7 @@ gs_fdata(gs) <- SeuratObject::LayerData(seurat_obj, layer = "data")
 gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
 
 # Normalize node coordinates to the image space
-gs <- normalizeGraphSpace(gs, use_image = TRUE)
+gs <- normalizeGraphSpace(gs)
 ```
 
 ## Session information
