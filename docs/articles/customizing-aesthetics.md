@@ -209,9 +209,9 @@ ggplot(data = gs) +
     #> [33] htmlwidgets_1.6.4  vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3   
     #> [37] beeswarm_0.4.0     desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1     
     #> [41] bslib_0.11.0       gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2 
-    #> [45] xfun_0.58          tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.18.0 
-    #> [49] knitr_1.51         farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31    
-    #> [53] labeling_0.4.3     compiler_4.6.0     S7_0.2.2
+    #> [45] xfun_0.58          tibble_3.3.1       tidyselect_1.2.1   knitr_1.51        
+    #> [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    
+    #> [53] compiler_4.6.0     S7_0.2.2
 
 ## References
 

@@ -220,9 +220,8 @@ must be called explicitly to synchronize clipping offsets.
     #> [53] ggbeeswarm_0.7.3   rmarkdown_2.31     otel_0.2.0         gridExtra_2.3     
     #> [57] ragg_1.5.2         memoise_2.0.1      evaluate_1.0.5     knitr_1.51        
     #> [61] ggrastr_1.0.2      viridisLite_0.4.3  rlang_1.2.0        Rcpp_1.1.1-1.1    
-    #> [65] glue_1.8.1         DBI_1.3.0          tweenr_2.0.3       rstudioapi_0.18.0 
-    #> [69] jsonlite_2.0.0     R6_2.6.1           systemfonts_1.3.2  fs_2.1.0          
-    #> [73] units_1.0-1
+    #> [65] glue_1.8.1         DBI_1.3.0          tweenr_2.0.3       jsonlite_2.0.0    
+    #> [69] R6_2.6.1           systemfonts_1.3.2  fs_2.1.0           units_1.0-1
 
 ## References
 
