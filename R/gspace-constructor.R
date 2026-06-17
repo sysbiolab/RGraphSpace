@@ -197,11 +197,16 @@
                 atts[[at]] <- as.numeric(x)
             } else if (is.character(x)) {
                 atts[[at]] <- as.character(x)
+            } else if (is.logical(x)) {
+                atts[[at]] <- as.logical(x)
+            } else {
+                atts[[at]] <- as.vector(x)
             }
         }
     }
+    a_names_present <- a_names[a_names %in% colnames(atts)]
+    atts <- atts[, c("vertex1", "vertex2", a_names_present)]
     rownames(atts) <- NULL
-    atts <- atts[, c("vertex1", "vertex2", a_names)]
     return(atts)
 }
 # ..this is a fix for 'as_adjacency_matrix', when 'attr' is character

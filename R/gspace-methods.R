@@ -749,25 +749,29 @@ setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ...) {
 setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
     g <- x@graph
     if (missing(name) && is.list(value)){
+      print("AA")
+      print(value)
         #workaround for analogy to igraph's "syntactic sugar" $<-
         len1 <- unlist(lapply(value, length))==1
         if(any(len1)){
             for(i in which(len1)){
                 vl <- value[[i]]
-                vl <- ifelse(.is_replicable(vl), vl, list(vl))
+                vl <- if(.is_replicable(vl)) vl else list(vl)
                 value[[i]] <- rep(vl, igraph::vcount(g))
             }
         }
         igraph::vertex_attr(graph = g) <- value
     } else {
+      print(value)
         if(length(value)==1){
-            value <- ifelse(.is_replicable(value), value, list(value))
+            value <- if(.is_replicable(value)) value else list(value)
         }
         igraph::vertex_attr(graph = g, name = name, ...=...) <- value  
     }
     x <- .updateNodeSpace(x, g)
     return(x)
 })
+# Used to handle possible function replication
 .is_replicable <- function(x) {
     tryCatch({
         rep(x, 2)
@@ -797,14 +801,14 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
         if(any(len1)){
             for(i in which(len1)){
                 vl <- value[[i]]
-                vl <- ifelse(.is_replicable(vl), vl, list(vl))
+                vl <- if(.is_replicable(vl)) vl else list(vl)
                 value[[i]] <- rep(vl, igraph::ecount(g))
             }
         }
         igraph::edge_attr(graph = g) <- value
     } else {
         if(length(value)==1){
-            value <- ifelse(.is_replicable(value), value, list(value))
+            value <- if(.is_replicable(value)) value else list(value)
         }
         igraph::edge_attr(graph = g, name = name, ...=...) <- value  
     }

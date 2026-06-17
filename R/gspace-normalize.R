@@ -210,6 +210,10 @@ setMethod("cropGraphSpace", "GraphSpace",
       rlang::abort("'crop.coord' should be in [0,1].")
     }
     
+    if(crop.coord[1] >= crop.coord[2] || crop.coord[3] >= crop.coord[4]){
+      rlang::abort("'crop.coord' must satisfy xmin < xmax and ymin < ymax.")
+    }
+    
     if(!gs@pars$is.normalized){
       rlang::abort(
         message = c(
@@ -246,14 +250,14 @@ setMethod("cropGraphSpace", "GraphSpace",
   if(flip.y){
     if(verbose) message("Flipping y-coordinates...")
     y <- coord$y2
-    coord$y2 <- -(y - max(y)) - max(y) + 1
+    coord$y2 <- max(y) + min(y) - y
   }
   
   # Flip x-coordinates
   if(flip.x){
     if(verbose) message("Flipping x-coordinates...")
     x <- coord$x2
-    coord$x2 <- -(x - max(x)) - max(x) + 1
+    coord$x2 <- max(x) + min(x) - x
   }
   # Update coordinates
   nodes$x <- coord$x2
@@ -280,8 +284,13 @@ setMethod("cropGraphSpace", "GraphSpace",
     from <- range(c(nds$x, nds$y))
     to <- c(mar, 1 - mar)
     
-    nds$x <- scales::rescale(nds$x, from = from, to=to)
-    nds$y <- scales::rescale(nds$y, from = from, to=to)
+    if(diff(from) == 0){
+      nds$x <- 0.5
+      nds$y <- 0.5
+    } else {
+      nds$x <- scales::rescale(nds$x, from = from, to=to)
+      nds$y <- scales::rescale(nds$y, from = from, to=to)
+    }
     
   }
   
@@ -531,7 +540,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   nodes <- gs@nodes
   cx <- nodes$x >= xmin & nodes$x <= xmax
   cy <- nodes$y >= ymin & nodes$y <= ymax
-  nodes <- nodes[which(cx & cy), ]
+  # nodes <- nodes[which(cx & cy), ]
   
   gs <- .crop_update_graph(gs, nodes)
   
@@ -601,6 +610,12 @@ setMethod("cropGraphSpace", "GraphSpace",
   V(gs@graph)$x[idx] <- nodes$x
   V(gs@graph)$y[idx] <- nodes$y
   gs@nodes <- nodes
+  
+  # Update fdata
+  if (nrow(gs@fdata) > 0) {
+    keep <- rownames(nodes)[rownames(nodes) %in% rownames(gs@fdata)]
+    gs@fdata <- gs@fdata[keep, , drop = FALSE]
+  }
   
   return(gs)
   

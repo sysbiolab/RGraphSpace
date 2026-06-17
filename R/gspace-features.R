@@ -122,17 +122,29 @@ gs_add_features <- function(x, data) {
   }
   
   # subset and reorder to match node order
-  data <- data[rownames(data) %in% node_ids, , drop = FALSE]
-  data <- data[match(node_ids, rownames(data)), , drop = FALSE]
-  
-  # fill missing nodes with NA rows
-  missing <- is.na(rownames(data))
-  if (any(missing)) {
-    rlang::warn(sprintf(
-      "%d node(s) have no feature data and will be set to NA.", sum(missing)
-    ))
+  matched_idx <- match(node_ids, rownames(data))
+  missing_count <- sum(is.na(matched_idx))
+  if (missing_count == 0) {
+
+    # safe: matched_idx has no NAs here
+    data <- data[matched_idx, , drop = FALSE]
+
+  } else {
+
+      rlang::warn(sprintf(
+          "%d node(s) have no feature data and will be set to NA.", 
+          missing_count))
+    
+      result <- Matrix::Matrix(
+          NA_real_,
+          nrow = length(node_ids),
+          ncol = ncol(data),
+          dimnames = list(node_ids, colnames(data))
+      )
+      present <- !is.na(matched_idx)
+      result[present, ] <- data[matched_idx[present], , drop = FALSE]
+      data <- result
   }
-  rownames(data) <- node_ids
   
   # Load fdata slot
   x@fdata <- data

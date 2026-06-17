@@ -87,6 +87,11 @@ annotation_gspace <- function(..., type = "image") {
 annotation_gspace_image <- function(raster, interpolate = FALSE, opacity = 1,
   flip.v = FALSE, flip.h = FALSE) {
 
+  .validate_gs_args("singleLogical", "interpolate", interpolate)
+  .validate_gs_args("singleLogical", "flip.v", flip.v)
+  .validate_gs_args("singleLogical", "flip.h", flip.h)
+  .validate_gs_args("singleNumber", "opacity", opacity)
+
   if (missing(raster)) {
     rlang::abort("Argument 'raster' is missing, with no default.")
   }
@@ -112,14 +117,15 @@ annotation_gspace_image <- function(raster, interpolate = FALSE, opacity = 1,
     if (is.null(raster)) return(invisible(NULL))
   }
 
+  opacity <- max(0, min(1, opacity))
   if (opacity != 1) {
-    alpha_channel <- as.integer(max(0, min(1, opacity)) * 255)
     img <- grDevices::col2rgb(as.character(raster), alpha = TRUE)
-    img[4, ] <- alpha_channel
-    raster <- as.raster(t(matrix(
+    img[4, ] <- as.integer(opacity * 255)
+    raster <- as.raster(matrix(
       grDevices::rgb(img[1,], img[2,], img[3,], img[4,], maxColorValue = 255),
-      nrow = nrow(raster), ncol = ncol(raster)
-    )))
+      nrow = nrow(raster), ncol = ncol(raster),
+      byrow = TRUE
+    ))
   }
 
   if (flip.v) raster <- raster[rev(seq_len(nrow(raster))), , drop = FALSE]

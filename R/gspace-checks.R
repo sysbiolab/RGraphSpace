@@ -90,7 +90,7 @@
     length(para) == 1L && !is.na(para)
   if (lg) {
     para <- abs(para)
-    lg <- abs(para - round(para)) <= para
+    lg <- abs(para - round(para)) <= .Machine$double.eps
   }
   return(lg)
 }
@@ -107,7 +107,7 @@
   lg <- is.integer(para) || is.numeric(para) || all(is.na(para))
   if (lg) {
     para <- abs(para)
-    lg <- all(abs(para - round(para)) <= para, na.rm=TRUE)
+    lg <- all( abs(para - round(para)) <= .Machine$double.eps, na.rm=TRUE)
   }
   if(lg && notNA) lg <- !any(is.na(para))
   return(lg)

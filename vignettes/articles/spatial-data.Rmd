@@ -77,7 +77,7 @@ SeuratData::InstallData("stxBrain")
 
 ```{r Load dataset, eval=FALSE, message=FALSE, results='hide'}
 # Check manifest of installed datasets
-SeuratData::InstalledData()
+# SeuratData::InstalledData()
 
 # Load the 'stxBrain' dataset
 seurat_obj <- LoadData("stxBrain", type = "anterior1")

@@ -86,7 +86,7 @@ SeuratData::InstallData("pbmc3k")
 ``` r
 
 # Check manifest of installed datasets
-SeuratData::InstalledData()
+# SeuratData::InstalledData()
 
 # Load the 'pbmc3k' dataset
 seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")

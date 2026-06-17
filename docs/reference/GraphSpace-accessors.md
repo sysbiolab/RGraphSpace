@@ -224,12 +224,52 @@ gs_vertex_attr(gs, "nodeLabel")
 
 # Modify a single value within a vertex attribute
 gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
+#> n1 n2 n3 n4 n5 
+#> 10  5  5 10  5 
 
 # Replace an entire vertex attribute
 gs_vertex_attr(gs, "nodeSize") <- 10
+#> [1] 10
 
 # Alternative syntax using `$` accessor
 gs_vertex_attr(gs)$nodeSize <- 10
+#> [1] "AA"
+#> $x
+#> [1]  0  2 -2 -4 -8
+#> 
+#> $y
+#> [1]  0  0  2 -4  0
+#> 
+#> $name
+#> [1] "n1" "n2" "n3" "n4" "n5"
+#> 
+#> $nodeLabel
+#> [1] "V1" "V2" "V3" "V4" "V5"
+#> 
+#> $nodeLabelSize
+#> [1] 8 8 8 8 8
+#> 
+#> $nodeLabelColor
+#> [1] "black" "black" "black" "black" "black"
+#> 
+#> $nodeShape
+#> [1] 21 22 23 24 25
+#> 
+#> $nodeSize
+#> [1] 10
+#> 
+#> $nodeColor
+#> [1] "red"       "#00ad39"   "grey80"    "lightblue" "cyan"     
+#> 
+#> $nodeLineWidth
+#> [1] 1 1 1 1 1
+#> 
+#> $nodeLineColor
+#> [1] "grey20" "grey20" "grey20" "grey20" "grey20"
+#> 
+#> $nodeAlpha
+#> [1] 1 1 1 1 1
+#> 
 
 # Access a specific edge attribute
 gs_edge_attr(gs, "edgeLineColor")

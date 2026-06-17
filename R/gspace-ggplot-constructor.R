@@ -449,15 +449,27 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
 
 #-------------------------------------------------------------------------------
 .is_handler <- function(f, type = "node") {
+  
   if (!is.function(f)) return(FALSE)
-  # Retrieve the original handler from inside ggplot2's data
-  # wrapper; depends on ggplot2 storing it as 'data' in the
-  # closure environment.
+  expected_class <- paste0(type, "space_handler")
+  
+  # Retrieve the original handler from inside ggplot2's data wrapper; 
+  # depends on ggplot2 storing it as 'data' in the closure environment.
+  
+  .check <- function(x) {
+    is.function(x) && (
+      inherits(x, expected_class) ||
+      identical(attr(x, "gs_handler_type"), type)
+    )
+  }
+
+  # 1. check f itself; covers future ggplot2 versions that may not wrap
+  if (.check(f)) return(TRUE)
+  
+  # 2. check ggproto method wrapper, look inner function as 'data' in its closure
   inner_f <- tryCatch(environment(f)$data, error = function(e) NULL)
-  if ( is.null(inner_f) ) return(FALSE)
-  b1 <- identical(attr(inner_f, "gs_handler_type"), type)
-  b2 <- inherits(inner_f, paste0(type, "space_handler"))
-  return( b1 || b2 )
+  .check(inner_f)
+  
 }
 
 #-------------------------------------------------------------------------------

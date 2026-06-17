@@ -133,6 +133,8 @@ clipping information into the edge layer.
 # still find their specific boundaries
 set.seed(234)
 gs_star$num_var2 <- sample(gs_star$num_var)
+#>  [1]  0.5  1.0  7.0  9.5  8.5  6.5  4.0 10.0  2.0  6.0  3.5  3.0  5.0  9.0  4.5
+#> [16]  1.5  8.0  5.5  7.5  2.5
 
 # Execute independent node and edge layers
 ggplot(data = gs_star) + 
