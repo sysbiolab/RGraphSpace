@@ -1,18 +1,5 @@
-# Histórico e Workspace do R (Local)
-.Rhistory
-.Rapp.history
-.RData
-.Ruserdata
-.Renviron
-
-# Configurações da IDE (RStudio / Posit)
-.Rproj.user/
-*.Rproj
-
 # Subprodutos de Compilação e Checagem do Pacote (CRAN/devtools)
 *-Ex.R
-/*.tar.gz
-/*.Rcheck/
 
 # Previews locais de Vinhetas e Cadernos RMarkdown
 vignettes/*.html
@@ -29,3 +16,69 @@ vignettes/*.pdf
 .httr-oauth
 rsconnect/
 .positai
+
+# R specific
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+
+# R package build artifacts
+*.tar.gz
+*.zip
+src/*.o
+src/*.so
+src/*.dll
+
+# R check output
+/*.Rcheck/
+/man/
+/doc/
+
+# Security: credentials - secrets
+.Renviron
+.Renviron.local
+.env
+.env.*
+secrets.R
+credentials.R
+config/secrets.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Claude Code
+.claude/
+.claudeignore
+
+# Data files (avoid committing sensitive data)
+data/raw/
+data/private/
+*.csv
+*.xlsx
+*.xls
+*.rds
+*.rda
+*.RData
+
+# OS & system files
+# Ubuntu/Linux
+.DS_Store
+*~
+.directory
+.Trash-*
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.positron/
+*.code-workspace
+
+# Logs
+*.log
+npm-debug.log*
+
