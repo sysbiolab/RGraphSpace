@@ -133,8 +133,6 @@ clipping information into the edge layer.
 # still find their specific boundaries
 set.seed(234)
 gs_star$num_var2 <- sample(gs_star$num_var)
-#>  [1]  0.5  1.0  7.0  9.5  8.5  6.5  4.0 10.0  2.0  6.0  3.5  3.0  5.0  9.0  4.5
-#> [16]  1.5  8.0  5.5  7.5  2.5
 
 # Execute independent node and edge layers
 ggplot(data = gs_star) + 
@@ -188,8 +186,8 @@ apply when `size` is passed as a node aesthetic mapping. Otherwise,
     #> [25] RColorBrewer_1.1-3 rlang_1.2.0        cachem_1.1.0       xfun_0.58         
     #> [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
     #> [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5    
-    #> [37] digest_0.6.39      grid_4.6.0         beeswarm_0.4.0     lifecycle_1.0.5   
-    #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
-    #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
-    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3   
-    #> [53] htmltools_0.5.9
+    #> [37] digest_0.6.39      grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0    
+    #> [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       
+    #> [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        
+    #> [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.31     tools_4.6.0       
+    #> [53] pkgconfig_2.0.3    htmltools_0.5.9

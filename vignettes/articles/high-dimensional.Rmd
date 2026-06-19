@@ -83,6 +83,9 @@ SeuratData::InstallData("pbmc3k")
 # SeuratData::InstalledData()
 
 # Load the 'pbmc3k' dataset
+# Note: LoadData() may print conversion warnings when loading pbmc3k.
+# These are expected and come from SeuratData's internal v4-to-v5
+# object migration — they can be safely ignored.
 seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
 ```
 
@@ -108,18 +111,21 @@ cpal <- DiscretePalette(nlevels(seurat_obj$seurat_annotations),
 # Left: cluster-level embedding
 p1 <- DimPlot(seurat_obj, pt.size = 1, cols = cpal) + 
   theme_minimal() + theme(aspect.ratio = 1)
+p1
 
 # Right: feature expression map
 p2 <- FeaturePlot(seurat_obj, features = "LYZ", 
   cols = c("lightgrey", "blue"), pt.size = 1) + 
   theme_minimal() + theme(aspect.ratio = 1)
+p2
 
-p1 + p2
+# Plot side-by-side
+# p1 + p2
 ```
 
 ```{r Seurat_FeaturePlot.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# ggsave(filename = "./vignettes/articles/figs_dev/Seurat_DimFeaturePlot.png",
-#   height=4, width=10, units="in", device="png", dpi=400, plot= p1 + p2)
+ggsave(filename = "./vignettes/articles/figs_dev/Seurat_DimFeaturePlot.png",
+  height=4, width=10, units="in", device="png", dpi=400, plot= p1 + p2)
 ```
 
 ```{r Seurat_FeaturePlot, echo=FALSE, out.width = '100%', purl=FALSE}
@@ -132,10 +138,18 @@ Note that `DimPlot` and `FeaturePlot` are high-level functions. Internally, *Seu
 
 We now apply `as.GraphSpace()` to expose the `Seurat` object's underlying high-dimensional data directly to *ggplot2* (for additional details, see the [*coercing high-dimensional data*](high-dimensional.html#hd-coercion) section).
 
-```{r Create a GraphSpace, eval=FALSE, message=FALSE, results='hide'}
+```{r Create a GraphSpace - 1, eval=FALSE, message=FALSE, results='hide'}
 # Create a GraphSpace from 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "embedding", reduction = "umap")
 
+# Seurat object converted to GraphSpace:
+# ℹ space=embedding, layer=default, features=2638, cells=13714, reduction="umap"
+# Node spatial boundaries:
+# ℹ x: [-9, 13] (cols)
+# ℹ y: [-9, 14] (rows)
+```
+
+```{r Create a GraphSpace - 2, eval=FALSE, message=FALSE, results='hide'}
 gs
 # A GraphSpace-class object for:
 # IGRAPH 1393201 UN-- 2638 0 -- 
@@ -159,6 +173,7 @@ p3 <- ggplot(gs) +
   labs(x = "UMAP_1", y = "UMAP_2") +
   theme_gspace_legend(discrete_fill = TRUE) +
   theme_minimal() + theme(aspect.ratio = 1)
+p3
 
 # Right: feature expression map
 p4 <- ggplot(gs) + 
@@ -167,8 +182,10 @@ p4 <- ggplot(gs) +
   scale_fill_continuous(palette = c("lightgrey", "blue")) +
   labs(x = "UMAP_1", y = "UMAP_2")  +
   theme_minimal() + theme(aspect.ratio = 1)
+p4
 
-p3 + p4
+# Plot side-by-side
+# p3 + p4 
 ```
 
 ```{r ggplot_seurat1.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}

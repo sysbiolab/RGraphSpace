@@ -8,7 +8,7 @@
     nodes <- .get_nodes(gg)
     edges <- .get_edges(gg)
     
-    if(verbose) message("Creating a 'GraphSpace' object...")
+    if(verbose) rlang::inform("Creating a 'GraphSpace' object...")
     instance_id <- .generate_gs_uuid()
     pars <- list(is.directed = is_directed(gg), 
         is.normalized = FALSE, image.layer = FALSE)

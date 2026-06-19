@@ -51,7 +51,6 @@ library("igraph")
 library("sf")
 library("maps")
 library("geometry")
-library("rnaturalearth")
 library("tidygraph")
 library("ggraph")
 ```
@@ -64,8 +63,7 @@ Next, we build a spatial network of cities; then *RGraphSpace* `geoms` are plugg
 
 ```{r Interoperability - 1, eval=FALSE, message=FALSE}
 # Load a map and transform projection
-map_sf <- ne_countries(country = "Brazil", returnclass = "sf")
-map_proj <- st_transform(map_sf)
+map_sf <- st_as_sf(map("world", regions = "Brazil", fill = TRUE))
 
 # Filter major cities by regional capitals
 data(world.cities, package = "maps")
@@ -103,7 +101,7 @@ The following options all produce the same visual output, demonstrating how thes
 # Option 1: Passing a 'GraphSpace' object directly to ggplot()
 gs <- GraphSpace(igraph_cities)
 ggplot(gs) +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
@@ -112,7 +110,7 @@ ggplot(gs) +
 
 # Option 2: Passing an 'igraph' object to RGraphSpace geoms
 ggplot() +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5, data = igraph_cities) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = igraph_cities) +
   scale_size(range = c(3, 9)) +
@@ -123,7 +121,7 @@ ggplot() +
 # Option 3: Passing a 'tbl_graph' object to RGraphSpace geoms
 gr <- as_tbl_graph(igraph_cities)
 ggplot() +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5, data = gr) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = gr) +
   scale_size(range = c(3, 9)) +
@@ -134,7 +132,7 @@ ggplot() +
 # Option 4: Integrating RGraphSpace geoms into a ggraph workflow
 gr <- as_tbl_graph(igraph_cities)
 ggraph(graph = gr, x= gr$x, y = gr$y) +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
@@ -147,17 +145,14 @@ Although all four approaches produce the same visualization, only *Option 1* pro
 
 ```{r toy_sf.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
 # gs <- GraphSpace(igraph_cities)
-# p <- ggplot() +
-#   geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
-#   geom_edgespace(color = "grey40", arrow_size = 0.5,
-#     arrow_offset = 0.01, data = gs) +
-#   geom_nodespace(aes(fill = Cities, size = `Population (M)`),
-#     data = gs) +
+# p <- ggplot(gs) +
+#   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
+#   geom_edgespace(color = "grey40", arrow_size = 0.5) +
+#   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
 #   scale_size(range = c(3, 9)) +
-#   scale_fill_discrete() +
-#   inject_nodespace() +
+#   theme_gray() +
 #   theme_gspace_legend(discrete_fill = TRUE)
-# ggsave(filename = "./vignettes/cards/interoperability.png",
+# ggsave(filename = "./vignettes/articles/cards/interoperability.png",
 #   height=5, width=5, units="in", device="png", dpi=200, plot = p)
 ```
 

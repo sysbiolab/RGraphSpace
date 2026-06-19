@@ -317,84 +317,87 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' @aliases plotGraphSpace
 #' @export
 setMethod("plotGraphSpace", "GraphSpace", 
-    function(gs, theme = "th0", xlab = "Graph coordinates 1", 
-        ylab = "Graph coordinates 2", font.size = 1,
-        bg.color = "grey95", add.labels = FALSE,
-        node.labels = NULL, label.size = 3, 
-        label.color = "grey20", add.image = TRUE, 
-        raster = FALSE, dpi = 300, dev = "cairo_png") {
-        #--- validate the gs object and args
-        .validate_gs_args("singleString", "xlab", xlab)
-        .validate_gs_args("singleString", "ylab", ylab)
-        .validate_gs_args("singleNumber", "font.size", font.size)
-        .validate_gs_colors("singleColor", "bg.color", bg.color)
-        .validate_gs_args("singleLogical", "add.labels", add.labels)
-        .validate_gs_args("singleNumber", "label.size", label.size)
-        .validate_gs_colors("singleColor", "label.color", label.color)
-        .validate_gs_args("singleLogical", "add.image", add.image)
-        .validate_gs_args("singleLogical", "raster", raster)
-        .validate_gs_args("singleInteger", "dpi", dpi)
-        .validate_gs_args("singleString", "dev", dev)
-        if (!is.null(node.labels)) {
-            .validate_gs_args("allCharacter", "node.labels", node.labels)
-        }
-        
-        theme <- match.arg(theme, choices = c("th0", "th1", "th2", "th3"))
-        
-        #--- get gs slots
-        nodes <- gs_nodes(gs)
-        pars <- getGraphSpace(gs, "pars")
-        
-        #--- initialize a ggplot object
-        ggp <- ggplot()
-        
-        #--- add image
-        if(pars$image.layer){
-            img <- getGraphSpace(gs, "image")
-            if(add.image){
-                ggp <- .add_image(ggp, img)
-            } else {
-                ggi <- .add_image(ggp, img)
-                ggi <- ggi + theme_gspace_coords(theme = theme, 
-                  is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
-                  txt_size = font.size, leg_size = font.size, 
-                  bg_color = bg.color)
-            }
-        }
-
-        #--- add graph
-        ggp <- ggp + geom_graphspace(data = gs)
-        
-        #--- add node labels
-        if (!is.null(node.labels)){
-            ggp <- .add_labels1(ggp, nodes, node.labels, 
-                label.size, label.color)
-        } else if(add.labels){
-            ggp <- .add_labels2(ggp, nodes)
-        }
-        
-        #--- apply custom theme
-        ggp <- ggp + theme_gspace_coords(theme = theme, 
-          is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
-          txt_size = font.size, leg_size = font.size,
-          bg_color = bg.color)
-        
-        if(raster){
-          ggp <- ggrastr::rasterize(ggp, layers = "GraphSpace", 
-              dpi = dpi, dev = dev)
-        }
-        
-        if(pars$image.layer && !add.image){
-            ggl <- list(image = ggi, graph = ggp)
-            return(ggl)
-        } else {
-            return(ggp)
-        }
-        
+  function(gs, theme = "th0", xlab = "Graph coordinates 1", 
+    ylab = "Graph coordinates 2", font.size = 1,
+    bg.color = "grey95", add.labels = FALSE,
+    node.labels = NULL, label.size = 3, 
+    label.color = "grey20", add.image = TRUE, 
+    raster = FALSE, dpi = 300, dev = "cairo_png") {
+    
+    gs <- updateGraphSpace(gs)
+    
+    #--- validate the gs object and args
+    .validate_gs_args("singleString", "xlab", xlab)
+    .validate_gs_args("singleString", "ylab", ylab)
+    .validate_gs_args("singleNumber", "font.size", font.size)
+    .validate_gs_colors("singleColor", "bg.color", bg.color)
+    .validate_gs_args("singleLogical", "add.labels", add.labels)
+    .validate_gs_args("singleNumber", "label.size", label.size)
+    .validate_gs_colors("singleColor", "label.color", label.color)
+    .validate_gs_args("singleLogical", "add.image", add.image)
+    .validate_gs_args("singleLogical", "raster", raster)
+    .validate_gs_args("singleInteger", "dpi", dpi)
+    .validate_gs_args("singleString", "dev", dev)
+    
+    if (!is.null(node.labels)) {
+      .validate_gs_args("allCharacter", "node.labels", node.labels)
     }
+    
+    theme <- match.arg(theme, choices = c("th0", "th1", "th2", "th3"))
+    
+    #--- get gs slots
+    nodes <- gs_nodes(gs)
+    pars <- getGraphSpace(gs, "pars")
+    
+    #--- initialize a ggplot object
+    ggp <- ggplot()
+    
+    #--- add image
+    if(pars$image.layer){
+      img <- getGraphSpace(gs, "image")
+      if(add.image){
+        ggp <- .add_image(ggp, img)
+      } else {
+        ggi <- .add_image(ggp, img)
+        ggi <- ggi + theme_gspace_coords(theme = theme, 
+          is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
+          txt_size = font.size, leg_size = font.size, 
+          bg_color = bg.color)
+      }
+    }
+    
+    #--- add graph
+    ggp <- ggp + geom_graphspace(data = gs)
+    
+    #--- add node labels
+    if (!is.null(node.labels)){
+      ggp <- .add_labels1(ggp, nodes, node.labels, 
+        label.size, label.color)
+    } else if(add.labels){
+      ggp <- .add_labels2(ggp, nodes)
+    }
+    
+    #--- apply custom theme
+    ggp <- ggp + theme_gspace_coords(theme = theme, 
+      is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
+      txt_size = font.size, leg_size = font.size,
+      bg_color = bg.color)
+    
+    if(raster){
+      ggp <- ggrastr::rasterize(ggp, layers = "GraphSpace", 
+        dpi = dpi, dev = dev)
+    }
+    
+    if(pars$image.layer && !add.image){
+      ggl <- list(image = ggi, graph = ggp)
+      return(ggl)
+    } else {
+      return(ggp)
+    }
+    
+  }
 )
 
-#-------------------------------------------------------------------------------
 .plot_graph_wrapper <- function(gs, ...) {
   gs <- GraphSpace(gs, verbose = FALSE)
   gs <- normalizeGraphSpace(gs)
@@ -670,10 +673,14 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
     }
     value <- as.raster(value)
   }
+  
+  .inform_image_boundaries(value)
+  
   x@image <- value
   x@pars$image.layer <- TRUE
   return(x)
 })
+
 
 #' @rdname GraphSpace-accessors
 #' @export
@@ -687,7 +694,11 @@ setMethod("gs_graph", "GraphSpace", function(x) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_fdata", "GraphSpace", function(x) {
+  
+  .check_updated_gs(x, "fdata")
+  
   x@fdata
+  
 })
 
 #' @rdname GraphSpace-accessors
@@ -705,13 +716,21 @@ setReplaceMethod("gs_fdata", "GraphSpace", function(x, value) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_nfeatures", "GraphSpace", function(x) {
-    ncol(x@fdata)
+  
+  .check_updated_gs(x, "fdata")
+  
+  ncol(x@fdata)
+  
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_features", "GraphSpace", function(x) {
+  
+  .check_updated_gs(x, "fdata")
+  
   colnames(x@fdata)
+  
 })
 
 
@@ -747,73 +766,70 @@ setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ...) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
-    g <- x@graph
-    if (missing(name) && is.list(value)){
-      print("AA")
-      print(value)
-        #workaround for analogy to igraph's "syntactic sugar" $<-
-        len1 <- unlist(lapply(value, length))==1
-        if(any(len1)){
-            for(i in which(len1)){
-                vl <- value[[i]]
-                vl <- if(.is_replicable(vl)) vl else list(vl)
-                value[[i]] <- rep(vl, igraph::vcount(g))
-            }
-        }
-        igraph::vertex_attr(graph = g) <- value
-    } else {
-      print(value)
-        if(length(value)==1){
-            value <- if(.is_replicable(value)) value else list(value)
-        }
-        igraph::vertex_attr(graph = g, name = name, ...=...) <- value  
+  g <- x@graph
+  if (missing(name) && is.list(value)){
+    #workaround for analogy to igraph's "syntactic sugar" $<-
+    len1 <- unlist(lapply(value, length))==1
+    if(any(len1)){
+      for(i in which(len1)){
+        vl <- value[[i]]
+        vl <- if(.is_replicable(vl)) vl else list(vl)
+        value[[i]] <- rep(vl, igraph::vcount(g))
+      }
     }
-    x <- .updateNodeSpace(x, g)
-    return(x)
+    igraph::vertex_attr(graph = g) <- value
+  } else {
+    if(length(value)==1){
+      value <- if(.is_replicable(value)) value else list(value)
+    }
+    igraph::vertex_attr(graph = g, name = name, ...=...) <- value  
+  }
+  x <- .updateNodeSpace(x, g)
+  return(x)
 })
 # Used to handle possible function replication
 .is_replicable <- function(x) {
-    tryCatch({
-        rep(x, 2)
-        TRUE
-    }, error = function(e) FALSE)
+  tryCatch({
+    rep(x, 2)
+    TRUE
+  }, error = function(e) FALSE)
 }
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_edge_attr", "GraphSpace", function(x, name, ...) {
-    g <- x@graph
-    if(missing(name)){
-      att <- igraph::edge_attr(graph = g, ...=...)
-    } else {
-      att <- igraph::edge_attr(graph = g, name = name, ...=...)
-    }
-    return(att)
+  g <- x@graph
+  if(missing(name)){
+    att <- igraph::edge_attr(graph = g, ...=...)
+  } else {
+    att <- igraph::edge_attr(graph = g, name = name, ...=...)
+  }
+  return(att)
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
-    g <- x@graph
-    if (missing(name) && is.list(value)){
-        #workaround for analogy to igraph's "syntactic sugar" $<-
-        len1 <- unlist(lapply(value, length))==1
-        if(any(len1)){
-            for(i in which(len1)){
-                vl <- value[[i]]
-                vl <- if(.is_replicable(vl)) vl else list(vl)
-                value[[i]] <- rep(vl, igraph::ecount(g))
-            }
-        }
-        igraph::edge_attr(graph = g) <- value
-    } else {
-        if(length(value)==1){
-            value <- if(.is_replicable(value)) value else list(value)
-        }
-        igraph::edge_attr(graph = g, name = name, ...=...) <- value  
+  g <- x@graph
+  if (missing(name) && is.list(value)){
+    #workaround for analogy to igraph's "syntactic sugar" $<-
+    len1 <- unlist(lapply(value, length))==1
+    if(any(len1)){
+      for(i in which(len1)){
+        vl <- value[[i]]
+        vl <- if(.is_replicable(vl)) vl else list(vl)
+        value[[i]] <- rep(vl, igraph::ecount(g))
+      }
     }
-    x <- .updateEdgeSpace(x, g)
-    return(x)
+    igraph::edge_attr(graph = g) <- value
+  } else {
+    if(length(value)==1){
+      value <- if(.is_replicable(value)) value else list(value)
+    }
+    igraph::edge_attr(graph = g, name = name, ...=...) <- value  
+  }
+  x <- .updateEdgeSpace(x, g)
+  return(x)
 })
 .updateEdgeSpace <- function(x, g){
   x@graph <- .validate_igraph(g)
@@ -821,14 +837,14 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   return(x)
 }
 .updateNodeSpace <- function(x, g) {
-    x@graph <- .validate_igraph(g)
-    nodes   <- .get_nodes(x@graph)
-    if (x@pars$is.normalized) {
-      nodes$x <- x@nodes$x
-      nodes$y <- x@nodes$y
-    }
-    x@nodes <- nodes
-    return(x)
+  x@graph <- .validate_igraph(g)
+  nodes   <- .get_nodes(x@graph)
+  if (x@pars$is.normalized) {
+    nodes$x <- x@nodes$x
+    nodes$y <- x@nodes$y
+  }
+  x@nodes <- nodes
+  return(x)
 }
 
 #' @rdname GraphSpace-accessors

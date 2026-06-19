@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-06-16</h4>
+            <h4 data-toc-skip class="date">2026-06-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/scales-and-offsets.Rmd" class="external-link"><code>vignettes/articles/scales-and-offsets.Rmd</code></a></small>
       <div class="d-none name"><code>scales-and-offsets.Rmd</code></div>
@@ -205,8 +205,6 @@ the corresponding clipping information into the edge layer.</p>
 <span><span class="co"># still find their specific boundaries</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">234</span><span class="op">)</span></span>
 <span><span class="va">gs_star</span><span class="op">$</span><span class="va">num_var2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">$</span><span class="va">num_var</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1]  0.5  1.0  7.0  9.5  8.5  6.5  4.0 10.0  2.0  6.0  3.5  3.0  5.0  9.0  4.5</span></span>
-<span><span class="co">#&gt; [16]  1.5  8.0  5.5  7.5  2.5</span></span>
 <span></span>
 <span><span class="co"># Execute independent node and edge layers</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -259,11 +257,11 @@ for all network elements.</p>
 <span><span class="co">#&gt; [25] RColorBrewer_1.1-3 rlang_1.2.0        cachem_1.1.0       xfun_0.58         </span></span>
 <span><span class="co">#&gt; [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        </span></span>
 <span><span class="co">#&gt; [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5    </span></span>
-<span><span class="co">#&gt; [37] digest_0.6.39      grid_4.6.0         beeswarm_0.4.0     lifecycle_1.0.5   </span></span>
-<span><span class="co">#&gt; [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    </span></span>
-<span><span class="co">#&gt; [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   </span></span>
-<span><span class="co">#&gt; [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3   </span></span>
-<span><span class="co">#&gt; [53] htmltools_0.5.9</span></span></code></pre>
+<span><span class="co">#&gt; [37] digest_0.6.39      grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0    </span></span>
+<span><span class="co">#&gt; [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       </span></span>
+<span><span class="co">#&gt; [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        </span></span>
+<span><span class="co">#&gt; [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.31     tools_4.6.0       </span></span>
+<span><span class="co">#&gt; [53] pkgconfig_2.0.3    htmltools_0.5.9</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

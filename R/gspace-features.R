@@ -38,6 +38,9 @@ gs_fetch_features <- function(x, vars = NULL, as_df = FALSE) {
   if (!inherits(x, "GraphSpace")) {
     rlang::abort("'x' must be a GraphSpace object.")
   }
+  
+  .check_updated_gs(x)
+  
   if (!is.null(vars)) {
     .validate_gs_args("allCharacter", "vars", vars)
   }
@@ -72,6 +75,8 @@ gs_add_features <- function(x, data) {
   if (!inherits(x, "GraphSpace")) {
     rlang::abort("'x' must be a GraphSpace object.")
   }
+  
+  .check_updated_gs(x)
   
   if (length(dim(data)) != 2) {
     rlang::abort("'data' must be two-dimensional (e.g. matrix-like object).")

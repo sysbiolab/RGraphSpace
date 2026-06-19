@@ -60,7 +60,6 @@ library("igraph")
 library("sf")
 library("maps")
 library("geometry")
-library("rnaturalearth")
 library("tidygraph")
 library("ggraph")
 ```
@@ -82,8 +81,7 @@ are plugged into *ggraph* and *sf* workflows.
 ``` r
 
 # Load a map and transform projection
-map_sf <- ne_countries(country = "Brazil", returnclass = "sf")
-map_proj <- st_transform(map_sf)
+map_sf <- st_as_sf(map("world", regions = "Brazil", fill = TRUE))
 
 # Filter major cities by regional capitals
 data(world.cities, package = "maps")
@@ -123,7 +121,7 @@ how these packages integrate different types of input data.
 # Option 1: Passing a 'GraphSpace' object directly to ggplot()
 gs <- GraphSpace(igraph_cities)
 ggplot(gs) +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
@@ -132,7 +130,7 @@ ggplot(gs) +
 
 # Option 2: Passing an 'igraph' object to RGraphSpace geoms
 ggplot() +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5, data = igraph_cities) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = igraph_cities) +
   scale_size(range = c(3, 9)) +
@@ -143,7 +141,7 @@ ggplot() +
 # Option 3: Passing a 'tbl_graph' object to RGraphSpace geoms
 gr <- as_tbl_graph(igraph_cities)
 ggplot() +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5, data = gr) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = gr) +
   scale_size(range = c(3, 9)) +
@@ -154,7 +152,7 @@ ggplot() +
 # Option 4: Integrating RGraphSpace geoms into a ggraph workflow
 gr <- as_tbl_graph(igraph_cities)
 ggraph(graph = gr, x= gr$x, y = gr$y) +
-  geom_sf(data = map_proj, fill = "grey95", color = "grey60") +
+  geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", arrow_size = 0.5) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
@@ -199,9 +197,8 @@ must be called explicitly to synchronize clipping offsets.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] ggraph_2.2.2        tidygraph_1.3.1     rnaturalearth_1.2.0
-    #> [4] geometry_0.5.2      maps_3.4.3          sf_1.1-1           
-    #> [7] igraph_2.3.2        RGraphSpace_1.4.1   ggplot2_4.0.3      
+    #> [1] ggraph_2.2.2      tidygraph_1.3.1   geometry_0.5.2    maps_3.4.3       
+    #> [5] sf_1.1-1          igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.58          bslib_0.11.0      
@@ -220,8 +217,9 @@ must be called explicitly to synchronize clipping offsets.
     #> [53] ggbeeswarm_0.7.3   rmarkdown_2.31     otel_0.2.0         gridExtra_2.3     
     #> [57] ragg_1.5.2         memoise_2.0.1      evaluate_1.0.5     knitr_1.51        
     #> [61] ggrastr_1.0.2      viridisLite_0.4.3  rlang_1.2.0        Rcpp_1.1.1-1.1    
-    #> [65] glue_1.8.1         DBI_1.3.0          tweenr_2.0.3       jsonlite_2.0.0    
-    #> [69] R6_2.6.1           systemfonts_1.3.2  fs_2.1.0           units_1.0-1
+    #> [65] glue_1.8.1         DBI_1.3.0          tweenr_2.0.3       rstudioapi_0.18.0 
+    #> [69] jsonlite_2.0.0     R6_2.6.1           systemfonts_1.3.2  fs_2.1.0          
+    #> [73] units_1.0-1
 
 ## References
 

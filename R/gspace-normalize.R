@@ -89,6 +89,8 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     flip.v = FALSE, flip.h = FALSE, verbose = TRUE, 
     use_image = deprecated()){
     
+    gs <- updateGraphSpace(gs)
+    
     if (lifecycle::is_present(use_image)) {
       deprecate_soft("1.4.0", "normalizeGraphSpace(use_image)")
       image.space <- .has_image(gs)
@@ -145,7 +147,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   nodes <- .get_nodes(gs@graph)
   nodes <- .setCoordToGraph(nodes, flip.x, flip.y, rotate.xy, verbose)
-  if(verbose) message("Normalizing node coordinates to graph space...")
+  if(verbose) rlang::inform("Normalizing node coordinates to graph space...")
   gs@nodes <- .fit_graph_space(nodes, mar)
   gs@pars$image.space <- FALSE
   gs@pars$is.normalized <- TRUE
@@ -164,15 +166,15 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   nodes <- .get_nodes(gs@graph)
   image <- gs_image(gs)
   
-  if(verbose) message("Normalizing node coordinates to image space...")
+  if(verbose) rlang::inform("Normalizing node coordinates to image space...")
   
   if(flip.v){
-    if(verbose) message("Flipping image top-to-bottom...")  
+    if(verbose) rlang::inform("Flipping image top-to-bottom...")  
     image <- image[rev(seq_len(nrow(image))), , drop = FALSE]
   } 
   
   if(flip.h){
-    if(verbose) message("Flipping image left-to-right...")  
+    if(verbose) rlang::inform("Flipping image left-to-right...")  
     image <- image[, rev(seq_len(ncol(image))), drop = FALSE]
   } 
   
@@ -199,6 +201,8 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 #' @export
 setMethod("cropGraphSpace", "GraphSpace", 
   function(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE){
+    
+    gs <- updateGraphSpace(gs)
     
     .validate_gs_args("numeric_vec", "crop.coord", crop.coord)
     
@@ -238,7 +242,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   # Rotated coordinates
   coord <- nodes[,c("x","y")]
   if(rotate.xy){
-    if(verbose) message("Rotating xy-coordinates...")
+    if(verbose) rlang::inform("Rotating xy-coordinates...")
     coord$x2 <- coord$y
     coord$y2 <- coord$x
   } else {
@@ -248,14 +252,14 @@ setMethod("cropGraphSpace", "GraphSpace",
   
   # Flip y-coordinates
   if(flip.y){
-    if(verbose) message("Flipping y-coordinates...")
+    if(verbose) rlang::inform("Flipping y-coordinates...")
     y <- coord$y2
     coord$y2 <- max(y) + min(y) - y
   }
   
   # Flip x-coordinates
   if(flip.x){
-    if(verbose) message("Flipping x-coordinates...")
+    if(verbose) rlang::inform("Flipping x-coordinates...")
     x <- coord$x2
     coord$x2 <- max(x) + min(x) - x
   }
@@ -307,7 +311,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   # Rotated coordinates
   coords <- nodes[,c("x","y")]
   if(rotate.xy){
-    if(verbose) message("Rotating xy-coordinates...")
+    if(verbose) rlang::inform("Rotating xy-coordinates...")
     coords$x2 <- coords$y
     coords$y2 <- coords$x
   } else {
@@ -316,7 +320,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   }
   
   if(flip.y){
-    if(verbose) message("Flipping y-coordinates...")
+    if(verbose) rlang::inform("Flipping y-coordinates...")
     y <- coords$y2
     y <- -(y - max(y)) + nrow(image) - max(y) + 1
     coords$y2 <- y
@@ -324,7 +328,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   
   # Flip x-coordinates over image axis
   if(flip.x){
-    if(verbose) message("Flipping x-coordinates...")
+    if(verbose) rlang::inform("Flipping x-coordinates...")
     x <- coords$x2
     x <- -(x - max(x)) + ncol(image) - max(x) + 1
     coords$x2 <- x
@@ -360,22 +364,26 @@ setMethod("cropGraphSpace", "GraphSpace",
     xr_orig <- c(floor(xr_orig[1]), ceiling(xr_orig[2]))
     yr_orig <- c(floor(yr_orig[1]), ceiling(yr_orig[2]))
     
-    msg <- "Graph coordinates outside the image boundaries."
+    msg <- "Graph coordinates fall outside the image boundaries."
     
-    ms_i <- c("i" = "Note: node coordinates are treated as indices of the image matrix.")
+    ms_i <- c("i" = "Note: node coordinates are mapped as indices of the image matrix.")
     
-    ms_x1 <- c(">" = sprintf("Node coordinate ranges: x[%s, %s], y[%s, %s].", 
+    ms_x1 <- c(">" = sprintf("Node ranges: x[%s, %s] (cols), y[%s, %s] (rows).", 
       xr_orig[1], xr_orig[2], yr_orig[1], yr_orig[2]))
       
-    ms_x2 <- c(">" = sprintf("Image dimensions: %s x %s (rows x cols).", d[1], d[2]))
+    ms_x2 <- c(">" = sprintf("Image dimensions: %s cols x %s rows.", d[2], d[1]))
     
-    ms_a1 <- c("*" = "Try adjusting 'flip' and 'rotate' options in `normalizeGraphSpace()`.")
-    ms_a2 <- c("*" = "Alternatively, set `image.space = FALSE` if normalization should not map to image indices.")
+    ms_a1 <- c("*" = "Try adjusting 'flip' and 'rotate' in `normalizeGraphSpace()`.")
+    ms_a2 <- c("*" = "Or set `image.space = FALSE` to skip image-index mapping.")
     
-    ms_f <- "See `vignette('RGraphSpace')` for more information on coordinate normalization."
+    footer = c(
+      "For details on coordinate normalization, visit the online tutorial:",
+      "https://sysbiolab.github.io/RGraphSpace/"
+    )
     
     rlang::abort(message = msg, 
-      body = c(ms_i, ms_x1, ms_x2, ms_a1, ms_a2), footer = ms_f, 
+      body = c(ms_i, ms_x1, ms_x2, ms_a1, ms_a2), 
+      footer = footer, 
       call = rlang::caller_env())
     
   }

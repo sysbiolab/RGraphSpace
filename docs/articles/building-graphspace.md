@@ -239,7 +239,8 @@ vignettes.
     #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.58          fs_2.1.0          
     #> [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
     #> [33] pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5     digest_0.6.39     
-    #> [37] grid_4.6.0         beeswarm_0.4.0     lifecycle_1.0.5    vipor_0.4.7       
-    #> [41] ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5     glue_1.8.1        
-    #> [45] farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1    purrr_1.2.2       
-    #> [49] rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3    htmltools_0.5.9
+    #> [37] grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5   
+    #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
+    #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
+    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3   
+    #> [53] htmltools_0.5.9

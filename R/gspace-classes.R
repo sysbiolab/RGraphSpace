@@ -146,23 +146,20 @@ setValidity("GraphSpace", function(object) {
 # show summary information on screen
 setMethod("show", "GraphSpace", 
   function(object) {
-    message("A GraphSpace-class object for:")
+    cat("A GraphSpace-class object for:\n")
     summary(object@graph)
-    nfeat <- ncol(object@fdata)
-    if (nfeat > 0) {
-      feat <- .gs_preview(colnames(object@fdata))
-      cat(
-        "+ features: ", nfeat, " (",
-        paste(feat, collapse = ", "),
-        ")\n",
-        sep = ""
-      )
+    if (.hasSlot(object, "fdata")) {
+      nfeat <- ncol(object@fdata)
+      if (nfeat > 0) {
+        feat <- .gs_preview(colnames(object@fdata))
+        cat("+ features: ", nfeat, " (", paste(feat, collapse = ", "), ")\n", sep = "")
+      }
     }
     invisible(object)
-    
   }
 )
 
+#' @importFrom utils head
 .gs_preview <- function(x, n = 4) {
   if (length(x) == 0) return("<empty>")
   out <- head(x, n)
@@ -170,3 +167,76 @@ setMethod("show", "GraphSpace",
   paste(out, collapse = ", ")
 }
 
+#-------------------------------------------------------------------------------
+
+setGeneric("updateGraphSpace", function(x, ...) standardGeneric("updateGraphSpace"))
+
+#' @title Update a GraphSpace object
+#' @description Updates \code{GraphSpace} objects serialized from
+#' previous package versions, adding any missing slots with default values.
+#' @param x A \code{GraphSpace} object.
+#' @param verbose Logical; if \code{TRUE}, reports which slots were added.
+#' @return An updated \code{GraphSpace} object.
+#' @aliases updateGraphSpace
+#' @rdname updateGraphSpace
+#' @export
+setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = FALSE) {
+  .update_gs(x, verbose = verbose)
+})
+
+.update_gs <- function(gs, verbose = FALSE) {
+
+  new_slots <- c("image", "fdata", "uuid")
+  missing_slots <- new_slots[!sapply(new_slots, function(s) .hasSlot(gs, s))]
+  
+  if (length(missing_slots) == 0){
+    if(verbose) rlang::inform("'GraphSpace' object is up to date.")
+    return(gs)
+  }
+  
+  rlang::warn(c(
+    "Outdated 'GraphSpace' object: updating on the fly.",
+    "i" = "Recently introduced feature slots may not be recoverable.",
+    "i" = "Rebuild the object from scratch to fully restore all components."
+  ))
+  
+  if (verbose){
+    rlang::inform(paste0("Missing slot(s) added with defaults: ",
+      paste(missing_slots, collapse = ", ")))
+  }
+  
+  proto <- new("GraphSpace")
+  x <- new("GraphSpace",
+    nodes = gs@nodes,
+    edges = gs@edges,
+    graph = gs@graph,
+    pars = gs@pars,
+    misc = gs@misc,
+    image = if (.hasSlot(gs, "image")) gs@image else proto@image,
+    fdata = if (.hasSlot(gs, "fdata")) gs@fdata else proto@fdata,
+    uuid  = if (.hasSlot(gs, "uuid"))  gs@uuid  else .generate_gs_uuid()
+  )
+  
+  validObject(x)
+  
+}
+
+#-------------------------------------------------------------------------------
+.check_updated_gs <- function(gs, slots = c("image", "fdata", "uuid")) {
+  
+  check <- vapply(slots, function(s) .hasSlot(gs, s), logical(1))
+  
+  if (!all(check)) {
+    rlang::abort(c(
+      "x" = paste0(
+        "Outdated 'GraphSpace' object: missing slot(s): ",
+        paste(slots[!check], collapse = ", "),
+        "."
+      ),
+      "i" = "Run 'updateGraphSpace(x)' to migrate the object."
+    ))
+  }
+  
+  invisible(TRUE)
+  
+}

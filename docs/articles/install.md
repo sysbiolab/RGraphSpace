@@ -32,7 +32,6 @@ install.packages("ggraph")
 install.packages("sf")
 install.packages("maps")
 install.packages("geometry")
-install.packages("rnaturalearth")
 install.packages("ggnewscale")
 
 install.packages("Seurat")

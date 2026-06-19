@@ -101,9 +101,11 @@
   is.logical(para) && length(para) == 1L && !is.na(para)
 }
 .all_binaryValues <- function(para) {
+  if (length(para) == 0L) return(FALSE)
   all(para %in% c(0, 1, NA))
 }
 .all_integerValues <- function(para, notNA = TRUE) {
+  if (length(para) == 0L) return(FALSE)
   lg <- is.integer(para) || is.numeric(para) || all(is.na(para))
   if (lg) {
     para <- abs(para)
@@ -113,11 +115,13 @@
   return(lg)
 }
 .all_numericValues <- function(para, notNA = TRUE) {
+  if (length(para) == 0L) return(FALSE)
   lg <- is.numeric(para) || all(is.na(para))
   if(lg && notNA) lg <- !any(is.na(para))
   return(lg)
 }
 .all_characterValues <- function(para, notNA = TRUE) {
+  if (length(para) == 0L) return(FALSE)
   lg <- is.character(para) || all(is.na(para))
   if(lg && notNA) lg <- !any(is.na(para))
   return(lg)
@@ -132,13 +136,8 @@
   is.vector(para) && .all_characterValues(para)
 }
 .is_color <- function(x) {
-  if (is.numeric(x)) {
-    if (any(x < 1 | x %% 1 != 0, na.rm = TRUE)) {
-      return(FALSE)
-    }
-  }
-  res <- try(col2rgb(x), silent = TRUE)
-  return( !inherits(res, "try-error") )
+  # if (anyNA(x)) return(FALSE)
+  tryCatch({ col2rgb(x); TRUE }, error = function(e) FALSE)
 }
 .is_singleColor <- function(para) {
   .is_color(para) && length(para) == 1L && !is.na(para)

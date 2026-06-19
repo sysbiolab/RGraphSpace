@@ -3,7 +3,7 @@
 ### Validate igraph for RGraphSpace
 ################################################################################
 .validate_igraph <- function(g, layout = NULL, verbose = FALSE) {
-    if (verbose) message("Validating the 'igraph' object...")
+    if (verbose) rlang::inform("Validating the 'igraph' object...")
     if (!inherits(g, "igraph")) {
         stop("'g' should be an 'igraph' object.", call. = FALSE)
     }
@@ -25,11 +25,11 @@
         igraph::V(g)$y <- layout[, 2]
         msg <- paste0("Vertex attributes 'x' and 'y' missing; ",
             "computing layout...")
-        if (verbose) message(msg)
+        if (verbose) rlang::inform(msg)
     }
     if (is.null(igraph::V(g)$name)) {
         msg <- "Vertex attribute 'name' missing; assigning names... "
-        if (verbose) message(msg)
+        if (verbose) rlang::inform(msg)
         igraph::V(g)$name <- paste0("n", seq_len(igraph::vcount(g)))
     } else {
         if(is.vector(igraph::V(g)$name) || !is.list(igraph::V(g)$name)){
@@ -52,9 +52,9 @@
     }
     if (!igraph::is_simple(g)) {
         if (verbose && igraph::any_loop(g)) 
-            message("Removing loops...")
+            rlang::inform("Removing loops...")
         if (verbose && igraph::any_multiple(g))
-            message("Merging duplicated edges...")
+            rlang::inform("Merging duplicated edges...")
         g <- igraph::simplify(g, remove.loops = TRUE, remove.multiple = TRUE,
           edge.attr.comb = list(weight = "max", "first"))
     }
@@ -72,9 +72,9 @@
         }
     }
     if(verbose && any(which_mutual(g))){
-        message("Mutual edges detected: Simplified for data frame...")
-        message("Arrows recoded to bidirectional display")
-        message("Edge attributes retained from the first occurrence")
+        rlang::inform("Mutual edges detected: Simplified for data frame...")
+        rlang::inform("Arrows recoded to bidirectional display")
+        rlang::inform("Edge attributes retained from the first occurrence")
     }
     g <- .validate_attributes(g)
     return(g)

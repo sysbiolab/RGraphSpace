@@ -80,6 +80,9 @@ SeuratData::InstallData("stxBrain")
 # SeuratData::InstalledData()
 
 # Load the 'stxBrain' dataset
+# Note: LoadData() may print conversion warnings when loading pbmc3k.
+# These are expected and come from SeuratData's internal v4-to-v5
+# object migration — they can be safely ignored.
 seurat_obj <- LoadData("stxBrain", type = "anterior1")
 ```
 
@@ -98,17 +101,32 @@ seurat_obj <- NormalizeData(seurat_obj)
 
 Next, we create a `GraphSpace` from the `Seurat` object; the `as.GraphSpace()` converts the *Seurat* object into a `GraphSpace`, exposing its spatial coordinates and feature data to the *ggplot2* grammar. We then attach the tissue image and normalize node coordinates to the image space.
 
-```{r Create a GraphSpace, eval=FALSE, message=FALSE, results='hide'}
+```{r Create a GraphSpace - 1, eval=FALSE, message=FALSE, results='hide'}
 # Create a GraphSpace from 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
 
+# Seurat object converted to GraphSpace:
+# ℹ space=spatial, layer=default, features=2696, cells=31053, scale="lowres"
+# Node spatial boundaries:
+# ℹ x: [76, 493] (cols)
+# ℹ y: [138, 541] (rows)
+```
+
+```{r Create a GraphSpace - 2, eval=FALSE, message=FALSE, results='hide'}
 # If available, add tissue image 
 gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
 
+# Image spatial boundaries:
+# ℹ x: [1, 600] (cols)
+# ℹ y: [1, 599] (rows)
+```
+
+```{r Create a GraphSpace - 3, eval=FALSE, message=FALSE, results='hide'}
 # Normalize node coordinates to the image space
 gs <- normalizeGraphSpace(gs)
+# Normalizing node coordinates to image space...
+# Flipping y-coordinates...
 
-# Inspect the 'gs' object
 gs
 # A GraphSpace-class object for:
 # IGRAPH c4b5fdf UN-- 2696 0 -- 
@@ -180,12 +198,14 @@ seurat_obj <- FindClusters(seurat_obj, verbose = FALSE)
 
 With clusters assigned, we rebuild the `GraphSpace` object from the updated `seurat_obj` and reproduce a typical Seurat spatial cluster plot, mapping cluster identity to the `fill` aesthetic and overlaying the tissue image as a dimmed background.
 
-```{r Metadata plot, eval=FALSE, message=FALSE, results='hide'}
+```{r Metadata plot - 1, eval=FALSE, message=FALSE, results='hide'}
 # Re-create a GraphSpace from the updated 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
 gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
 gs <- normalizeGraphSpace(gs)
+```
 
+```{r Metadata plot - 2, eval=FALSE, message=FALSE, results='hide'}
 # Reproduce a typical Seurat cluster visualization
 cpal <- DiscretePalette(nlevels(gs$seurat_clusters), palette = "polychrome")
 ggplot(gs) + 
@@ -223,9 +243,8 @@ Below, we show how to access the relevant components of a `Seurat` object and us
 
 ```{r GraphSpace from high-dimensional data, eval=FALSE, message=FALSE, results='hide'}
 # Extract tissue coordinates
-coords <- SeuratObject::GetTissueCoordinates(object = seurat_obj, 
-  scale = "lowres")
-coords <- coords |> as.data.frame()
+coords <- SeuratObject::GetTissueCoordinates(object = seurat_obj, scale = "lowres")
+coords <- as.data.frame(coords)
 all(c("x", "y") %in% colnames(coords))
 # [1] TRUE
 

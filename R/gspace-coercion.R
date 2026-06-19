@@ -174,14 +174,91 @@ as.GraphSpace.Seurat <- function(x,
   
   # Create GraphSpace
   coords$nodeSize <- 1
-  gs <- GraphSpace(coords)
+  gs <- GraphSpace(coords, verbose = FALSE)
   
   # Add fdata
   fdata <- SeuratObject::LayerData(x, layer = layer)
   fdata <- Matrix::t(fdata)
   gs_fdata(gs) <- fdata
   
+  .inform_data_specs(fdata, layer, space, ...)
+  
+  .inform_coord_boundaries(coords)
+  
   return(gs)
   
 }
+
+#-------------------------------------------------------------------------------
+# Informative messages on data dimensions, image specs, and coordinate checks
+#-------------------------------------------------------------------------------
+
+.inform_data_specs <- function(fdata, layer, space, ...) {
+  
+  args <- list(...)
+  d <- dim(fdata)
+  
+  args_str <- if (length(args) > 0) {
+    paste(mapply(function(k, v) sprintf("%s=%s", k, deparse(v)),
+      names(args), args), collapse = ", ")
+  } else NULL
+  
+  msg <- c(
+    "Seurat object converted to GraphSpace:",
+    "i" = sprintf("space=%s, layer=%s, features=%s, cells=%s%s",
+      space, 
+      if (is.null(layer)) "default" else layer, 
+      d[1], d[2],
+      if (!is.null(args_str)) sprintf(", %s", args_str) else "")
+  )
+  
+  rlang::inform(msg)
+}
+
+# .inform_data_specs <- function(fdata, layer, space, ...) {
+#   
+#   args <- list(...)
+#   d <- dim(fdata)
+#   
+#   msg <- c(
+#     "Seurat object converted to GraphSpace:",
+#     "i" = sprintf("Coordinate space: %s", space),
+#     "i" = sprintf("Data layer: %s", if (is.null(layer)) "default" else layer),
+#     "i" = sprintf("Features: %s", d[1]),
+#     "i" = sprintf("Cells: %s", d[2])
+#   )
+#   
+#   # report any extra args passed via dots
+#   if (length(args) > 0) {
+#     args_str <- mapply(function(k, v) sprintf("- %s = %s", k, deparse(v)),
+#       names(args), args)
+#     msg <- c(msg, "i" = "Additional args:", args_str)
+#   }
+#   
+#   rlang::inform(msg)
+# }
+
+.inform_coord_boundaries <- function(coords) {
+  xr <- c(floor(min(coords$x, na.rm = TRUE)), ceiling(max(coords$x, na.rm = TRUE)))
+  yr <- c(floor(min(coords$y, na.rm = TRUE)), ceiling(max(coords$y, na.rm = TRUE)))
+  
+  rlang::inform(c(
+    "Node spatial boundaries:",
+    "i" = sprintf("x: [%s, %s] (cols)", xr[1], xr[2]),
+    "i" = sprintf("y: [%s, %s] (rows)", yr[1], yr[2])
+  ))
+}
+
+.inform_image_boundaries <- function(image) {
+  
+  d <- dim(image)
+  
+  rlang::inform(c(
+    "Image spatial boundaries:",
+    "i" = sprintf("x: [%s, %s] (cols)", 1, d[2]),
+    "i" = sprintf("y: [%s, %s] (rows)", 1, d[1])
+  ))
+  
+}
+
 

@@ -81,3 +81,5 @@
   [`theme_gspace_coords()`](https://sysbiolab.github.io/RGraphSpace/reference/theme_gspace.md)
   [`theme_gspace_legend()`](https://sysbiolab.github.io/RGraphSpace/reference/theme_gspace.md)
   : RGraphSpace ggplot2 themes
+- [`updateGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/updateGraphSpace.md)
+  : Update a GraphSpace object
