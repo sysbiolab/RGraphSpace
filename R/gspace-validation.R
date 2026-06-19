@@ -51,12 +51,17 @@
         }
     }
     if (!igraph::is_simple(g)) {
-        if (verbose && igraph::any_loop(g)) 
-            rlang::inform("Removing loops...")
-        if (verbose && igraph::any_multiple(g))
-            rlang::inform("Merging duplicated edges...")
+        if (verbose) {
+            rlang::inform("Simplifying graph...")
+            if (igraph::any_loop(g))
+                rlang::inform("Removing loops...")
+            if (igraph::any_multiple(g)){
+                rlang::inform("Merging duplicate edges...")
+                rlang::inform("Retaining attributes from the first occurrence.")
+            }
+        }
         g <- igraph::simplify(g, remove.loops = TRUE, remove.multiple = TRUE,
-          edge.attr.comb = list(weight = "max", "first"))
+            edge.attr.comb = list(weight = "max", "first"))
     }
     if (is.null(igraph::V(g)$nodeLabel)){
         igraph::V(g)$nodeLabel <- as.character(igraph::V(g)$name)
@@ -70,11 +75,6 @@
         } else {
             igraph::E(g)$arrowType <- 0
         }
-    }
-    if(verbose && any(which_mutual(g))){
-        rlang::inform("Mutual edges detected: Simplified for data frame...")
-        rlang::inform("Arrows recoded to bidirectional display")
-        rlang::inform("Edge attributes retained from the first occurrence")
     }
     g <- .validate_attributes(g)
     return(g)

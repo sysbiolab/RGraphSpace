@@ -178,14 +178,29 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 
 ## Passing graphs to *geoms*
 
-Alternatively, the `igraph` object can be transformed into a
-`GraphSpace` container and passed to the underlying `geoms`:
+Alternatively, an `igraph` can be converted to a `GraphSpace` object and
+passed directly to *ggplot2* geoms.
 
 ``` r
 
-data('gtoy1', package = 'RGraphSpace')
+# Load the toy graph used in the previous example
+data("gtoy1", package = 'RGraphSpace')
+
+# Create a GraphSpace object
 gs <- GraphSpace(gtoy1)
+#> Validating the 'igraph' object...
+#> Creating a 'GraphSpace' object...
+
+# Normalize the coordinates
 gs <- normalizeGraphSpace(gs)
+#> Normalizing node coordinates to graph space...
+```
+
+The resulting `GraphSpace` integrates with *ggplot2*, allowing
+graph-specific geoms to be combined with standard *ggplot2* layers.
+
+``` r
+
 ggplot(gs) + 
   geom_edgespace() + 
   geom_nodespace() + 
@@ -193,7 +208,7 @@ ggplot(gs) +
   theme_gspace_coords(is_norm = TRUE)
 ```
 
-![](building-graphspace_files/figure-html/Using%20geoms-1.png)
+![](building-graphspace_files/figure-html/Using%20geoms%20-%202-1.png)
 
 For detailed integration with the *ggplot2* ecosystem and other spatial
 packages, see [*customizing

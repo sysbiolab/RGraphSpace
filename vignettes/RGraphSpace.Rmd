@@ -42,9 +42,9 @@ This section will create a toy `igraph` object to demonstrate the basic *RGraphS
 
 ```{r Load packages for quick start, eval=TRUE, message=FALSE}
 #--- Load required packages
+library("RGraphSpace")
 library("igraph")
 library("ggplot2")
-library("RGraphSpace")
 ```
 
 ```{r Toy igraph - 1, eval=TRUE, message=FALSE, results=FALSE}
@@ -171,21 +171,31 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 #   units="in", device="png", dpi=200, plot = p)
 ```
 
-
 # Passing graphs to *geoms*
 
-Alternatively, the `igraph` object can be transformed into a `GraphSpace` container and passed to the underlying `geoms`:
+Alternatively, an `igraph` can be converted to a `GraphSpace` object and passed directly to *ggplot2* geoms.
 
-```{r Using geoms, eval=TRUE, message=FALSE}
-data('gtoy1', package = 'RGraphSpace')
+```{r Using geoms - 1, eval=TRUE, message=TRUE}
+# Load the toy graph used in the previous example
+data("gtoy1", package = 'RGraphSpace')
+
+# Create a GraphSpace object
 gs <- GraphSpace(gtoy1)
+
+# Normalize the coordinates
 gs <- normalizeGraphSpace(gs)
+```
+
+The resulting `GraphSpace` integrates with *ggplot2*, allowing graph-specific geoms to be combined with standard *ggplot2* layers.
+
+```{r Using geoms - 2, eval=TRUE, message=FALSE}
 ggplot(gs) + 
   geom_edgespace() + 
   geom_nodespace() + 
   geom_text(aes(x = x, y = y, label = nodeLabel), size = 2) + 
   theme_gspace_coords(is_norm = TRUE)
 ```
+
 
 # Online tutorials
 

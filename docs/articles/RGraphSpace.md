@@ -29,9 +29,9 @@ require that all vertices have `x`, `y`, and `name` attributes.
 ``` r
 
 #--- Load required packages
+library("RGraphSpace")
 library("igraph")
 library("ggplot2")
-library("RGraphSpace")
 ```
 
 ``` r
@@ -180,14 +180,29 @@ plotGraphSpace(gtoy1, add.labels = TRUE)
 
 ## Passing graphs to *geoms*
 
-Alternatively, the `igraph` object can be transformed into a
-`GraphSpace` container and passed to the underlying `geoms`:
+Alternatively, an `igraph` can be converted to a `GraphSpace` object and
+passed directly to *ggplot2* geoms.
 
 ``` r
 
-data('gtoy1', package = 'RGraphSpace')
+# Load the toy graph used in the previous example
+data("gtoy1", package = 'RGraphSpace')
+
+# Create a GraphSpace object
 gs <- GraphSpace(gtoy1)
+#> Validating the 'igraph' object...
+#> Creating a 'GraphSpace' object...
+
+# Normalize the coordinates
 gs <- normalizeGraphSpace(gs)
+#> Normalizing node coordinates to graph space...
+```
+
+The resulting `GraphSpace` integrates with *ggplot2*, allowing
+graph-specific geoms to be combined with standard *ggplot2* layers.
+
+``` r
+
 ggplot(gs) + 
   geom_edgespace() + 
   geom_nodespace() + 
@@ -195,7 +210,7 @@ ggplot(gs) +
   theme_gspace_coords(is_norm = TRUE)
 ```
 
-![](RGraphSpace_files/figure-html/Using%20geoms-1.png)
+![](RGraphSpace_files/figure-html/Using%20geoms%20-%202-1.png)
 
 ## Online tutorials
 
@@ -244,7 +259,7 @@ If you use *RGraphSpace*, please cite:
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] RGraphSpace_1.4.1 ggplot2_4.0.3     igraph_2.3.2     
+    #> [1] igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
@@ -255,7 +270,7 @@ If you use *RGraphSpace*, please cite:
     #> [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3
     #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.58          fs_2.1.0          
     #> [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
-    #> [33] withr_3.0.2        pkgdown_2.2.0      magrittr_2.0.5     digest_0.6.39     
+    #> [33] pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5     digest_0.6.39     
     #> [37] grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5   
     #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
     #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
