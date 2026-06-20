@@ -121,7 +121,7 @@ the tissue image and normalize node coordinates to the image space.
 gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
 
 # Seurat object converted to GraphSpace:
-# ℹ space=spatial, layer=default, features=2696, cells=31053, scale="lowres"
+# ℹ space=spatial, layer=default, features=31053, samples=2696, scale="lowres"
 # Node spatial boundaries:
 # ℹ x: [76, 493] (cols)
 # ℹ y: [138, 541] (rows)

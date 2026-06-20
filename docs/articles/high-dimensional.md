@@ -161,7 +161,7 @@ section).
 gs <- as.GraphSpace(seurat_obj, space = "embedding", reduction = "umap")
 
 # Seurat object converted to GraphSpace:
-# ℹ space=embedding, layer=default, features=2638, cells=13714, reduction="umap"
+# ℹ space=embedding, layer=default, features=13714, samples=2638, reduction="umap"
 # Node spatial boundaries:
 # ℹ x: [-9, 13] (cols)
 # ℹ y: [-9, 14] (rows)

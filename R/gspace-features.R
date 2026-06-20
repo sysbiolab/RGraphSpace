@@ -155,6 +155,8 @@ gs_add_features <- function(x, data) {
   x@fdata <- data
   x@pars$signal.layer <- TRUE
   
+  validObject(x)
+  
   return(x)
   
 }

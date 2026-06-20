@@ -38,9 +38,9 @@
   : Attribute Processing for GeomEdgeSpace
 - [`StatNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/StatNodeSpace.md)
   : Attribute Processing for GeomNodeSpace
-- [`annotation_gspace()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace.md)
-  [`annotation_gspace_image()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace.md)
-  : Annotate a GraphSpace Plot
+- [`annotation_gspace_image()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace_image.md)
+  [`annotation_gspace()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace_image.md)
+  : Annotate a GraphSpace Plot with an Image
 - [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
   : Convert objects to GraphSpace
 - [`as_colorraster()`](https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.md)

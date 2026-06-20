@@ -704,13 +704,8 @@ setMethod("gs_fdata", "GraphSpace", function(x) {
 #' @rdname GraphSpace-accessors
 #' @export
 setReplaceMethod("gs_fdata", "GraphSpace", function(x, value) {
-  
   x <- gs_add_features(x, value)
-  
-  validObject(x)
-  
   return(x)
-  
 })
 
 #' @rdname GraphSpace-accessors

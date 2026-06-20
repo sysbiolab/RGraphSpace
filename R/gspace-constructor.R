@@ -31,12 +31,12 @@
 ################################################################################
 .get_nodes <- function(gg){
     lt <- vertex_attr(gg)
-    nodes <- data.frame(row.names = seq_along(lt[[1]]))
+    n <- igraph::vcount(gg)
+    nodes <- data.frame(row.names = seq_len(n) )
     for(nm in names(lt)){
         nodes[[nm]] <- lt[[nm]]
     }
-    vertex <- seq_len(igraph::vcount(gg))
-    nodes <- cbind(vertex = vertex, nodes)
+    nodes <- cbind(vertex = seq_len(n), nodes)
     rownames(nodes) <- nodes$name
     return(nodes)
 }
@@ -170,10 +170,21 @@
 .merge_arrowtypes_dir <- function(edges, arrow1, arrow2) {
     ##  0 = "---", 1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->",
     ## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|",
+    ## arrow1/arrow2 are guaranteed in {-1, 0, 1} (validated upstream),
+    ## so all 9 combinations below are exhaustive by construction.
+    ## No empty edges will reach this point.
     atypes <- c(0, 1, 2, 3, 4, -1, -2, -3, -4)
     names(atypes) <- c("00","01","10","11","-11","0-1","-10","-1-1","1-1")
+    
+    ## format(..., digits = 1, trim = TRUE) on -1/0/1 always yields "-1"/"0"/"1"
+    ## (no decimal point, no leading/trailing whitespace), so paste0() produces
+    ## exactly one of the 9 keys in names(atypes) above -- never a partial or
+    ## malformed key.
     arrowType <- paste0(format(arrow1, digits = 1, trim = TRUE),
         format(arrow2, digits = 1, trim = TRUE))
+    
+    ## Named-vector lookup: atypes[arrowType] returns NA for any unmatched key.
+    ## Given the guarantees above, this never happens -- see comments at top.
     edges$arrowType <- as.numeric(atypes[arrowType])
     return(edges)
 }

@@ -434,11 +434,11 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   id_edges <- as.character(unique(id_edges))
   is_topo_ok <- all(id_edges %in% id_nodes) 
   if(is_topo_ok){
-    rlang::message_cnd(
+    rlang::inform(
       message = c(
-        "`inject_nodespace()`: layers synced via vertex IDs.",
-        "i" = "Fallback triggered by UUID mismatch between edge and node data.",
-        "*" = "Ensure graph objects remain identical across all plot layers."
+        "`inject_nodespace()` could not sync node-edge layers from graph UUIDs.",
+        "i" = "Synced layers using vertex IDs instead.",
+        "*" = "Use `ggplot(gs)` with a 'GraphSpace' object to skip this check."
       )
     )
   }

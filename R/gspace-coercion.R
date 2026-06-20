@@ -121,7 +121,6 @@ as.GraphSpace.Seurat <- function(x,
     }
     coords <- coords[, seq_len(2), drop = FALSE]
     colnames(coords) <- c("x", "y")
-    coords <- as.data.frame(coords)
     
   } else {
     
@@ -136,10 +135,9 @@ as.GraphSpace.Seurat <- function(x,
         "Spatial coordinates must be returned as a matrix or data frame."
       )
     }
-    coords <- as.data.frame(coords)
     
     # Remove unnamed columns occasionally returned by some methods
-    coords[, !nzchar(names(coords))] <- NULL
+    coords[, !nzchar(colnames(coords))] <- NULL
     
     if (nrow(coords) == 0L || ncol(coords) < 2L){
       rlang::abort(
@@ -157,10 +155,15 @@ as.GraphSpace.Seurat <- function(x,
   
   if (is.null(rownames(coords))) {
     if (nrow(coords) != ncol(x)) {
-      rlang::abort("Unable to infer node identifiers from coordinate space.")
+      rlang::abort(c(
+        "Unable to infer node identifiers from coordinate space.",
+        "i" = "Coordinate rownames are missing.",
+        "x" = "The number of coordinates does not match the number of samples in 'x'."
+      ))
     }
     rownames(coords) <- colnames(x)
   }
+  coords <- as.data.frame(coords)
   
   # Add metadata
   metadata <- x[[]]
@@ -205,38 +208,14 @@ as.GraphSpace.Seurat <- function(x,
   
   msg <- c(
     "Seurat object converted to GraphSpace:",
-    "i" = sprintf("space=%s, layer=%s, features=%s, cells=%s%s",
+    "i" = sprintf("space=%s, layer=%s, features=%s, samples=%s%s",
       space, 
-      if (is.null(layer)) "default" else layer, 
-      d[1], d[2],
+      if (is.null(layer)) "default" else layer, d[2], d[1],
       if (!is.null(args_str)) sprintf(", %s", args_str) else "")
   )
   
   rlang::inform(msg)
 }
-
-# .inform_data_specs <- function(fdata, layer, space, ...) {
-#   
-#   args <- list(...)
-#   d <- dim(fdata)
-#   
-#   msg <- c(
-#     "Seurat object converted to GraphSpace:",
-#     "i" = sprintf("Coordinate space: %s", space),
-#     "i" = sprintf("Data layer: %s", if (is.null(layer)) "default" else layer),
-#     "i" = sprintf("Features: %s", d[1]),
-#     "i" = sprintf("Cells: %s", d[2])
-#   )
-#   
-#   # report any extra args passed via dots
-#   if (length(args) > 0) {
-#     args_str <- mapply(function(k, v) sprintf("- %s = %s", k, deparse(v)),
-#       names(args), args)
-#     msg <- c(msg, "i" = "Additional args:", args_str)
-#   }
-#   
-#   rlang::inform(msg)
-# }
 
 .inform_coord_boundaries <- function(coords) {
   xr <- c(floor(min(coords$x, na.rm = TRUE)), ceiling(max(coords$x, na.rm = TRUE)))

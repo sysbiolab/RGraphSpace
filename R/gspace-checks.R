@@ -31,7 +31,7 @@
     msg <- paste0("'", name, "' should be a vector of strings.")
     if (!.all_characterValues(para)) stop(msg, call. = FALSE)
   } else if (check == "allCharacterOrInteger") {
-    msg <- paste("'", name, "'should be a vector of strings of integers.")
+    msg <- paste("'", name, " 'should be a vector of strings of integers.")
     if (! (.all_characterValues(para) | .all_integerValues(para) ) ) 
       stop(msg, call. = FALSE)
   } else if (check == "allCharacterOrNa") {
@@ -59,7 +59,7 @@
     msg <- paste0("'", name, "' should be a single logical value.")
     if (!.is_singleLogical(para)) stop(msg, call. = FALSE)
   } else {
-    warning("Skipped arg validation.", call. = FALSE)
+    stop("Skipped arg validation.", call. = FALSE)
   }
 }
 
@@ -76,7 +76,7 @@
       stop(msg, call. = FALSE)
     }
   } else {
-    warning("Skipped color validation.", call. = FALSE)
+    stop("Skipped color validation.", call. = FALSE)
   }
 }
 

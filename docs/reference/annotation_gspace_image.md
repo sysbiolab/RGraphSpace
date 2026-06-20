@@ -1,15 +1,11 @@
-# Annotate a GraphSpace Plot
+# Annotate a GraphSpace Plot with an Image
 
-`annotation_gspace()` is a generic dispatcher for adding annotation
-layers to a `ggplot`-based `GraphSpace` plot. The `type` argument
-selects the annotation type; additional arguments are forwarded to the
-corresponding handler.
+`annotation_gspace_image()` adds an image annotation layer to a
+`ggplot`-based `GraphSpace` plot.
 
 ## Usage
 
 ``` r
-annotation_gspace(..., type = "image")
-
 annotation_gspace_image(
   raster,
   interpolate = FALSE,
@@ -17,18 +13,11 @@ annotation_gspace_image(
   flip.v = FALSE,
   flip.h = FALSE
 )
+
+annotation_gspace(...)
 ```
 
 ## Arguments
-
-- ...:
-
-  Arguments forwarded to the annotation handler selected by `type`.
-
-- type:
-
-  A string specifying the annotation type. Currently available:
-  `"image"` (default), dispatched to `annotation_gspace_image()`.
 
 - raster:
 
@@ -66,12 +55,21 @@ annotation_gspace_image(
   A logical value; if `TRUE`, the image is flipped horizontally
   (left-to-right). Defaults to `FALSE`.
 
+- ...:
+
+  Additional arguments (currently unused).
+
 ## Value
 
 A ggplot2 layer object that can be added to a
 [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html) call
 with `+`, or `invisible(NULL)` with a warning if the image could not be
 resolved.
+
+## Note
+
+`annotation_gspace()` is deprecated as of v1.4.0; use
+`annotation_gspace_image()` instead.
 
 ## See also
 
@@ -90,19 +88,19 @@ resolved.
 if (FALSE) { # \dontrun{
 # Pass a GraphSpace object directly
 ggplot(gs) +
-  annotation_gspace(gs) +
+  annotation_gspace_image(gs) +
   geom_edgespace() +
   geom_nodespace()
 
 # Extract the image explicitly
 ggplot(gs) +
-  annotation_gspace(gs_image(gs)) +
+  annotation_gspace_image(gs_image(gs)) +
   geom_edgespace() +
   geom_nodespace()
 
 # Dim the background and flip vertically
 ggplot(gs) +
-  annotation_gspace(gs, opacity = 0.5, flip.v = TRUE) +
+  annotation_gspace_image(gs, opacity = 0.5, flip.v = TRUE) +
   geom_edgespace() +
   geom_nodespace()
   

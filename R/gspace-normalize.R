@@ -548,7 +548,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   nodes <- gs@nodes
   cx <- nodes$x >= xmin & nodes$x <= xmax
   cy <- nodes$y >= ymin & nodes$y <= ymax
-  # nodes <- nodes[which(cx & cy), ]
+  nodes <- nodes[which(cx & cy), ]
   
   gs <- .crop_update_graph(gs, nodes)
   
