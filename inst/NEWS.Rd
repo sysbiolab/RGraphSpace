@@ -2,6 +2,12 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
+\section{CHANGES IN VERSION 1.4.1 (2026-06-22)}{
+  \itemize{
+    \item Restored compatibility with objects from older package versions.
+  }
+}
+
 \section{CHANGES IN VERSION 1.4.0 (2026-06-12)}{
   \itemize{
     \item Improved integration with ggplot2 ecosystem.
