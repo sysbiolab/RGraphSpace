@@ -10,18 +10,14 @@ normalization approach to align layers, particularly useful for analyses
 in which network elements must be spatially aligned with reference maps
 and images.
 
-## Index
+## Details
 
-|  |  |
-|----|----|
-| [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md): | Constructor of GraphSpace-class objects. |
-| [plotGraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.md): | Wrapper function to plot GraphSpace objects in ggplot2. |
+For a hands-on introduction, see the vignette:
+[`vignette("RGraphSpace")`](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md).
 
-Further information is available in the vignettes by typing
-[`vignette('RGraphSpace')`](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md).
-Documented topics are also available in HTML by typing
+The full set of documented topics can also be browsed in HTML by running
 [`help.start()`](https://rdrr.io/r/utils/help.start.html) and selecting
-the RGraphSpace package from the menu.
+the RGraphSpace package from the package list.
 
 ## References
 

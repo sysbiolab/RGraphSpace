@@ -53,7 +53,67 @@ navbar:
       - text: "High-dimensional data"
         href: articles/high-dimensional.html
       - text: "Spatial transcriptomics data"
-        href: articles/spatial-data.html 
+        href: articles/spatial-data.html
+    - text: Index
+      href: reference/index.html
+
+reference:
+
+- title: GraphSpace
+  contents:
+    - GraphSpace-class
+    - GraphSpace
+    - as.GraphSpace
+    - getGraphSpace
+    - updateGraphSpace
+    - normalizeGraphSpace
+    - cropGraphSpace
+
+- title: Accessors
+  contents:
+    - GraphSpace-accessors
+
+- title: ggplot2 integration
+  contents:
+    - ggplot-GraphSpace
+    - inject_nodespace
+
+- title: Geoms
+  contents:
+    - geom_graphspace
+    - geom_nodespace
+    - geom_edgespace
+
+- title: Annotation
+  contents:
+    - annotation_gspace_image
+
+- title: Plotting
+  contents:
+    - plotGraphSpace
+    - plot.GraphSpace
+
+- title: Themes
+  contents:
+    - theme_gspace
+
+- title: Utilities
+  contents:
+    - gs_features-utils
+    - as_colorraster
+
+- title: Data
+  contents:
+    - gtoys
+    
+- title: Internal
+  contents:
+    - GeomEdgeSpace
+    - GeomGraphSpace
+    - GeomNodeSpace
+    - StatEdgeSpace
+    - StatNodeSpace
+    
 home:
   sidebar:
     structure: [links, license, community, citation, dev]

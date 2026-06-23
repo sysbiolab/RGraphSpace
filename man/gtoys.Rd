@@ -14,6 +14,7 @@ This package.
 }
 \usage{
 data(gtoy1)
+data(gtoy2)
 }
 \value{
 A pre-processed igraph object.
@@ -27,4 +28,4 @@ library(RGraphSpace)
 data(gtoy1)
 data(gtoy2)
 }
-\keyword{gtoys}
+\keyword{datasets}

@@ -7,6 +7,7 @@ include 'x', 'y', and 'name' vertex attributes.
 
 ``` r
 data(gtoy1)
+data(gtoy2)
 ```
 
 ## Format

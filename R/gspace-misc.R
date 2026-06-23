@@ -2,25 +2,22 @@
 ################################################################################
 ### Package documentation
 ################################################################################
-#' @aliases RGraphSpace-package
-#'
-#' @section Index:
-#' \tabular{ll}{
-#' \link{GraphSpace}:
-#' \tab Constructor of GraphSpace-class objects.\cr
-#' \link{plotGraphSpace}:
-#' \tab Wrapper function to plot GraphSpace objects in ggplot2.
-#' }
-#' Further information is available in the vignettes by typing 
-#' \code{vignette('RGraphSpace')}. Documented topics are also available in
-#' HTML by typing \code{help.start()} and selecting the RGraphSpace package
-#' from the menu.
-#'
+#' @details
+#' 
+#' For a hands-on introduction, see the vignette:
+#' \code{vignette("RGraphSpace")}.
+#' 
+#' The full set of documented topics can also be browsed in HTML by
+#' running \code{help.start()} and selecting the RGraphSpace package
+#' from the package list.
+#' 
 #' @references
 #' `r paste(format(citation("RGraphSpace"), style = "text"), collapse = "\n\n")`
 #' 
-#' @importFrom lifecycle deprecated deprecate_soft is_present
+#' @aliases RGraphSpace-package
 #' @keywords internal
+#' 
+#' @importFrom lifecycle deprecated deprecate_soft is_present
 "_PACKAGE"
 
 
@@ -34,14 +31,17 @@
 #'
 #' @format igraph
 #'
-#' @usage data(gtoy1)
-#'
+#' @usage 
+#' data(gtoy1)
+#' data(gtoy2)
+#' 
 #' @source This package.
 #'
 #' @docType data
-#' @keywords gtoys
+#' @keywords datasets
 #' @name gtoys
-#' @aliases gtoy1 gtoy2
+#' @aliases gtoy1
+#' @aliases gtoy2
 #' @return A pre-processed igraph object.
 #' @examples
 #' library(RGraphSpace)

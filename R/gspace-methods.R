@@ -575,6 +575,7 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
 #' gs_image(gs) <- as_colorraster(volcano)
 #' gs <- normalizeGraphSpace(gs, image.space = FALSE)
 #' 
+#' @name GraphSpace-accessors
 #' @aliases names
 #' @aliases gs_names
 #' @aliases gs_nodes
@@ -592,7 +593,10 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
 #' @aliases gs_vertex_attr<-
 #' @aliases gs_edge_attr
 #' @aliases gs_edge_attr<-
+NULL
+
 #' @rdname GraphSpace-accessors
+#' @aliases names,GraphSpace-method
 #' @export
 setMethod("names", "GraphSpace", function(x) {
   x@nodes$name
