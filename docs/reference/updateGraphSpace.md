@@ -7,7 +7,7 @@ adding any missing slots with default values.
 
 ``` r
 # S4 method for class 'GraphSpace'
-updateGraphSpace(x, verbose = FALSE)
+updateGraphSpace(x, verbose = TRUE)
 ```
 
 ## Arguments

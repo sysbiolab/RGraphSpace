@@ -33,7 +33,7 @@ setOldClass("gs_graph")
 #'
 ## Class GraphSpace
 setClass("GraphSpace",
-  slot = c(
+  slots = c(
     nodes = "data.frame",
     edges = "data.frame",
     graph = "igraph",
@@ -180,29 +180,25 @@ setGeneric("updateGraphSpace", function(x, ...) standardGeneric("updateGraphSpac
 #' @aliases updateGraphSpace
 #' @rdname updateGraphSpace
 #' @export
-setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = FALSE) {
+setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
   .update_gs(x, verbose = verbose)
 })
 
-.update_gs <- function(gs, verbose = FALSE) {
+.update_gs <- function(gs, verbose = TRUE) {
 
   new_slots <- c("image", "fdata", "uuid")
   missing_slots <- new_slots[!sapply(new_slots, function(s) .hasSlot(gs, s))]
   
   if (length(missing_slots) == 0){
-    if(verbose) rlang::inform("'GraphSpace' object is up to date.")
     return(gs)
   }
   
-  rlang::warn(c(
-    "Outdated 'GraphSpace' object: updating on the fly.",
-    "i" = "Recently introduced feature slots may not be recoverable.",
-    "i" = "Rebuild the object from scratch to fully restore all components."
-  ))
-  
-  if (verbose){
-    rlang::inform(paste0("Missing slot(s) added with defaults: ",
-      paste(missing_slots, collapse = ", ")))
+  if(verbose){
+    rlang::inform(c(
+      "Outdated 'GraphSpace' object: updating on the fly.",
+      "i" = "Recently introduced feature slots may not be recoverable.",
+      "*" = "Rebuild the object from scratch to fully restore all components."
+    ))
   }
   
   proto <- new("GraphSpace")
@@ -219,6 +215,8 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = FALSE) {
   
   validObject(x)
   
+  x
+  
 }
 
 #-------------------------------------------------------------------------------
@@ -230,9 +228,7 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = FALSE) {
     rlang::abort(c(
       "x" = paste0(
         "Outdated 'GraphSpace' object: missing slot(s): ",
-        paste(slots[!check], collapse = ", "),
-        "."
-      ),
+        paste(slots[!check], collapse = ", "), "."),
       "i" = "Run 'updateGraphSpace(x)' to migrate the object."
     ))
   }

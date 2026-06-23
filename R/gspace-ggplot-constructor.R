@@ -79,13 +79,9 @@
 #' @method ggplot GraphSpace
 #' @export
 ggplot.GraphSpace <- function(data, mapping = NULL, ...) {
-
   p <- NextMethod()
-  
   class(p) <- c("gspace_plot", class(p))
-  
   p
-  
 }
 
 #-------------------------------------------------------------------------------
