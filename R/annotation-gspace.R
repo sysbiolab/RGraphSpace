@@ -77,15 +77,15 @@ annotation_gspace_image <- function(raster, interpolate = FALSE, opacity = 1,
   .validate_gs_args("singleLogical", "flip.v", flip.v)
   .validate_gs_args("singleLogical", "flip.h", flip.h)
   .validate_gs_args("singleNumber", "opacity", opacity)
-
+  
   if (inherits(raster, "GraphSpace")) {
-    raster <- gs_image(raster)
-    if (is.null(raster)) {
+    if (!.has_image(raster)) {
       rlang::warn("The 'GraphSpace' object contains no image.")
       return(invisible(NULL))
     }
+    raster <- gs_image(raster)
   }
-
+  
   if (!inherits(raster, "raster")) {
     raster <- tryCatch({
       grDevices::as.raster(raster)

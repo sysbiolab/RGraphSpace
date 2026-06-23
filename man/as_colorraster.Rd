@@ -12,7 +12,7 @@ as_colorraster(x, palette = hcl.colors(30), na.color = "white")
 \item{palette}{A vector of colors used as the palette. By default,
 \code{hcl.colors(30)} is used.}
 
-\item{na.color}{Color used for \code{NA} values. Defaults to \code{NA}.}
+\item{na.color}{Color used for \code{NA} values. Defaults to \code{white}.}
 }
 \value{
 A raster object as produced by \code{as.raster()}.

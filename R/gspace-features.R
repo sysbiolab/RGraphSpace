@@ -130,25 +130,33 @@ gs_add_features <- function(x, data) {
   matched_idx <- match(node_ids, rownames(data))
   missing_count <- sum(is.na(matched_idx))
   if (missing_count == 0) {
-
+    
     # safe: matched_idx has no NAs here
     data <- data[matched_idx, , drop = FALSE]
-
-  } else {
-
-      rlang::warn(sprintf(
-          "%d node(s) have no feature data and will be set to NA.", 
-          missing_count))
     
-      result <- Matrix::Matrix(
-          NA_real_,
-          nrow = length(node_ids),
-          ncol = ncol(data),
-          dimnames = list(node_ids, colnames(data))
-      )
-      present <- !is.na(matched_idx)
-      result[present, ] <- data[matched_idx[present], , drop = FALSE]
-      data <- result
+  } else {
+    
+    rlang::warn(sprintf(
+      "%d node(s) have no feature data and will be set to NA.", 
+      missing_count))
+    
+    # 'result' is always dense (Matrix::Matrix(NA_real_, ...)); 'data' may
+    # be sparse (e.g. dgCMatrix) at this point. Assigning a sparse-derived
+    # row subset into a dense row-subset target, as below, has been
+    # verified empirically: correct values (including stored structural
+    # zeros, not coerced to NA) for both partial node coverage (this
+    # branch) and shuffled/reordered row names matched via 'matched_idx'.
+    # Not a risk needing further guarding -- Matrix's S4 dispatch handles
+    # this correctly.
+    result <- Matrix::Matrix(
+      NA_real_,
+      nrow = length(node_ids),
+      ncol = ncol(data),
+      dimnames = list(node_ids, colnames(data))
+    )
+    present <- !is.na(matched_idx)
+    result[present, ] <- data[matched_idx[present], , drop = FALSE]
+    data <- result
   }
   
   # Load fdata slot

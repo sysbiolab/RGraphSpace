@@ -23,7 +23,7 @@ as_colorraster(x, palette = hcl.colors(30), na.color = "white")
 
 - na.color:
 
-  Color used for `NA` values. Defaults to `NA`.
+  Color used for `NA` values. Defaults to `white`.
 
 ## Value
 

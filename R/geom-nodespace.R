@@ -253,7 +253,7 @@ nodespace_handler <- function(mapping = NULL) {
       rlang::abort(
         message = c(
           "x" = "`nodespace_handler()` received an unsupported object type.",
-          "i" = "Input must be a 'GraphSpace', 'gs_nodes', 'igraph', 'tidygraph', or 'ggraph' layout."
+          "i" = "Input must be a 'GraphSpace', 'igraph', 'tbl_graph', or 'layout_ggraph'."
         )
       )
     }

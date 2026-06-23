@@ -44,6 +44,8 @@
 .add_labels2 <- function(ggp, nodes){
   vatt <- .get_default_vatt()
   nodes_ft <- nodes[!is.na(nodes$nodeLabel), ]
+  # 'size' and 'colour' are vector arguments that allow fallback to 
+  # default values via %||%.
   x <- y <- nodeLabel <- NULL
   ggp <- ggp + geom_text(
     mapping = aes(x = x, y = y, label = nodeLabel), 

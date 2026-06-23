@@ -13,11 +13,11 @@ plotGraphSpace(
   xlab = "Graph coordinates 1",
   ylab = "Graph coordinates 2",
   font.size = 1,
-  bg.color = "grey95",
+  bg.colour = "grey95",
   add.labels = FALSE,
   node.labels = NULL,
   label.size = 3,
-  label.color = "grey20",
+  label.colour = "grey20",
   add.image = TRUE,
   raster = FALSE,
   dpi = 300,
@@ -63,7 +63,7 @@ plotGraphSpace(gs, ...)
 
   A single numeric value passed to ggplot themes.
 
-- bg.color:
+- bg.colour:
 
   A single color for background.
 
@@ -81,7 +81,7 @@ plotGraphSpace(gs, ...)
   A size argument passed to
   [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html).
 
-- label.color:
+- label.colour:
 
   A color passed to
   [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html).

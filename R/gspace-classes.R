@@ -91,6 +91,9 @@ setValidity("GraphSpace", function(object) {
   }
   
   # graph <-> nodes consistency
+  # Note: do not assume that @nodes rows and @graph vertices share the same order,
+  # as igraph accessors are independent. Downstream code relies on validated
+  # index values rather than positional order
   if (!inherits(object@graph, "igraph")) {
     errors <- c(errors, "'@graph' slot must be an igraph object.")
   } else {

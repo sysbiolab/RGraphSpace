@@ -36,6 +36,11 @@ as.GraphSpace.default <- function(x, ...) {
   )
   
   if (!is.null(y)) {
+    rlang::inform(paste0(
+      "No native 'as.GraphSpace' method for class '", class(x)[1], "'; ",
+      "converted via tidygraph::as_tbl_graph(). Verify the resulting graph ",
+      "structure if this wasn't the intended input."
+    ))
     return(GraphSpace(y, ...))
   }
   
@@ -137,7 +142,7 @@ as.GraphSpace.Seurat <- function(x,
     }
     
     # Remove unnamed columns occasionally returned by some methods
-    coords[, !nzchar(colnames(coords))] <- NULL
+    coords <- coords[, nzchar(colnames(coords)), drop = FALSE]
     
     if (nrow(coords) == 0L || ncol(coords) < 2L){
       rlang::abort(
@@ -170,8 +175,20 @@ as.GraphSpace.Seurat <- function(x,
   if(inherits(metadata, "data.frame") && ncol(metadata) > 0){
     cids <- setdiff(colnames(metadata), colnames(coords))
     if (length(cids) > 0){
-      metadata <- metadata[rownames(coords), cids, drop = FALSE]
-      coords <- cbind(coords, metadata)
+      if (!any(rownames(coords) %in% rownames(metadata))) {
+        rlang::warn(c(
+          "None of the coordinate row names match the Seurat object's cell identifiers.",
+          "i" = "Skipping metadata merge; the resulting GraphSpace will not include x[[]] columns."
+        ))
+      } else {
+        if (!all(rownames(coords) %in% rownames(metadata))) {
+          rlang::warn(
+            "Some coordinate row names do not match Seurat cell identifiers; corresponding metadata will be NA."
+          )
+        }
+        metadata <- metadata[rownames(coords), cids, drop = FALSE]
+        coords <- cbind(coords, metadata)
+      }
     }
   }
   
@@ -181,6 +198,11 @@ as.GraphSpace.Seurat <- function(x,
   
   # Add fdata
   fdata <- SeuratObject::LayerData(x, layer = layer)
+  if (is.null(fdata)) {
+    rlang::abort(c("x" = "LayerData() returned NULL.",
+      "i" = sprintf("Layer '%s' may not exist.", 
+        layer %||% "default")))
+  }
   fdata <- Matrix::t(fdata)
   gs_fdata(gs) <- fdata
   

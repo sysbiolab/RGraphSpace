@@ -374,7 +374,6 @@ theme_gspace_legend <- function(leg_size = 1,
   l_args
 }
 
-
 .clean_args <- function(...) {
   args <- list(...)
   args[c("key_fill", "key_colour", "bg_color")] <- NULL

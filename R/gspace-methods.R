@@ -166,19 +166,20 @@ setMethod("GraphSpace", signature(g = "ANY"),
         error = function(e) NULL
       )
       g <- attr(g, "graph")
+    } else if (inherits(g, "tbl_graph")) {
+      g <- tidygraph::as.igraph(g)
     }
     
-    if (inherits(g, "igraph")) {
-      class(g) <- "igraph"
-    } else {
+    if (!inherits(g, "igraph")) {
       rlang::abort(
         message = c(
           "x" = "Input 'g' must inherit from the 'igraph' class.",
-          "i" = paste("Received an object of class:", paste(class(g), collapse = "/")),
-          "*" = "Did you mean to use `tidygraph::as_tbl_graph()`?"
+          "i" = "Input must be an 'igraph', 'tbl_graph', or 'layout_ggraph'."
         )
       )
     }
+    class(g) <- "igraph"
+    
     if(!is.null(layout)){
       .validate_gs_args("numeric_mtx", "layout", layout)
       if (ncol(layout) != 2) {
@@ -232,6 +233,9 @@ setMethod("GraphSpace", signature(g = "data.frame"),
   
   # Initialize a graph using 'coord' as vertices, with no edges
   g <- make_empty_graph(n = nrow(coord), directed = FALSE)
+  
+  # If 'coord' has no row names (a common case for a plain data.frame), 
+  # sequential names will be later assigned in the validation functions
   if(!is.null(rownames(coord))){
     V(g)$name <- rownames(coord)
   }
@@ -266,12 +270,12 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' @param xlab The title for the 'x' axis of a 2D-image space.
 #' @param ylab The title for the 'y' axis of a 2D-image space.
 #' @param font.size A single numeric value passed to ggplot themes.
-#' @param bg.color A single color for background.
+#' @param bg.colour A single color for background.
 #' @param add.labels A logical value indicating whether to plot vertex labels.
 #' @param node.labels A vector of vertex names to be highlighted in the graph
 #' space. This argument overrides 'add.labels'.
 #' @param label.size A size argument passed to \code{\link[ggplot2]{geom_text}}.
-#' @param label.color A color passed to \code{\link[ggplot2]{geom_text}}.
+#' @param label.colour A color passed to \code{\link[ggplot2]{geom_text}}.
 #' @param add.image A logical value indicating whether to add a background 
 #' image, when one is available (see \code{\link{GraphSpace}}).
 #' @param raster A logical value indicating whether to rasterize the main plot.
@@ -319,9 +323,9 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 setMethod("plotGraphSpace", "GraphSpace", 
   function(gs, theme = "th0", xlab = "Graph coordinates 1", 
     ylab = "Graph coordinates 2", font.size = 1,
-    bg.color = "grey95", add.labels = FALSE,
+    bg.colour = "grey95", add.labels = FALSE,
     node.labels = NULL, label.size = 3, 
-    label.color = "grey20", add.image = TRUE, 
+    label.colour = "grey20", add.image = TRUE, 
     raster = FALSE, dpi = 300, dev = "cairo_png") {
     
     gs <- updateGraphSpace(gs)
@@ -330,10 +334,10 @@ setMethod("plotGraphSpace", "GraphSpace",
     .validate_gs_args("singleString", "xlab", xlab)
     .validate_gs_args("singleString", "ylab", ylab)
     .validate_gs_args("singleNumber", "font.size", font.size)
-    .validate_gs_colors("singleColor", "bg.color", bg.color)
+    .validate_gs_colors("singleColor", "bg.colour", bg.colour)
     .validate_gs_args("singleLogical", "add.labels", add.labels)
     .validate_gs_args("singleNumber", "label.size", label.size)
-    .validate_gs_colors("singleColor", "label.color", label.color)
+    .validate_gs_colors("singleColor", "label.colour", label.colour)
     .validate_gs_args("singleLogical", "add.image", add.image)
     .validate_gs_args("singleLogical", "raster", raster)
     .validate_gs_args("singleInteger", "dpi", dpi)
@@ -362,7 +366,7 @@ setMethod("plotGraphSpace", "GraphSpace",
         ggi <- ggi + theme_gspace_coords(theme = theme, 
           is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
           txt_size = font.size, leg_size = font.size, 
-          bg_color = bg.color)
+          bg_colour = bg.colour)
       }
     }
     
@@ -372,7 +376,7 @@ setMethod("plotGraphSpace", "GraphSpace",
     #--- add node labels
     if (!is.null(node.labels)){
       ggp <- .add_labels1(ggp, nodes, node.labels, 
-        label.size, label.color)
+        label.size, label.colour)
     } else if(add.labels){
       ggp <- .add_labels2(ggp, nodes)
     }
@@ -381,7 +385,7 @@ setMethod("plotGraphSpace", "GraphSpace",
     ggp <- ggp + theme_gspace_coords(theme = theme, 
       is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
       txt_size = font.size, leg_size = font.size,
-      bg_color = bg.color)
+      bg_colour = bg.colour)
     
     if(raster){
       ggp <- ggrastr::rasterize(ggp, layers = "GraphSpace", 
@@ -440,7 +444,7 @@ plot.GraphSpace <- function(x, ...) {
 #-------------------------------------------------------------------------------
 #' @title Accessors for fetching slots from a GraphSpace object
 #'
-#' @description \code{getGraphSpace} retrives information from
+#' @description \code{getGraphSpace} retrieves information from
 #' individual slots available in a GraphSpace object.
 #'
 #' @param gs A preprocessed \linkS4class{GraphSpace} class object
@@ -458,7 +462,7 @@ plot.GraphSpace <- function(x, ...) {
 #' # Create a new GraphSpace object
 #' gs <- GraphSpace(gtoy1)
 #'
-#' # Get the 'summary' slot in gs
+#' # Get the 'graph' slot in gs
 #' getGraphSpace(gs, what = 'graph')
 #'
 #' @import methods
@@ -835,8 +839,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   x@graph <- .validate_igraph(g)
   nodes   <- .get_nodes(x@graph)
   if (x@pars$is.normalized) {
-    nodes$x <- x@nodes$x
-    nodes$y <- x@nodes$y
+    nodes[x@nodes$name, c("x","y")] <- x@nodes[, c("x","y")]
   }
   x@nodes <- nodes
   return(x)

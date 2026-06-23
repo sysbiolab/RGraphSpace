@@ -19,7 +19,7 @@ Options: "graph", "nodes", "edges", "pars", "misc", "image", and "fdata".}
 Content from slots in the \linkS4class{GraphSpace} object.
 }
 \description{
-\code{getGraphSpace} retrives information from
+\code{getGraphSpace} retrieves information from
 individual slots available in a GraphSpace object.
 }
 \examples{
@@ -32,7 +32,7 @@ data('gtoy1', package = 'RGraphSpace')
 # Create a new GraphSpace object
 gs <- GraphSpace(gtoy1)
 
-# Get the 'summary' slot in gs
+# Get the 'graph' slot in gs
 getGraphSpace(gs, what = 'graph')
 
 }

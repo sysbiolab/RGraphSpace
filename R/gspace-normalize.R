@@ -399,6 +399,22 @@ setMethod("cropGraphSpace", "GraphSpace",
 #-------------------------------------------------------------------------------
 .fitImageNodes <- function(nodes, image, mar = 0.1){
   
+  # gs_image() (the getter) tags its return value with class "gs_image" for
+  # downstream handler-recognition purposes (see .is_handler()); the @image
+  # slot itself only ever stores plain "raster" (its setter enforces this).
+  class(image) <- "raster"
+  
+  # Degenerate case: all nodes share the same (x, y) -- mirrors the explicit
+  # guard in .fit_graph_space() for the non-image path. Without this, the
+  # crop window collapses to a 1-pixel image and .normalize_image_nodes()
+  # divides by (n - 1) = 0. Handled here, at the point where "center the
+  # point, use the image as-is".
+  if (diff(range(nodes$x)) == 0 && diff(range(nodes$y)) == 0) {
+    nodes$x <- 0.5
+    nodes$y <- 0.5
+    return(list(nodes = nodes, image = image, side_length = NA))
+  }
+  
   l_temp <- .fit_image_nodes(nodes, image, mar)
   l_temp <- .adjust_aspect_ratio(l_temp)
   l_temp <- .normalize_image_nodes(l_temp)
@@ -498,7 +514,7 @@ setMethod("cropGraphSpace", "GraphSpace",
 .adjust_aspect_ratio <- function(l_temp){
   d <- dim(l_temp$image)
   if(d[1] > d[2]){
-    n <- ceiling( (d[1] - d[2]) )/2
+    n <- ceiling( (d[1] - d[2])/2 )
     img_d <- matrix(NA, nrow = d[1], ncol = d[1])
     img_d[ , seq(n + 1, n + d[2])] <- as.matrix(l_temp$image)
     l_temp$nodes$x <- l_temp$nodes$x + n

@@ -166,9 +166,9 @@ gs_edges(gs)
 #> 4 0 0   -8    0            8          5       1       5    n1    n5
 #>   edgeLineType edgeLineColor edgeLineWidth arrowType edgeAlpha
 #> 1        solid           red           0.8         1         1
-#> 2           11         green           0.8         1         1
+#> 2        solid         green           0.8         1         1
 #> 3       dashed          blue           0.8         1         1
-#> 4         2124         black           0.8         1         1
+#> 4        solid         black           0.8         1         1
 
 # Get vertex count
 gs_vcount(gs)

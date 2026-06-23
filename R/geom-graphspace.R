@@ -182,6 +182,11 @@ geom_graphspace <- function(mapping = NULL, data,
   arrow_size = 1, arrow_offset = 0.01,
   raster = FALSE, dpi = NULL, dev = "cairo", scale = 1) {
   
+  # Validate package-specific arguments;
+  # All other arguments are validated elsewhere.
+  .validate_gs_args("numeric_vec", "arrow_size", arrow_size)
+  .validate_gs_args("numeric_vec", "arrow_offset", arrow_offset)
+  
   if (missing(data) || is.null(data)){
     rlang::warn(
       message = c(

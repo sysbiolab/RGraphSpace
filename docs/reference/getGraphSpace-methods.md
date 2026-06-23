@@ -1,6 +1,6 @@
 # Accessors for fetching slots from a GraphSpace object
 
-`getGraphSpace` retrives information from individual slots available in
+`getGraphSpace` retrieves information from individual slots available in
 a GraphSpace object.
 
 ## Usage
@@ -44,7 +44,7 @@ gs <- GraphSpace(gtoy1)
 #> Validating the 'igraph' object...
 #> Creating a 'GraphSpace' object...
 
-# Get the 'summary' slot in gs
+# Get the 'graph' slot in gs
 getGraphSpace(gs, what = 'graph')
 #> IGRAPH d6f4f35 DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize

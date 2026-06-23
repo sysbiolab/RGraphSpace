@@ -184,6 +184,8 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
     return(plot)
   }
   
+  # Note: @data/@layers/@scales require ggplot2 >= 4.0 (S7 plot objects).
+  # This requirement is intentional and enforced in DESCRIPTION.
   for(i in seq_along(plot@layers)){
     
     layer <- plot@layers[[i]]

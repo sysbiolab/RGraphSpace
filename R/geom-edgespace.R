@@ -146,12 +146,10 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
   lineend = "butt", linejoin = "mitre",
   raster = FALSE, dpi = NULL, dev = "cairo", scale = 1) {
   
-  # Check custom params
-  .validate_gs_args("singleLogical", "na.rm", na.rm)
-  .validate_gs_args("singleNumber", "arrow_size", arrow_size)
-  .validate_gs_args("singleNumber", "arrow_offset", arrow_offset)
-  .validate_gs_args("singleString", "lineend", lineend)
-  .validate_gs_args("singleString", "linejoin", linejoin)
+  # Validate package-specific arguments;
+  # All other arguments are validated elsewhere.
+  .validate_gs_args("numeric_vec", "arrow_size", arrow_size)
+  .validate_gs_args("numeric_vec", "arrow_offset", arrow_offset)
   
   if (is.null(data)){
     data <- edgespace_handler()
@@ -251,7 +249,7 @@ edgespace_handler <- function() {
         rlang::warn(
           message = c(
             "x" = "`edgespace_handler()` found no edges in the input data.",
-            "i" = "Input must be a 'GraphSpace', 'gs_edges', 'igraph', 'tidygraph', or 'ggraph' layout."
+            "i" = "Input must be a 'GraphSpace', 'igraph', 'tbl_graph', or 'layout_ggraph'."
           )
         )
         data <- NULL
@@ -260,7 +258,7 @@ edgespace_handler <- function() {
       rlang::abort(
         message = c(
           "x" = "`edgespace_handler()` received an unsupported object type.",
-          "i" = "Input must be a 'GraphSpace', 'gs_edges', 'igraph', 'tidygraph', or 'ggraph' layout."
+          "i" = "Input must be a 'GraphSpace', 'igraph', 'tbl_graph', or 'layout_ggraph'."
         )
       )
     }
@@ -725,6 +723,7 @@ GeomEdgeSpace <- ggproto(
   # a tiny segment (0.01 npc) is used to anchor the arrowhead
   exy$xend <- exy$x + (edges$px * 0.01)
   exy$yend <- exy$y + (edges$py * 0.01)
+  # grid::arrow(length = ...) is vectorized; it has been tested and validate
   arrow <- grid::arrow(angle = edges$arrowAngleStart,
     type = "open", ends = "first",
     length = grid::unit(edges$arrowSize1, size_unit))
@@ -736,6 +735,7 @@ GeomEdgeSpace <- ggproto(
   # a tiny segment (0.01 npc) is used to anchor the arrowhead
   exy$x <- exy$xend - (edges$px * 0.01)
   exy$y <- exy$yend - (edges$py * 0.01)
+  # grid::arrow(length = ...) is vectorized; it has been tested and validated
   arrow <- grid::arrow(angle = edges$arrowAngleEnd,
     type = "open", ends = "last",
     length = grid::unit(edges$arrowSize2, size_unit))

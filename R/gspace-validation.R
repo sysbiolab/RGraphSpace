@@ -7,9 +7,6 @@
     if (!inherits(g, "igraph")) {
         stop("'g' should be an 'igraph' object.", call. = FALSE)
     }
-    if (inherits(g, "tbl_graph")) {
-        g <- tidygraph::as.igraph(g)
-    }
     if (!is.null(layout)) {
         if (nrow(layout) != vcount(g)) {
             msg <- paste("'layout' must have xy-coordinates",
@@ -32,7 +29,7 @@
         if (verbose) rlang::inform(msg)
         igraph::V(g)$name <- paste0("n", seq_len(igraph::vcount(g)))
     } else {
-        if(is.vector(igraph::V(g)$name) || !is.list(igraph::V(g)$name)){
+        if(is.vector(igraph::V(g)$name) && !is.list(igraph::V(g)$name)){
             if(any(is.na(igraph::V(g)$name))){
                 msg <- "NA values found in vertex attribute 'name'."
                 stop(msg, call. = FALSE)
@@ -212,7 +209,7 @@
     }
     if (!is.null(atts$nodeLabelSize)) {
         .validate_gs_args("numeric_vec", "nodeLabelSize", atts$nodeLabelSize)
-        if (min(atts$nodeLabelSize) <= 0) {
+        if (min(atts$nodeLabelSize, na.rm = TRUE) <= 0) {
             stop("'nodeLabelSize' should be a vector of numeric values >0", 
               call. = FALSE)
         }
@@ -222,7 +219,7 @@
     }
     if (!is.null(atts$nodeSize)) {
         .validate_gs_args("numeric_vec", "nodeSize", atts$nodeSize)
-        if (max(atts$nodeSize) > 100 || min(atts$nodeSize) < 0) {
+        if (max(atts$nodeSize, na.rm = TRUE) > 100 || min(atts$nodeSize, na.rm = TRUE) < 0) {
             stop("'nodeSize' should be a vector of numeric values in [0, 100]", 
               call. = FALSE)
         }
@@ -235,7 +232,7 @@
     }
     if (!is.null(atts$nodeLineWidth)) {
         .validate_gs_args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)
-        if (min(atts$nodeLineWidth) < 0) {
+        if (min(atts$nodeLineWidth, na.rm = TRUE) < 0) {
             stop("'nodeLineWidth' should be a vector of numeric values >=0", 
               call. = FALSE)
         }
@@ -383,8 +380,8 @@
     return(g)
 }
 .transform_linetype <- function(lty) {
+    ltypes <- .linetypes()
     if (.all_integerValues(lty)) {
-        ltypes <- .linetypes()
         lty[!lty %in% ltypes] <- 1
         lty <- ltypes[match(lty, ltypes)]
         lty <- names(lty)
@@ -395,6 +392,7 @@
         lty[grep("dashed", lty)] <- "dashed"
         lty[grep("long", lty)] <- "longdash"
         lty[grep("two", lty)] <- "twodash"
+        lty[!lty %in% names(ltypes)] <- "solid"
     }
     return(lty)
 }

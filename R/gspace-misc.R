@@ -59,7 +59,7 @@ NULL
 #' @param x A numeric vector or matrix containing values to be mapped to colors.
 #' @param palette A vector of colors used as the palette. By default,
 #'   \code{hcl.colors(30)} is used.
-#' @param na.color Color used for \code{NA} values. Defaults to \code{NA}.
+#' @param na.color Color used for \code{NA} values. Defaults to \code{white}.
 #'
 #' @details
 #' Values in \code{x} are rescaled to the range of the palette using
