@@ -15,11 +15,11 @@
   xlab = "Graph coordinates 1",
   ylab = "Graph coordinates 2",
   font.size = 1,
-  bg.colour = "grey95",
+  bg.color = "grey95",
   add.labels = FALSE,
   node.labels = NULL,
   label.size = 3,
-  label.colour = "grey20",
+  label.color = "grey20",
   add.image = TRUE,
   raster = FALSE,
   dpi = 300,
@@ -47,7 +47,7 @@ which can subsequently refine using \code{\link[ggplot2]{ggplot2}}.}
 
 \item{font.size}{A single numeric value passed to ggplot themes.}
 
-\item{bg.colour}{A single color for background.}
+\item{bg.color}{A single color for background.}
 
 \item{add.labels}{A logical value indicating whether to plot vertex labels.}
 
@@ -56,7 +56,7 @@ space. This argument overrides 'add.labels'.}
 
 \item{label.size}{A size argument passed to \code{\link[ggplot2]{geom_text}}.}
 
-\item{label.colour}{A color passed to \code{\link[ggplot2]{geom_text}}.}
+\item{label.color}{A color passed to \code{\link[ggplot2]{geom_text}}.}
 
 \item{add.image}{A logical value indicating whether to add a background
 image, when one is available (see \code{\link{GraphSpace}}).}
