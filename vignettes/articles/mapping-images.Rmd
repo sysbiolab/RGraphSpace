@@ -70,13 +70,15 @@ igraph::V(gtoy3)$nodeColor[bottom_row] <- adjustcolor("red", 0.4)
 
 # Initialize, normalize, and plot
 
-```{r Mapping images - 2, eval=TRUE, message=FALSE}
+```{r Mapping images - 2, eval=TRUE, message=TRUE}
 # Initialize a GraphSpace object
 gs <- GraphSpace(gtoy3)
+
+# Add a raster image
 gs_image(gs) <- as_colorraster(volcano2)
 
 # Map graph coordinates to the image space; by default,
-# 'y' row indices will be flipped (see comments below).
+# y-coordinates will be flipped (see comments below).
 gs <- normalizeGraphSpace(gs)
 ```
 

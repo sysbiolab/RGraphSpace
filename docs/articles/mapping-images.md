@@ -58,11 +58,21 @@ igraph::V(gtoy3)$nodeColor[bottom_row] <- adjustcolor("red", 0.4)
 
 # Initialize a GraphSpace object
 gs <- GraphSpace(gtoy3)
+#> Validating the 'igraph' object...
+#> Vertex attribute 'name' missing; assigning names... 
+#> Creating a 'GraphSpace' object...
+
+# Add a raster image
 gs_image(gs) <- as_colorraster(volcano2)
+#> Image spatial boundaries:
+#> ℹ x: [1, 61] (cols)
+#> ℹ y: [1, 87] (rows)
 
 # Map graph coordinates to the image space; by default,
-# 'y' row indices will be flipped (see comments below).
+# y-coordinates will be flipped (see comments below).
 gs <- normalizeGraphSpace(gs)
+#> Normalizing node coordinates to image space...
+#> Flipping y-coordinates...
 ```
 
 Observe that the nodes (open circles) are precisely aligned with the

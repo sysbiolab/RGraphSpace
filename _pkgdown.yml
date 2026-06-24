@@ -5,8 +5,7 @@ destination: docs
 template:
   bootstrap: 5
   bootswatch: flatly
-  params:
-    mathjax: true
+  math-rendering: mathjax
   includes:
     in_header: |
       <style>
