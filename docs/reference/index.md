@@ -111,3 +111,10 @@
   : Attribute Processing for GeomEdgeSpace
 - [`StatNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/StatNodeSpace.md)
   : Attribute Processing for GeomNodeSpace
+
+## Package
+
+- [`RGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
+  [`RGraphSpace-package`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
+  : RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2'
+  Graphics

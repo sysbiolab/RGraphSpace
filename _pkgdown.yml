@@ -114,6 +114,10 @@ reference:
     - StatEdgeSpace
     - StatNodeSpace
     
+- title: Package
+  contents:
+    - RGraphSpace-package
+
 home:
   sidebar:
     structure: [links, license, community, citation, dev]
