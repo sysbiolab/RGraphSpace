@@ -14,7 +14,11 @@
         is.directed = igraph::is_directed(gg), 
         is.simplified = simplify,
         is.normalized = FALSE, 
-        image.space = FALSE)
+        image.space = FALSE,
+        # Retained for backward compatibility
+        image.layer = FALSE #not used
+        # Remove in the next release
+        )
     gs <- new(Class = "GraphSpace", 
         nodes = nodes, edges = edges, graph = gg, 
         image = grDevices::as.raster(matrix()), 

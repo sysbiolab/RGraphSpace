@@ -64,7 +64,7 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH d4d0467 DN-- 20 19 -- 
+#> IGRAPH ab22f49 DN-- 20 19 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), num_var (v/n), edgeLineColor (e/c), arrowType (e/n)
 #> + node spatial boundaries: raw graph
