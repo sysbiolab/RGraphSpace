@@ -47,20 +47,18 @@ library("igraph")
 library("ggplot2")
 ```
 
-```{r Toy igraph - 1, eval=TRUE, message=FALSE, results=FALSE}
+```{r Toy igraph - 1, eval=TRUE, message=TRUE}
 # Make a 'toy' igraph with 5 nodes and 4 edges;
 # ..either a directed or undirected graph
 gtoy1 <- make_star(5, mode="out")
 
 # Check whether the graph is directed or not
 is_directed(gtoy1)
-## [1] TRUE
 
 # Check graph size
 vcount(gtoy1)
-## [1] 5
+
 ecount(gtoy1)
-## [1] 4
 
 # Assign 'x' and 'y' coordinates to each vertex;
 # ..this can be an arbitrary unit in (-Inf, +Inf)
@@ -78,7 +76,7 @@ plot(gtoy1)
 
 ```{r Toy igraph - 3, eval=TRUE, message=FALSE}
 # Plot the 'gtoy1' using RGraphSpace
-plotGraphSpace(gtoy1, add.labels = TRUE)
+plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
 # *RGraphSpace* attributes
@@ -104,10 +102,10 @@ V(gtoy1)$nodeLineWidth <- 1
 V(gtoy1)$nodeLineColor <- "grey20"
 
 # Node labels ('NA' will omit the label)
-V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", "V5")
+V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
 
-# Node label size (in pts)
-V(gtoy1)$nodeLabelSize <- 8
+# Node label size (in mm)
+V(gtoy1)$nodeLabelSize <- 3
 
 # Node label color (Hexadecimal or color name)
 V(gtoy1)$nodeLabelColor <- "black"
@@ -162,13 +160,13 @@ E(gtoy1)$arrowType <- 1
  
 ```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE}
 # Plot the updated 'gtoy1' using RGraphSpace
-plotGraphSpace(gtoy1, add.labels = TRUE)
+plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
 ```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# p <- plotGraphSpace(gtoy1, add.labels = TRUE)
-# ggsave(filename = "./vignettes/cards/building_gspace.png", height=4, width=4,
-#   units="in", device="png", dpi=200, plot = p)
+# V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", "V5")
+# save(gtoy1, file = "./data/gtoy1.RData")
+# tools::resaveRdaFiles(paths = "./data/gtoy1.RData")
 ```
 
 # Passing graphs to *geoms*
@@ -184,6 +182,8 @@ gs <- GraphSpace(gtoy1)
 
 # Normalize the coordinates
 gs <- normalizeGraphSpace(gs)
+
+gs
 ```
 
 The resulting `GraphSpace` integrates with *ggplot2*, allowing graph-specific geoms to be combined with standard *ggplot2* layers.
@@ -191,8 +191,7 @@ The resulting `GraphSpace` integrates with *ggplot2*, allowing graph-specific ge
 ```{r Using geoms - 2, eval=TRUE, message=FALSE}
 ggplot(gs) + 
   geom_edgespace() + 
-  geom_nodespace() + 
-  geom_text(aes(x = x, y = y, label = nodeLabel), size = 2) + 
+  geom_nodespace(aes(label = nodeLabel)) + 
   theme_gspace_coords(is_norm = TRUE)
 ```
 

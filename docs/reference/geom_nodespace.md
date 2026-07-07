@@ -94,8 +94,8 @@ nodespace_handler(mapping = NULL)
 
 - dev:
 
-  Character. Rasterization backend. One of `"cairo"`, `"ragg"`,
-  `"ragg_png"`, or `"cairo_png"`.
+  Character. Rasterization backend. One of `'cairo'`, `'ragg'`,
+  `'ragg_png'`, or `'cairo_png'`.
 
 - scale:
 
@@ -136,7 +136,7 @@ object.
 
 |  |  |
 |----|----|
-| **`x`, `y`** | Required (automatically supplied). |
+| **`x`, `y`** | Node coordinates (required; automatically supplied). |
 | `fill` | Node interior colour (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
 | `colour` | Node border colour (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
 | `alpha` | Transparency (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
@@ -144,7 +144,7 @@ object.
 | `size` | Node size (see *drawing* section and [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
 | `stroke` | Node line width (see [gg_par](https://ggplot2.tidyverse.org/reference/gg_par.html) and [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
 
-Required aesthetics `x` and `y` are supplied from the
+Required aesthetics **`x`** and **`y`** are supplied from the
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 object and do not need to be manually mapped.
 
@@ -152,25 +152,44 @@ Additional parameters can be passed to control fixed values for the
 layer. For example: `fill = "red"`, `stroke = 3`, `alpha = 0.5`, or
 `shape = 21`.
 
-## Integration with ggraph
+## Label aesthetics
 
-`geom_nodespace` is compatible with the `ggraph` methods. When used
-within a `ggraph()` call, the default `nodespace_handler()`
-automatically:
+When `label` is mapped via
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html), a text
+label is drawn at each node's position using
+[`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html),
+rendered on top of the node glyph. Nodes with `NA` labels are silently
+skipped.
 
-- Identifies the current `layout_ggraph`.
+The `label_size` and `label_colour` aesthetics are automatically
+retrieved from the
+[GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
+object when not explicitly provided in
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). All other
+`label_*` aesthetics default to
+[`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)
+when not set.
 
-- Extracts the `x` and `y` coordinates calculated by `ggraph`.
-
-- Reconstructs a temporary `GraphSpace` object to inject spatial
-  metadata and user-chosen `ggraph` layout.
+|  |  |
+|----|----|
+| **`label`** | Required to activate label rendering. |
+| `label_size` | Font size (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_colour` | Label colour (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_alpha` | Label transparency (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_angle` | Rotation angle (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_hjust` | Horizontal justification (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_vjust` | Vertical justification (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_family` | Font family (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_fontface` | Font face (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_lineheight` | Line height (see [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
 
 ## See also
 
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md),
 [geom_edgespace](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md),
 [geom_graphspace](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md),
-[geom_point](https://ggplot2.tidyverse.org/reference/geom_point.html)
+[geom_point](https://ggplot2.tidyverse.org/reference/geom_point.html),
+[geom_text](https://ggplot2.tidyverse.org/reference/geom_text.html)
 
 ## Examples
 
@@ -194,6 +213,7 @@ V(gtoy1)$user_var2 <-  rep(c(1, 2, 3), each = 5)
 gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 #> Validating the 'igraph' object...
 #> Vertex attribute 'name' missing; assigning names... 
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
 if (FALSE) { # \dontrun{
@@ -203,12 +223,11 @@ if (FALSE) { # \dontrun{
 # ggplot2 default behavior: size is translated 
 # to absolute units (mm) via 'scale_size()'.
 
-ggplot() + 
-geom_edgespace(data = gs, arrow_offset = 0.01) +
-  geom_nodespace(mapping = aes(size = nodeSize, fill = user_var2), 
-  data = gs) + 
-  scale_size(range = c(1, 12)) + 
-  theme(aspect.ratio = 1)
+ggplot(gs) + 
+geom_edgespace(arrow_offset = 0.01) +
+geom_nodespace(mapping = aes(size = nodeSize, fill = user_var2)) + 
+scale_size(range = c(1, 12)) + 
+theme(aspect.ratio = 1)
   
 # Example 2: Nodes scaling with the viewport
 # When 'size' is passed as a node attribute, 
@@ -216,10 +235,16 @@ geom_edgespace(data = gs, arrow_offset = 0.01) +
 # interpreted as a percentage of the plotting 
 # area and translated to NPC units.
 
-ggplot() + 
-geom_edgespace(data = gs, arrow_offset = 0.01) +
-geom_nodespace(mapping = aes(fill = user_var2), data = gs) +
+ggplot(gs) + 
+geom_edgespace(arrow_offset = 0.01) +
+geom_nodespace(mapping = aes(fill = user_var2)) +
 theme(aspect.ratio = 1)
+  
+# Example 3: Node labels
+ggplot(gs) +
+  geom_edgespace() +
+  geom_nodespace(aes(label = nodeLabel)) +
+  theme(aspect.ratio = 1)
   
 } # }
 ```

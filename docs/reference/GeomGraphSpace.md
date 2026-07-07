@@ -1,13 +1,16 @@
 # GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods
 
-`GeomGraphSpace` is the underlying
-[ggproto](https://ggplot2.tidyverse.org/reference/ggproto.html) object
-used by
-[geom_graphspace](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
-to draw node and edge elements in a graph layout.
+**\[deprecated\]**
 
-This geom is designed for network diagrams, where graph attributes are
-often already in their final form (e.g., hex colors).
+The underlying
+[ggproto](https://ggplot2.tidyverse.org/reference/ggproto.html) object
+used by the deprecated
+[geom_graphspace](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md).
+Use
+[GeomEdgeSpace](https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.md)
+and
+[GeomNodeSpace](https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.md)
+instead.
 
 ## Usage
 
@@ -15,11 +18,7 @@ often already in their final form (e.g., hex colors).
 GeomGraphSpace
 ```
 
-## Aesthetics
-
-`GeomGraphSpace` understands ggplot2's conventions for point-like geoms.
-
 ## See also
 
-[geom_graphspace](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md),
-[geom_point](https://ggplot2.tidyverse.org/reference/geom_point.html)
+[GeomEdgeSpace](https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.md),
+[GeomNodeSpace](https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.md)

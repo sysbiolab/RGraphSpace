@@ -31,7 +31,7 @@
     msg <- paste0("'", name, "' should be a vector of strings.")
     if (!.all_characterValues(para)) stop(msg, call. = FALSE)
   } else if (check == "allCharacterOrInteger") {
-    msg <- paste("'", name, " 'should be a vector of strings of integers.")
+    msg <- paste0("'", name, " 'should be a vector of strings of integers.")
     if (! (.all_characterValues(para) | .all_integerValues(para) ) ) 
       stop(msg, call. = FALSE)
   } else if (check == "allCharacterOrNa") {
@@ -52,6 +52,9 @@
   } else if (check == "singleNumber") {
     msg <- paste0("'", name, "' should be a single numeric value.")
     if (!.is_singleNumber(para)) stop(msg, call. = FALSE)
+  } else if (check == "singlePositiveNumber") {
+    msg <- paste0("'", name, "' should be a single numeric value >=0.")
+    if (!.is_singleNumber(para) || para<0) stop(msg, call. = FALSE)
   } else if (check == "function") {
     msg <- paste0("'", name, "' should be a function.")
     if (!is.function(para)) stop(msg, call. = FALSE)

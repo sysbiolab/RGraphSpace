@@ -2,21 +2,22 @@
 ################################################################################
 ### Main constructor of GraphSpace-class objects
 ################################################################################
-.buildGraphSpace <- function(g, layout = NULL, verbose = TRUE) {
+.buildGraphSpace <- function(g, layout = NULL, simplify = TRUE, verbose = TRUE) {
     
-    gg <- .validate_igraph(g, layout, verbose)
+    gg <- .validate_igraph(g, layout, simplify, verbose)
+    edges <- .get_edges(gg, simplify)
     nodes <- .get_nodes(gg)
-    edges <- .get_edges(gg)
     
     if(verbose) rlang::inform("Creating a 'GraphSpace' object...")
     instance_id <- .generate_gs_uuid()
-    pars <- list(is.directed = is_directed(gg), 
-        is.normalized = FALSE, image.layer = FALSE)
+    pars <- list(
+        is.directed = igraph::is_directed(gg), 
+        is.simplified = simplify,
+        is.normalized = FALSE, 
+        image.space = FALSE)
     gs <- new(Class = "GraphSpace", 
-        nodes = nodes, 
-        edges = edges, 
-        graph = gg, 
-        image = as.raster(matrix()), 
+        nodes = nodes, edges = edges, graph = gg, 
+        image = grDevices::as.raster(matrix()), 
         pars = pars, 
         misc = list(),
         uuid = instance_id
@@ -40,19 +41,27 @@
     rownames(nodes) <- nodes$name
     return(nodes)
 }
-.get_edges <- function(gg){
-    if (igraph::is_directed(gg)) {
-        edges <- .get_directed_edges(gg)
+.get_edges <- function(gg, simplify = TRUE){
+    
+    if (simplify && is_simple(gg) && igraph::is_directed(gg)) {
+        edges <- .get_simplified_edgelist(gg)
     } else {
-        edges <- .get_undirected_edges(gg)
+        edges <- .get_edgelist(gg)
     }
+    # Post-processing only: curve_weight, is_multiple and is_loop 
+    # are derived from graph structure, not real graph attributes,
+    # and are never written back to @graph.
+    edges$curve_weight <- .get_curve_weight(edges$vertex1, edges$vertex2, 
+        igraph::is_directed(gg))
+    edges$is_multiple <- .get_is_multiple(edges$vertex1, edges$vertex2)
+    edges$is_loop <- edges$vertex1 == edges$vertex2
     return(edges)
 }
 
 ################################################################################
-### Get edges in a df object
+### Get either directed or undirected edge lists
 ################################################################################
-.get_undirected_edges <- function(g){
+.get_edgelist <- function(g){
     if(ecount(g)>0){
         vertex <- igraph::V(g)$name
         edges <- igraph::as_edgelist(g, names = FALSE)
@@ -96,9 +105,9 @@
 }
 
 ################################################################################
-### Get undirected edges in a df object
+### Get directed edge lists in a simplified format
 ################################################################################
-.get_directed_edges <- function(g) {
+.get_simplified_edgelist <- function(g) {
     if (ecount(g) > 0) {
         atts <- .extract_directed_att(g)
         vertex <- igraph::V(g)$name
@@ -241,35 +250,140 @@
 ### Other functions
 ################################################################################
 
-.gs_edges <- function(gs){
-    
+#-------------------------------------------------------------------------------
+.get_emode <- function(arrow_type){
+    emode <- abs(arrow_type)
+    emode[emode>3] <- 3
+    return(emode)
+}
+
+#-------------------------------------------------------------------------------
+.gs_nodes <- function(gs){
     nodes <- gs@nodes
+    nodes$away_angle <- .get_node_away_angle(nodes)
+    return(nodes)
+}
+
+#-------------------------------------------------------------------------------
+.gs_edges <- function(gs){
+    nodes <- .gs_nodes(gs)
     edges <- gs@edges
-    
     coord <- data.frame(
         x = nodes[edges$vertex1, "x"],
         y = nodes[edges$vertex1, "y"],
         xend = nodes[edges$vertex2, "x"],
         yend = nodes[edges$vertex2, "y"]
         )
-    
     n_offsets <- nodes[["nodeSize"]]
-    #emode <- .get_emode(edges[["arrowType"]])
-    #coord$offset_start <- ifelse(emode %in% c(0,1), 0, n_offsets[edges[["vertex1"]]])
-    #coord$offset_end <- ifelse(emode %in% c(0,2), 0, n_offsets[edges[["vertex2"]]])
-    coord$offset_start <- n_offsets[edges[["vertex1"]]]
-    coord$offset_end <- n_offsets[edges[["vertex2"]]]
-
+    coord$offset_start <- n_offsets[edges$vertex1]
+    coord$offset_end <- n_offsets[edges$vertex2]
+    edges$away_angle <- .get_edge_away_angle(coord, nodes)
     gs_id <- attr(edges, "gs_id")
     edges <- cbind(coord, edges)
     attr(edges, "gs_id") <- gs_id
-    
     return(edges)
 }
 
-.get_emode <- function(arrow_type){
-    emode <- abs(arrow_type)
-    emode[emode>3] <- 3
-    return(emode)
+#-------------------------------------------------------------------------------
+# Node-level "away from centroid" angle (degrees). 
+.get_node_away_angle <- function(nodes){
+    cx <- mean(nodes$x, na.rm = TRUE)
+    cy <- mean(nodes$y, na.rm = TRUE)
+    layout_scale <- sqrt(stats::var(nodes$x, na.rm = TRUE) +
+            stats::var(nodes$y, na.rm = TRUE))
+    if (nrow(nodes) < 2 || !is.finite(layout_scale) || layout_scale == 0) {
+        return(rep(90, nrow(nodes)))
+    }
+    away_x <- nodes$x - cx
+    away_y <- nodes$y - cy
+    away_len <- sqrt(away_x^2 + away_y^2)
+    angle <- atan2(away_y, away_x) * 180 / pi
+    angle[away_len < layout_scale * 0.01] <- 90
+    angle
 }
+
+#-------------------------------------------------------------------------------
+# Edge-level "away from centroid" angle (degrees). 
+.get_edge_away_angle <- function(coord, nodes){
+    cx <- mean(nodes$x, na.rm = TRUE)
+    cy <- mean(nodes$y, na.rm = TRUE)
+    layout_scale <- sqrt(stats::var(nodes$x, na.rm = TRUE) +
+            stats::var(nodes$y, na.rm = TRUE))
+    if (nrow(nodes) < 2 || !is.finite(layout_scale) || layout_scale == 0) {
+        return(rep(90, nrow(nodes)))
+    }
+    mid_x <- (coord$x + coord$xend) / 2
+    mid_y <- (coord$y + coord$yend) / 2
+    away_x <- mid_x - cx
+    away_y <- mid_y - cy
+    away_len <- sqrt(away_x^2 + away_y^2)
+    edge_angle <- atan2(away_y, away_x) * 180 / pi
+    edge_angle[away_len < layout_scale * 0.01] <- 90
+    edge_angle
+}
+
+#-------------------------------------------------------------------------------
+.get_is_multiple <- function(vertex1, vertex2){
+    lo <- pmin(vertex1, vertex2)
+    hi <- pmax(vertex1, vertex2)
+    key <- paste(lo, hi, sep = "_")
+    group_size <- table(key)
+    as.logical(group_size[key] > 1)
+}
+
+#-------------------------------------------------------------------------------
+# Computes a per-edge "weight" in [-1, 1] for automatically distributing
+# curvature among parallel edges and self-loops, so that geom_edgespace()
+# can later just multiply this by the user's `curve` value at render
+# time (curve_final <- curve_param * curve_weight) with no further
+# graph-level computation.
+.get_curve_weight <- function(vertex1, vertex2, is_directed){
+    
+    n <- length(vertex1)
+    weight <- numeric(n)
+    
+    is_loop <- vertex1 == vertex2
+    lo <- pmin(vertex1, vertex2)
+    hi <- pmax(vertex1, vertex2)
+    key <- paste(lo, hi, sep = "_")
+    
+    # split() builds the full key -> row-index map in one pass (hash-based,
+    # O(e) average), avoiding the O(e^2) worst case of calling which(key == k)
+    # inside a loop over unique pairs. The loop body is otherwise unchanged.
+    idx_by_key <- split(seq_len(n), key)
+    
+    for (idx in idx_by_key) {
+        if (is_loop[idx[1]]) {
+            weight[idx] <- .fan_onesided(length(idx))
+        } else if (!is_directed) {
+            weight[idx] <- .fan_symmetric(length(idx))
+        } else {
+            is_fwd <- vertex1[idx] == lo[idx]
+            idx_fwd <- idx[is_fwd]
+            idx_bwd <- idx[!is_fwd]
+            if (length(idx_fwd) == 0 || length(idx_bwd) == 0) {
+                weight[idx] <- .fan_symmetric(length(idx))
+            } else {
+                weight[idx_fwd] <- .fan_onesided(length(idx_fwd))
+                weight[idx_bwd] <- .fan_onesided(length(idx_bwd))
+            }
+        }
+    }
+    
+    return(weight)
+}
+
+# i/n for i = 1..n: ascending, NEVER zero. Used for one side of a
+# directed pair, and (via .fan_split) for one half of a self-loop group.
+.fan_onesided <- function(n){
+    seq_len(n) / n
+}
+
+# n == 1 -> 1 (the user's curve value applies exactly, since there's
+# nothing to disambiguate from)
+.fan_symmetric <- function(n){
+    if (n == 1) return(1)
+    seq(-1, 1, length.out = n)
+}
+
 

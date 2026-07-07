@@ -127,6 +127,7 @@ data('gtoy1', package = 'RGraphSpace')
 # Create a new GraphSpace object
 gs <- GraphSpace(gtoy1)
 #> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
 #--- Usage of GraphSpace attribute accessors:
@@ -145,17 +146,17 @@ gs_names(gs)
 # Get a data frame with nodes
 gs_nodes(gs)
 #>    vertex  x  y name nodeLabel nodeLabelSize nodeLabelColor nodeShape nodeSize
-#> n1      1  0  0   n1        V1             8          black        21        8
-#> n2      2  2  0   n2        V2             8          black        22        5
-#> n3      3 -2  2   n3        V3             8          black        23        5
-#> n4      4 -4 -4   n4        V4             8          black        24       10
-#> n5      5 -8  0   n5        V5             8          black        25        5
-#>    nodeColor nodeLineWidth nodeLineColor nodeAlpha
-#> n1       red             1        grey20         1
-#> n2   #00ad39             1        grey20         1
-#> n3    grey80             1        grey20         1
-#> n4 lightblue             1        grey20         1
-#> n5      cyan             1        grey20         1
+#> n1      1  0  0   n1        V1             3          black        21        8
+#> n2      2  2  0   n2        V2             3          black        22        5
+#> n3      3 -2  2   n3        V3             3          black        23        5
+#> n4      4 -4 -4   n4        V4             3          black        24       10
+#> n5      5 -8  0   n5        V5             3          black        25        5
+#>    nodeColor nodeLineWidth nodeLineColor nodeAlpha  away_angle
+#> n1       red             1        grey20         1    9.462322
+#> n2   #00ad39             1        grey20         1    5.194429
+#> n3    grey80             1        grey20         1   80.537678
+#> n4 lightblue             1        grey20         1 -113.962489
+#> n5      cyan             1        grey20         1  175.914383
 
 # Get a data frame with edges
 gs_edges(gs)
@@ -164,11 +165,16 @@ gs_edges(gs)
 #> 2 0 0   -2    2            8          5       1       3    n1    n3
 #> 3 0 0   -4   -4            8         10       1       4    n1    n4
 #> 4 0 0   -8    0            8          5       1       5    n1    n5
-#>   edgeLineType edgeLineColor edgeLineWidth arrowType edgeAlpha
-#> 1        solid           red           0.8         1         1
-#> 2        solid         green           0.8         1         1
-#> 3       dashed          blue           0.8         1         1
-#> 4        solid         black           0.8         1         1
+#>   edgeLineType edgeLineColor edgeLineWidth arrowType edgeAlpha curve_weight
+#> 1        solid           red           0.8         1         1            1
+#> 2           11         green           0.8         1         1            1
+#> 3       dashed          blue           0.8         1         1            1
+#> 4         2124         black           0.8         1         1            1
+#>   is_multiple is_loop away_angle
+#> 1       FALSE   FALSE   6.709837
+#> 2       FALSE   FALSE  45.000000
+#> 3       FALSE   FALSE -75.963757
+#> 4       FALSE   FALSE 165.963757
 
 # Get vertex count
 gs_vcount(gs)
@@ -193,7 +199,7 @@ gs_vertex_attr(gs)
 #> [1] "V1" "V2" "V3" "V4" "V5"
 #> 
 #> $nodeLabelSize
-#> [1] 8 8 8 8 8
+#> [1] 3 3 3 3 3
 #> 
 #> $nodeLabelColor
 #> [1] "black" "black" "black" "black" "black"
@@ -228,18 +234,12 @@ gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
 # Replace an entire vertex attribute
 gs_vertex_attr(gs, "nodeSize") <- 10
 
-# Alternative syntax using `$` accessor
-gs_vertex_attr(gs)$nodeSize <- 10
-
 # Access a specific edge attribute
 gs_edge_attr(gs, "edgeLineColor")
 #> [1] "red"   "green" "blue"  "black"
 
 # Replace an entire edge attribute
 gs_edge_attr(gs, "edgeLineWidth") <- 1
-
-# Alternative syntax using `$` for edge attributes
-gs_edge_attr(gs)$edgeLineWidth <- 3
 
 # Add an image and rescale graph coordinates to image space
 # Images may be provided as a raster or numeric matrix

@@ -17,6 +17,13 @@ ggplot-based GraphSpace plot."><style>
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -25,7 +32,7 @@ ggplot-based GraphSpace plot."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,11 +83,12 @@ ggplot-based GraphSpace plot."><style>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">annotation_gspace_image</span><span class="op">(</span></span>
-<span>  <span class="va">raster</span>,</span>
+<span>  <span class="va">x</span>,</span>
 <span>  interpolate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  opacity <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  flip.v <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  flip.h <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  flip.h <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  raster <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">annotation_gspace</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -90,7 +98,7 @@ ggplot-based GraphSpace plot."><style>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-raster">raster<a class="anchor" aria-label="anchor" href="#arg-raster"></a></dt>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An image to be displayed. Accepted types:</p><ul><li><p>A <code><a href="GraphSpace-methods.html">GraphSpace</a></code> object — the image is extracted via
 <code><a href="GraphSpace-accessors.html">gs_image</a></code>.</p></li>
 <li><p>A <code>raster</code> object
@@ -122,6 +130,10 @@ vertically (top-to-bottom). Defaults to <code>FALSE</code>.</p></dd>
 horizontally (left-to-right). Defaults to <code>FALSE</code>.</p></dd>
 
 
+<dt id="arg-raster">raster<a class="anchor" aria-label="anchor" href="#arg-raster"></a></dt>
+<dd><p>Deprecated as of RGraphSpace 1.4.1; use <code>x</code> instead.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments (currently unused).</p></dd>
 
@@ -148,8 +160,25 @@ image could not be resolved.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Assuming 'gs' is a GraphSpace object with </span></span></span>
-<span class="r-in"><span><span class="co"># an image stored in gs_image(gs)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">RGraphSpace</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/" class="external-link">igraph</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load a demo igraph</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">'gtoy1'</span>, package <span class="op">=</span> <span class="st">'RGraphSpace'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Validating the 'igraph' object...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring graph-level attributes: 'name', 'mode', 'center'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Creating a 'GraphSpace' object...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Normalize node coordinates</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Normalizing node coordinates to graph space...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Add a raster image</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="GraphSpace-accessors.html">gs_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="as_colorraster.html">as_colorraster</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Image spatial boundaries:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> x: [1, 61] (cols)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> y: [1, 87] (rows)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Pass a GraphSpace object directly</span></span></span>

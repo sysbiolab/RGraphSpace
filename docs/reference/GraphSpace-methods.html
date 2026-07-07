@@ -19,6 +19,13 @@ metadata for optimized rendering in RGraphSpace."><style>
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -27,7 +34,7 @@ metadata for optimized rendering in RGraphSpace."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +86,7 @@ metadata for optimized rendering in RGraphSpace.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'ANY'</span></span>
-<span><span class="fu">GraphSpace</span><span class="op">(</span><span class="va">g</span>, layout <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">GraphSpace</span><span class="op">(</span><span class="va">g</span>, layout <span class="op">=</span> <span class="cn">NULL</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'data.frame'</span></span>
 <span><span class="fu">GraphSpace</span><span class="op">(</span><span class="va">g</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -106,8 +113,14 @@ vertex attributes. For graphs requiring edge definitions, use the
 <code>y</code> vertex coordinates. If provided, it overrides coordinates in <code>g</code>.</p></dd>
 
 
+<dt id="arg-simplify">simplify<a class="anchor" aria-label="anchor" href="#arg-simplify"></a></dt>
+<dd><p>A logical value. If <code>TRUE</code> (default), removes loops and
+multiple edges (see <a href="https://r.igraph.org/reference/simplify.html" class="external-link">simplify</a>).</p></dd>
+
+
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>A logical value. If <code>TRUE</code>, displays detailed messages.</p></dd>
+<dd><p>A logical value. If <code>TRUE</code> (default), displays detailed
+messages.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -211,6 +224,7 @@ backward, or bidirectional arrowheads.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Validating the 'igraph' object...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Vertex attributes 'x' and 'y' missing; computing layout...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Vertex attribute 'name' missing; assigning names... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring graph-level attributes: 'name', 'loops'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Creating a 'GraphSpace' object...</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -4,6 +4,8 @@
 
 - [Building a Graph
   Space](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md):
+- [Curved Edges, Parallel Edges, and
+  Self-Loops](https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.md):
 - [Customizing
   Aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md):
 - [Getting Started with

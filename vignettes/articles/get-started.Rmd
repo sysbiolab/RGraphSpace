@@ -28,10 +28,11 @@ These tutorials introduce *RGraphSpace* using simple toy examples: [*building a 
 
 ```{r, include=FALSE}
 title <- c("Building GraphSpace", "Customizing Aesthetics", 
-  "Fine-tuning Scales")
-image <- c("cards/building_gspace.png", "cards/using_geoms.png", "cards/scales_and_offsets.png")
+  "Fine-tuning Scales", "Curved Edges and Loops")
+image <- c("cards/building_gspace.png", "cards/using_geoms.png", 
+  "cards/scales_and_offsets.png", "cards/curved_edges.png")
 link <- c("building-graphspace.html","customizing-aesthetics.html",
-  "scales-and-offsets.html")
+  "scales-and-offsets.html", "curved-edges.html")
 ps_cards1 <- data.frame(title = title, image = image, link = link)
 ```
 

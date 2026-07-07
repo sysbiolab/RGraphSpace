@@ -15,6 +15,13 @@
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -23,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -166,13 +173,6 @@
 
       <dl><dt>
 
-          <code><a href="geom_graphspace.html">geom_graphspace()</a></code>
-
-        </dt>
-        <dd>Draw node and edge elements in a 2D graph layout</dd>
-
-        <dt>
-
           <code><a href="geom_nodespace.html">geom_nodespace()</a></code> <code><a href="geom_nodespace.html">nodespace_handler()</a></code>
 
         </dt>
@@ -262,6 +262,13 @@
 
         </dt>
         <dd>Map numeric values to a color raster</dd>
+
+        <dt>
+
+          <code><a href="summary-GraphSpace-method.html">summary(<i>&lt;GraphSpace&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Summarise a GraphSpace object</dd>
       </dl></div><div class="section level2">
       <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a></h2>
 
@@ -338,6 +345,22 @@
 
         </dt>
         <dd>RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics</dd>
+      </dl></div><div class="section level2">
+      <h2 id="deprecated">Deprecated<a class="anchor" aria-label="anchor" href="#deprecated"></a></h2>
+
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="geom_graphspace.html">geom_graphspace()</a></code>
+
+        </dt>
+        <dd>Draw node and edge elements in a 2D graph layout</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

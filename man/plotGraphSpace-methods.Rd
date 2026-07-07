@@ -14,16 +14,16 @@
   theme = "th0",
   xlab = "Graph coordinates 1",
   ylab = "Graph coordinates 2",
-  font.size = 1,
-  bg.color = "grey95",
-  add.labels = FALSE,
-  node.labels = NULL,
+  node.labels = FALSE,
   label.size = 3,
   label.color = "grey20",
   add.image = TRUE,
   raster = FALSE,
   dpi = 300,
-  dev = "cairo_png"
+  dev = "cairo_png",
+  add.labels = deprecated(),
+  font.size = deprecated(),
+  bg.color = deprecated()
 )
 
 \S4method{plotGraphSpace}{igraph}(gs, ...)
@@ -39,24 +39,21 @@ and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).}
 
 \item{theme}{Name of a custom RGraphSpace theme. These themes
 (from 'th0' to 'th3') consist of preconfigured ggplot settings,
-which can subsequently refine using \code{\link[ggplot2]{ggplot2}}.}
+which can be subsequently refine using \code{\link[ggplot2]{theme}}.}
 
 \item{xlab}{The title for the 'x' axis of a 2D-image space.}
 
 \item{ylab}{The title for the 'y' axis of a 2D-image space.}
 
-\item{font.size}{A single numeric value passed to ggplot themes.}
+\item{node.labels}{Optional specification of node labels to display.
+If \code{FALSE} (default), no labels are shown. If \code{TRUE}, labels are
+displayed for all nodes. Otherwise, a character vector may be supplied
+to display labels only for the specified nodes. Character values are matched
+against the \code{nodeLabel} attribute.}
 
-\item{bg.color}{A single color for background.}
+\item{label.size}{Font size passed to \code{\link[ggplot2]{geom_text}}.}
 
-\item{add.labels}{A logical value indicating whether to plot vertex labels.}
-
-\item{node.labels}{A vector of vertex names to be highlighted in the graph
-space. This argument overrides 'add.labels'.}
-
-\item{label.size}{A size argument passed to \code{\link[ggplot2]{geom_text}}.}
-
-\item{label.color}{A color passed to \code{\link[ggplot2]{geom_text}}.}
+\item{label.color}{Color passed to \code{\link[ggplot2]{geom_text}}.}
 
 \item{add.image}{A logical value indicating whether to add a background
 image, when one is available (see \code{\link{GraphSpace}}).}
@@ -67,6 +64,12 @@ See \code{\link[ggrastr]{rasterise}} for further specifications.}
 \item{dpi}{Raster resolution, in dots per inch.}
 
 \item{dev}{Device used in the \code{\link[ggrastr]{rasterise}} call.}
+
+\item{add.labels}{Deprecated. Use \code{node.labels} instead.}
+
+\item{font.size}{Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.}
+
+\item{bg.color}{Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.}
 
 \item{...}{Additional arguments passed to the
 \code{\link{plotGraphSpace}} function.}
@@ -86,7 +89,8 @@ library(igraph)
 data('gtoy1', package = 'RGraphSpace')
 
 # Generate a ggplot for gtoy1
-plotGraphSpace(gtoy1)
+plotGraphSpace(gtoy1, node.labels = TRUE)
+
 
 # Create a star graph
 gtoy_star <- make_full_graph(15)

@@ -55,8 +55,8 @@ Rasterization support is based on \code{\link[ggrastr]{rasterise}}.}
 
 \item{dpi}{Numeric. Rasterization resolution.}
 
-\item{dev}{Character. Rasterization backend. One of \code{"cairo"},
-\code{"ragg"}, \code{"ragg_png"}, or \code{"cairo_png"}.}
+\item{dev}{Character. Rasterization backend. One of \code{'cairo'},
+\code{'ragg'}, \code{'ragg_png'}, or \code{'cairo_png'}.}
 
 \item{scale}{Numeric. Rasterization scaling factor
 (see \code{\link[ggrastr]{rasterise}}).}
@@ -95,33 +95,45 @@ If these aesthetics are not explicitly provided in \code{aes()}, they
 are automatically retrieved from the \link{GraphSpace} object.
 
 \tabular{ll}{
-\strong{\code{x}, \code{y}} \tab Required (automatically supplied).\cr
-\code{fill} \tab Node interior colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{colour} \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{shape} \tab Node shape (see \link{points} and \link[ggplot2]{aes_linetype_size_shape}).\cr
-\code{size} \tab Node size (see \emph{drawing} section and \link[ggplot2]{aes_linetype_size_shape}).\cr
-\code{stroke} \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
+\strong{\code{x}, \code{y}} \tab Node coordinates (required; automatically supplied).\cr
+\code{fill}    \tab Node interior colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{colour}  \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{alpha}   \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{shape}   \tab Node shape (see \link{points} and \link[ggplot2]{aes_linetype_size_shape}).\cr
+\code{size}    \tab Node size (see \emph{drawing} section and \link[ggplot2]{aes_linetype_size_shape}).\cr
+\code{stroke}  \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
 }
 
-Required aesthetics \code{x} and \code{y} are supplied from the
-\link{GraphSpace} object and do not need to be manually mapped.
+Required aesthetics \strong{\code{x}} and \strong{\code{y}} are supplied
+from the \link{GraphSpace} object and do not need to be manually mapped.
 
 Additional parameters can be passed to control fixed values for the layer.
 For example: \code{fill = "red"}, \code{stroke = 3}, \code{alpha = 0.5}, or \code{shape = 21}.
 }
 
-\section{Integration with ggraph}{
+\section{Label aesthetics}{
 
 
-\code{geom_nodespace} is compatible with the \code{ggraph} methods.
-When used within a \code{ggraph()} call, the default \code{nodespace_handler()}
-automatically:
-\itemize{
-\item Identifies the current \code{layout_ggraph}.
-\item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
-\item Reconstructs a temporary \code{GraphSpace} object to inject spatial
-metadata and user-chosen \code{ggraph} layout.
+When \code{label} is mapped via \code{aes()}, a text label is drawn at
+each node's position using \code{\link[ggplot2]{geom_text}}, rendered on
+top of the node glyph. Nodes with \code{NA} labels are silently skipped.
+
+The \code{label_size} and \code{label_colour} aesthetics are automatically
+retrieved from the \link{GraphSpace} object when not explicitly provided
+in \code{aes()}. All other \code{label_*} aesthetics default to
+\code{\link[ggplot2]{geom_text}} when not set.
+
+\tabular{ll}{
+\strong{\code{label}}   \tab Required to activate label rendering.\cr
+\code{label_size}       \tab Font size (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_colour}     \tab Label colour (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_alpha}      \tab Label transparency (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_angle}      \tab Rotation angle (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_hjust}      \tab Horizontal justification (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_vjust}      \tab Vertical justification (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_family}     \tab Font family (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_fontface}   \tab Font face (see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_lineheight} \tab Line height (see \code{\link[ggplot2]{geom_text}}).
 }
 }
 
@@ -151,12 +163,11 @@ gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 # ggplot2 default behavior: size is translated 
 # to absolute units (mm) via 'scale_size()'.
 
-ggplot() + 
-geom_edgespace(data = gs, arrow_offset = 0.01) +
-  geom_nodespace(mapping = aes(size = nodeSize, fill = user_var2), 
-  data = gs) + 
-  scale_size(range = c(1, 12)) + 
-  theme(aspect.ratio = 1)
+ggplot(gs) + 
+geom_edgespace(arrow_offset = 0.01) +
+geom_nodespace(mapping = aes(size = nodeSize, fill = user_var2)) + 
+scale_size(range = c(1, 12)) + 
+theme(aspect.ratio = 1)
   
 # Example 2: Nodes scaling with the viewport
 # When 'size' is passed as a node attribute, 
@@ -164,15 +175,21 @@ geom_edgespace(data = gs, arrow_offset = 0.01) +
 # interpreted as a percentage of the plotting 
 # area and translated to NPC units.
 
-ggplot() + 
-geom_edgespace(data = gs, arrow_offset = 0.01) +
-geom_nodespace(mapping = aes(fill = user_var2), data = gs) +
+ggplot(gs) + 
+geom_edgespace(arrow_offset = 0.01) +
+geom_nodespace(mapping = aes(fill = user_var2)) +
 theme(aspect.ratio = 1)
+  
+# Example 3: Node labels
+ggplot(gs) +
+  geom_edgespace() +
+  geom_nodespace(aes(label = nodeLabel)) +
+  theme(aspect.ratio = 1)
   
 }
 
 }
 \seealso{
 \link{GraphSpace}, \link{geom_edgespace}, \link{geom_graphspace},
-\link[ggplot2]{geom_point}
+\link[ggplot2]{geom_point}, \link[ggplot2]{geom_text}
 }

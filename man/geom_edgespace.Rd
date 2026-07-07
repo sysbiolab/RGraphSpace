@@ -14,8 +14,11 @@ geom_edgespace(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = FALSE,
-  arrow_size = 1,
+  arrow_size = 0.5,
   arrow_offset = 0.01,
+  curve = 0,
+  parallel_spread = 1,
+  loop_direction = "adaptive",
   lineend = "butt",
   linejoin = "mitre",
   raster = FALSE,
@@ -55,24 +58,36 @@ whether this layer should be included in legends.}
 aesthetics defined in \code{mapping}.}
 
 \item{arrow_size}{Numeric scaling factor controlling arrowhead
-geometry (see 'drawing' section).}
+geometry (see 'details').}
 
 \item{arrow_offset}{Numeric value controlling the base offset of arrows
-at edge endpoints (see 'drawing' section).}
+at edge endpoints (see 'details').}
 
-\item{lineend}{Line end style (round, butt, square). Supplied for
-compatibility with \link[ggplot2]{geom_segment}.}
+\item{curve}{Numeric. Controls edge curvature, as a fraction of edge
+length. Non-zero values bow the edge into a smooth curve, and the sign
+controls which side it bows toward. Ignored for loops and parallel edges
+(see 'details').}
 
-\item{linejoin}{Line join style (round, mitre, bevel). Supplied for
-compatibility with \link[ggplot2]{geom_segment}.}
+\item{parallel_spread}{Controls the lateral spread of parallel edges and
+self-loops. Ignored for simple non-loop edges (see 'details').}
+
+\item{loop_direction}{Controls how self-loops are oriented around their
+node. Options: \code{'adaptive'} (default), \code{'opposite'}, and an
+angle in degrees (see 'details').}
+
+\item{lineend}{Line end style (\code{'round'}, \code{'butt'},
+\code{'square'}). Supplied for compatibility with \link[ggplot2]{geom_segment}.}
+
+\item{linejoin}{Line join style (\code{'round'}, \code{'mitre'},
+\code{'bevel'}). Supplied for compatibility with \link[ggplot2]{geom_segment}.}
 
 \item{raster}{Logical. Should node glyphs be rasterized?
 Rasterization support is based on \code{\link[ggrastr]{rasterise}}.}
 
 \item{dpi}{Numeric. Rasterization resolution.}
 
-\item{dev}{Character. Rasterization backend. One of \code{"cairo"},
-\code{"ragg"}, \code{"ragg_png"}, or \code{"cairo_png"}.}
+\item{dev}{Character. Rasterization backend. One of \code{'cairo'},
+\code{'ragg'}, \code{'ragg_png'}, or \code{'cairo_png'}.}
 
 \item{scale}{Numeric. Rasterization scaling factor
 (see \code{\link[ggrastr]{rasterise}}).}
@@ -93,13 +108,38 @@ in \link{GeomEdgeSpace}.
 }
 \details{
 \strong{arrow_size} is a numeric scaling factor controlling arrowhead geometry.
-The value is interpreted in the same numeric space as line width (\code{lwd}),
-ensuring consistent scaling between edge strokes and arrowheads.
+The value is interpreted in the same numeric space as line width (\code{lwd}).
 
 \strong{arrow_offset} is an additive term that offsets arrow endpoints
 uniformly in graph space and is bounded by the edge length, in NPC units.
 
 Arrowhead types are specified in the \link{GraphSpace} constructor.
+
+\strong{curve} bows an edge through a control point displaced perpendicular
+to the edge, by \code{curve} times the edge length. \code{curve = 0}
+(default) renders a straight edge. Typical visible values range from
+about 0.1 to 0.4; sign sets which side the edge bows toward.
+
+\strong{parallel_spread} controls the fan opening for parallel edges,
+reciprocal \code{A->B}/\code{B->A} pairs, and self-loops -- anything
+where multiple edges share the same vertex pair. \code{curve} has no
+effect on these edges; \code{parallel_spread} governs both their
+curvature magnitude and how far apart they fan. A value of \code{0}
+collapses all edges in a group onto the same position; increasing
+values progressively open the fan. Self-loops behave the same way:
+a single loop uses \code{parallel_spread} to set its own size, and
+multiple loops at the same node fan out accordingly. A built-in
+minimum, tied to \code{arrow_size} and node size, keeps small
+\code{parallel_spread} values from producing a loop whose arrowhead
+looks skewed against its own curvature.
+
+\strong{loop_direction} determines where self-loops sit relative to their node.
+\code{"adaptive"} (default) points each loop in the direction that faces
+away from the graph's centroid. \code{"opposite"} is a two-sided
+arrangement: loops are split into two groups placed above and below the
+node. A numeric angle (in degrees) places all loops at a fixed direction
+regardless of their node's position in the layout. When node position data
+is unavailable, \code{"adaptive"} silently falls back to \code{"opposite"}.
 }
 \section{Aesthetics}{
 
@@ -110,14 +150,14 @@ If these aesthetics are not explicitly provided in \code{aes()}, they
 are automatically retrieved from the \link{GraphSpace} object.
 
 \tabular{ll}{
-\strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required (automatically supplied).\cr
+\strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required; automatically supplied.\cr
 \code{colour} \tab Edge colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
 \code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
 \code{linetype} \tab Edge line type (see \link[ggplot2]{aes_linetype_size_shape}).\cr
 \code{linewidth} \tab Edge line width (see \link[ggplot2]{aes_linetype_size_shape}).
 }
 
-Required aesthetics (\code{x}, \code{y}, \code{xend}, \code{yend}, ...)
+Required aesthetics (\code{x}, \code{y}, \code{xend}, \code{yend})
 are supplied from the \link{GraphSpace} object and do not need to be
 manually mapped.
 
@@ -128,17 +168,34 @@ Arrows can be further adjusted by \code{arrow_size} and \code{arrow_offset}
 arguments (see \emph{details}).
 }
 
-\section{Integration with ggraph}{
+\section{Label aesthetics}{
 
 
-\code{geom_edgespace} is compatible with the \code{ggraph} methods.
-When used within a \code{ggraph()} call, the default \code{edgespace_handler()}
-automatically:
-\itemize{
-\item Identifies the current \code{layout_ggraph}.
-\item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
-\item Reconstructs a temporary \code{GraphSpace} object to inject spatial
-metadata and user-chosen \code{ggraph} layout.
+When \code{label} is mapped via \code{aes()}, a text label is drawn at
+the visual midpoint of each edge. Labels follow the rendered edge geometry:
+the chord midpoint for straight edges, the Bezier midpoint for curved edges,
+and the loop apex for self-loops. Edges with \code{NA} labels are silently
+skipped.
+
+The \code{label_colour} aesthetic defaults to the edge \code{colour}, and
+\code{label_alpha} defaults to the edge \code{alpha}. All other
+\code{label_*} aesthetics default to \code{\link[ggplot2]{geom_label}}
+when not set.
+
+\tabular{ll}{
+\strong{\code{label}} \tab Required to activate label rendering.\cr
+\code{label_colour}   \tab Label text colour (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_alpha}    \tab Transparency (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_fill}     \tab Background colour (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_size}     \tab Font size (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_angle}    \tab Rotation angle (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_hjust}    \tab Horizontal justification (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_vjust}    \tab Vertical justification (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_lwd}      \tab Border linewidth (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_lty}      \tab Border linetype (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_family}   \tab Font family (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_fontface} \tab Font face (see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_lineheight} \tab Line height (see \code{\link[ggplot2]{geom_label}}).
 }
 }
 
@@ -155,9 +212,9 @@ gs <- GraphSpace(gtoy1)
 
 \dontrun{
 
-ggplot() +
-  geom_edgespace(data = gs) +
-  geom_nodespace(data = gs) +
+ggplot(gs) +
+  geom_edgespace() +
+  geom_nodespace() +
   theme(aspect.ratio = 1)
 
 }
@@ -165,5 +222,5 @@ ggplot() +
 }
 \seealso{
 \link{GraphSpace}, \link{geom_nodespace}, \link{geom_graphspace},
-\link[ggplot2]{geom_segment}
+\link[ggplot2]{geom_segment}, \link[ggplot2]{geom_label}
 }

@@ -1,12 +1,12 @@
 # Customizing Aesthetics
 
   
-**Package**: RGraphSpace 1.4.1
+**Package**: RGraphSpace 1.4.2
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -14,35 +14,31 @@ if (packageVersion("RGraphSpace") < "1.4.1"){
 
 ## Overview
 
-This section illustrates how *RGraphSpace* integrates with the *ggplot2*
-using `geoms` building blocks (Wickham 2016). Graph attributes stored
-within the `GraphSpace` object can be handled in two ways:
+This section illustrates how *RGraphSpace* integrates with *ggplot2*
+using `geoms` building blocks (Wickham 2016). Graph attributes stored in
+the `GraphSpace` object can be handled in two ways:
 
-- **Identity mapping:** Graph attributes are interpreted as “identity
-  values” (such as `nodeColor`, `nodeSize`, or `nodeShape`) and are
-  displayed exactly as they are, without further scaling or mapping.
+- **Identity mapping:** Attributes such as `nodeColor`, `nodeSize`, and
+  `nodeShape` are treated as literal values and displayed exactly as
+  specified, without scaling or transformation.
 
-- **Dynamic aesthetic mapping:** Graph attributes are mapped to
-  *aesthetics* (such as `colour`, `size`, and `shape`) and rendered
-  through standard *ggplot2* scales, which automatically generate
-  synchronized legends.
+- **Dynamic aesthetic mapping:** Attributes are mapped to *ggplot2*
+  aesthetics such as `colour`, `size`, and `shape`, and rendered through
+  standard scales, which automatically generate synchronized legends.
 
-To facilitate this integration, *RGraphSpace* implements three
-specialized `geoms` designed to handle graph data types within a
-*ggplot2* workflow. These `geoms` use a dual-anchor normalization
-approach to align layers, which is critical for analysis where network
-elements must stay accurately referenced to a spatial map or image.
+*RGraphSpace* implements two specialized `geoms` for handling graph data
+within a *ggplot2* workflow. Both use a dual-anchor normalization
+strategy to keep layers aligned, which is essential when network
+elements must remain accurately referenced to a spatial map or image.
 
-1.  **[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)**:
-    A high-level convenience layer that processes both nodes and edges
-    in a single call.
-2.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
-    Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic
-    mappings, modified to inform the edge layer on node states.
-3.  **[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)**:
-    Handles the relational data between nodes. Inherits `GeomSegment`
-    aesthetic mappings; unlike standard segments, it is “node-aware” and
-    dynamically calibrates start and end points.
+1.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
+    Renders network nodes. Extends `GeomPoint` aesthetic mappings and
+    exposes node state information to the edge layer.
+2.  **[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)**:
+    Renders the relationships between nodes. Extends `GeomSegment`
+    aesthetic mappings; unlike standard segments, it is node-aware and
+    dynamically adjusts start and end points based on node position and
+    size.
 
 ## Setting basic input data
 
@@ -52,9 +48,13 @@ handle different mapping requirements.
 
 ``` r
 
+#--- Load packages
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
+```
+
+``` r
 
 # Make a toy modular graph
 gtoy2 <- sample_islands(
@@ -78,6 +78,21 @@ E(gtoy2)$edge_var <- runif(ecount(gtoy2))
 
 # Create a GraphSpace from the toy igraph
 gs <- GraphSpace(gtoy2)
+#> Validating the 'igraph' object...
+#> Vertex attributes 'x' and 'y' missing; computing layout...
+#> Vertex attribute 'name' missing; assigning names... 
+#> Ignoring graph-level attributes: 'name', 'islands_n', 'islands_size', ...
+#> Creating a 'GraphSpace' object...
+
+gs
+#> A GraphSpace-class object for:
+#> IGRAPH 5a602fd UN-- 90 340 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | arrowType (e/n), edge_var (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-10, 8] (cols)
+#> | y: [-9, 8] (rows)
 ```
 
 ## Plotting identity values
@@ -85,15 +100,16 @@ gs <- GraphSpace(gtoy2)
 In this example, `nodeColor` already contains the final colour values
 stored in the `GraphSpace` object. The colours will be displayed as-is
 by the
-[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
+[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
 function. This approach is useful when nodes have been pre-processed
-with specific color schemes and you want the visual output without
-further mapping.
+with specific attributes and you want the visual output without further
+mapping.
 
 ``` r
 
-ggplot() + 
-  geom_graphspace(colour = "grey", data = gs) +
+ggplot(gs) + 
+  geom_edgespace() +
+  geom_nodespace(colour = "grey") +
   theme(aspect.ratio = 1)
 ```
 
@@ -109,12 +125,7 @@ attribute should be mapped via aesthetics (e.g.,
 ## Mapping categorical variables
 
 In this example, the node categorical variable `node_group` is mapped to
-the `fill` aesthetic. We call
-[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
-and
-[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
-as independent layers to provide maximum flexibility when mapping
-aesthetics with legends.
+the `fill` aesthetic.
 
 ``` r
 
@@ -172,7 +183,7 @@ ggplot(data = gs) +
 
 ## Session information
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
     #> Running under: Ubuntu 24.04.4 LTS
     #> 
@@ -195,23 +206,23 @@ ggplot(data = gs) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] ggnewscale_0.5.2  igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
+    #> [1] ggnewscale_0.5.2  igraph_2.3.3      RGraphSpace_1.4.2 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    
-    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.0        
+    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.1        
     #>  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-5      
     #> [13] ggrastr_1.0.2      purrr_1.2.2        viridisLite_0.4.3  scales_1.4.0      
     #> [17] textshaping_1.0.5  jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0       
-    #> [21] tidygraph_1.3.1    withr_3.0.2        cachem_1.1.0       yaml_2.3.12       
-    #> [25] otel_0.2.0         ggbeeswarm_0.7.3   tools_4.6.0        dplyr_1.2.1       
+    #> [21] tidygraph_1.3.1    withr_3.0.3        cachem_1.1.0       yaml_2.3.12       
+    #> [25] otel_0.2.0         ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1       
     #> [29] vctrs_0.7.3        R6_2.6.1           lifecycle_1.0.5    fs_2.1.0          
     #> [33] htmlwidgets_1.6.4  vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3   
     #> [37] beeswarm_0.4.0     desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1     
     #> [41] bslib_0.11.0       gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2 
-    #> [45] xfun_0.58          tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.18.0 
+    #> [45] xfun_0.59          tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0 
     #> [49] knitr_1.51         farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31    
-    #> [53] labeling_0.4.3     compiler_4.6.0     S7_0.2.2
+    #> [53] labeling_0.4.3     compiler_4.6.1     S7_0.2.2
 
 ## References
 

@@ -7,19 +7,12 @@
 GeomGraphSpace
 }
 \description{
-\code{GeomGraphSpace} is the underlying \link[ggplot2]{ggproto} object
-used by \link{geom_graphspace} to draw node and edge elements in a
-graph layout.
+\lifecycle{deprecated}
 
-This geom is designed for network diagrams, where graph attributes
-are often already in their final form (e.g., hex colors).
+The underlying \link[ggplot2]{ggproto} object used by the deprecated
+\link{geom_graphspace}. Use \link{GeomEdgeSpace} and
+\link{GeomNodeSpace} instead.
 }
-\section{Aesthetics}{
-
-
-\code{GeomGraphSpace} understands ggplot2's conventions for point-like geoms.
-}
-
 \seealso{
-\link{geom_graphspace}, \link[ggplot2]{geom_point}
+\link{GeomEdgeSpace}, \link{GeomNodeSpace}
 }

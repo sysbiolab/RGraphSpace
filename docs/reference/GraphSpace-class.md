@@ -24,8 +24,20 @@ An S4 class object.
 - `image`:
 
   A `raster` object (see
-  [`as.raster`](https://rdrr.io/r/grDevices/as.raster.html)) used as
-  background image.
+  [`as.raster`](https://rdrr.io/r/grDevices/as.raster.html)) holding the
+  original background image as supplied by the user. Never modified
+  after construction; always serves as the stable source for
+  [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md).
+
+- `canvas`:
+
+  A `raster` object holding the processed, render-ready image produced
+  by
+  [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md).
+  Receives all centering, flipping, and margin adjustments. When this
+  slot contains only the empty sentinel, downstream accessors fall back
+  to `@image` automatically; see
+  [gs_image](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md).
 
 - `fdata`:
 

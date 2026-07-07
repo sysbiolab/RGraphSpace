@@ -282,7 +282,6 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
     rlang::warn(
       message = c(
         "!" = "`inject_nodespace()` could not find a 'size' aesthetic.",
-        "i" = "Fixed node 'size' scales with the viewport.",
         "*" = "Use aes(size = ...) for data-driven scaling."
       )
     )
@@ -299,10 +298,11 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   
   ##--- MAP AES
   
-  # Map 'size' and 'stroke' aesthetics if present
-  if(!is.null(p_pars$size_aes)){
-    node_data <- .geom_map_size_aes(node_data, size_aes = p_pars$size_aes)
-  }
+  # Map 'size' and 'stroke' aesthetics if present; 
+  # if not, default to node attributes then .get_default_vatt()
+  required_clipping <- c("x", "y", "vertex", "size", "stroke")
+  node_data <- .geom_map_size_aes(node_data, required_clipping,
+    size_aes = p_pars$size_aes)
   
   ##--- PREPARE SCALES
   
@@ -358,12 +358,11 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   
   # check if only one size params was included
   if( sum(c("size", "stroke") %in% colnames(node_data)) == 1){
-    node_data <- .geom_map_size_params(node_data)
+    node_data <- .geom_map_size_params(node_data, required_clipping)
   }
   
   ##--- INJECT NODE METADATA INTO EDGE LAYERS
-  required_att <- c("x", "y", "vertex", "size", "stroke")
-  has_clipping_cols <- all(required_att %in% colnames(node_data))
+  has_clipping_cols <- all(required_clipping %in% colnames(node_data))
   check_idx <- !is.null(p_layers$e_idx) && p_layers$e_idx <= length(plot@layers)
   has_unit <- !is.null(p_pars$size_unit)
   if (check_idx && (has_clipping_cols || has_unit)){
@@ -493,9 +492,8 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
 }
 
 #-------------------------------------------------------------------------------
-.geom_map_size_aes <- function(nodes, size_aes){
+.geom_map_size_aes <- function(nodes, required_clipping, size_aes){
   
-  required_clipping <- c("x", "y", "vertex", "size", "stroke")
   size_att <- c(size = "nodeSize", stroke = "nodeLineWidth")
   default_att <- .get_default_vatt()
   
@@ -511,9 +509,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
         NULL
       })
     } else {
-      if( !(att %in% colnames(nodes)) ){
-        nodes[[att]] <- nodes[[size_att[att]]] %||% default_att[[size_att[att]]]
-      }
+      nodes[[att]] <- nodes[[size_att[att]]] %||% default_att[[size_att[att]]]
     }
     if(is.null(nodes[[att]]) || !is.numeric(nodes[[att]])){
       nodes[[att]] <- default_att[[size_att[att]]]
@@ -533,9 +529,8 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   all(vars %in% names(data_df))
 }
 
-.geom_map_size_params <- function(nodes){
+.geom_map_size_params <- function(nodes, required_clipping){
   
-  required_clipping <- c("x", "y", "vertex", "size", "stroke")
   size_att <- c(size = "nodeSize", stroke = "nodeLineWidth")
   default_att <- .get_default_vatt()
 

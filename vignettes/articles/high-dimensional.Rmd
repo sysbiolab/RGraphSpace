@@ -48,7 +48,7 @@ This vignette assumes prior experience with [*Seurat*](https://satijalab.org/seu
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -141,22 +141,25 @@ We now apply `as.GraphSpace()` to expose the `Seurat` object's underlying high-d
 ```{r Create a GraphSpace - 1, eval=FALSE, message=FALSE, results='hide'}
 # Create a GraphSpace from 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "embedding", reduction = "umap")
-
-# Seurat object converted to GraphSpace:
-# ℹ space=embedding, layer=default, features=13714, samples=2638, reduction="umap"
-# Node spatial boundaries:
-# ℹ x: [-9, 13] (cols)
-# ℹ y: [-9, 14] (rows)
+#> Seurat object converted to GraphSpace:
+#> ℹ space=embedding, layer=default, features=13714, samples=2638, reduction="umap"
+#> Node spatial boundaries:
+#> ℹ x: [-9, 13] (cols)
+#> ℹ y: [-9, 14] (rows)
 ```
 
 ```{r Create a GraphSpace - 2, eval=FALSE, message=FALSE, results='hide'}
 gs
-# A GraphSpace-class object for:
-# IGRAPH 1393201 UN-- 2638 0 -- 
-# + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), orig.ident (v/x),
-# | nCount_RNA (v/n), nFeature_RNA (v/n), seurat_annotations (v/x), percent.mt (v/n),
-# | RNA_snn_res.0.5 (v/x), seurat_clusters (v/x), arrowType (e/n)
-# + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)
+#> A GraphSpace-class object for:
+#> IGRAPH 42d1248 UN-- 2638 0 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), orig.ident
+#> | (v/x), nCount_RNA (v/n), nFeature_RNA (v/n), seurat_annotations (v/x), percent.mt
+#> | (v/n), RNA_snn_res.0.5 (v/x), seurat_clusters (v/x), arrowType (e/n)
+#> + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)
+#> + samples: 2638 (AAACATACAACCAC, AAACATTGAGCTAC, ...)
+#> + node spatial boundaries: raw graph
+#> | x: [-9, 13] (cols)
+#> | y: [-9, 14] (rows)
 ```
 
 With the `GraphSpace` object ready, we reproduce the same plots using *ggplot2* geoms and aesthetic mappings.
@@ -184,7 +187,7 @@ p4 <- ggplot(gs) +
   theme_minimal() + theme(aspect.ratio = 1)
 p4
 
-# Plot side-by-side
+## Plot side-by-side
 # p3 + p4 
 ```
 

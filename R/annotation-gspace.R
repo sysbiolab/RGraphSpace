@@ -6,7 +6,7 @@
 #' \code{annotation_gspace_image()} adds an image annotation layer to a
 #' \code{ggplot}-based \code{GraphSpace} plot.
 #'
-#' @param raster An image to be displayed. Accepted types:
+#' @param x An image to be displayed. Accepted types:
 #'   \itemize{
 #'     \item A \code{\link{GraphSpace}} object — the image is extracted via
 #'       \code{\link{gs_image}}.
@@ -25,6 +25,7 @@
 #'   vertically (top-to-bottom). Defaults to \code{FALSE}.
 #' @param flip.h A logical value; if \code{TRUE}, the image is flipped
 #'   horizontally (left-to-right). Defaults to \code{FALSE}.
+#' @param raster Deprecated as of RGraphSpace 1.4.1; use \code{x} instead.
 #' @param ... Additional arguments (currently unused).
 #' 
 #' @return A ggplot2 layer object that can be added to a \code{ggplot()}
@@ -39,8 +40,18 @@
 #'
 #' @examples
 #' 
-#' # Assuming 'gs' is a GraphSpace object with 
-#' # an image stored in gs_image(gs)
+#' library(RGraphSpace)
+#' library(igraph)
+#' 
+#' # Load a demo igraph
+#' data('gtoy1', package = 'RGraphSpace')
+#' gs <- GraphSpace(gtoy1)
+#' 
+#' # Normalize node coordinates
+#' gs <- normalizeGraphSpace(gs)
+#' 
+#' # Add a raster image
+#' gs_image(gs) <- as_colorraster(volcano)
 #' 
 #' \dontrun{
 #' # Pass a GraphSpace object directly
@@ -66,11 +77,17 @@
 #' @importFrom grDevices col2rgb rgb
 #' @rdname annotation_gspace_image
 #' @export
-annotation_gspace_image <- function(raster, interpolate = FALSE, opacity = 1,
-  flip.v = FALSE, flip.h = FALSE) {
+annotation_gspace_image <- function(x, interpolate = FALSE, 
+  opacity = 1, flip.v = FALSE, flip.h = FALSE, 
+  raster = deprecated()) {
 
-  if (missing(raster)) {
-    rlang::abort("Argument 'raster' is missing, with no default.")
+  if (missing(x)) {
+    rlang::abort("Argument 'x' is missing, with no default.")
+  }
+  
+  if (lifecycle::is_present(raster)) {
+    deprecate_soft("1.4.1", "annotation_gspace_image(raster)", 
+      "annotation_gspace_image(x)")
   }
   
   .validate_gs_args("singleLogical", "interpolate", interpolate)
@@ -78,25 +95,25 @@ annotation_gspace_image <- function(raster, interpolate = FALSE, opacity = 1,
   .validate_gs_args("singleLogical", "flip.h", flip.h)
   .validate_gs_args("singleNumber", "opacity", opacity)
   
-  if (inherits(raster, "GraphSpace")) {
-    if (!.has_image(raster)) {
+  if (inherits(x, "GraphSpace")) {
+    if (!.has_image(x)) {
       rlang::warn("The 'GraphSpace' object contains no image.")
       return(invisible(NULL))
     }
-    raster <- gs_image(raster)
+    x <- gs_image(x)
   }
   
-  if (!inherits(raster, "raster")) {
-    raster <- tryCatch({
-      grDevices::as.raster(raster)
+  if (!inherits(x, "raster")) {
+    x <- tryCatch({
+      grDevices::as.raster(x)
     }, error = function(e) {
       rlang::warn(c(
-        "x" = "Failed to convert 'raster' to a valid raster object.",
+        "x" = "Failed to convert 'x' to a valid raster object.",
         "i" = "Accepted types: matrix, array (RGB/RGBA), or raster."
       ))
       NULL
     })
-    if (is.null(raster)) return(invisible(NULL))
+    if (is.null(x)) return(invisible(NULL))
   }
 
   if (opacity < 0 || opacity > 1) {
@@ -109,26 +126,22 @@ annotation_gspace_image <- function(raster, interpolate = FALSE, opacity = 1,
   }
   
   if (opacity != 1) {
-    img <- grDevices::col2rgb(as.character(raster), alpha = TRUE)
+    img <- grDevices::col2rgb(as.character(x), alpha = TRUE)
     img[4, ] <- as.integer(opacity * 255)
-    raster <- as.raster(matrix(
+    x <- as.raster(matrix(
       grDevices::rgb(img[1,], img[2,], img[3,], img[4,], maxColorValue = 255),
-      nrow = nrow(raster), ncol = ncol(raster),
+      nrow = nrow(x), ncol = ncol(x),
       byrow = TRUE
     ))
   }
 
-  if (flip.v) raster <- raster[rev(seq_len(nrow(raster))), , drop = FALSE]
-  if (flip.h) raster <- raster[, rev(seq_len(ncol(raster))), drop = FALSE]
+  if (flip.v) x <- x[rev(seq_len(nrow(x))), , drop = FALSE]
+  if (flip.h) x <- x[, rev(seq_len(ncol(x))), drop = FALSE]
 
-  ggplot2::annotation_raster(
-    raster      = raster,
-    xmin        = 0,
-    xmax        = 1,
-    ymin        = 0,
-    ymax        = 1,
-    interpolate = interpolate
-  )
+  ggplot2::annotation_raster(raster = x,
+    xmin = 0, xmax = 1, ymin = 0, ymax = 1,
+    interpolate = interpolate)
+  
 }
 
 #' @note \code{annotation_gspace()} is deprecated as of v1.4.0; use 

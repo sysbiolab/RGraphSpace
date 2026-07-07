@@ -2,16 +2,18 @@
 ################################################################################
 ### Validate igraph for RGraphSpace
 ################################################################################
-.validate_igraph <- function(g, layout = NULL, verbose = FALSE) {
+.validate_igraph <- function(g, layout = NULL, simplify = TRUE, 
+    verbose = FALSE) {
+    
     if (verbose) rlang::inform("Validating the 'igraph' object...")
     if (!inherits(g, "igraph")) {
-        stop("'g' should be an 'igraph' object.", call. = FALSE)
+        rlang::abort("'g' should be an 'igraph' object.")
     }
     if (!is.null(layout)) {
         if (nrow(layout) != vcount(g)) {
             msg <- paste("'layout' must have xy-coordinates",
                 "for the exact number of nodes in 'g'")
-            stop(msg, call. = FALSE)
+            rlang::abort(msg)
         } else {
             igraph::V(g)$x <- layout[, 1]
             igraph::V(g)$y <- layout[, 2]
@@ -32,22 +34,22 @@
         if(is.vector(igraph::V(g)$name) && !is.list(igraph::V(g)$name)){
             if(any(is.na(igraph::V(g)$name))){
                 msg <- "NA values found in vertex attribute 'name'."
-                stop(msg, call. = FALSE)
+                rlang::abort(msg, call. = FALSE)
             }
             if(!.all_characterValues(igraph::V(g)$name)){
-                warning("vertex attribute 'name' converted to character.", 
-                    call. = FALSE)
+                rlang::warn("vertex attribute 'name' converted to character.")
                 igraph::V(g)$name <- as.character(igraph::V(g)$name)
             }
         } else {
             msg <- "vertex attribute 'name' should be a character vector."
-            stop(msg, call. = FALSE) 
+            rlang::abort(msg) 
         }
         if (anyDuplicated(igraph::V(g)$name) > 0){
-            stop("vertex names must be unique.", call. = FALSE)
+            rlang::abort("vertex names must be unique.")
         }
     }
-    if (!igraph::is_simple(g)) {
+    
+    if (simplify && !igraph::is_simple(g)) {
         if (verbose) {
             rlang::inform("Simplifying graph...")
             if (igraph::any_loop(g))
@@ -73,7 +75,19 @@
             igraph::E(g)$arrowType <- 0
         }
     }
+    if(verbose){
+        d_names <- igraph::graph_attr_names(g)
+        if (length(d_names) > 0){
+            rlang::inform(sprintf(
+                "Ignoring graph-level attribute%s: %s",
+                if (length(d_names) == 1) "" else "s",
+                .gs_preview(shQuote(d_names), n = 3)
+            ))
+        } 
+    }
+
     g <- .validate_attributes(g)
+    
     return(g)
     
 }
@@ -162,7 +176,7 @@
 }
 .get_default_vatt <- function() {
     atts <- list(
-        "nodeLabel" = NA, "nodeLabelSize" = 8, "nodeLabelColor" = "grey40",
+        "nodeLabel" = NA, "nodeLabelSize" = 3, "nodeLabelColor" = "grey40",
         "nodeShape" = 21, "nodeSize" = 5, "nodeColor" = "grey80",
         "nodeLineWidth" = 0.5, "nodeLineColor" = "grey20")
     return(atts)
@@ -210,8 +224,7 @@
     if (!is.null(atts$nodeLabelSize)) {
         .validate_gs_args("numeric_vec", "nodeLabelSize", atts$nodeLabelSize)
         if (min(atts$nodeLabelSize, na.rm = TRUE) <= 0) {
-            stop("'nodeLabelSize' should be a vector of numeric values >0", 
-              call. = FALSE)
+            rlang::abort("'nodeLabelSize' should be a vector of numeric values >0")
         }
     }
     if (!is.null(atts$nodeLabelColor)) {
@@ -220,8 +233,7 @@
     if (!is.null(atts$nodeSize)) {
         .validate_gs_args("numeric_vec", "nodeSize", atts$nodeSize)
         if (max(atts$nodeSize, na.rm = TRUE) > 100 || min(atts$nodeSize, na.rm = TRUE) < 0) {
-            stop("'nodeSize' should be a vector of numeric values in [0, 100]", 
-              call. = FALSE)
+            rlang::abort("'nodeSize' should be a vector of numeric values in [0, 100]")
         }
     }
     if (!is.null(atts$nodeShape)) {
@@ -233,8 +245,7 @@
     if (!is.null(atts$nodeLineWidth)) {
         .validate_gs_args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)
         if (min(atts$nodeLineWidth, na.rm = TRUE) < 0) {
-            stop("'nodeLineWidth' should be a vector of numeric values >=0", 
-              call. = FALSE)
+            rlang::abort("'nodeLineWidth' should be a vector of numeric values >=0")
         }
     }
     if (!is.null(atts$nodeLineColor)) {
@@ -249,9 +260,8 @@
     }
     if (!is.null(atts$edgeLineWidth)) {
         .validate_gs_args("numeric_vec", "edgeLineWidth", atts$edgeLineWidth)
-        if (min(atts$edgeLineWidth) <= 0) {
-            stop("'edgeLineWidth' should be a vector of numeric values >0", 
-                call. = FALSE)
+        if (min(atts$edgeLineWidth, na.rm = TRUE) <= 0) {
+            rlang::abort("'edgeLineWidth' should be a vector of numeric values >0")
         }
     }
     if (!is.null(atts$edgeLineColor)) {
@@ -350,25 +360,32 @@
     }
     return(atypes)
 }
+
 .arrowtypes_warning <- function(is.dir = FALSE){
     
     atypes <- .arrowtypes(is.dir, unique = TRUE)
+    as_bullet <- function(idx) {
+        paste(paste0("'", names(atypes)[idx], "' or ", atypes[idx]), 
+            collapse = ", ")
+    }
+    graph_type <- if (is.dir) "directed" else "undirected"
+    headline <- sprintf(
+        "Invalid 'arrowType' for %s graphs; using default values.", 
+        graph_type)
     
     if (is.dir) {
-        msg1 <- paste("'arrow type' for directed graphs must be one of:\n")
-        msg2 <- paste(paste0("'", names(atypes), "'"), atypes, sep = " or ")
-        msg2 <- paste(msg2, collapse = ", ")
+        rlang::warn(c(
+            headline,
+            "i" = paste("Accepted values:", as_bullet(seq_along(atypes)))
+        ))
     } else {
-        msg1 <- paste("'arrow type' for undirected graphs must be one of:\n")
         idx <- atypes >= 0
-        atp1 <- paste(paste0("'", names(atypes)[idx], "'"), atypes[idx], sep = " or ")
-        atp2 <- paste(paste0("'", names(atypes)[!idx], "'"), atypes[!idx], sep = " or ")
-        atp1 <- paste0(paste(atp1, collapse = ", "), "\n")
-        atp2 <- paste(atp2, collapse = ", ")
-        msg2 <- paste0(atp1, atp2)
+        rlang::warn(c(
+            headline,
+            "i" = paste("Accepted values:", as_bullet(idx)),
+            "i" = as_bullet(!idx)
+        ))
     }
-    msg3 <- c("\n...using default values.")
-    warning(msg1, msg2, msg3, call. = FALSE)
     
 }
 
@@ -392,7 +409,8 @@
         lty[grep("dashed", lty)] <- "dashed"
         lty[grep("long", lty)] <- "longdash"
         lty[grep("two", lty)] <- "twodash"
-        lty[!lty %in% names(ltypes)] <- "solid"
+        is_valid_hex <- grepl("^[0-9a-f]{2,8}$", lty) & nchar(lty) %% 2 == 0
+        lty[!lty %in% names(ltypes) & !is_valid_hex] <- "solid"
     }
     return(lty)
 }

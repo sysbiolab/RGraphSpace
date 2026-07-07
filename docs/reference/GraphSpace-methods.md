@@ -9,7 +9,7 @@ rendering in RGraphSpace.
 
 ``` r
 # S4 method for class 'ANY'
-GraphSpace(g, layout = NULL, verbose = TRUE, ...)
+GraphSpace(g, layout = NULL, simplify = TRUE, verbose = TRUE, ...)
 
 # S4 method for class 'data.frame'
 GraphSpace(g, verbose = TRUE, ...)
@@ -35,9 +35,14 @@ GraphSpace(g, verbose = TRUE, ...)
   An optional numeric matrix with two columns for `x` and `y` vertex
   coordinates. If provided, it overrides coordinates in `g`.
 
+- simplify:
+
+  A logical value. If `TRUE` (default), removes loops and multiple edges
+  (see [simplify](https://r.igraph.org/reference/simplify.html)).
+
 - verbose:
 
-  A logical value. If `TRUE`, displays detailed messages.
+  A logical value. If `TRUE` (default), displays detailed messages.
 
 - ...:
 
@@ -173,5 +178,6 @@ gs <- GraphSpace(gtoy1)
 #> Validating the 'igraph' object...
 #> Vertex attributes 'x' and 'y' missing; computing layout...
 #> Vertex attribute 'name' missing; assigning names... 
+#> Ignoring graph-level attributes: 'name', 'loops'
 #> Creating a 'GraphSpace' object...
 ```

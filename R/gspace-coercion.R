@@ -208,7 +208,7 @@ as.GraphSpace.Seurat <- function(x,
   
   .inform_data_specs(fdata, layer, space, ...)
   
-  .inform_coord_boundaries(coords)
+  .inform_node_boundaries(coords)
   
   return(gs)
   
@@ -224,8 +224,13 @@ as.GraphSpace.Seurat <- function(x,
   d <- dim(fdata)
   
   args_str <- if (length(args) > 0) {
-    paste(mapply(function(k, v) sprintf("%s=%s", k, deparse(v)),
-      names(args), args), collapse = ", ")
+    
+    nms <- names(args) %||% rep("", length(args))
+    nms[is.na(nms)] <- ""
+    vals <- vapply(args, deparse, character(1))
+    prefix <- ifelse(nzchar(nms), paste0(nms, "="), "")
+    paste0(prefix, vals, collapse = ", ")
+    
   } else NULL
   
   msg <- c(
@@ -239,27 +244,5 @@ as.GraphSpace.Seurat <- function(x,
   rlang::inform(msg)
 }
 
-.inform_coord_boundaries <- function(coords) {
-  xr <- c(floor(min(coords$x, na.rm = TRUE)), ceiling(max(coords$x, na.rm = TRUE)))
-  yr <- c(floor(min(coords$y, na.rm = TRUE)), ceiling(max(coords$y, na.rm = TRUE)))
-  
-  rlang::inform(c(
-    "Node spatial boundaries:",
-    "i" = sprintf("x: [%s, %s] (cols)", xr[1], xr[2]),
-    "i" = sprintf("y: [%s, %s] (rows)", yr[1], yr[2])
-  ))
-}
-
-.inform_image_boundaries <- function(image) {
-  
-  d <- dim(image)
-  
-  rlang::inform(c(
-    "Image spatial boundaries:",
-    "i" = sprintf("x: [%s, %s] (cols)", 1, d[2]),
-    "i" = sprintf("y: [%s, %s] (rows)", 1, d[1])
-  ))
-  
-}
 
 

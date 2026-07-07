@@ -44,8 +44,8 @@
 #' 
 #' @param dpi Numeric. Rasterization resolution.
 #' 
-#' @param dev Character. Rasterization backend. One of `"cairo"`,
-#' `"ragg"`, `"ragg_png"`, or `"cairo_png"`.
+#' @param dev Character. Rasterization backend. One of \code{'cairo'},
+#' \code{'ragg'}, \code{'ragg_png'}, or \code{'cairo_png'}.
 #' 
 #' @param scale Numeric. Rasterization scaling factor
 #' (see \code{\link[ggrastr]{rasterise}}).
@@ -61,31 +61,43 @@
 #' are automatically retrieved from the \link{GraphSpace} object.
 #'
 #' \tabular{ll}{
-#'   \strong{\code{x}, \code{y}} \tab Required (automatically supplied).\cr
-#'   \code{fill} \tab Node interior colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{colour} \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{shape} \tab Node shape (see \link{points} and \link[ggplot2]{aes_linetype_size_shape}).\cr
-#'   \code{size} \tab Node size (see *drawing* section and \link[ggplot2]{aes_linetype_size_shape}).\cr
-#'   \code{stroke} \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
+#'   \strong{\code{x}, \code{y}} \tab Node coordinates (required; automatically supplied).\cr
+#'   \code{fill}    \tab Node interior colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{colour}  \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{alpha}   \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{shape}   \tab Node shape (see \link{points} and \link[ggplot2]{aes_linetype_size_shape}).\cr
+#'   \code{size}    \tab Node size (see *drawing* section and \link[ggplot2]{aes_linetype_size_shape}).\cr
+#'   \code{stroke}  \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
 #' }
 #' 
-#' Required aesthetics \code{x} and \code{y} are supplied from the 
-#' \link{GraphSpace} object and do not need to be manually mapped.
+#' Required aesthetics \strong{\code{x}} and \strong{\code{y}} are supplied 
+#' from the \link{GraphSpace} object and do not need to be manually mapped.
 #' 
 #' Additional parameters can be passed to control fixed values for the layer.
 #' For example: `fill = "red"`, `stroke = 3`, `alpha = 0.5`, or `shape = 21`.
 #' 
-#' @section Integration with ggraph:
+#' @section Label aesthetics:
+#'
+#' When \code{label} is mapped via \code{aes()}, a text label is drawn at
+#' each node's position using \code{\link[ggplot2]{geom_text}}, rendered on
+#' top of the node glyph. Nodes with \code{NA} labels are silently skipped.
 #' 
-#' \code{geom_nodespace} is compatible with the \code{ggraph} methods.
-#' When used within a \code{ggraph()} call, the default \code{nodespace_handler()} 
-#' automatically:
-#' \itemize{
-#'   \item Identifies the current \code{layout_ggraph}.
-#'   \item Extracts the \code{x} and \code{y} coordinates calculated by \code{ggraph}.
-#'   \item Reconstructs a temporary \code{GraphSpace} object to inject spatial 
-#'   metadata and user-chosen \code{ggraph} layout.
+#' The \code{label_size} and \code{label_colour} aesthetics are automatically 
+#' retrieved from the \link{GraphSpace} object when not explicitly provided 
+#' in \code{aes()}. All other \code{label_*} aesthetics default to 
+#' \code{\link[ggplot2]{geom_text}} when not set.
+#' 
+#' \tabular{ll}{
+#'   \strong{\code{label}}   \tab Required to activate label rendering.\cr
+#'   \code{label_size}       \tab Font size (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_colour}     \tab Label colour (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_alpha}      \tab Label transparency (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_angle}      \tab Rotation angle (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_hjust}      \tab Horizontal justification (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_vjust}      \tab Vertical justification (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_family}     \tab Font family (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_fontface}   \tab Font face (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_lineheight} \tab Line height (see \code{\link[ggplot2]{geom_text}}).
 #' }
 #' 
 #' @details
@@ -103,7 +115,7 @@
 #' 
 #' @seealso
 #' \link{GraphSpace}, \link{geom_edgespace}, \link{geom_graphspace}, 
-#' \link[ggplot2]{geom_point}
+#' \link[ggplot2]{geom_point}, \link[ggplot2]{geom_text}
 #'
 #' @examples
 #' library(RGraphSpace)
@@ -131,12 +143,11 @@
 #' # ggplot2 default behavior: size is translated 
 #' # to absolute units (mm) via 'scale_size()'.
 #' 
-#' ggplot() + 
-#' geom_edgespace(data = gs, arrow_offset = 0.01) +
-#'   geom_nodespace(mapping = aes(size = nodeSize, fill = user_var2), 
-#'   data = gs) + 
-#'   scale_size(range = c(1, 12)) + 
-#'   theme(aspect.ratio = 1)
+#' ggplot(gs) + 
+#' geom_edgespace(arrow_offset = 0.01) +
+#' geom_nodespace(mapping = aes(size = nodeSize, fill = user_var2)) + 
+#' scale_size(range = c(1, 12)) + 
+#' theme(aspect.ratio = 1)
 #'   
 #' # Example 2: Nodes scaling with the viewport
 #' # When 'size' is passed as a node attribute, 
@@ -144,10 +155,16 @@
 #' # interpreted as a percentage of the plotting 
 #' # area and translated to NPC units.
 #' 
-#' ggplot() + 
-#' geom_edgespace(data = gs, arrow_offset = 0.01) +
-#' geom_nodespace(mapping = aes(fill = user_var2), data = gs) +
+#' ggplot(gs) + 
+#' geom_edgespace(arrow_offset = 0.01) +
+#' geom_nodespace(mapping = aes(fill = user_var2)) +
 #' theme(aspect.ratio = 1)
+#'   
+#' # Example 3: Node labels
+#' ggplot(gs) +
+#'   geom_edgespace() +
+#'   geom_nodespace(aes(label = nodeLabel)) +
+#'   theme(aspect.ratio = 1)
 #'   
 #' }
 #' 
@@ -221,8 +238,9 @@ geom_nodespace <- function(mapping = NULL, data = NULL,
 #' @export
 StatNodeSpace <- ggproto(
   "StatNodeSpace", ggplot2::Stat,
-  optional_aes = c("nodeSize", "nodeShape", "nodeLineWidth", 
-    "nodeColor", "nodeLineColor", "nodeAlpha"),
+  optional_aes = c("nodeSize", "nodeShape", "nodeLineWidth",  
+    "nodeColor", "nodeLineColor", "nodeAlpha", 
+    "nodeLabel", "nodeLabelSize", "nodeLabelColor"),
   setup_data = function(data, params) {
     data <- .params_nodespace(params, data)
     return(data)
@@ -284,15 +302,19 @@ nodespace_handler <- function(mapping = NULL) {
   x <- y <- NULL
   default_mapping <- ggplot2::aes(x = x, y = y)
   
-  nodeColor <- nodeSize <- nodeShape <- nodeLineWidth <- 
-    nodeLineColor <- nodeAlpha <- NULL
+  nodeSize <- nodeShape <- nodeLineWidth <- NULL
+  nodeColor <- nodeLineColor <- nodeAlpha <- NULL
+  nodeLabel <- nodeLabelSize <- nodeLabelColor <- NULL
   optional_mapping <- ggplot2::aes(
-    nodeColor = nodeColor, 
     nodeSize = nodeSize,
     nodeShape = nodeShape,
     nodeLineWidth = nodeLineWidth,
+    nodeColor = nodeColor,
     nodeLineColor = nodeLineColor,
-    nodeAlpha = nodeAlpha)
+    nodeAlpha = nodeAlpha,
+    nodeLabel = nodeLabel,
+    nodeLabelSize = nodeLabelSize,
+    nodeLabelColor = nodeLabelColor)
   
   if (is.null(mapping)) {
     mapping <- utils::modifyList(
@@ -318,6 +340,8 @@ nodespace_handler <- function(mapping = NULL) {
   } else {
     mapping <- names(mapping)
   }
+  
+  # Node attributes
   
   if(is.null(params[["size"]]) && !"size" %in% mapping){
     if("nodeSize" %in% names(nodes) ){
@@ -355,6 +379,22 @@ nodespace_handler <- function(mapping = NULL) {
     }
   }
   
+  # Node label attributes
+  # Note: 'nodeLabel' mapping is controlled upstream by the caller;
+  # Here, only the styling attributes are resolved
+  
+  if(is.null(params[["label_size"]]) && !"label_size" %in% mapping ){
+    if("nodeLabelSize" %in% names(nodes) ){
+      nodes[["label_size"]] <- nodes[["nodeLabelSize"]]
+    }
+  }
+  
+  if(is.null(params[["label_colour"]]) && !"label_colour" %in% mapping ){
+    if("nodeLabelColor" %in% names(nodes) ){
+      nodes[["label_colour"]] <- nodes[["nodeLabelColor"]]
+    }
+  }
+  
   return(nodes)
   
 }
@@ -378,7 +418,7 @@ nodespace_handler <- function(mapping = NULL) {
 #' \link{geom_nodespace}, \link[ggplot2]{geom_point}
 #'
 #' @importFrom ggplot2 scale_colour_identity zeroGrob
-#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt geom_text gg_par
+#' @importFrom ggplot2 geom_point geom_segment aes Geom .pt gg_par
 #' @importFrom ggplot2 element_rect margin element_blank layer theme_bw
 #' @importFrom ggplot2 element_line element_text ggproto theme theme_gray
 #' @importFrom ggplot2 scale_linetype_manual annotation_raster coord_fixed
@@ -397,6 +437,9 @@ GeomNodeSpace <- ggproto(
   
   required_aes = c("x", "y"),
   
+  optional_aes = c("label_alpha", "label_angle", "label_hjust",
+    "label_vjust", "label_family", "label_fontface", "label_lineheight"),
+  
   non_missing_aes = c("size", "stroke", "shape", "colour"),
   
   default_aes = aes(
@@ -405,7 +448,10 @@ GeomNodeSpace <- ggproto(
     colour = "grey20",
     fill = "grey80",
     stroke = 0.5,
-    alpha = NA
+    alpha = NA,
+    label = NA,
+    label_size = 3,
+    label_colour = "grey10"
   ),
   
   draw_panel = function(self, data, panel_params, coord, 
@@ -427,6 +473,13 @@ GeomNodeSpace <- ggproto(
         dev = dev, scale = scale)
     }
     
+    # Label grob -- rendered on top of node glyphs using GeomText
+    # so labels are never obscured by the node background.
+    if ("label" %in% colnames(data) && !all(is.na(data$label))) {
+      label_grob <- .get_node_label_grob(data, coord, panel_params)
+      grobs <- grid::gTree(children = grid::gList(grobs, label_grob))
+    }
+    
     grobs
     
   },
@@ -434,6 +487,35 @@ GeomNodeSpace <- ggproto(
   draw_key = draw_key_point
   
 )
+
+#-------------------------------------------------------------------------------
+.get_node_label_grob <- function(data, coord, panel_params){
+
+  l_data <- data[!is.na(data$label), , drop = FALSE]
+  if (nrow(l_data) == 0){
+    return( zeroGrob() )
+  }
+  
+  # Override label aesthetics if user provided label_* columns
+  if (!is.null(l_data$label_colour)) l_data$colour <- l_data$label_colour
+  if (!is.null(l_data$label_alpha)) l_data$alpha <- l_data$label_alpha
+  if (!is.null(l_data$label_size)) l_data$size <- l_data$label_size
+  if (!is.null(l_data$label_angle)) l_data$angle <- l_data$label_angle
+  if (!is.null(l_data$label_hjust)) l_data$hjust <- l_data$label_hjust
+  if (!is.null(l_data$label_vjust)) l_data$vjust <- l_data$label_vjust
+  if (!is.null(l_data$label_family)) l_data$family <- l_data$label_family
+  if (!is.null(l_data$label_fontface)) l_data$fontface <- l_data$label_fontface
+  if (!is.null(l_data$label_lineheight)) l_data$lineheight <- l_data$label_lineheight
+  
+  # Drop size if not overridden -- let GeomText$use_defaults() fill it
+  # from its own default_aes rather than picking up the node size column
+  if (is.null(l_data$label_size)) l_data$size <- NULL
+  
+  l_data <- ggplot2::GeomText$use_defaults(l_data)
+  
+  ggplot2::GeomText$draw_panel(l_data, panel_params, coord)
+  
+}
 
 #-------------------------------------------------------------------------------
 .geom_check_node_size <- function(nodes, size_unit = "npc"){

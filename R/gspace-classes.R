@@ -14,8 +14,15 @@ setOldClass("gs_graph")
 #' @slot edges  A data frame containing edge relationships and attributes.
 #' @slot graph An \code{\link[igraph]{igraph}} object representing the graph 
 #' structure.
-#' @slot image A \code{raster} object (see \code{\link[grDevices]{as.raster}}) used 
-#' as background image.
+#' @slot image A \code{raster} object (see \code{\link[grDevices]{as.raster}})
+#' holding the original background image as supplied by the user. Never
+#' modified after construction; always serves as the stable source for
+#' \code{normalizeGraphSpace()}.
+#' @slot canvas A \code{raster} object holding the processed,
+#' render-ready image produced by \code{normalizeGraphSpace()}. Receives all
+#' centering, flipping, and margin adjustments. When this slot contains only
+#' the empty sentinel, downstream accessors fall back to \code{@image}
+#' automatically; see \link{gs_image}.
 #' @slot fdata A \code{\link[Matrix]{Matrix}} object storing high-dimensional 
 #' feature data associated with graph nodes.
 #' @slot pars A list with parameters.
@@ -38,6 +45,7 @@ setClass("GraphSpace",
     edges = "data.frame",
     graph = "igraph",
     image = "raster",
+    canvas = "raster",
     fdata = "Matrix",
     pars = "list",
     misc = "list",
@@ -48,6 +56,7 @@ setClass("GraphSpace",
     edges = data.frame(),
     graph = igraph::empty_graph(),
     image = as.raster(matrix()),
+    canvas = as.raster(matrix()),
     fdata = Matrix::Matrix(nrow = 0, ncol = 0),
     pars = list(),
     misc = list(),
@@ -72,7 +81,7 @@ setValidity("GraphSpace", function(object) {
   }
   
   if (!is(object@fdata, "Matrix")) {
-    errors <- c(errors, "'@fdata' slot  must be a Matrix object.")
+    errors <- c(errors, "'@fdata' slot must be a Matrix object.")
   }
   
   if (nrow(object@fdata) > 0 && is.null(rownames(object@fdata))) {
@@ -108,6 +117,25 @@ setValidity("GraphSpace", function(object) {
         }
       }
     }
+  }
+  
+  # image <-> canvas consistency
+  # @canvas is always derived from @image; a populated canvas without a source
+  # image indicates an invalid object state.
+  canvas_has_content <- .hasSlot(object, "canvas") && prod(dim(object@canvas)) > 1
+  image_has_content  <- .hasSlot(object, "image")  && prod(dim(object@image))  > 1
+  
+  if (canvas_has_content && !image_has_content) {
+    errors <- c(errors,
+      "'@canvas' is populated but '@image' is empty; canvas requires a source image.")
+  }
+  
+  # pars$image.space <-> canvas consistency
+  # When normalization ran with image.space = TRUE the canvas must have been
+  # populated. A mismatch indicates the object was modified outside the API.
+  if (isTRUE(object@pars$image.space) && !canvas_has_content) {
+    errors <- c(errors,
+      "'pars$image.space' is TRUE but '@canvas' is empty; re-run normalizeGraphSpace().")
   }
   
   if (length(errors) == 0) TRUE else errors
@@ -146,31 +174,6 @@ setValidity("GraphSpace", function(object) {
 }
 
 #-------------------------------------------------------------------------------
-# show summary information on screen
-setMethod("show", "GraphSpace", 
-  function(object) {
-    cat("A GraphSpace-class object for:\n")
-    summary(object@graph)
-    if (.hasSlot(object, "fdata")) {
-      nfeat <- ncol(object@fdata)
-      if (nfeat > 0) {
-        feat <- .gs_preview(colnames(object@fdata))
-        cat("+ features: ", nfeat, " (", paste(feat, collapse = ", "), ")\n", sep = "")
-      }
-    }
-    invisible(object)
-  }
-)
-
-#' @importFrom utils head
-.gs_preview <- function(x, n = 4) {
-  if (length(x) == 0) return("<empty>")
-  out <- head(x, n)
-  if (length(x) > n) out <- c(out, "...")
-  paste(out, collapse = ", ")
-}
-
-#-------------------------------------------------------------------------------
 
 setGeneric("updateGraphSpace", function(x, ...) standardGeneric("updateGraphSpace"))
 
@@ -187,9 +190,10 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
   .update_gs(x, verbose = verbose)
 })
 
+#' @keywords internal
 .update_gs <- function(gs, verbose = TRUE) {
 
-  new_slots <- c("image", "fdata", "uuid")
+  new_slots <- c("image", "fdata", "uuid", "canvas")
   missing_slots <- new_slots[!sapply(new_slots, function(s) .hasSlot(gs, s))]
   
   if (length(missing_slots) == 0){
@@ -212,6 +216,7 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
     pars = gs@pars,
     misc = gs@misc,
     image = if (.hasSlot(gs, "image")) gs@image else proto@image,
+    canvas = if (.hasSlot(gs, "canvas")) gs@canvas else proto@canvas,
     fdata = if (.hasSlot(gs, "fdata")) gs@fdata else proto@fdata,
     uuid  = if (.hasSlot(gs, "uuid"))  gs@uuid  else .generate_gs_uuid()
   )
@@ -223,7 +228,8 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
 }
 
 #-------------------------------------------------------------------------------
-.check_updated_gs <- function(gs, slots = c("image", "fdata", "uuid")) {
+#' @keywords internal
+.check_updated_gs <- function(gs, slots = c("image", "canvas","fdata", "uuid")) {
   
   check <- vapply(slots, function(s) .hasSlot(gs, s), logical(1))
   
@@ -238,4 +244,180 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
   
   invisible(TRUE)
   
+}
+
+#-------------------------------------------------------------------------------
+setGeneric("summary", function(object, ...) standardGeneric("summary"))
+
+#-------------------------------------------------------------------------------
+#' @title Summarise a GraphSpace object
+#'
+#' @description Prints a structured summary of a \code{GraphSpace} object,
+#' including graph topology, optional feature data, and spatial boundaries
+#' for nodes and, when present, the background image.
+#'
+#' Node boundaries are always drawn from \code{@graph} (original pixel
+#' coordinates, never modified). Image boundaries reflect \code{@canvas}
+#' after normalization with \code{image.space = TRUE}, and \code{@image}
+#' otherwise. When normalized, both boundary lines show the source range
+#' and \code{[0,1]} target to make the transformation explicit.
+#'
+#' @param object A \code{GraphSpace} object.
+#' @param ... Currently unused; present for S4 generic compatibility.
+#'
+#' @return Invisibly returns \code{object}, allowing the call to be used inside
+#' a pipeline without side effects beyond the printed output.
+#'
+#' @seealso \code{\link{GraphSpace}}, \code{\link{normalizeGraphSpace}}
+#' @importFrom igraph print.igraph
+#' @aliases summary,GraphSpace-method
+#' @exportMethod summary
+setMethod("summary", "GraphSpace",
+  function(object, ...) {
+    igraph::print.igraph(object@graph, full = FALSE)
+    if (.hasSlot(object, "fdata")) {
+      nfeat <- ncol(object@fdata)
+      if (nfeat > 0) {
+        feat <- .gs_preview(colnames(object@fdata))
+        cat("+ features: ", nfeat, " (", feat, ")\n", sep = "")
+        nsamp <- nrow(object@fdata)
+        samp <- .gs_preview(rownames(object@fdata), 2)
+        cat("+ samples: ", nsamp, " (", samp, ")\n", sep = "")
+      }
+    }
+    .inform_node_coord_status(object)
+    .inform_boundaries( .node_boundaries(.get_nodes(object@graph)),
+      if (.is_normalized(object)) list(x = c(0,1), y = c(0,1)) else NULL )
+    if (.has_image(object)) {
+      .inform_image_coord_status(object)
+      img <- if (.is_image_space(object)) object@canvas else object@image
+      .inform_boundaries( .image_boundaries(object@image),
+        if (.is_image_space(object)) .image_boundaries(img) else NULL )
+    }
+    invisible(object)
+  }
+)
+
+#' @keywords internal
+#' @importFrom utils head
+.gs_preview <- function(x, n = 4) {
+  if (length(x) == 0) return("<empty>")
+  out <- head(x, n)
+  if (length(x) > n) out <- c(out, "...")
+  paste(out, collapse = ", ")
+}
+
+#-------------------------------------------------------------------------------
+# show: header only; delegates content to summary()
+setMethod("show", "GraphSpace", 
+  function(object) {
+    cat("A GraphSpace-class object for:\n")
+    summary(object)
+    invisible(object)
+  }
+)
+
+#-------------------------------------------------------------------------------
+# display helpers -- write directly to stdout, for show()/summary() only
+#' @keywords internal
+.inform_boundaries <- function(bounds, target = NULL) {
+  suffix_x <- if (!is.null(target)) paste0(" -> [", target$x[1], ", ", target$x[2], "]") else ""
+  suffix_y <- if (!is.null(target)) paste0(" -> [", target$y[1], ", ", target$y[2], "]") else ""
+  cat("| x: [", bounds$x[1], ", ", bounds$x[2], "]", suffix_x, " (cols)\n", sep = "")
+  cat("| y: [", bounds$y[1], ", ", bounds$y[2], "]", suffix_y, " (rows)\n", sep = "")
+}
+
+#' @keywords internal
+.node_boundaries <- function(nodes) {
+  list(
+    x = c(floor(min(nodes$x, na.rm = TRUE)), ceiling(max(nodes$x, na.rm = TRUE))),
+    y = c(floor(min(nodes$y, na.rm = TRUE)), ceiling(max(nodes$y, na.rm = TRUE)))
+  )
+}
+
+#' @keywords internal
+.image_boundaries <- function(image) {
+  d <- dim(image)
+  list(x = c(1L, d[2L]), y = c(1L, d[1L]))
+}
+
+#' @keywords internal
+.inform_node_coord_status <- function(object) {
+  if (.is_normalized(object)) {
+    if (.is_image_space(object)) {
+      cat("+ node spatial boundaries: normalized to image space\n")
+    } else {
+      cat("+ node spatial boundaries: normalized to graph space\n")
+    }
+  } else {
+    cat("+ node spatial boundaries: raw graph\n")
+  }
+}
+
+#' @keywords internal
+.inform_image_coord_status <- function(object) {
+  if (.is_image_space(object)){
+    cat("+ image spatial boundaries: cropped to graph space\n")
+  } else {
+    cat("+ image spatial boundaries: raw image\n")
+  }
+}
+
+#-------------------------------------------------------------------------------
+# condition helper -- emit suppressible messages during operations
+#' @keywords internal
+.inform_node_boundaries <- function(nodes) {
+  bounds <- .node_boundaries(nodes)
+  rlang::inform(c(
+    "Node spatial boundaries:",
+    "i" = sprintf("x: [%s, %s] (cols)", bounds$x[1], bounds$x[2]),
+    "i" = sprintf("y: [%s, %s] (rows)", bounds$y[1], bounds$y[2])
+  ))
+}
+
+# condition helper -- emit suppressible messages during operations
+#' @keywords internal
+.inform_image_boundaries <- function(image) {
+  bounds <- .image_boundaries(image)
+  rlang::inform(c(
+    "Image spatial boundaries:",
+    "i" = sprintf("x: [%s, %s] (cols)", bounds$x[1], bounds$x[2]),
+    "i" = sprintf("y: [%s, %s] (rows)", bounds$y[1], bounds$y[2])
+  ))
+}
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.has_canvas <- function(gs) {
+  .hasSlot(gs, "canvas") && prod(dim(gs@canvas)) > 1
+}
+
+#' @keywords internal
+.has_image <- function(gs) {
+  .hasSlot(gs, "image") && prod(dim(gs@image)) > 1
+}
+
+#' @keywords internal
+.get_canvas <- function(gs) {
+  if (.has_canvas(gs)) gs@canvas else gs@image
+}
+
+#' @keywords internal
+.get_image <- function(gs) {
+  gs@image
+}
+
+#' @keywords internal
+.is_simplified <- function(gs){
+  gs@pars$is.simplified %||% TRUE
+}
+
+#' @keywords internal
+.is_normalized <- function(gs){
+  gs@pars$is.normalized %||% FALSE
+}
+
+#' @keywords internal
+.is_image_space <- function(gs){
+  gs@pars$image.space %||% FALSE
 }

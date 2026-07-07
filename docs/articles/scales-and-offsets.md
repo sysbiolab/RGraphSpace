@@ -2,12 +2,12 @@
 
   
 
-**Package**: RGraphSpace 1.4.1
+**Package**: RGraphSpace 1.4.2
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -31,9 +31,13 @@ how the geometries stay synchronized across a wide range values.
 
 ``` r
 
+#--- Load packages
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
+```
+
+``` r
 
 # Make a toy graph
 gtoy_star <- make_star(20, mode="out")
@@ -53,6 +57,19 @@ E(gtoy_star)$arrowType <- sample(c(1, -1), ecount(gtoy_star), replace = T)
 
 # Make a 'GraphSpace'
 gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
+#> Validating the 'igraph' object...
+#> Vertex attribute 'name' missing; assigning names... 
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+
+gs_star
+#> A GraphSpace-class object for:
+#> IGRAPH d4d0467 DN-- 20 19 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeColor (v/c), num_var (v/n), edgeLineColor (e/c), arrowType (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-1, 1] (cols)
+#> | y: [-1, 1] (rows)
 ```
 
 ## The problem: static vs. dynamic sizes
@@ -69,8 +86,9 @@ output resolution.
 
 ``` r
 
-ggplot() + 
-  geom_graphspace(data = gs_star) + 
+ggplot(gs_star) + 
+  geom_edgespace() +
+  geom_nodespace() + 
   theme_gspace_coords()
 ```
 
@@ -81,23 +99,22 @@ rescales these values into a target range (e.g., `c(2, 40)`). This
 provides all the advantages of the *ggplot2* ecosystem, such as flexible
 graphical scaling and coordinated legends.
 
-There is, however, a subtle trade-off to keep in mind. When node size is
-mapped via [`aes()`](https://ggplot2.tidyverse.org/reference/aes.html),
-*ggplot2* treats it as a fixed physical dimension (usually in `mm`) to
-maintain consistency with the legends. This means the node size will
-stay locked to the legends and will no longer scale proportionally if
-the plotting area is resized.
+There is, however, a subtle trade-off to keep in mind: *ggplot2* treats
+`size` as a fixed physical dimension (usually in `mm`) to maintain
+consistency with the legends. This means node size will stay locked to
+the legends and will no longer scale proportionally when the plotting
+area is resized.
 
 In the example below,
-[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
+[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
 handles the bulk of the edge adjustment, with the `arrow_offset`
 parameter providing additional manual fine-tuning.
 
 ``` r
 
-ggplot() + 
-  geom_graphspace(mapping = aes(size = num_var),
-    data = gs_star,  arrow_offset = 0.03) + 
+ggplot(gs_star) + 
+  geom_edgespace(arrow_offset = 0.03) +
+  geom_nodespace(mapping = aes(size = num_var)) + 
   scale_size(range = c(2, 40)) + 
   theme_gspace_coords() + 
   theme(legend.position = "none")
@@ -105,27 +122,14 @@ ggplot() +
 
 ![](scales-and-offsets_files/figure-html/Adjusting%20scales%20-%203-1.png)
 
-## Mapping independent layers
-
-While
-[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
-is convenient for quick, coordinated plots, it has a limitation: the
-`mapping` argument is reserved for node aesthetics. To overcome this
-limitation, we can call
-[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
-and
-[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
-as independent layers. This allows for total flexibility for mapping
-different variables to edges and nodes.
-
-However, because these layers are now independent, they no longer “talk”
-to each other by default. For example, if node sizes are modified
-through a scale transformation, the edge layer has no direct way to
-determine the resulting node boundaries needed for clipping
-calculations. To address this, *RGraphSpace* performs a post-processing
-synchronization step during plot construction, intercepting the
-calculated sizes from the node layer and “injecting” the corresponding
-clipping information into the edge layer.
+Because *ggplot2* layers are independent, they do not “talk” to each
+other by default. For example, if node sizes are modified through a
+scale transformation, the edge layer has no direct way to determine the
+resulting node boundaries needed for clipping calculations. To address
+this, *RGraphSpace* performs a post-processing synchronization step
+during plot construction, intercepting the calculated sizes from the
+node layer and “injecting” the corresponding clipping information into
+the edge layer.
 
 ``` r
 
@@ -145,13 +149,14 @@ ggplot(data = gs_star) +
 
 ![](scales-and-offsets_files/figure-html/Adjusting%20scales%20-%204-1.png)
 
-To provide a final note of customization, these scaling trade-offs only
+One last customization is worth noting: these scaling trade-offs only
 apply when `size` is passed as a node aesthetic mapping. Otherwise,
-*RGraphSpace* defaults to using `npc` units for all network elements.
+except for labels, *RGraphSpace* defaults to using `npc` units for all
+network elements.
 
 ## Session information
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
     #> Running under: Ubuntu 24.04.4 LTS
     #> 
@@ -174,20 +179,20 @@ apply when `size` is passed as a node aesthetic mapping. Otherwise,
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RGraphSpace_1.4.2 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
-    #>  [5] compiler_4.6.0     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
+    #>  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
     #>  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 
     #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          
     #> [17] labeling_0.4.3     generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4 
     #> [21] tibble_3.3.1       desc_1.4.3         bslib_0.11.0       pillar_1.11.1     
-    #> [25] RColorBrewer_1.1-3 rlang_1.2.0        cachem_1.1.0       xfun_0.58         
+    #> [25] RColorBrewer_1.1-3 rlang_1.2.0        cachem_1.1.0       xfun_0.59         
     #> [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
-    #> [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5    
-    #> [37] digest_0.6.39      grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0    
+    #> [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5    
+    #> [37] digest_0.6.39      grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0    
     #> [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       
     #> [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        
-    #> [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.31     tools_4.6.0       
+    #> [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.31     tools_4.6.1       
     #> [53] pkgconfig_2.0.3    htmltools_0.5.9

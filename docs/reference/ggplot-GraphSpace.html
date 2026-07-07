@@ -35,6 +35,13 @@ and arrow placement in GraphSpace-native geoms.
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -43,7 +50,7 @@ and arrow placement in GraphSpace-native geoms.
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -153,6 +160,7 @@ rendering.</p>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu"><a href="https://r.igraph.org/reference/layout_in_circle.html" class="external-link">layout_in_circle</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Validating the 'igraph' object...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Vertex attribute 'name' missing; assigning names... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring graph-level attributes: 'name', 'mode', 'center'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Creating a 'GraphSpace' object...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>

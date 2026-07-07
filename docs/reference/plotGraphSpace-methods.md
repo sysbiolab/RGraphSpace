@@ -12,16 +12,16 @@ plotGraphSpace(
   theme = "th0",
   xlab = "Graph coordinates 1",
   ylab = "Graph coordinates 2",
-  font.size = 1,
-  bg.color = "grey95",
-  add.labels = FALSE,
-  node.labels = NULL,
+  node.labels = FALSE,
   label.size = 3,
   label.color = "grey20",
   add.image = TRUE,
   raster = FALSE,
   dpi = 300,
-  dev = "cairo_png"
+  dev = "cairo_png",
+  add.labels = deprecated(),
+  font.size = deprecated(),
+  bg.color = deprecated()
 )
 
 # S4 method for class 'igraph'
@@ -47,9 +47,9 @@ plotGraphSpace(gs, ...)
 - theme:
 
   Name of a custom RGraphSpace theme. These themes (from 'th0' to 'th3')
-  consist of preconfigured ggplot settings, which can subsequently
+  consist of preconfigured ggplot settings, which can be subsequently
   refine using
-  [`ggplot2`](https://ggplot2.tidyverse.org/reference/ggplot2-package.html).
+  [`theme`](https://ggplot2.tidyverse.org/reference/theme.html).
 
 - xlab:
 
@@ -59,31 +59,22 @@ plotGraphSpace(gs, ...)
 
   The title for the 'y' axis of a 2D-image space.
 
-- font.size:
-
-  A single numeric value passed to ggplot themes.
-
-- bg.color:
-
-  A single color for background.
-
-- add.labels:
-
-  A logical value indicating whether to plot vertex labels.
-
 - node.labels:
 
-  A vector of vertex names to be highlighted in the graph space. This
-  argument overrides 'add.labels'.
+  Optional specification of node labels to display. If `FALSE`
+  (default), no labels are shown. If `TRUE`, labels are displayed for
+  all nodes. Otherwise, a character vector may be supplied to display
+  labels only for the specified nodes. Character values are matched
+  against the `nodeLabel` attribute.
 
 - label.size:
 
-  A size argument passed to
+  Font size passed to
   [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html).
 
 - label.color:
 
-  A color passed to
+  Color passed to
   [`geom_text`](https://ggplot2.tidyverse.org/reference/geom_text.html).
 
 - add.image:
@@ -106,6 +97,22 @@ plotGraphSpace(gs, ...)
 
   Device used in the
   [`rasterise`](https://rdrr.io/pkg/ggrastr/man/rasterise.html) call.
+
+- add.labels:
+
+  Deprecated. Use `node.labels` instead.
+
+- font.size:
+
+  Deprecated. Use
+  [`theme`](https://ggplot2.tidyverse.org/reference/theme.html)
+  customization instead.
+
+- bg.color:
+
+  Deprecated. Use
+  [`theme`](https://ggplot2.tidyverse.org/reference/theme.html)
+  customization instead.
 
 - ...:
 
@@ -133,8 +140,8 @@ library(igraph)
 data('gtoy1', package = 'RGraphSpace')
 
 # Generate a ggplot for gtoy1
-plotGraphSpace(gtoy1)
-#> Normalizing node coordinates to graph space...
+plotGraphSpace(gtoy1, node.labels = TRUE)
+
 
 
 # Create a star graph
@@ -150,6 +157,7 @@ gs_star <- GraphSpace(gtoy_star)
 #> Validating the 'igraph' object...
 #> Vertex attributes 'x' and 'y' missing; computing layout...
 #> Vertex attribute 'name' missing; assigning names... 
+#> Ignoring graph-level attributes: 'name', 'loops'
 #> Creating a 'GraphSpace' object...
 
 # Normalize graph coordinates

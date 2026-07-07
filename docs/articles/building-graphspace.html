@@ -27,6 +27,13 @@
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style>
 </head>
 <body>
@@ -37,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,7 +97,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-06-24</h4>
+            <h4 data-toc-skip class="date">2026-07-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/building-graphspace.Rmd" class="external-link"><code>vignettes/articles/building-graphspace.Rmd</code></a></small>
       <div class="d-none name"><code>building-graphspace.Rmd</code></div>
@@ -98,10 +105,10 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.4.1</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.4.2</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.1"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.2"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -128,13 +135,14 @@ respectively. <em>RGraphSpace</em> will require that all vertices have
 <span></span>
 <span><span class="co"># Check whether the graph is directed or not</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/is_directed.html" class="external-link">is_directed</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span></span>
-<span><span class="co">## [1] TRUE</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="co"># Check graph size</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/gorder.html" class="external-link">vcount</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span></span>
-<span><span class="co">## [1] 5</span></span>
+<span><span class="co">#&gt; [1] 5</span></span>
+<span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/gsize.html" class="external-link">ecount</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span></span>
-<span><span class="co">## [1] 4</span></span>
+<span><span class="co">#&gt; [1] 4</span></span>
 <span></span>
 <span><span class="co"># Assign 'x' and 'y' coordinates to each vertex;</span></span>
 <span><span class="co"># ..this can be an arbitrary unit in (-Inf, +Inf)</span></span>
@@ -149,7 +157,7 @@ respectively. <em>RGraphSpace</em> will require that all vertices have
 <p><img src="building-graphspace_files/figure-html/Toy%20igraph%20-%202-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the 'gtoy1' using RGraphSpace</span></span>
-<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, add.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="building-graphspace_files/figure-html/Toy%20igraph%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
@@ -178,10 +186,10 @@ respectively. <em>RGraphSpace</em> will require that all vertices have
 <span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeLineColor</span> <span class="op">&lt;-</span> <span class="st">"grey20"</span></span>
 <span></span>
 <span><span class="co"># Node labels ('NA' will omit labels)</span></span>
-<span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeLabel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V3"</span>, <span class="st">"V4"</span>, <span class="st">"V5"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeLabel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V3"</span>, <span class="st">"V4"</span>, <span class="cn">NA</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Node label size (in pts)</span></span>
-<span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeLabelSize</span> <span class="op">&lt;-</span> <span class="fl">8</span></span>
+<span><span class="co"># Node label size (in mm)</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeLabelSize</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
 <span></span>
 <span><span class="co"># Node label color (Hexadecimal or color name)</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeLabelColor</span> <span class="op">&lt;-</span> <span class="st">"black"</span></span>
@@ -239,7 +247,7 @@ straightforward call simply passes an <code>igraph</code> directly to
 the wrapper <code><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace()</a></code> function.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the updated 'gtoy1' using RGraphSpace</span></span>
-<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, add.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="building-graphspace_files/figure-html/A%20shortcut%20for%20RGraphSpace-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
 </div>
@@ -256,19 +264,31 @@ geoms.</p>
 <span><span class="co"># Create a GraphSpace object</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Validating the 'igraph' object...</span></span>
+<span><span class="co">#&gt; Ignoring graph-level attributes: 'name', 'mode', 'center'</span></span>
 <span><span class="co">#&gt; Creating a 'GraphSpace' object...</span></span>
 <span></span>
 <span><span class="co"># Normalize the coordinates</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Normalizing node coordinates to graph space...</span></span></code></pre></div>
+<span><span class="co">#&gt; Normalizing node coordinates to graph space...</span></span>
+<span></span>
+<span><span class="va">gs</span></span>
+<span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
+<span><span class="co">#&gt; IGRAPH b2723e1 DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
+<span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
+<span><span class="co">#&gt; | nodeColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c), nodeAlpha</span></span>
+<span><span class="co">#&gt; | (v/n), edgeLineType (e/c), edgeLineColor (e/c), edgeLineWidth (e/n),</span></span>
+<span><span class="co">#&gt; | arrowType (e/n), edgeAlpha (e/n)</span></span>
+<span><span class="co">#&gt; + node spatial boundaries: normalized to graph space</span></span>
+<span><span class="co">#&gt; | x: [-8, 2] -&gt; [0, 1] (cols)</span></span>
+<span><span class="co">#&gt; | y: [-4, 2] -&gt; [0, 1] (rows)</span></span></code></pre></div>
 <p>The resulting <code>GraphSpace</code> integrates with
 <em>ggplot2</em>, allowing graph-specific geoms to be combined with
 standard <em>ggplot2</em> layers.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, label <span class="op">=</span> <span class="va">nodeLabel</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">nodeLabel</span><span class="op">)</span>, label_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="building-graphspace_files/figure-html/Using%20geoms%20-%202-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>For detailed integration with the <em>ggplot2</em> ecosystem and
@@ -279,7 +299,7 @@ and <a href="interoperability.html"><em>interoperability with ggraph
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code><span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
+<pre><code><span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -302,22 +322,22 @@ and <a href="interoperability.html"><em>interoperability with ggraph
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] igraph_2.3.3      RGraphSpace_1.4.2 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       </span></span>
-<span><span class="co">#&gt;  [5] compiler_4.6.0     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       </span></span>
+<span><span class="co">#&gt;  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       </span></span>
 <span><span class="co">#&gt;  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 </span></span>
 <span><span class="co">#&gt; [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          </span></span>
 <span><span class="co">#&gt; [17] generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1      </span></span>
 <span><span class="co">#&gt; [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3</span></span>
-<span><span class="co">#&gt; [25] rlang_1.2.0        cachem_1.1.0       xfun_0.58          fs_2.1.0          </span></span>
+<span><span class="co">#&gt; [25] rlang_1.2.0        cachem_1.1.0       xfun_0.59          fs_2.1.0          </span></span>
 <span><span class="co">#&gt; [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         </span></span>
-<span><span class="co">#&gt; [33] pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5     digest_0.6.39     </span></span>
-<span><span class="co">#&gt; [37] grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5   </span></span>
+<span><span class="co">#&gt; [33] pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     </span></span>
+<span><span class="co">#&gt; [37] grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0     lifecycle_1.0.5   </span></span>
 <span><span class="co">#&gt; [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    </span></span>
 <span><span class="co">#&gt; [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   </span></span>
-<span><span class="co">#&gt; [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3   </span></span>
+<span><span class="co">#&gt; [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   </span></span>
 <span><span class="co">#&gt; [53] htmltools_0.5.9</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

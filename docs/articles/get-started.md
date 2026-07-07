@@ -1,7 +1,7 @@
 # Getting Started with RGraphSpace
 
   
-**Package**: RGraphSpace 1.4.1
+**Package**: RGraphSpace 1.4.2
 
 ## Introductory vignettes
 
@@ -32,6 +32,12 @@ describes the trade-offs involved in synchronizing node and edge layers.
 [](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md)
 
 ###### Fine-tuning Scales
+
+[![](cards/curved_edges.png)](https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.md)
+
+[](https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.md)
+
+###### Curved Edges and Loops
 
 ------------------------------------------------------------------------
 

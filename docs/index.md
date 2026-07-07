@@ -25,19 +25,17 @@ and edges to a unit space. The package implements new *ggplot2*
 prototypes ([Wickham 2016](#ref-wickham)), optimized for representing
 large networks. This enables extensive customization of aesthetics and
 visual style, including interoperability with *ggraph* and *tidygraph*
-workflows ([Pedersen 2024](#ref-pedersen)). Three specialized `geoms`
+workflows ([Pedersen 2024](#ref-pedersen)). Two specialized `geoms`
 translate graph data into geometric layers.
 
-1.  **[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)**:
-    A high-level convenience layer that processes both nodes and edges
-    in a single call.
-2.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
-    Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic
-    mappings, modified to inform the edge layer on node states.
-3.  **[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)**:
-    Handles the relational data between nodes. Inherits `GeomSegment`
-    aesthetic mappings; unlike standard segments, it is “node-aware” and
-    dynamically calibrates start and end points to connected nodes.
+1.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
+    Renders network nodes. Extends `GeomPoint` aesthetic mappings and
+    exposes node state information to the edge layer.
+2.  **[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)**:
+    Renders the relationships between nodes. Extends `GeomSegment`
+    aesthetic mappings; unlike standard segments, it is node-aware and
+    dynamically adjusts start and end points based on node position and
+    size.
 
 ### Citation
 

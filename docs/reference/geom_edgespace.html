@@ -25,6 +25,13 @@ in GeomEdgeSpace."><style>
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -33,7 +40,7 @@ in GeomEdgeSpace."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,8 +103,11 @@ in <a href="GeomEdgeSpace.html">GeomEdgeSpace</a>.</p>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show.legend <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  inherit.aes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  arrow_size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  arrow_size <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  arrow_offset <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  curve <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  parallel_spread <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  loop_direction <span class="op">=</span> <span class="st">"adaptive"</span>,</span>
 <span>  lineend <span class="op">=</span> <span class="st">"butt"</span>,</span>
 <span>  linejoin <span class="op">=</span> <span class="st">"mitre"</span>,</span>
 <span>  raster <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -158,22 +168,40 @@ aesthetics defined in <code>mapping</code>.</p></dd>
 
 <dt id="arg-arrow-size">arrow_size<a class="anchor" aria-label="anchor" href="#arg-arrow-size"></a></dt>
 <dd><p>Numeric scaling factor controlling arrowhead
-geometry (see 'drawing' section).</p></dd>
+geometry (see 'details').</p></dd>
 
 
 <dt id="arg-arrow-offset">arrow_offset<a class="anchor" aria-label="anchor" href="#arg-arrow-offset"></a></dt>
 <dd><p>Numeric value controlling the base offset of arrows
-at edge endpoints (see 'drawing' section).</p></dd>
+at edge endpoints (see 'details').</p></dd>
+
+
+<dt id="arg-curve">curve<a class="anchor" aria-label="anchor" href="#arg-curve"></a></dt>
+<dd><p>Numeric. Controls edge curvature, as a fraction of edge
+length. Non-zero values bow the edge into a smooth curve, and the sign
+controls which side it bows toward. Ignored for loops and parallel edges
+(see 'details').</p></dd>
+
+
+<dt id="arg-parallel-spread">parallel_spread<a class="anchor" aria-label="anchor" href="#arg-parallel-spread"></a></dt>
+<dd><p>Controls the lateral spread of parallel edges and
+self-loops. Ignored for simple non-loop edges (see 'details').</p></dd>
+
+
+<dt id="arg-loop-direction">loop_direction<a class="anchor" aria-label="anchor" href="#arg-loop-direction"></a></dt>
+<dd><p>Controls how self-loops are oriented around their
+node. Options: <code>'adaptive'</code> (default), <code>'opposite'</code>, and an
+angle in degrees (see 'details').</p></dd>
 
 
 <dt id="arg-lineend">lineend<a class="anchor" aria-label="anchor" href="#arg-lineend"></a></dt>
-<dd><p>Line end style (round, butt, square). Supplied for
-compatibility with <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
+<dd><p>Line end style (<code>'round'</code>, <code>'butt'</code>,
+<code>'square'</code>). Supplied for compatibility with <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
 
 
 <dt id="arg-linejoin">linejoin<a class="anchor" aria-label="anchor" href="#arg-linejoin"></a></dt>
-<dd><p>Line join style (round, mitre, bevel). Supplied for
-compatibility with <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
+<dd><p>Line join style (<code>'round'</code>, <code>'mitre'</code>,
+<code>'bevel'</code>). Supplied for compatibility with <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
 
 
 <dt id="arg-raster">raster<a class="anchor" aria-label="anchor" href="#arg-raster"></a></dt>
@@ -186,8 +214,8 @@ Rasterization support is based on <code><a href="https://rdrr.io/pkg/ggrastr/man
 
 
 <dt id="arg-dev">dev<a class="anchor" aria-label="anchor" href="#arg-dev"></a></dt>
-<dd><p>Character. Rasterization backend. One of <code>"cairo"</code>,
-<code>"ragg"</code>, <code>"ragg_png"</code>, or <code>"cairo_png"</code>.</p></dd>
+<dd><p>Character. Rasterization backend. One of <code>'cairo'</code>,
+<code>'ragg'</code>, <code>'ragg_png'</code>, or <code>'cairo_png'</code>.</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
@@ -203,11 +231,33 @@ Rasterization support is based on <code><a href="https://rdrr.io/pkg/ggrastr/man
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><strong>arrow_size</strong> is a numeric scaling factor controlling arrowhead geometry.
-The value is interpreted in the same numeric space as line width (<code>lwd</code>),
-ensuring consistent scaling between edge strokes and arrowheads.</p>
+The value is interpreted in the same numeric space as line width (<code>lwd</code>).</p>
 <p><strong>arrow_offset</strong> is an additive term that offsets arrow endpoints
 uniformly in graph space and is bounded by the edge length, in NPC units.</p>
 <p>Arrowhead types are specified in the <a href="GraphSpace-methods.html">GraphSpace</a> constructor.</p>
+<p><strong>curve</strong> bows an edge through a control point displaced perpendicular
+to the edge, by <code>curve</code> times the edge length. <code>curve = 0</code>
+(default) renders a straight edge. Typical visible values range from
+about 0.1 to 0.4; sign sets which side the edge bows toward.</p>
+<p><strong>parallel_spread</strong> controls the fan opening for parallel edges,
+reciprocal <code>A-&gt;B</code>/<code>B-&gt;A</code> pairs, and self-loops – anything
+where multiple edges share the same vertex pair. <code>curve</code> has no
+effect on these edges; <code>parallel_spread</code> governs both their
+curvature magnitude and how far apart they fan. A value of <code>0</code>
+collapses all edges in a group onto the same position; increasing
+values progressively open the fan. Self-loops behave the same way:
+a single loop uses <code>parallel_spread</code> to set its own size, and
+multiple loops at the same node fan out accordingly. A built-in
+minimum, tied to <code>arrow_size</code> and node size, keeps small
+<code>parallel_spread</code> values from producing a loop whose arrowhead
+looks skewed against its own curvature.</p>
+<p><strong>loop_direction</strong> determines where self-loops sit relative to their node.
+<code>"adaptive"</code> (default) points each loop in the direction that faces
+away from the graph's centroid. <code>"opposite"</code> is a two-sided
+arrangement: loops are split into two groups placed above and below the
+node. A numeric angle (in degrees) places all loops at a fixed direction
+regardless of their node's position in the layout. When node position data
+is unavailable, <code>"adaptive"</code> silently falls back to <code>"opposite"</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="aesthetics">Aesthetics<a class="anchor" aria-label="anchor" href="#aesthetics"></a></h2>
@@ -217,7 +267,7 @@ uniformly in graph space and is bounded by the edge length, in NPC units.</p>
 <p><code>geom_edgespace()</code> understands <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a> aesthetics.</p>
 <p>If these aesthetics are not explicitly provided in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>, they
 are automatically retrieved from the <a href="GraphSpace-methods.html">GraphSpace</a> object.</p>
-<table class="table table"><tr><td><strong><code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code></strong></td><td>Required (automatically supplied).</td></tr><tr><td><code>colour</code></td><td>Edge colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>linetype</code></td><td>Edge line type (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>linewidth</code></td><td>Edge line width (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>Required aesthetics (<code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code>, ...)
+<table class="table table"><tr><td><strong><code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code></strong></td><td>Required; automatically supplied.</td></tr><tr><td><code>colour</code></td><td>Edge colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>linetype</code></td><td>Edge line type (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>linewidth</code></td><td>Edge line width (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>Required aesthetics (<code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code>)
 are supplied from the <a href="GraphSpace-methods.html">GraphSpace</a> object and do not need to be
 manually mapped.</p>
 <p>Additional parameters can be passed to control fixed values for the layer.
@@ -226,21 +276,24 @@ For example: <code>colour = "grey"</code>, <code>linetype = 2</code>, <code>line
 arguments (see <em>details</em>).</p>
     </div>
     <div class="section level2">
-    <h2 id="integration-with-ggraph">Integration with ggraph<a class="anchor" aria-label="anchor" href="#integration-with-ggraph"></a></h2>
+    <h2 id="label-aesthetics">Label aesthetics<a class="anchor" aria-label="anchor" href="#label-aesthetics"></a></h2>
 
 
 
-<p><code>geom_edgespace</code> is compatible with the <code>ggraph</code> methods.
-When used within a <code>ggraph()</code> call, the default <code>edgespace_handler()</code>
-automatically:</p><ul><li><p>Identifies the current <code>layout_ggraph</code>.</p></li>
-<li><p>Extracts the <code>x</code> and <code>y</code> coordinates calculated by <code>ggraph</code>.</p></li>
-<li><p>Reconstructs a temporary <code>GraphSpace</code> object to inject spatial
-metadata and user-chosen <code>ggraph</code> layout.</p></li>
-</ul></div>
+<p>When <code>label</code> is mapped via <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>, a text label is drawn at
+the visual midpoint of each edge. Labels follow the rendered edge geometry:
+the chord midpoint for straight edges, the Bezier midpoint for curved edges,
+and the loop apex for self-loops. Edges with <code>NA</code> labels are silently
+skipped.</p>
+<p>The <code>label_colour</code> aesthetic defaults to the edge <code>colour</code>, and
+<code>label_alpha</code> defaults to the edge <code>alpha</code>. All other
+<code>label_*</code> aesthetics default to <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>
+when not set.</p>
+<table class="table table"><tr><td><strong><code>label</code></strong></td><td>Required to activate label rendering.</td></tr><tr><td><code>label_colour</code></td><td>Label text colour (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_alpha</code></td><td>Transparency (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_fill</code></td><td>Background colour (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_size</code></td><td>Font size (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_angle</code></td><td>Rotation angle (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_hjust</code></td><td>Horizontal justification (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_vjust</code></td><td>Vertical justification (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lwd</code></td><td>Border linewidth (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lty</code></td><td>Border linetype (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_family</code></td><td>Font family (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_fontface</code></td><td>Font face (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lineheight</code></td><td>Line height (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr></table></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="GraphSpace-methods.html">GraphSpace</a>, <a href="geom_nodespace.html">geom_nodespace</a>, <a href="geom_graphspace.html">geom_graphspace</a>,
-<a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></p></div>
+<a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>, <a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></p></div>
     </div>
 
     <div class="section level2">
@@ -255,13 +308,14 @@ metadata and user-chosen <code>ggraph</code> layout.</p></li>
 <span class="r-in"><span><span class="co"># Create a GraphSpace object</span></span></span>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Validating the 'igraph' object...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring graph-level attributes: 'name', 'mode', 'center'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Creating a 'GraphSpace' object...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu">geom_edgespace</span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu">geom_edgespace</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

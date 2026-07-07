@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -58,11 +58,11 @@ if(!require("RedeR", quietly = TRUE)){
 ```{r System requirements, eval=FALSE, message=FALSE}
 library("RedeR")
 RedPort(checkJava=TRUE)
-# RedeR will need Java Runtime Environment (Java >=11)
-# Checking Java version installed on this system...
-# openjdk version "21.0.10" 2026-01-20
-# OpenJDK Runtime Environment (build 21.0.10+7-Ubuntu-124.04)
-# OpenJDK 64-Bit Server VM (build 21.0.10+7-Ubuntu-124.04, mixed mode, sharing)
+#> RedeR will need Java Runtime Environment (Java >=11)
+#> Checking Java version installed on this system...
+#> openjdk version "21.0.10" 2026-01-20
+#> OpenJDK Runtime Environment (build 21.0.10+7-Ubuntu-124.04)
+#> OpenJDK 64-Bit Server VM (build 21.0.10+7-Ubuntu-124.04, mixed mode, sharing)
 
 # Note: The output may vary, but ensure your system meets the minimum requirement.
 ```
@@ -77,7 +77,7 @@ library("RGraphSpace")
 library("RedeR")
 library("igraph")
 data(gtoy1, package = "RGraphSpace")
-plotGraphSpace(gtoy1, add.labels = TRUE)
+plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
 The main advantage of this interoperability comes from the "round-trip" workflow. You can send a graph space to *RedeR*, use its force-directed algorithms to manually refine the layout, and then pull that updated geometry back into **R** for further analysis and plotting with *ggplot2*.
@@ -89,24 +89,24 @@ The following steps demonstrate the launch, manipulation, and retrieval process:
 startRedeR()
 resetRedeR()
 
-# Send 'gtoy1' to the RedeR interface
+# Send 'gtoy1' to the Java interface
 addGraphToRedeR(gtoy1, unit="npc")
 relaxRedeR()
 
-# Fetch 'gtoy1' with a fresh layout
+# Fetch 'gtoy1' with an updated layout
 gtoy1_2 <- getGraphFromRedeR(unit="npc")
 
 # Check the round trip...
-plotGraphSpace(gtoy1_2, add.labels = TRUE)
+plotGraphSpace(gtoy1_2, node.labels = TRUE)
 
-## Note that for the round trip, shapes and line types are
-## partially compatible between ggplot2 and RedeR.
+## Note: fonts, shapes, and line types are only partially
+## compatible between the two interfaces.
 
 # ...alternatively, just update the graph layout
 gtoy1_2 <- updateLayoutFromRedeR(g=gtoy1)
 
-# ...check the updated layout
-plotGraphSpace(gtoy1_2, add.labels = TRUE)
+# ...and check the result
+plotGraphSpace(gtoy1_2, node.labels = TRUE)
 ```
 
 ```{r toygraph, echo=FALSE, out.width = '95%', purl=FALSE}
@@ -173,11 +173,11 @@ relaxRedeR(p1 = 10, p2 = 50, p5 = 1)
 gtoy2_2 <- updateLayoutFromRedeR(g = gs_graph(gs_gtoy2))
 
 # ...check the updated layout
-plotGraphSpace(gtoy2_2, add.labels = FALSE)
+plotGraphSpace(gtoy2_2, node.labels = FALSE)
 ```
 
 ```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# p <- plotGraphSpace(gtoy2_2, add.labels = FALSE)
+# p <- plotGraphSpace(gtoy2_2, node.labels = FALSE)
 # ggsave(filename = "./vignettes/cards/interactive.png", height=4, width=4,
 #   units="in", device="png", dpi=200, plot = p)
 ```

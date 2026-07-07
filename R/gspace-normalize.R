@@ -109,7 +109,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
       rlang::warn("'mar' should be in [0, 0.5]")
       mar <- max(0, min(mar, 0.5))
     }
-    if(image.space && !gs@pars$image.layer){
+    if(image.space && !.has_image(gs)){
       rlang::warn(
         message = c(
           "!" = "'image.space = TRUE' requested, but no image is available.",
@@ -136,12 +136,6 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   }
 )
 
-.has_image <- function(gs) {
-  image.layer <- gs@pars$image.layer %||% FALSE
-  img <- gs_image(gs)
-  !is.null(img) && prod(dim(img)) > 1 && image.layer
-}
-
 .normalizeGraphSpace.graph <- function(gs, mar, flip.x, flip.y, 
   rotate.xy, verbose){
   
@@ -164,7 +158,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   rotate.xy, flip.v, flip.h, verbose){
   
   nodes <- .get_nodes(gs@graph)
-  image <- gs_image(gs)
+  image <- .get_image(gs)
   
   if(verbose) rlang::inform("Normalizing node coordinates to image space...")
   
@@ -182,8 +176,8 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   l_temp <- .fitImageNodes(nodes, image, mar)
   
-  gs@image <- l_temp$image
   gs@nodes <- l_temp$nodes
+  gs@canvas <- l_temp$image
   gs@pars$is.normalized <- TRUE
   gs@pars$image.space <- TRUE
   gs@pars$flip.v <- flip.v
@@ -546,7 +540,7 @@ setMethod("cropGraphSpace", "GraphSpace",
 
 #-------------------------------------------------------------------------------
 .crop_gspace <- function(gs, crop.coord) {
-  if (gs@pars$image.layer) {
+  if (.has_image(gs)) {
     gs <- .crop_gspace_image(gs, crop.coord)
   } else {
     gs <- .crop_gspace_graph(gs, crop.coord)
@@ -560,13 +554,14 @@ setMethod("cropGraphSpace", "GraphSpace",
   xmin <- crop.coord[1]; xmax <- crop.coord[2]
   ymin <- crop.coord[3]; ymax <- crop.coord[4]
   
-  # Filter nodes within the crop window
+  # Crop nodes
   nodes <- gs@nodes
   cx <- nodes$x >= xmin & nodes$x <= xmax
   cy <- nodes$y >= ymin & nodes$y <= ymax
   nodes <- nodes[which(cx & cy), ]
+  gs@nodes <- nodes
   
-  gs <- .crop_update_graph(gs, nodes)
+  gs <- .update_crop_graph(gs, nodes)
   
   return(gs)
   
@@ -579,11 +574,13 @@ setMethod("cropGraphSpace", "GraphSpace",
   ymin <- crop.coord[3]; ymax <- crop.coord[4]
   
   # Filter nodes within the crop window
+  # Node: crop required normalized image
   nodes <- gs@nodes
+  canvas <- gs@canvas
   
   # Compute image crop indices
-  nrow_mat <- nrow(gs@image)
-  ncol_mat <- ncol(gs@image)
+  nrow_mat <- nrow(canvas)
+  ncol_mat <- ncol(canvas)
   col_s <- max(1L, ceiling(xmin * ncol_mat))
   col_e <- min(ncol_mat, floor(xmax * ncol_mat))
   row_s <- max(1L, ceiling((1 - ymax) * nrow_mat))
@@ -606,9 +603,8 @@ setMethod("cropGraphSpace", "GraphSpace",
   nodes <- nodes[which(cx & cy), ]
   
   # Crop image
-  gs@image <- gs@image[row_s:row_e, col_s:col_e, drop = FALSE]
-  
-  gs <- .crop_update_graph(gs, nodes)
+  gs@canvas <- canvas[row_s:row_e, col_s:col_e, drop = FALSE]
+  gs <- .update_crop_graph(gs, nodes)
   
   return(gs)
   
@@ -620,24 +616,29 @@ setMethod("cropGraphSpace", "GraphSpace",
 }
 
 #-------------------------------------------------------------------------------
-.crop_update_graph <- function(gs, nodes) {
+.update_crop_graph <- function(gs, nodes) {
   
   # Remove edges whose endpoints are no longer in the node set
-  idx <- (gs@edges$name1 %in% nodes$name) &
-    (gs@edges$name2 %in% nodes$name)
-  gs@edges <- gs@edges[idx, ]
+  edges <- gs@edges
+  idx <- (edges$name1 %in% nodes$name) &
+    (edges$name2 %in% nodes$name)
+  edges <- edges[idx, ]
+  
+  # Re-map vertex index
+  nodes$vertex <- seq_len(nrow(nodes))
+  edges$vertex1 <- match(edges$name1, nodes$name)
+  edges$vertex2 <- match(edges$name2, nodes$name)
+  rownames(edges) <- NULL
+  gs@edges <- edges
+  gs@nodes <- nodes
   
   # Update graph vertices
-  idx <- V(gs@graph)$name %in% rownames(nodes)
+  idx <- V(gs@graph)$name %in% nodes$name
   gs@graph <- igraph::delete_vertices(gs@graph, which(!idx))
-  idx <- match(rownames(nodes), V(gs@graph)$name)
-  V(gs@graph)$x[idx] <- nodes$x
-  V(gs@graph)$y[idx] <- nodes$y
-  gs@nodes <- nodes
   
   # Update fdata
   if (nrow(gs@fdata) > 0) {
-    keep <- rownames(nodes)[rownames(nodes) %in% rownames(gs@fdata)]
+    keep <- nodes$name[nodes$name %in% rownames(gs@fdata)]
     gs@fdata <- gs@fdata[keep, , drop = FALSE]
   }
   

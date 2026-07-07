@@ -5,15 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods — GeomGraphSpace"><meta name="description" content="GeomGraphSpace is the underlying ggproto object
-used by geom_graphspace to draw node and edge elements in a
-graph layout.
-This geom is designed for network diagrams, where graph attributes
-are often already in their final form (e.g., hex colors)."><meta property="og:description" content="GeomGraphSpace is the underlying ggproto object
-used by geom_graphspace to draw node and edge elements in a
-graph layout.
-This geom is designed for network diagrams, where graph attributes
-are often already in their final form (e.g., hex colors)."><style>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods — GeomGraphSpace"><meta name="description" content="
+The underlying ggproto object used by the deprecated
+geom_graphspace. Use GeomEdgeSpace and
+GeomNodeSpace instead."><meta property="og:description" content="
+The underlying ggproto object used by the deprecated
+geom_graphspace. Use GeomEdgeSpace and
+GeomNodeSpace instead."><style>
   .contents h1, .page-header h1 {
     font-size: 2.2rem !important;
     font-weight: 700 !important;
@@ -23,6 +21,13 @@ are often already in their final form (e.g., hex colors)."><style>
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -31,7 +36,7 @@ are often already in their final form (e.g., hex colors)."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,11 +80,10 @@ are often already in their final form (e.g., hex colors)."><style>
     </div>
 
     <div class="ref-description section level2">
-    <p><code>GeomGraphSpace</code> is the underlying <a href="https://ggplot2.tidyverse.org/reference/ggproto.html" class="external-link">ggproto</a> object
-used by <a href="geom_graphspace.html">geom_graphspace</a> to draw node and edge elements in a
-graph layout.</p>
-<p>This geom is designed for network diagrams, where graph attributes
-are often already in their final form (e.g., hex colors).</p>
+    <p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a></p>
+<p>The underlying <a href="https://ggplot2.tidyverse.org/reference/ggproto.html" class="external-link">ggproto</a> object used by the deprecated
+<a href="geom_graphspace.html">geom_graphspace</a>. Use <a href="GeomEdgeSpace.html">GeomEdgeSpace</a> and
+<a href="GeomNodeSpace.html">GeomNodeSpace</a> instead.</p>
     </div>
 
     <div class="section level2">
@@ -88,15 +92,8 @@ are often already in their final form (e.g., hex colors).</p>
     </div>
 
     <div class="section level2">
-    <h2 id="aesthetics">Aesthetics<a class="anchor" aria-label="anchor" href="#aesthetics"></a></h2>
-
-
-
-<p><code>GeomGraphSpace</code> understands ggplot2's conventions for point-like geoms.</p>
-    </div>
-    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="geom_graphspace.html">geom_graphspace</a>, <a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></p></div>
+    <div class="dont-index"><p><a href="GeomEdgeSpace.html">GeomEdgeSpace</a>, <a href="GeomNodeSpace.html">GeomNodeSpace</a></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

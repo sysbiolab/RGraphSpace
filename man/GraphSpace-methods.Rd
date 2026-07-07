@@ -6,7 +6,7 @@
 \alias{GraphSpace,data.frame-method}
 \title{Create a GraphSpace object}
 \usage{
-\S4method{GraphSpace}{ANY}(g, layout = NULL, verbose = TRUE, ...)
+\S4method{GraphSpace}{ANY}(g, layout = NULL, simplify = TRUE, verbose = TRUE, ...)
 
 \S4method{GraphSpace}{data.frame}(g, verbose = TRUE, ...)
 }
@@ -24,7 +24,11 @@ vertex attributes. For graphs requiring edge definitions, use the
 \item{layout}{An optional numeric matrix with two columns for \code{x} and
 \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.}
 
-\item{verbose}{A logical value. If \code{TRUE}, displays detailed messages.}
+\item{simplify}{A logical value. If \code{TRUE} (default), removes loops and
+multiple edges (see \link[igraph]{simplify}).}
+
+\item{verbose}{A logical value. If \code{TRUE} (default), displays detailed
+messages.}
 
 \item{...}{Additional arguments passed to the \code{GraphSpace} constructor.}
 }

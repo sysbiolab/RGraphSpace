@@ -23,6 +23,13 @@ size) or any aesthetics supported by GeomPoint."><style>
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -31,7 +38,7 @@ size) or any aesthetics supported by GeomPoint."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -159,8 +166,8 @@ Rasterization support is based on <code><a href="https://rdrr.io/pkg/ggrastr/man
 
 
 <dt id="arg-dev">dev<a class="anchor" aria-label="anchor" href="#arg-dev"></a></dt>
-<dd><p>Character. Rasterization backend. One of <code>"cairo"</code>,
-<code>"ragg"</code>, <code>"ragg_png"</code>, or <code>"cairo_png"</code>.</p></dd>
+<dd><p>Character. Rasterization backend. One of <code>'cairo'</code>,
+<code>'ragg'</code>, <code>'ragg_png'</code>, or <code>'cairo_png'</code>.</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
@@ -191,27 +198,28 @@ viewport changes.</p></li>
 <p><code>geom_nodespace()</code> understands <a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a> aesthetics.</p>
 <p>If these aesthetics are not explicitly provided in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>, they
 are automatically retrieved from the <a href="GraphSpace-methods.html">GraphSpace</a> object.</p>
-<table class="table table"><tr><td><strong><code>x</code>, <code>y</code></strong></td><td>Required (automatically supplied).</td></tr><tr><td><code>fill</code></td><td>Node interior colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>colour</code></td><td>Node border colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>shape</code></td><td>Node shape (see <a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a> and <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>size</code></td><td>Node size (see <em>drawing</em> section and <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>stroke</code></td><td>Node line width (see <a href="https://ggplot2.tidyverse.org/reference/gg_par.html" class="external-link">gg_par</a> and <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>Required aesthetics <code>x</code> and <code>y</code> are supplied from the
-<a href="GraphSpace-methods.html">GraphSpace</a> object and do not need to be manually mapped.</p>
+<table class="table table"><tr><td><strong><code>x</code>, <code>y</code></strong></td><td>Node coordinates (required; automatically supplied).</td></tr><tr><td><code>fill</code></td><td>Node interior colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>colour</code></td><td>Node border colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>shape</code></td><td>Node shape (see <a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a> and <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>size</code></td><td>Node size (see <em>drawing</em> section and <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>stroke</code></td><td>Node line width (see <a href="https://ggplot2.tidyverse.org/reference/gg_par.html" class="external-link">gg_par</a> and <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>Required aesthetics <strong><code>x</code></strong> and <strong><code>y</code></strong> are supplied
+from the <a href="GraphSpace-methods.html">GraphSpace</a> object and do not need to be manually mapped.</p>
 <p>Additional parameters can be passed to control fixed values for the layer.
 For example: <code>fill = "red"</code>, <code>stroke = 3</code>, <code>alpha = 0.5</code>, or <code>shape = 21</code>.</p>
     </div>
     <div class="section level2">
-    <h2 id="integration-with-ggraph">Integration with ggraph<a class="anchor" aria-label="anchor" href="#integration-with-ggraph"></a></h2>
+    <h2 id="label-aesthetics">Label aesthetics<a class="anchor" aria-label="anchor" href="#label-aesthetics"></a></h2>
 
 
 
-<p><code>geom_nodespace</code> is compatible with the <code>ggraph</code> methods.
-When used within a <code>ggraph()</code> call, the default <code>nodespace_handler()</code>
-automatically:</p><ul><li><p>Identifies the current <code>layout_ggraph</code>.</p></li>
-<li><p>Extracts the <code>x</code> and <code>y</code> coordinates calculated by <code>ggraph</code>.</p></li>
-<li><p>Reconstructs a temporary <code>GraphSpace</code> object to inject spatial
-metadata and user-chosen <code>ggraph</code> layout.</p></li>
-</ul></div>
+<p>When <code>label</code> is mapped via <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>, a text label is drawn at
+each node's position using <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>, rendered on
+top of the node glyph. Nodes with <code>NA</code> labels are silently skipped.</p>
+<p>The <code>label_size</code> and <code>label_colour</code> aesthetics are automatically
+retrieved from the <a href="GraphSpace-methods.html">GraphSpace</a> object when not explicitly provided
+in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>. All other <code>label_*</code> aesthetics default to
+<code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code> when not set.</p>
+<table class="table table"><tr><td><strong><code>label</code></strong></td><td>Required to activate label rendering.</td></tr><tr><td><code>label_size</code></td><td>Font size (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_colour</code></td><td>Label colour (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_alpha</code></td><td>Label transparency (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_angle</code></td><td>Rotation angle (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_hjust</code></td><td>Horizontal justification (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_vjust</code></td><td>Vertical justification (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_family</code></td><td>Font family (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_fontface</code></td><td>Font face (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr><tr><td><code>label_lineheight</code></td><td>Line height (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></code>).</td></tr></table></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="GraphSpace-methods.html">GraphSpace</a>, <a href="geom_edgespace.html">geom_edgespace</a>, <a href="geom_graphspace.html">geom_graphspace</a>,
-<a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></p></div>
+<a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a>, <a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></p></div>
     </div>
 
     <div class="section level2">
@@ -235,6 +243,7 @@ metadata and user-chosen <code>ggraph</code> layout.</p></li>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu"><a href="https://r.igraph.org/reference/layout_in_circle.html" class="external-link">layout_in_circle</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Validating the 'igraph' object...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Vertex attribute 'name' missing; assigning names... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring graph-level attributes: 'name', 'mode', 'center'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Creating a 'GraphSpace' object...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
@@ -244,12 +253,11 @@ metadata and user-chosen <code>ggraph</code> layout.</p></li>
 <span class="r-in"><span><span class="co"># ggplot2 default behavior: size is translated </span></span></span>
 <span class="r-in"><span><span class="co"># to absolute units (mm) via 'scale_size()'.</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs</span>, arrow_offset <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu">geom_nodespace</span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">nodeSize</span>, fill <span class="op">=</span> <span class="va">user_var2</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">12</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span>arrow_offset <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span><span class="fu">geom_nodespace</span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">nodeSize</span>, fill <span class="op">=</span> <span class="va">user_var2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">12</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># Example 2: Nodes scaling with the viewport</span></span></span>
 <span class="r-in"><span><span class="co"># When 'size' is passed as a node attribute, </span></span></span>
@@ -257,10 +265,16 @@ metadata and user-chosen <code>ggraph</code> layout.</p></li>
 <span class="r-in"><span><span class="co"># interpreted as a percentage of the plotting </span></span></span>
 <span class="r-in"><span><span class="co"># area and translated to NPC units.</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span></span>
-<span class="r-in"><span><span class="fu"><a href="geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">gs</span>, arrow_offset <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span><span class="fu">geom_nodespace</span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">user_var2</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span></span>
+<span class="r-in"><span><span class="fu"><a href="geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span>arrow_offset <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span><span class="fu">geom_nodespace</span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">user_var2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># Example 3: Node labels</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu">geom_nodespace</span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">nodeLabel</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

@@ -147,17 +147,11 @@ gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
 # Replace an entire vertex attribute
 gs_vertex_attr(gs, "nodeSize") <- 10
 
-# Alternative syntax using `$` accessor
-gs_vertex_attr(gs)$nodeSize <- 10
-
 # Access a specific edge attribute
 gs_edge_attr(gs, "edgeLineColor")
 
 # Replace an entire edge attribute
 gs_edge_attr(gs, "edgeLineWidth") <- 1
-
-# Alternative syntax using `$` for edge attributes
-gs_edge_attr(gs)$edgeLineWidth <- 3
 
 # Add an image and rescale graph coordinates to image space
 # Images may be provided as a raster or numeric matrix

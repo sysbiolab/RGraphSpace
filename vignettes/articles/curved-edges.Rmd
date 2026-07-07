@@ -1,0 +1,145 @@
+---
+title: "Curved Edges, Parallel Edges, and Self-Loops"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Curved Edges, Parallel Edges, and Self-Loops}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+```{r Check required version}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.4.2"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
+## Overview
+
+The `geom_edgespace()` function can render edges as curves through its `curve` argument. Curved edges are especially useful when a pair of nodes is connected by more than one edge, or when an edge starts and ends at the same node (a self-loop).
+
+## Setting up the example data
+
+We build a small toy graph containing ordinary edges, parallel edges, and self-loops. A self-loop is an edge whose two endpoints are the same vertex, whereas parallel edges are edges that connect the same pair of vertices. The graph is wrapped into `GraphSpace` objects with `simplify = FALSE`, since parallel edges and self-loops are otherwise removed by default when a graph is validated.
+
+```{r Load packages, eval=TRUE, message=FALSE}
+# Load packages
+library("RGraphSpace")
+library("igraph")
+library("ggplot2")
+```
+
+```{r Setting up the example data, eval=TRUE, message=TRUE}
+# Toy graph topology: hub + ring
+n <- 10; hub <- 5
+g <- make_ring(n, directed = TRUE) %u% 
+  make_star(n, center = hub, mode = "out")
+  
+# Add self-loops
+g <- add_edges(g, rep(c(2,4,6,8,10,10), each = 2))
+
+# Add parallel edges
+g <- add_edges(g, c(6,5, 6,5, 5,4))
+
+# Set node and edge colors via igraph attributes directly, rather than
+# through a geom, as these values will be fixed (not data-driven)
+V(g)$nodeColor <- "steelblue1"
+E(g)$edgeLineColor <- "purple"
+E(g)$label <- seq_len(ecount(g))
+  
+# Build a GraphSpace with a circular layout; simplify = FALSE keeps the
+# parallel edges and loops intact
+gs_toy <- GraphSpace(g, layout = layout_in_circle(g), simplify = FALSE)
+
+# Rescale coordinates to a standard range 
+# (optional, but recommended for consistent plotting)
+gs_toy <- normalizeGraphSpace(gs_toy)
+
+gs_toy
+```
+
+## Curved edges
+
+By default, simple edges are drawn as straight lines.
+
+```{r Straight edges, eval=TRUE, message=TRUE}
+ggplot(gs_toy) +
+  geom_edgespace(aes(label = label), label_size = 2) +
+  geom_nodespace(aes(label = nodeLabel), label_size = 3) +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+Increasing `curve` bows each simple edge through a control point displaced perpendicular to it, by `curve` times the edge length. Arrowheads, labels, and node-clipping offsets automatically follow the local curve direction, so they stay correctly oriented as the edge bends.
+
+```{r Gentle curve, eval=TRUE, message=TRUE}
+ggplot(gs_toy) +
+  geom_edgespace(aes(label = label), label_size = 2, curve = 0.2) +
+  geom_nodespace(aes(label = nodeLabel), label_size = 3) +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+The sign of `curve` sets which side the simple edge bows toward.
+
+```{r Curve sign flips the side, eval=TRUE, message=TRUE}
+ggplot(gs_toy) +
+  geom_edgespace(aes(label = label), label_size = 2, curve = -0.2) +
+  geom_nodespace(aes(label = nodeLabel), label_size = 3) +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+## Parallel edges and self-loops
+
+`curve` applies uniformly to simple edges in a layer, which is not enough on its own to keep parallel edges apart, or to make a self-loop visible (a loop has no length for `curve` to be a fraction of). *RGraphSpace* handles both automatically: edges that share the same pair of nodes fan out, and self-loops are drawn with their own geometry -- all without any extra arguments.
+
+The amount of fan-out is controlled by a separate argument, `parallel_spread` (default `1`), independently of `curve`. Lower values keep parallel edges and loops closer together; higher values spread them further apart.
+
+```{r Curve and parallel_spread together, eval=TRUE, message=TRUE}
+ggplot(gs_toy) +
+  geom_edgespace(aes(label = label), label_size = 2,
+    curve = 0.3, parallel_spread = 2) +
+  geom_nodespace(aes(label = nodeLabel), label_size = 3) +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+## Orienting self-loops
+
+Self-loops also accept a `loop_direction` argument, which controls where a loop sits relative to its node, independently of `parallel_spread`'s control over its size. The default, `"adaptive"`, points each loop away from the graph's centroid, so loops naturally expand toward less crowded regions of the layout. A single numeric value fixes every loop at the same angle (in degrees), regardless of node position.
+
+```{r Adaptive loop direction, eval=TRUE, message=TRUE}
+ggplot(gs_toy) +
+  geom_edgespace(aes(label = label), label_size = 2, 
+    curve = 0.3, parallel_spread = 2, loop_direction = 90) +
+  geom_nodespace(aes(label = nodeLabel), label_size = 2) +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+
+```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# p <- ggplot(gs_toy) +
+#   geom_edgespace(aes(label = label), label_size = 2,
+#     curve = 0.3, parallel_spread = 2) +
+#   geom_nodespace(aes(label = nodeLabel), label_size = 3) +
+#   theme_gspace_coords(is_norm = TRUE)
+# ggsave(filename = "./vignettes/articles/cards/curved_edges.png", height=4, width=4,
+#   units="in", device="png", dpi=200, plot = p)
+```
+
+## Session information
+
+```{r Session information}
+sessionInfo()
+```

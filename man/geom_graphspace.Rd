@@ -13,8 +13,11 @@ geom_graphspace(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = FALSE,
-  arrow_size = 1,
+  arrow_size = 0.5,
   arrow_offset = 0.01,
+  curve = 0,
+  edge_spread = 0.2,
+  loop_direction = "adaptive",
   raster = FALSE,
   dpi = NULL,
   dev = "cairo",
@@ -22,183 +25,30 @@ geom_graphspace(
 )
 }
 \arguments{
-\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}.
-These mappings override global aesthetics and are not inherited
-from the top-level plot.}
+\item{mapping, data, stat, position, na.rm, show.legend, inherit.aes}{See \code{\link{geom_edgespace}} and \code{\link{geom_nodespace}}.}
 
-\item{data}{A \link{GraphSpace} object.}
+\item{...}{Additional arguments passed to the underlying geoms.}
 
-\item{stat}{The statistical transformation to use on the data.
-Defaults to \code{identity}.}
+\item{arrow_size, arrow_offset, curve, edge_spread, loop_direction}{See \code{\link{geom_edgespace}}.}
 
-\item{position}{Position adjustment, either as a string or
-the result of a call to a position adjustment function.}
-
-\item{...}{Additional parameters passed to the underlying
-drawing function in \link{GeomGraphSpace}.}
-
-\item{na.rm}{Logical. Should missing values be removed?
-Defaults to \code{FALSE}.}
-
-\item{show.legend}{Logical or a named logical vector indicating
-whether this layer should be included in legends.}
-
-\item{inherit.aes}{Logical. If \code{FALSE} (default), the layer will use
-aesthetics defined in \code{mapping}.}
-
-\item{arrow_size}{Numeric scaling factor controlling arrowhead
-geometry (see 'drawing' section).}
-
-\item{arrow_offset}{Numeric value controlling the base offset of arrows
-at edge endpoints (see 'drawing' section).}
-
-\item{raster}{Logical. Should node glyphs be rasterized?
-Rasterization support is based on \code{\link[ggrastr]{rasterise}}.}
-
-\item{dpi}{Numeric. Rasterization resolution.}
-
-\item{dev}{Character. Rasterization backend. One of \code{"cairo"},
-\code{"ragg"}, \code{"ragg_png"}, or \code{"cairo_png"}.}
-
-\item{scale}{Numeric. Rasterization scaling factor
-(see \code{\link[ggrastr]{rasterise}}).}
+\item{raster, dpi, dev, scale}{See \code{\link{geom_nodespace}}.}
 }
 \value{
-A ggplot2 layer that renders node glyphs defined by
-\link{GeomGraphSpace}.
+A ggplot2 layer.
 }
 \description{
-Constructor for \link{GeomGraphSpace} ggproto objects.
+\lifecycle{deprecated}
 
-A wrapper around \link[ggplot2]{geom_point} that enables direct use of
-node attributes stored in \link{GraphSpace} objects as aesthetics.
-
-This geom is designed to map node-level attributes (e.g., \code{fill},
-\code{size}) or any aesthetics supported by \link[ggplot2]{GeomPoint}.
+Deprecated as of v1.4.2. Use
+\code{\link{geom_edgespace}() + \link{geom_nodespace}()} instead. These
+geoms support all current features including node-edge synchronization,
+labels, multiple edges, and self-loops.
 }
-\section{Aesthetics for node drawing}{
-
-
-Nodes are drawn in the main layer of \code{geom_graphspace()}, which
-understands \link[ggplot2]{geom_point} aesthetics.
-
-If these aesthetics are not explicitly provided in \code{aes()}, they
-are automatically retrieved from the \link{GraphSpace} object.
-
-\tabular{ll}{
-\strong{\code{x}, \code{y}, \code{vertex}} \tab
-Required (automatically supplied).\cr
-\code{fill} \tab Node interior colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{colour} \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{shape} \tab Node shape (see \link{points} and \link[ggplot2]{aes_linetype_size_shape}).\cr
-\code{size} \tab Node size (see \emph{drawing} section and \link[ggplot2]{aes_linetype_size_shape}).\cr
-\code{stroke} \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
-}
-
-Required aesthetics \code{x}, \code{y}, and \code{vertex} are supplied from
-the \link{GraphSpace} object and do not need to be manually mapped.
-
-Additional parameters can be passed to control fixed values for the layer.
-For example: \code{fill = "red"}, \code{stroke = 3}, \code{alpha = 0.5}, or \code{shape = 21}.
-
-The interpretation of \strong{\code{size}} depends on how it is provided:
-\itemize{
-\item \strong{As an aesthetic}: When mapped within \code{aes()}, \code{size}
-follows the behavior of \link[ggplot2]{geom_point}, using absolute
-units to ensure consistency with the plot legends.
-\item \strong{As a parameter}: When set outside \code{aes()}, \code{size} is
-treated as a percentage of the viewport (\code{[0, 100]}), scaling
-in \code{npc} units. This allows nodes to resize dynamically with
-viewport changes.
-}
-}
-
-\section{Edge context-aware parameters}{
-
-
-These parameters control the edge appearance. If not explicitly provided,
-they are automatically retrieved from the \link{GraphSpace} object.
-They can be a single value or a vector matching the number of edges:
-
-\tabular{ll}{
-\code{edge_colour} \tab Node border colour.\cr
-\code{edge_linetype} \tab Edge line type.\cr
-\code{edge_linewidth} \tab Edge line width.\cr
-\code{edge_alpha} \tab Edge transparency.
-}
-}
-
-\section{Edge global parameters}{
-
-
-These parameters apply globally to all edges in the layer:
-
-\tabular{ll}{
-\code{arrow_size} \tab Arrow scaling factor (default = 1).\cr
-\code{arrow_offset} \tab Arrow offset from nodes (default = 0.01).\cr
-\code{arrow_lineend} \tab Line end style (see \link[grid]{gpar}).\cr
-\code{arrow_linejoin} \tab Line join style (see \link[grid]{gpar}).
-}
-
-\strong{arrow_size} is a numeric scaling factor controlling arrowhead geometry.
-The value is interpreted in the same numeric space as line width (\code{lwd}),
-ensuring consistent scaling between edge strokes and arrowheads.
-
-\strong{arrow_offset} is an additive term that offsets arrow endpoints
-uniformly in graph space and is bounded by the edge length, in NPC units.
-
-Arrowhead types are specified in the \link{GraphSpace} constructor.
-}
-
-\examples{
-library(RGraphSpace)
-library(igraph)
-library(ggplot2)
-
-# Make a demo igraph
-gtoy1 <- make_star(15, mode="out")
-
-# Set some node attributes
-V(gtoy1)$nodeSize <- runif(vcount(gtoy1), 1, 20)
-V(gtoy1)$nodeColor <- rainbow(vcount(gtoy1))
-
-# Set some variables
-V(gtoy1)$user_var1 <- runif(vcount(gtoy1), 1, 3)^3
-V(gtoy1)$user_var2 <-  rep(c(1, 2, 3), each = 5)
-
-# Create a GraphSpace object
-gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
-
-\dontrun{
-
-# Example 1: Nodes scaling with the legend
-# When 'size' is mapped inside aes(), it follows
-# ggplot2 default behavior: size is translated 
-# to absolute units (mm) via 'scale_size()'.
-
-ggplot() + 
-  geom_graphspace(
-  mapping = aes(size = nodeSize, fill = user_var2), 
-  data = gs, arrow_offset = 0.01) + 
-  scale_size(range = c(1, 12)) + 
-  theme(aspect.ratio = 1)
-  
-# Example 2: Nodes scaling with the viewport
-# When 'size' is passed as a node attribute, 
-# inherited from the igraph object, it is
-# interpreted as a percentage of the plotting 
-# area and translated to NPC units.
-
-ggplot() +
-  geom_graphspace(mapping = aes(fill = user_var2), 
-  data = gs, arrow_offset = 0.01) + 
-  theme(aspect.ratio = 1)
-  
-}
-
+\note{
+This function is deprecated. Replace \code{geom_graphspace(data = gs)}
+with \code{geom_edgespace() + geom_nodespace()} in your \code{ggplot(gs)}
+call.
 }
 \seealso{
-\link{GraphSpace}, \link{geom_nodespace}, \link{geom_edgespace},
-\link[ggplot2]{geom_point}
+\link{geom_nodespace}, \link{geom_edgespace}
 }

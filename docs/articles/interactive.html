@@ -27,6 +27,13 @@
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style>
 </head>
 <body>
@@ -37,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,7 +97,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-06-24</h4>
+            <h4 data-toc-skip class="date">2026-07-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/interactive.Rmd" class="external-link"><code>vignettes/articles/interactive.Rmd</code></a></small>
       <div class="d-none name"><code>interactive.Rmd</code></div>
@@ -98,10 +105,10 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.4.1</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.4.2</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.1"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.2"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -138,11 +145,11 @@ installed Java version directly from R:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://doi.org/10.1186/gb-2012-13-4-r29" class="external-link">"RedeR"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/RedPort.html" class="external-link">RedPort</a></span><span class="op">(</span>checkJava<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co"># RedeR will need Java Runtime Environment (Java &gt;=11)</span></span>
-<span><span class="co"># Checking Java version installed on this system...</span></span>
-<span><span class="co"># openjdk version "21.0.10" 2026-01-20</span></span>
-<span><span class="co"># OpenJDK Runtime Environment (build 21.0.10+7-Ubuntu-124.04)</span></span>
-<span><span class="co"># OpenJDK 64-Bit Server VM (build 21.0.10+7-Ubuntu-124.04, mixed mode, sharing)</span></span>
+<span><span class="co">#&gt; RedeR will need Java Runtime Environment (Java &gt;=11)</span></span>
+<span><span class="co">#&gt; Checking Java version installed on this system...</span></span>
+<span><span class="co">#&gt; openjdk version "21.0.10" 2026-01-20</span></span>
+<span><span class="co">#&gt; OpenJDK Runtime Environment (build 21.0.10+7-Ubuntu-124.04)</span></span>
+<span><span class="co">#&gt; OpenJDK 64-Bit Server VM (build 21.0.10+7-Ubuntu-124.04, mixed mode, sharing)</span></span>
 <span></span>
 <span><span class="co"># Note: The output may vary, but ensure your system meets the minimum requirement.</span></span></code></pre></div>
 </div>
@@ -158,7 +165,7 @@ the network dynamically.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://doi.org/10.1186/gb-2012-13-4-r29" class="external-link">"RedeR"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">gtoy1</span>, package <span class="op">=</span> <span class="st">"RGraphSpace"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, add.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="interactive_files/figure-html/Plot%20gtoy1-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>The main advantage of this interoperability comes from the
 “round-trip” workflow. You can send a graph space to <em>RedeR</em>, use
@@ -172,24 +179,24 @@ retrieval process:</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/startRedeR.html" class="external-link">startRedeR</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/resetRedeR.html" class="external-link">resetRedeR</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Send 'gtoy1' to the RedeR interface</span></span>
+<span><span class="co"># Send 'gtoy1' to the Java interface</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/addGraphToRedeR.html" class="external-link">addGraphToRedeR</a></span><span class="op">(</span><span class="va">gtoy1</span>, unit<span class="op">=</span><span class="st">"npc"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/relaxRedeR.html" class="external-link">relaxRedeR</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Fetch 'gtoy1' with a fresh layout</span></span>
+<span><span class="co"># Fetch 'gtoy1' with an updated layout</span></span>
 <span><span class="va">gtoy1_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/getGraphFromRedeR.html" class="external-link">getGraphFromRedeR</a></span><span class="op">(</span>unit<span class="op">=</span><span class="st">"npc"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Check the round trip...</span></span>
-<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1_2</span>, add.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1_2</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Note that for the round trip, shapes and line types are</span></span>
-<span><span class="co">## partially compatible between ggplot2 and RedeR.</span></span>
+<span><span class="co">## Note: fonts, shapes, and line types are only partially</span></span>
+<span><span class="co">## compatible between the two interfaces.</span></span>
 <span></span>
 <span><span class="co"># ...alternatively, just update the graph layout</span></span>
 <span><span class="va">gtoy1_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/updateLayoutFromRedeR.html" class="external-link">updateLayoutFromRedeR</a></span><span class="op">(</span>g<span class="op">=</span><span class="va">gtoy1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># ...check the updated layout</span></span>
-<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1_2</span>, add.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># ...and check the result</span></span>
+<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1_2</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figs_intro/toy_reder.png" class="r-plt" alt="" width="95%" style="display: block; margin: auto;"></p>
 <hr>
 <p><br></p>
@@ -256,14 +263,14 @@ adjustments.</p>
 <span><span class="va">gtoy2_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/updateLayoutFromRedeR.html" class="external-link">updateLayoutFromRedeR</a></span><span class="op">(</span>g <span class="op">=</span> <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_graph</a></span><span class="op">(</span><span class="va">gs_gtoy2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># ...check the updated layout</span></span>
-<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy2_2</span>, add.labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy2_2</span>, node.labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cards/interactive.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code><span><span class="co">#&gt; R version 4.6.0 (2026-04-24)</span></span>
+<pre><code><span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -286,23 +293,23 @@ adjustments.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] igraph_2.3.2      RedeR_3.8.0       RGraphSpace_1.4.1 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] igraph_2.3.3      RedeR_3.8.0       RGraphSpace_1.4.2 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    </span></span>
-<span><span class="co">#&gt;  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.0        </span></span>
+<span><span class="co">#&gt;  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.1        </span></span>
 <span><span class="co">#&gt;  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-5      </span></span>
 <span><span class="co">#&gt; [13] ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 </span></span>
 <span><span class="co">#&gt; [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        tidygraph_1.3.1   </span></span>
-<span><span class="co">#&gt; [21] withr_3.0.2        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        </span></span>
-<span><span class="co">#&gt; [25] ggbeeswarm_0.7.3   tools_4.6.0        dplyr_1.2.1        vctrs_0.7.3       </span></span>
+<span><span class="co">#&gt; [21] withr_3.0.3        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        </span></span>
+<span><span class="co">#&gt; [25] ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1        vctrs_0.7.3       </span></span>
 <span><span class="co">#&gt; [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 </span></span>
 <span><span class="co">#&gt; [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    </span></span>
 <span><span class="co">#&gt; [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      </span></span>
-<span><span class="co">#&gt; [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.58         </span></span>
-<span><span class="co">#&gt; [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.18.0  knitr_1.51        </span></span>
+<span><span class="co">#&gt; [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         </span></span>
+<span><span class="co">#&gt; [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        </span></span>
 <span><span class="co">#&gt; [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    </span></span>
-<span><span class="co">#&gt; [53] compiler_4.6.0     S7_0.2.2</span></span></code></pre>
+<span><span class="co">#&gt; [53] compiler_4.6.1     S7_0.2.2</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

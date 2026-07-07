@@ -1,6 +1,6 @@
 # Extending ggplot2 Grammar to High-Dimensional Data
 
-**Package**: RGraphSpace 1.4.1  
+**Package**: RGraphSpace 1.4.2  
 
 ## Overview
 
@@ -48,7 +48,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -159,23 +159,26 @@ section).
 
 # Create a GraphSpace from 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "embedding", reduction = "umap")
-
-# Seurat object converted to GraphSpace:
-# ℹ space=embedding, layer=default, features=13714, samples=2638, reduction="umap"
-# Node spatial boundaries:
-# ℹ x: [-9, 13] (cols)
-# ℹ y: [-9, 14] (rows)
+#> Seurat object converted to GraphSpace:
+#> ℹ space=embedding, layer=default, features=13714, samples=2638, reduction="umap"
+#> Node spatial boundaries:
+#> ℹ x: [-9, 13] (cols)
+#> ℹ y: [-9, 14] (rows)
 ```
 
 ``` r
 
 gs
-# A GraphSpace-class object for:
-# IGRAPH 1393201 UN-- 2638 0 -- 
-# + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), orig.ident (v/x),
-# | nCount_RNA (v/n), nFeature_RNA (v/n), seurat_annotations (v/x), percent.mt (v/n),
-# | RNA_snn_res.0.5 (v/x), seurat_clusters (v/x), arrowType (e/n)
-# + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)
+#> A GraphSpace-class object for:
+#> IGRAPH 42d1248 UN-- 2638 0 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), orig.ident
+#> | (v/x), nCount_RNA (v/n), nFeature_RNA (v/n), seurat_annotations (v/x), percent.mt
+#> | (v/n), RNA_snn_res.0.5 (v/x), seurat_clusters (v/x), arrowType (e/n)
+#> + features: 13714 (AL627309.1, AP006222.2, RP11-206L10.2, RP11-206L10.9, ...)
+#> + samples: 2638 (AAACATACAACCAC, AAACATTGAGCTAC, ...)
+#> + node spatial boundaries: raw graph
+#> | x: [-9, 13] (cols)
+#> | y: [-9, 14] (rows)
 ```
 
 With the `GraphSpace` object ready, we reproduce the same plots using
@@ -205,7 +208,7 @@ p4 <- ggplot(gs) +
   theme_minimal() + theme(aspect.ratio = 1)
 p4
 
-# Plot side-by-side
+## Plot side-by-side
 # p3 + p4 
 ```
 
@@ -255,7 +258,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
 
 ## Session information
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
     #> Running under: Ubuntu 24.04.4 LTS
     #> 
@@ -280,12 +283,12 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #> other attached packages:
     #>  [1] patchwork_1.3.2           stxBrain.SeuratData_0.1.2
     #>  [3] ssHippo.SeuratData_3.1.4  pbmc3k.SeuratData_3.1.4  
-    #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.0             
+    #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.1             
     #>  [7] SeuratObject_5.4.0        sp_2.2-1                 
-    #>  [9] RGraphSpace_1.4.1         ggplot2_4.0.3            
+    #>  [9] RGraphSpace_1.4.2         ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):
-    #>   [1] RColorBrewer_1.1-3     rstudioapi_0.18.0      jsonlite_2.0.0        
+    #>   [1] RColorBrewer_1.1-3     rstudioapi_0.19.0      jsonlite_2.0.0        
     #>   [4] magrittr_2.0.5         spatstat.utils_3.2-3   ggbeeswarm_0.7.3      
     #>   [7] farver_2.1.2           rmarkdown_2.31         fs_2.1.0              
     #>  [10] ragg_1.5.2             vctrs_0.7.3            ROCR_1.0-12           
@@ -294,37 +297,37 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [19] bslib_0.11.0           htmlwidgets_1.6.4      desc_1.4.3            
     #>  [22] ica_1.0-3              fontawesome_0.5.3      plyr_1.8.9            
     #>  [25] plotly_4.12.0          zoo_1.8-15             cachem_1.1.0          
-    #>  [28] igraph_2.3.2           mime_0.13              lifecycle_1.0.5       
+    #>  [28] igraph_2.3.3           mime_0.13              lifecycle_1.0.5       
     #>  [31] pkgconfig_2.0.3        Matrix_1.7-5           R6_2.6.1              
     #>  [34] fastmap_1.2.0          fitdistrplus_1.2-6     future_1.70.0         
-    #>  [37] shiny_1.13.0           digest_0.6.39          tensor_1.5.1          
+    #>  [37] shiny_1.14.0           digest_0.6.39          tensor_1.5.1          
     #>  [40] RSpectra_0.16-2        irlba_2.3.7            textshaping_1.0.5     
     #>  [43] progressr_0.19.0       spatstat.sparse_3.2-0  httr_1.4.8            
-    #>  [46] polyclip_1.10-7        abind_1.4-8            compiler_4.6.0        
-    #>  [49] withr_3.0.2            S7_0.2.2               fastDummies_1.7.6     
-    #>  [52] MASS_7.3-65            rappdirs_0.3.4         tools_4.6.0           
+    #>  [46] polyclip_1.10-7        abind_1.4-8            compiler_4.6.1        
+    #>  [49] withr_3.0.3            S7_0.2.2               fastDummies_1.7.6     
+    #>  [52] MASS_7.3-65            rappdirs_0.3.4         tools_4.6.1           
     #>  [55] vipor_0.4.7            lmtest_0.9-40          otel_0.2.0            
     #>  [58] beeswarm_0.4.0         httpuv_1.6.17          future.apply_1.20.2   
     #>  [61] goftest_1.2-3          glue_1.8.1             nlme_3.1-169          
-    #>  [64] promises_1.5.0         grid_4.6.0             Rtsne_0.17            
+    #>  [64] promises_1.5.0         grid_4.6.1             Rtsne_0.17            
     #>  [67] cluster_2.1.8.2        reshape2_1.4.5         generics_0.1.4        
     #>  [70] gtable_0.3.6           spatstat.data_3.1-9    tidyr_1.3.2           
     #>  [73] data.table_1.18.4      tidygraph_1.3.1        spatstat.geom_3.8-1   
     #>  [76] RcppAnnoy_0.0.23       ggrepel_0.9.8          RANN_2.6.2            
     #>  [79] pillar_1.11.1          stringr_1.6.0          spam_2.11-4           
-    #>  [82] RcppHNSW_0.7.0         later_1.4.8            splines_4.6.0         
+    #>  [82] RcppHNSW_0.7.0         later_1.4.8            splines_4.6.1         
     #>  [85] dplyr_1.2.1            lattice_0.22-9         survival_3.8-6        
     #>  [88] deldir_2.0-4           tidyselect_1.2.1       miniUI_0.1.2          
-    #>  [91] pbapply_1.7-4          knitr_1.51             gridExtra_2.3         
-    #>  [94] scattermore_1.2        xfun_0.58              matrixStats_1.5.0     
+    #>  [91] pbapply_1.7-4          knitr_1.51             gridExtra_2.3.1       
+    #>  [94] scattermore_1.2        xfun_0.59              matrixStats_1.5.0     
     #>  [97] stringi_1.8.7          lazyeval_0.2.3         yaml_2.3.12           
     #> [100] evaluate_1.0.5         codetools_0.2-20       tibble_3.3.1          
     #> [103] cli_3.6.6              uwot_0.2.4             xtable_1.8-8          
     #> [106] reticulate_1.46.0      systemfonts_1.3.2      jquerylib_0.1.4       
     #> [109] Rcpp_1.1.1-1.1         globals_0.19.1         spatstat.random_3.5-0 
     #> [112] png_0.1-9              ggrastr_1.0.2          spatstat.univar_3.2-0 
-    #> [115] parallel_4.6.0         pkgdown_2.2.0          dotCall64_1.2         
-    #> [118] listenv_0.10.1         viridisLite_0.4.3      scales_1.4.0          
+    #> [115] parallel_4.6.1         pkgdown_2.2.0          dotCall64_1.2         
+    #> [118] listenv_1.0.0          viridisLite_0.4.3      scales_1.4.0          
     #> [121] ggridges_0.5.7         crayon_1.5.3           purrr_1.2.2           
     #> [124] rlang_1.2.0            cowplot_1.2.0
 

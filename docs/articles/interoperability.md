@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.4.1
+**Package**: RGraphSpace 1.4.2
 
 ## Overview
 
@@ -46,7 +46,7 @@ are installed.
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -122,7 +122,7 @@ how these packages integrate different types of input data.
 gs <- GraphSpace(igraph_cities)
 ggplot(gs) +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", arrow_size = 0.5) +
+  geom_edgespace(color = "grey40", curve = 0.1) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
   theme_gray() +
@@ -131,8 +131,9 @@ ggplot(gs) +
 # Option 2: Passing an 'igraph' object to RGraphSpace geoms
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", arrow_size = 0.5, data = igraph_cities) +
-  geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = igraph_cities) +
+  geom_edgespace(color = "grey40", curve = 0.1, data = igraph_cities) +
+  geom_nodespace(aes(fill = Cities, size = `Population (M)`), 
+    data = igraph_cities) +
   scale_size(range = c(3, 9)) +
   inject_nodespace() + 
   theme_gray() +
@@ -142,7 +143,7 @@ ggplot() +
 gr <- as_tbl_graph(igraph_cities)
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", arrow_size = 0.5, data = gr) +
+  geom_edgespace(color = "grey40", curve = 0.1, data = gr) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = gr) +
   scale_size(range = c(3, 9)) +
   inject_nodespace() + 
@@ -153,7 +154,7 @@ ggplot() +
 gr <- as_tbl_graph(igraph_cities)
 ggraph(graph = gr, x= gr$x, y = gr$y) +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", arrow_size = 0.5) +
+  geom_edgespace(color = "grey40", curve = 0.1) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
   inject_nodespace() +
@@ -174,7 +175,7 @@ must be called explicitly to synchronize clipping offsets.
 
 ## Session information
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
     #> Running under: Ubuntu 24.04.4 LTS
     #> 
@@ -198,26 +199,26 @@ must be called explicitly to synchronize clipping offsets.
     #> 
     #> other attached packages:
     #> [1] ggraph_2.2.2      tidygraph_1.3.1   geometry_0.5.2    maps_3.4.3       
-    #> [5] sf_1.1-1          igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
+    #> [5] sf_1.1-1          igraph_2.3.3      RGraphSpace_1.4.2 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.58          bslib_0.11.0      
+    #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.59          bslib_0.11.0      
     #>  [5] htmlwidgets_1.6.4  ggrepel_0.9.8      lattice_0.22-9     vctrs_0.7.3       
-    #>  [9] tools_4.6.0        generics_0.1.4     tibble_3.3.1       proxy_0.4-29      
+    #>  [9] tools_4.6.1        generics_0.1.4     tibble_3.3.1       proxy_0.4-29      
     #> [13] pkgconfig_2.0.3    Matrix_1.7-5       KernSmooth_2.23-26 RColorBrewer_1.1-3
-    #> [17] S7_0.2.2           desc_1.4.3         lifecycle_1.0.5    compiler_4.6.0    
+    #> [17] S7_0.2.2           desc_1.4.3         lifecycle_1.0.5    compiler_4.6.1    
     #> [21] farver_2.1.2       textshaping_1.0.5  ggforce_0.5.0      fontawesome_0.5.3 
-    #> [25] graphlayouts_1.2.3 vipor_0.4.7        htmltools_0.5.9    class_7.3-23      
+    #> [25] graphlayouts_1.2.4 vipor_0.4.7        htmltools_0.5.9    class_7.3-23      
     #> [29] sass_0.4.10        yaml_2.3.12        pillar_1.11.1      pkgdown_2.2.0     
     #> [33] jquerylib_0.1.4    tidyr_1.3.2        MASS_7.3-65        classInt_0.4-11   
     #> [37] cachem_1.1.0       viridis_0.6.5      abind_1.4-8        tidyselect_1.2.1  
     #> [41] digest_0.6.39      dplyr_1.2.1        purrr_1.2.2        magic_1.6-1       
-    #> [45] polyclip_1.10-7    fastmap_1.2.0      grid_4.6.0         cli_3.6.6         
-    #> [49] magrittr_2.0.5     e1071_1.7-17       withr_3.0.2        scales_1.4.0      
-    #> [53] ggbeeswarm_0.7.3   rmarkdown_2.31     otel_0.2.0         gridExtra_2.3     
+    #> [45] polyclip_1.10-7    fastmap_1.2.0      grid_4.6.1         cli_3.6.6         
+    #> [49] magrittr_2.0.5     e1071_1.7-17       withr_3.0.3        scales_1.4.0      
+    #> [53] ggbeeswarm_0.7.3   rmarkdown_2.31     otel_0.2.0         gridExtra_2.3.1   
     #> [57] ragg_1.5.2         memoise_2.0.1      evaluate_1.0.5     knitr_1.51        
     #> [61] ggrastr_1.0.2      viridisLite_0.4.3  rlang_1.2.0        Rcpp_1.1.1-1.1    
-    #> [65] glue_1.8.1         DBI_1.3.0          tweenr_2.0.3       rstudioapi_0.18.0 
+    #> [65] glue_1.8.1         DBI_1.3.0          tweenr_2.0.3       rstudioapi_0.19.0 
     #> [69] jsonlite_2.0.0     R6_2.6.1           systemfonts_1.3.2  fs_2.1.0          
     #> [73] units_1.0-1
 

@@ -3,6 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   articles/building-graphspace: building-graphspace.html
+  articles/curved-edges: curved-edges.html
   articles/customizing-aesthetics: customizing-aesthetics.html
   articles/get-started: get-started.html
   articles/high-dimensional: high-dimensional.html
@@ -13,7 +14,7 @@ articles:
   RGraphSpace: RGraphSpace.html
   articles/scales-and-offsets: scales-and-offsets.html
   articles/spatial-data: spatial-data.html
-last_built: 2026-06-24T13:40Z
+last_built: 2026-07-07T02:23Z
 urls:
   reference: https://sysbiolab.github.io/RGraphSpace/reference
   article: https://sysbiolab.github.io/RGraphSpace/articles

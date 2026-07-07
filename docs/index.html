@@ -29,6 +29,13 @@
     font-size: 1.6rem !important;
     margin-top: 2rem !important;
   }
+  body pre.sourceCode,
+  body pre.sourceCode code.sourceCode {
+    line-height: 1.5 !important;
+  }
+  span.co {
+    font-size: 90% !important;
+  }
 </style>
 </head>
 <body>
@@ -39,7 +46,7 @@
 
     <a class="navbar-brand me-2" href="index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,14 +107,12 @@
 <div class="section level3">
 <h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h3>
-<p><em>RGraphSpace</em> is an R package that generates <em>ggplot2</em> graphics for <em>igraph</em> objects (<a href="#ref-nepusz">Csardi and Nepusz 2006</a>), scaling nodes and edges to a unit space. The package implements new <em>ggplot2</em> prototypes (<a href="#ref-wickham">Wickham 2016</a>), optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including interoperability with <em>ggraph</em> and <em>tidygraph</em> workflows (<a href="#ref-pedersen">Pedersen 2024</a>). Three specialized <code>geoms</code> translate graph data into geometric layers.</p>
+<p><em>RGraphSpace</em> is an R package that generates <em>ggplot2</em> graphics for <em>igraph</em> objects (<a href="#ref-nepusz">Csardi and Nepusz 2006</a>), scaling nodes and edges to a unit space. The package implements new <em>ggplot2</em> prototypes (<a href="#ref-wickham">Wickham 2016</a>), optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including interoperability with <em>ggraph</em> and <em>tidygraph</em> workflows (<a href="#ref-pedersen">Pedersen 2024</a>). Two specialized <code>geoms</code> translate graph data into geometric layers.</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong><code><a href="reference/geom_graphspace.html">geom_graphspace()</a></code></strong>: A high-level convenience layer that processes both nodes and edges in a single call.</li>
+<strong><code><a href="reference/geom_nodespace.html">geom_nodespace()</a></code></strong>: Renders network nodes. Extends <code>GeomPoint</code> aesthetic mappings and exposes node state information to the edge layer.</li>
 <li>
-<strong><code><a href="reference/geom_nodespace.html">geom_nodespace()</a></code></strong>: Dedicated to rendering nodes. Inherits <code>GeomPoint</code> aesthetic mappings, modified to inform the edge layer on node states.</li>
-<li>
-<strong><code><a href="reference/geom_edgespace.html">geom_edgespace()</a></code></strong>: Handles the relational data between nodes. Inherits <code>GeomSegment</code> aesthetic mappings; unlike standard segments, it is “node-aware” and dynamically calibrates start and end points to connected nodes.</li>
+<strong><code><a href="reference/geom_edgespace.html">geom_edgespace()</a></code></strong>: Renders the relationships between nodes. Extends <code>GeomSegment</code> aesthetic mappings; unlike standard segments, it is node-aware and dynamically adjusts start and end points based on node position and size.</li>
 </ol>
 </div>
 <div class="section level3">

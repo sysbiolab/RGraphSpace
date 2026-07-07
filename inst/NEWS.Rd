@@ -2,6 +2,12 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
+\section{CHANGES IN VERSION 1.4.2 (2026-07-10)}{
+  \itemize{
+    \item Added support for graphs with multiple edges and self-loops.
+  }
+}
+
 \section{CHANGES IN VERSION 1.4.1 (2026-06-22)}{
   \itemize{
     \item Restored compatibility with objects from older package versions.

@@ -7,11 +7,12 @@
 
 ``` r
 annotation_gspace_image(
-  raster,
+  x,
   interpolate = FALSE,
   opacity = 1,
   flip.v = FALSE,
-  flip.h = FALSE
+  flip.h = FALSE,
+  raster = deprecated()
 )
 
 annotation_gspace(...)
@@ -19,7 +20,7 @@ annotation_gspace(...)
 
 ## Arguments
 
-- raster:
+- x:
 
   An image to be displayed. Accepted types:
 
@@ -55,6 +56,10 @@ annotation_gspace(...)
   A logical value; if `TRUE`, the image is flipped horizontally
   (left-to-right). Defaults to `FALSE`.
 
+- raster:
+
+  Deprecated as of RGraphSpace 1.4.1; use `x` instead.
+
 - ...:
 
   Additional arguments (currently unused).
@@ -82,8 +87,25 @@ resolved.
 
 ``` r
 
-# Assuming 'gs' is a GraphSpace object with 
-# an image stored in gs_image(gs)
+library(RGraphSpace)
+library(igraph)
+
+# Load a demo igraph
+data('gtoy1', package = 'RGraphSpace')
+gs <- GraphSpace(gtoy1)
+#> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+
+# Normalize node coordinates
+gs <- normalizeGraphSpace(gs)
+#> Normalizing node coordinates to graph space...
+
+# Add a raster image
+gs_image(gs) <- as_colorraster(volcano)
+#> Image spatial boundaries:
+#> ℹ x: [1, 61] (cols)
+#> ℹ y: [1, 87] (rows)
 
 if (FALSE) { # \dontrun{
 # Pass a GraphSpace object directly

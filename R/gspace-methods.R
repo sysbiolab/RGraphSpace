@@ -17,7 +17,10 @@
 #' \code{igraph} initialization.
 #' @param layout An optional numeric matrix with two columns for \code{x} and
 #' \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.
-#' @param verbose A logical value. If \code{TRUE}, displays detailed messages.
+#' @param simplify A logical value. If \code{TRUE} (default), removes loops and 
+#' multiple edges (see \link[igraph]{simplify}).
+#' @param verbose A logical value. If \code{TRUE} (default), displays detailed 
+#' messages.
 #' @param ... Additional arguments passed to the \code{GraphSpace} constructor.
 #' 
 #' @return A \linkS4class{GraphSpace} class object.
@@ -147,9 +150,10 @@
 #' @rdname GraphSpace-methods
 #' @export
 setMethod("GraphSpace", signature(g = "ANY"),
-  function(g, layout = NULL, verbose = TRUE, ...) {
+  function(g, layout = NULL, simplify = TRUE, verbose = TRUE, ...) {
     
     #--- validate argument values
+    .validate_gs_args("singleLogical", "simplify", simplify)
     .validate_gs_args("singleLogical", "verbose", verbose)
     if(inherits(g, "layout_ggraph")){
       if (!inherits(attr(g, "graph"), "igraph")) {
@@ -194,7 +198,7 @@ setMethod("GraphSpace", signature(g = "ANY"),
     }
     
     #--- validate igraph and build a gs object
-    gs <- .buildGraphSpace(g, layout, verbose)
+    gs <- .buildGraphSpace(g, layout, simplify, verbose)
     
     return(gs)
   }
@@ -266,22 +270,26 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' and \code{name}  vertex attributes (see \code{\link{GraphSpace}}).
 #' @param theme Name of a custom RGraphSpace theme. These themes 
 #' (from 'th0' to 'th3') consist of preconfigured ggplot settings, 
-#' which can subsequently refine using \code{\link[ggplot2]{ggplot2}}.
+#' which can be subsequently refine using \code{\link[ggplot2]{theme}}.
 #' @param xlab The title for the 'x' axis of a 2D-image space.
 #' @param ylab The title for the 'y' axis of a 2D-image space.
-#' @param font.size A single numeric value passed to ggplot themes.
-#' @param bg.color A single color for background.
-#' @param add.labels A logical value indicating whether to plot vertex labels.
-#' @param node.labels A vector of vertex names to be highlighted in the graph
-#' space. This argument overrides 'add.labels'.
-#' @param label.size A size argument passed to \code{\link[ggplot2]{geom_text}}.
-#' @param label.color A color passed to \code{\link[ggplot2]{geom_text}}.
+#' @param node.labels Optional specification of node labels to display.
+#' If \code{FALSE} (default), no labels are shown. If \code{TRUE}, labels are 
+#' displayed for all nodes. Otherwise, a character vector may be supplied 
+#' to display labels only for the specified nodes. Character values are matched 
+#' against the \code{nodeLabel} attribute.
+#' @param label.size Font size passed to \code{\link[ggplot2]{geom_text}}.
+#' @param label.color Color passed to \code{\link[ggplot2]{geom_text}}.
 #' @param add.image A logical value indicating whether to add a background 
 #' image, when one is available (see \code{\link{GraphSpace}}).
 #' @param raster A logical value indicating whether to rasterize the main plot.
 #' See \code{\link[ggrastr]{rasterise}} for further specifications.
 #' @param dpi Raster resolution, in dots per inch.
 #' @param dev Device used in the \code{\link[ggrastr]{rasterise}} call.
+#' @param add.labels Deprecated. Use \code{node.labels} instead.
+#' @param font.size Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.
+#' @param bg.color Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.
+#' 
 #' @return A ggplot-class object.
 #' @author Sysbiolab.
 #' @seealso \code{\link{GraphSpace}}
@@ -293,7 +301,8 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' data('gtoy1', package = 'RGraphSpace')
 #' 
 #' # Generate a ggplot for gtoy1
-#' plotGraphSpace(gtoy1)
+#' plotGraphSpace(gtoy1, node.labels = TRUE)
+#' 
 #' 
 #' # Create a star graph
 #' gtoy_star <- make_full_graph(15)
@@ -313,7 +322,7 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' plotGraphSpace(gs_star)
 #' 
 #' @import methods
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot geom_text
 #' @importFrom grDevices col2rgb
 #' @importFrom ggrastr rasterize
 #' @docType methods
@@ -322,89 +331,83 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' @export
 setMethod("plotGraphSpace", "GraphSpace", 
   function(gs, theme = "th0", xlab = "Graph coordinates 1", 
-    ylab = "Graph coordinates 2", font.size = 1,
-    bg.color = "grey95", add.labels = FALSE,
-    node.labels = NULL, label.size = 3, 
-    label.color = "grey20", add.image = TRUE, 
-    raster = FALSE, dpi = 300, dev = "cairo_png") {
+    ylab = "Graph coordinates 2", 
+    node.labels = FALSE, label.size = 3, label.color = "grey20",
+    add.image = TRUE, raster = FALSE, dpi = 300, dev = "cairo_png",
+    add.labels = deprecated(), font.size = deprecated(), 
+    bg.color = deprecated()) {
+    
+    if (lifecycle::is_present(add.labels)) {
+      lifecycle::deprecate_soft("1.4.2", "plotGraphSpace(add.labels)",
+        details = "Use `plotGraphSpace(node.labels)` instead.")
+      node.labels <- add.labels
+    }
+    if (lifecycle::is_present(font.size)) {
+      lifecycle::deprecate_soft("1.4.2", "plotGraphSpace(font.size)",
+        details = "Use `theme(...)` instead.")
+    }
+    if (lifecycle::is_present(bg.color)) {
+      lifecycle::deprecate_soft("1.4.2", "plotGraphSpace(bg.color)",
+        details = "Use `theme(...)` instead.")
+    }
     
     gs <- updateGraphSpace(gs)
     
     #--- validate the gs object and args
     .validate_gs_args("singleString", "xlab", xlab)
     .validate_gs_args("singleString", "ylab", ylab)
-    .validate_gs_args("singleNumber", "font.size", font.size)
-    .validate_gs_colors("singleColor", "bg.color", bg.color)
-    .validate_gs_args("singleLogical", "add.labels", add.labels)
+    .validate_gs_args("singleLogical", "add.image", add.image)
     .validate_gs_args("singleNumber", "label.size", label.size)
     .validate_gs_colors("singleColor", "label.color", label.color)
-    .validate_gs_args("singleLogical", "add.image", add.image)
     .validate_gs_args("singleLogical", "raster", raster)
     .validate_gs_args("singleInteger", "dpi", dpi)
     .validate_gs_args("singleString", "dev", dev)
     
-    if (!is.null(node.labels)) {
-      .validate_gs_args("allCharacter", "node.labels", node.labels)
-    }
-    
     theme <- match.arg(theme, choices = c("th0", "th1", "th2", "th3"))
     
-    #--- get gs slots
-    nodes <- gs_nodes(gs)
-    pars <- getGraphSpace(gs, "pars")
+    label_aes <- aes(label = NA_character_)
+    if ("nodeLabel" %in% gs_names(gs) && 
+        (isTRUE(node.labels) || is.character(node.labels))) {
+      
+      gs$plotLabel <- gs$nodeLabel
+      
+      if (is.character(node.labels)) {
+        .validate_gs_args("allCharacter", "node.labels", node.labels)
+        gs$plotLabel[!gs$plotLabel %in% node.labels] <- NA_character_
+      }
+      plotLabel <- NULL
+      label_aes <- aes(label = plotLabel)
+    }
+
     
     #--- initialize a ggplot object
-    ggp <- ggplot()
-    
-    #--- add image
-    if(pars$image.layer){
-      img <- getGraphSpace(gs, "image")
-      if(add.image){
-        ggp <- .add_image(ggp, img)
-      } else {
-        ggi <- .add_image(ggp, img)
-        ggi <- ggi + theme_gspace_coords(theme = theme, 
-          is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
-          txt_size = font.size, leg_size = font.size, 
-          bg_colour = bg.color)
-      }
-    }
-    
-    #--- add graph
-    ggp <- ggp + geom_graphspace(data = gs)
-    
-    #--- add node labels
-    if (!is.null(node.labels)){
-      ggp <- .add_labels1(ggp, nodes, node.labels, 
-        label.size, label.color)
-    } else if(add.labels){
-      ggp <- .add_labels2(ggp, nodes)
+    if(.has_image(gs) && add.image){
+      ggp <- ggplot(gs) + 
+        annotation_gspace_image(gs) +
+        geom_edgespace(raster = raster, dpi = dpi, dev = dev) +
+        geom_nodespace(mapping = label_aes, label_size = label.size, 
+          label_colour = label.color, raster = raster, 
+          dpi = dpi, dev = dev)
+    } else {
+      ggp <- ggplot(gs) + 
+        geom_edgespace(raster = raster, dpi = dpi, dev = dev) +
+        geom_nodespace(mapping = label_aes, label_size = label.size,
+          label_colour = label.color, raster = raster, 
+          dpi = dpi, dev = dev)
     }
     
     #--- apply custom theme
     ggp <- ggp + theme_gspace_coords(theme = theme, 
-      is_norm = pars$is.normalized, xlab = xlab, ylab = ylab, 
-      txt_size = font.size, leg_size = font.size,
-      bg_colour = bg.color)
+      is_norm = .is_normalized(gs), xlab = xlab, ylab = ylab)
     
-    if(raster){
-      ggp <- ggrastr::rasterize(ggp, layers = "GraphSpace", 
-        dpi = dpi, dev = dev)
-    }
-    
-    if(pars$image.layer && !add.image){
-      ggl <- list(image = ggi, graph = ggp)
-      return(ggl)
-    } else {
-      return(ggp)
-    }
+    return(ggp)
     
   }
 )
 
 .plot_graph_wrapper <- function(gs, ...) {
   gs <- GraphSpace(gs, verbose = FALSE)
-  gs <- normalizeGraphSpace(gs)
+  gs <- normalizeGraphSpace(gs, verbose = FALSE)
   plotGraphSpace(gs = gs, ...)
 }
 
@@ -450,7 +453,8 @@ plot.GraphSpace <- function(x, ...) {
 #' @param gs A preprocessed \linkS4class{GraphSpace} class object
 #' @param what A single character value specifying which slot to 
 #' retrieve from a 'GraphSpace' object.
-#' Options: "graph", "nodes", "edges", "pars", "misc", "image", and "fdata".
+#' Options: "graph", "nodes", "edges", "pars", "misc", "image", 
+#' "canvas", and "fdata".
 #' @return Content from slots in the \linkS4class{GraphSpace} object.
 #' @examples
 #' library(RGraphSpace)
@@ -472,7 +476,7 @@ plot.GraphSpace <- function(x, ...) {
 #' @export
 setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
   .validate_gs_args("singleString", "what", what)
-  opts <- c("graph", "nodes", "edges", "pars", "misc", "image", "fdata")
+  opts <- c("graph", "nodes", "edges", "pars", "misc", "image", "canvas","fdata")
   if (!what %in% opts) {
     opts <- paste0(opts, collapse = ", ")
     stop("'what' must be one of:\n", opts, call. = FALSE)
@@ -489,6 +493,8 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
     obj <- gs@misc
   } else if (what == "image") {
     obj <- gs@image
+  } else if (what == "canvas") {
+    obj <- gs@canvas
   } else if (what == "fdata") {
     obj <- gs@fdata
   } else {
@@ -558,17 +564,11 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
 #' # Replace an entire vertex attribute
 #' gs_vertex_attr(gs, "nodeSize") <- 10
 #' 
-#' # Alternative syntax using `$` accessor
-#' gs_vertex_attr(gs)$nodeSize <- 10
-#' 
 #' # Access a specific edge attribute
 #' gs_edge_attr(gs, "edgeLineColor")
 #' 
 #' # Replace an entire edge attribute
 #' gs_edge_attr(gs, "edgeLineWidth") <- 1
-#' 
-#' # Alternative syntax using `$` for edge attributes
-#' gs_edge_attr(gs)$edgeLineWidth <- 3
 #' 
 #' # Add an image and rescale graph coordinates to image space
 #' # Images may be provided as a raster or numeric matrix
@@ -616,7 +616,7 @@ setMethod("gs_nodes", "GraphSpace", function(x, ...) {
   
   vars <- args$vars
   
-  nodes <- x@nodes
+  nodes <- .gs_nodes(x)
   
   if (!is.null(vars) && .all_characterValues(vars)) {
     
@@ -655,7 +655,7 @@ setMethod("gs_edges", "GraphSpace", function(x) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_image", "GraphSpace", function(x) {
-  x <- x@image
+  x <- .get_canvas(x)
   attr(x, "gs_handler_type") <- "image"
   class(x) <- c("gs_image", class(x))
   return(x)
@@ -685,7 +685,6 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
   .inform_image_boundaries(value)
   
   x@image <- value
-  x@pars$image.layer <- TRUE
   return(x)
 })
 
@@ -752,44 +751,55 @@ setMethod("gs_ecount", "GraphSpace", function(x) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ...) {
-    g <- x@graph
-    if(missing(name)){
-        att <- igraph::vertex_attr(graph = g, ...=...)
+  g <- x@graph
+  if(missing(name)){
+    att <- igraph::vertex_attr(graph = g, ...=...)
+  } else {
+    if(name %in% igraph::vertex_attr_names(g)){
+      att <- igraph::vertex_attr(graph = g, name = name, ...=...)
+      if(name!="name") names(att) <- V(g)$name
     } else {
-        if(name %in% igraph::vertex_attr_names(g)){
-            att <- igraph::vertex_attr(graph = g, name = name, ...=...)
-            if(name!="name") names(att) <- V(g)$name
-        } else {
-            att <- NULL
-        }
+      att <- NULL
     }
-    return(att)
+  }
+  return(att)
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
-  g <- x@graph
-  if (missing(name) && is.list(value)){
-    #workaround for analogy to igraph's "syntactic sugar" $<-
-    len1 <- unlist(lapply(value, length))==1
-    if(any(len1)){
-      for(i in which(len1)){
-        vl <- value[[i]]
-        vl <- if(.is_replicable(vl)) vl else list(vl)
-        value[[i]] <- rep(vl, igraph::vcount(g))
-      }
-    }
-    igraph::vertex_attr(graph = g) <- value
-  } else {
-    if(length(value)==1){
-      value <- if(.is_replicable(value)) value else list(value)
-    }
-    igraph::vertex_attr(graph = g, name = name, ...=...) <- value  
+  
+  # 'vertex' and 'name' attributes are protected
+  if (name %in% "vertex") {
+    rlang::abort(
+      message = c(
+        "x" = "The 'vertex' attribute is read-only.",
+        "i" = "Modifying vertex identifiers directly would break node-edge coherence.",
+        "*" = "To change the graph structure, please modify the underlying igraph object."
+      )
+    )
   }
+  if (name %in% "name") {
+    rlang::abort(
+      message = c(
+        "x" = "The 'name' attribute is read-only.",
+        "i" = "Modifying vertex names directly would break node-edge coherence.",
+        "*" = "Use the 'nodeLabel' attribute instead."
+      )
+    )
+  }
+  
+  g <- x@graph
+  if(length(value)==1){
+    value <- if(.is_replicable(value)) value else list(value)
+  }
+  igraph::vertex_attr(graph = g, name = name, ...=...) <- value
   x <- .updateNodeSpace(x, g)
+  
   return(x)
+  
 })
+
 # Used to handle possible function replication
 .is_replicable <- function(x) {
   tryCatch({
@@ -813,36 +823,48 @@ setMethod("gs_edge_attr", "GraphSpace", function(x, name, ...) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
-  g <- x@graph
-  if (missing(name) && is.list(value)){
-    #workaround for analogy to igraph's "syntactic sugar" $<-
-    len1 <- unlist(lapply(value, length))==1
-    if(any(len1)){
-      for(i in which(len1)){
-        vl <- value[[i]]
-        vl <- if(.is_replicable(vl)) vl else list(vl)
-        value[[i]] <- rep(vl, igraph::ecount(g))
-      }
-    }
-    igraph::edge_attr(graph = g) <- value
-  } else {
-    if(length(value)==1){
-      value <- if(.is_replicable(value)) value else list(value)
-    }
-    igraph::edge_attr(graph = g, name = name, ...=...) <- value  
+  
+  # 'vertex' and 'name' attributes are protected
+  if (name %in% c("vertex1","vertex2")) {
+    rlang::abort(
+      message = c(
+        "x" = "The 'vertex1' and 'vertex2' attributes are read-only.",
+        "i" = "Modifying vertex identifiers directly would break node-edge coherence.",
+        "*" = "To change the graph structure, please modify the underlying igraph object."
+      )
+    )
   }
+  if (name %in% c("name1","name2")) {
+    rlang::abort(
+      message = c(
+        "x" = "The 'name1' and 'name2' attributes are read-only.",
+        "i" = "Modifying vertex names directly would break node-edge coherence.",
+        "*" = "To change the graph structure, please modify the underlying igraph object."
+      )
+    )
+  }
+  
+  g <- x@graph
+  if(length(value)==1){
+    value <- if(.is_replicable(value)) value else list(value)
+  }
+  igraph::edge_attr(graph = g, name = name, ...=...) <- value
   x <- .updateEdgeSpace(x, g)
+  
   return(x)
+  
 })
+
 .updateEdgeSpace <- function(x, g){
-  x@graph <- .validate_igraph(g)
-  x@edges <- .get_edges(x@graph)
+  x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
+  x@edges <- .get_edges(x@graph, simplify = .is_simplified(x))
   return(x)
 }
+
 .updateNodeSpace <- function(x, g) {
-  x@graph <- .validate_igraph(g)
-  nodes   <- .get_nodes(x@graph)
-  if (x@pars$is.normalized) {
+  x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
+  nodes <- .get_nodes(x@graph)
+  if (.is_normalized(x)) {
     nodes[x@nodes$name, c("x","y")] <- x@nodes[, c("x","y")]
   }
   x@nodes <- nodes
@@ -854,7 +876,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
 #' @export
 setMethod("$", "GraphSpace", function(x, name) {
   
-  nodes <- gs_nodes(x)
+  nodes <- x@nodes
   
   if (!(name %in% names(nodes))) {
     rlang::warn(paste0("Column '", name, "' not found in nodes."))
@@ -868,19 +890,6 @@ setMethod("$", "GraphSpace", function(x, name) {
 #' @aliases $<-,GraphSpace-method [[<-,GraphSpace-method
 #' @export
 setReplaceMethod("$", "GraphSpace", function(x, name, value) {
-  
-  protected <- c("vertex", "name")
-  
-  if (name %in% protected) {
-    rlang::abort(
-      message = c(
-        "x" = paste0("Column '", name, "' is read-only."),
-        "i" = "Modifying vertex identifiers directly would break node-edge coherence.",
-        "*" = "To change the graph structure, please modify the underlying igraph object."
-      )
-    )
-  }
-  
   gs_vertex_attr(x, name) <- value
   x
 })
@@ -912,6 +921,5 @@ NULL
 #' @keywords internal
 #' @export
 .DollarNames.GraphSpace <- function(x, pattern = "") {
-  nodes <- gs_nodes(x)
-  grep(pattern, names(nodes), value = TRUE)
+  grep(pattern, names(x@nodes), value = TRUE)
 }

@@ -50,8 +50,6 @@
 
 ## Geoms
 
-- [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
-  : Draw node and edge elements in a 2D graph layout
 - [`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
   [`nodespace_handler()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
   : Draw node elements in a 2D graph layout
@@ -92,6 +90,8 @@
   : Manipulate node features in a GraphSpace object
 - [`as_colorraster()`](https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.md)
   : Map numeric values to a color raster
+- [`summary(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/summary-GraphSpace-method.md)
+  : Summarise a GraphSpace object
 
 ## Data
 
@@ -118,3 +118,8 @@
   [`RGraphSpace-package`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
   : RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2'
   Graphics
+
+## Deprecated
+
+- [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
+  : Draw node and edge elements in a 2D graph layout

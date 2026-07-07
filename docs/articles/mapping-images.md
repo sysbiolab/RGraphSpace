@@ -1,12 +1,12 @@
 # Mapping Graphs to Images
 
   
-**Package**: RGraphSpace 1.4.1
+**Package**: RGraphSpace 1.4.2
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -73,6 +73,18 @@ gs_image(gs) <- as_colorraster(volcano2)
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to image space...
 #> Flipping y-coordinates...
+
+gs
+#> A GraphSpace-class object for:
+#> IGRAPH 39bf31e DN-- 39 0 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeColor (v/c), arrowType (e/n)
+#> + node spatial boundaries: normalized to image space
+#> | x: [16, 50] -> [0, 1] (cols)
+#> | y: [11, 51] -> [0, 1] (rows)
+#> + image spatial boundaries: cropped to graph space
+#> | x: [1, 61] -> [1, 51] (cols)
+#> | y: [1, 87] -> [1, 51] (rows)
 ```
 
 Observe that the nodes (open circles) are precisely aligned with the
@@ -122,7 +134,7 @@ tutorial for examples using a reference image.
 
 ## Session information
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
     #> Running under: Ubuntu 24.04.4 LTS
     #> 
@@ -145,20 +157,20 @@ tutorial for examples using a reference image.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RGraphSpace_1.4.2 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
-    #>  [5] compiler_4.6.0     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
+    #>  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
     #>  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 
     #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          
     #> [17] generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1      
     #> [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3
-    #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.58          fs_2.1.0          
+    #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.59          fs_2.1.0          
     #> [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
-    #> [33] pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5     digest_0.6.39     
-    #> [37] grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5   
+    #> [33] pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     
+    #> [37] grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0     lifecycle_1.0.5   
     #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
     #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
-    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3   
+    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   
     #> [53] htmltools_0.5.9

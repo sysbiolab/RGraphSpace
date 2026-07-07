@@ -18,6 +18,13 @@ template:
           font-size: 1.6rem !important;
           margin-top: 2rem !important;
         }
+        body pre.sourceCode,
+        body pre.sourceCode code.sourceCode {
+          line-height: 1.5 !important;
+        }
+        span.co {
+          font-size: 90% !important;
+        }
       </style>
 
 navbar:
@@ -79,7 +86,6 @@ reference:
 
 - title: Geoms
   contents:
-    - geom_graphspace
     - geom_nodespace
     - geom_edgespace
 
@@ -100,6 +106,7 @@ reference:
   contents:
     - gs_features-utils
     - as_colorraster
+    - summary,GraphSpace-method
 
 - title: Data
   contents:
@@ -117,6 +124,10 @@ reference:
   contents:
     - RGraphSpace-package
 
+- title: Deprecated
+  contents:
+    - geom_graphspace
+    
 home:
   sidebar:
     structure: [links, license, community, citation, dev]

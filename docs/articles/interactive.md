@@ -1,12 +1,12 @@
 # Interactive visualization
 
   
-**Package**: RGraphSpace 1.4.1
+**Package**: RGraphSpace 1.4.2
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -47,11 +47,11 @@ version directly from R:
 
 library("RedeR")
 RedPort(checkJava=TRUE)
-# RedeR will need Java Runtime Environment (Java >=11)
-# Checking Java version installed on this system...
-# openjdk version "21.0.10" 2026-01-20
-# OpenJDK Runtime Environment (build 21.0.10+7-Ubuntu-124.04)
-# OpenJDK 64-Bit Server VM (build 21.0.10+7-Ubuntu-124.04, mixed mode, sharing)
+#> RedeR will need Java Runtime Environment (Java >=11)
+#> Checking Java version installed on this system...
+#> openjdk version "21.0.10" 2026-01-20
+#> OpenJDK Runtime Environment (build 21.0.10+7-Ubuntu-124.04)
+#> OpenJDK 64-Bit Server VM (build 21.0.10+7-Ubuntu-124.04, mixed mode, sharing)
 
 # Note: The output may vary, but ensure your system meets the minimum requirement.
 ```
@@ -69,7 +69,7 @@ library("RGraphSpace")
 library("RedeR")
 library("igraph")
 data(gtoy1, package = "RGraphSpace")
-plotGraphSpace(gtoy1, add.labels = TRUE)
+plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
 ![](interactive_files/figure-html/Plot%20gtoy1-1.png)
@@ -89,24 +89,24 @@ process:
 startRedeR()
 resetRedeR()
 
-# Send 'gtoy1' to the RedeR interface
+# Send 'gtoy1' to the Java interface
 addGraphToRedeR(gtoy1, unit="npc")
 relaxRedeR()
 
-# Fetch 'gtoy1' with a fresh layout
+# Fetch 'gtoy1' with an updated layout
 gtoy1_2 <- getGraphFromRedeR(unit="npc")
 
 # Check the round trip...
-plotGraphSpace(gtoy1_2, add.labels = TRUE)
+plotGraphSpace(gtoy1_2, node.labels = TRUE)
 
-## Note that for the round trip, shapes and line types are
-## partially compatible between ggplot2 and RedeR.
+## Note: fonts, shapes, and line types are only partially
+## compatible between the two interfaces.
 
 # ...alternatively, just update the graph layout
 gtoy1_2 <- updateLayoutFromRedeR(g=gtoy1)
 
-# ...check the updated layout
-plotGraphSpace(gtoy1_2, add.labels = TRUE)
+# ...and check the result
+plotGraphSpace(gtoy1_2, node.labels = TRUE)
 ```
 
 ![](figs_intro/toy_reder.png)
@@ -181,14 +181,14 @@ relaxRedeR(p1 = 10, p2 = 50, p5 = 1)
 gtoy2_2 <- updateLayoutFromRedeR(g = gs_graph(gs_gtoy2))
 
 # ...check the updated layout
-plotGraphSpace(gtoy2_2, add.labels = FALSE)
+plotGraphSpace(gtoy2_2, node.labels = FALSE)
 ```
 
 ![](cards/interactive.png)
 
 ## Session information
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
     #> Running under: Ubuntu 24.04.4 LTS
     #> 
@@ -211,20 +211,20 @@ plotGraphSpace(gtoy2_2, add.labels = FALSE)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.2      RedeR_3.8.0       RGraphSpace_1.4.1 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RedeR_3.8.0       RGraphSpace_1.4.2 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    
-    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.0        
+    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.1        
     #>  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-5      
     #> [13] ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
     #> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        tidygraph_1.3.1   
-    #> [21] withr_3.0.2        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        
-    #> [25] ggbeeswarm_0.7.3   tools_4.6.0        dplyr_1.2.1        vctrs_0.7.3       
+    #> [21] withr_3.0.3        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        
+    #> [25] ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1        vctrs_0.7.3       
     #> [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 
     #> [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    
     #> [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      
-    #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.58         
-    #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.18.0  knitr_1.51        
+    #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
+    #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
     #> [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    
-    #> [53] compiler_4.6.0     S7_0.2.2
+    #> [53] compiler_4.6.1     S7_0.2.2

@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -35,27 +35,29 @@ if (packageVersion("RGraphSpace") < "1.4.1"){
 
 # Overview
 
-This section illustrates how *RGraphSpace* integrates with the *ggplot2* using `geoms` building blocks [@Wickham2016]. Graph attributes stored within the `GraphSpace` object can be handled in two ways:
+This section illustrates how *RGraphSpace* integrates with *ggplot2* using `geoms` building blocks [@Wickham2016]. Graph attributes stored in the `GraphSpace` object can be handled in two ways:
 
-* **Identity mapping:** Graph attributes are interpreted as "identity values" (such as `nodeColor`, `nodeSize`, or `nodeShape`) and are displayed exactly as they are, without further scaling or mapping.
+* **Identity mapping:** Attributes such as `nodeColor`, `nodeSize`, and `nodeShape` are treated as literal values and displayed exactly as specified, without scaling or transformation.
 
-* **Dynamic aesthetic mapping:** Graph attributes are mapped to  *aesthetics* (such as `colour`, `size`, and `shape`) and rendered through standard *ggplot2* scales, which automatically generate synchronized legends.
+* **Dynamic aesthetic mapping:** Attributes are mapped to *ggplot2* aesthetics such as `colour`, `size`, and `shape`, and rendered through standard scales, which automatically generate synchronized legends.
 
-To facilitate this integration, *RGraphSpace* implements three specialized `geoms` designed to handle graph data types within a *ggplot2* workflow. These `geoms` use a dual-anchor normalization approach to align layers, which is critical for analysis where network elements must stay accurately referenced to a spatial map or image.
+*RGraphSpace* implements two specialized `geoms` for handling graph data within a *ggplot2* workflow. Both use a dual-anchor normalization strategy to keep layers aligned, which is essential when network elements must remain accurately referenced to a spatial map or image.
 
-1. **`geom_graphspace()`**: A high-level convenience layer that processes both nodes and edges in a single call. 
-2. **`geom_nodespace()`**: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states.
-3. **`geom_edgespace()`**: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is "node-aware" and dynamically calibrates start and end points. 
+1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint` aesthetic mappings and exposes node state information to the edge layer.
+2. **`geom_edgespace()`**: Renders the relationships between nodes. Extends `GeomSegment` aesthetic mappings; unlike standard segments, it is node-aware and dynamically adjusts start and end points based on node position and size.
 
 # Setting basic input data
 
 In the following example, we create a small modular graph containing variables of different types to demonstrate how *RGraphSpace* `geoms` handle different mapping requirements.
 
-```{r Load a toy graph, eval=TRUE, message=FALSE}
+```{r Load packages, eval=TRUE, message=FALSE}
+#--- Load packages
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
+```
 
+```{r Load a toy graph, eval=TRUE, message=TRUE}
 # Make a toy modular graph
 gtoy2 <- sample_islands(
   islands.n = 3,       # number of modules
@@ -78,19 +80,22 @@ E(gtoy2)$edge_var <- runif(ecount(gtoy2))
 
 # Create a GraphSpace from the toy igraph
 gs <- GraphSpace(gtoy2)
+
+gs
 ```
 
 # Plotting identity values
 
-In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is useful when nodes have been pre-processed with specific color schemes and you want the visual output without further mapping.
+In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_nodespace()` function. This approach is useful when nodes have been pre-processed with specific attributes and you want the visual output without further mapping.
 
 ```{r, eval=TRUE, message=FALSE, include = FALSE}
 edge_var <- node_var <- nodeColor <- node_group <- NULL
 ```
 
 ```{r Plot identity values, eval=TRUE, message=FALSE}
-ggplot() + 
-  geom_graphspace(colour = "grey", data = gs) +
+ggplot(gs) + 
+  geom_edgespace() +
+  geom_nodespace(colour = "grey") +
   theme(aspect.ratio = 1)
 ```
 
@@ -98,8 +103,7 @@ The trade-off on this approach is that, on one hand, all attributes reflect the 
 
 # Mapping categorical variables
 
-In this example, the node categorical variable `node_group` is mapped to the `fill` aesthetic. We call `geom_edgespace()` and `geom_nodespace()` as independent layers 
-to provide maximum flexibility when mapping aesthetics with legends.
+In this example, the node categorical variable `node_group` is mapped to the `fill` aesthetic.
 
 ```{r Map aesthetics to categorical variables, eval=TRUE, message=FALSE}
 ggplot(gs) + 

@@ -26,8 +26,11 @@ geom_edgespace(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = FALSE,
-  arrow_size = 1,
+  arrow_size = 0.5,
   arrow_offset = 0.01,
+  curve = 0,
+  parallel_spread = 1,
+  loop_direction = "adaptive",
   lineend = "butt",
   linejoin = "mitre",
   raster = FALSE,
@@ -88,22 +91,41 @@ edgespace_handler()
 
 - arrow_size:
 
-  Numeric scaling factor controlling arrowhead geometry (see 'drawing'
-  section).
+  Numeric scaling factor controlling arrowhead geometry (see 'details').
 
 - arrow_offset:
 
   Numeric value controlling the base offset of arrows at edge endpoints
-  (see 'drawing' section).
+  (see 'details').
+
+- curve:
+
+  Numeric. Controls edge curvature, as a fraction of edge length.
+  Non-zero values bow the edge into a smooth curve, and the sign
+  controls which side it bows toward. Ignored for loops and parallel
+  edges (see 'details').
+
+- parallel_spread:
+
+  Controls the lateral spread of parallel edges and self-loops. Ignored
+  for simple non-loop edges (see 'details').
+
+- loop_direction:
+
+  Controls how self-loops are oriented around their node. Options:
+  `'adaptive'` (default), `'opposite'`, and an angle in degrees (see
+  'details').
 
 - lineend:
 
-  Line end style (round, butt, square). Supplied for compatibility with
+  Line end style (`'round'`, `'butt'`, `'square'`). Supplied for
+  compatibility with
   [geom_segment](https://ggplot2.tidyverse.org/reference/geom_segment.html).
 
 - linejoin:
 
-  Line join style (round, mitre, bevel). Supplied for compatibility with
+  Line join style (`'round'`, `'mitre'`, `'bevel'`). Supplied for
+  compatibility with
   [geom_segment](https://ggplot2.tidyverse.org/reference/geom_segment.html).
 
 - raster:
@@ -118,8 +140,8 @@ edgespace_handler()
 
 - dev:
 
-  Character. Rasterization backend. One of `"cairo"`, `"ragg"`,
-  `"ragg_png"`, or `"cairo_png"`.
+  Character. Rasterization backend. One of `'cairo'`, `'ragg'`,
+  `'ragg_png'`, or `'cairo_png'`.
 
 - scale:
 
@@ -135,8 +157,7 @@ A ggplot2 layer that renders edge segments defined by
 
 **arrow_size** is a numeric scaling factor controlling arrowhead
 geometry. The value is interpreted in the same numeric space as line
-width (`lwd`), ensuring consistent scaling between edge strokes and
-arrowheads.
+width (`lwd`).
 
 **arrow_offset** is an additive term that offsets arrow endpoints
 uniformly in graph space and is bounded by the edge length, in NPC
@@ -145,6 +166,31 @@ units.
 Arrowhead types are specified in the
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 constructor.
+
+**curve** bows an edge through a control point displaced perpendicular
+to the edge, by `curve` times the edge length. `curve = 0` (default)
+renders a straight edge. Typical visible values range from about 0.1 to
+0.4; sign sets which side the edge bows toward.
+
+**parallel_spread** controls the fan opening for parallel edges,
+reciprocal `A->B`/`B->A` pairs, and self-loops – anything where multiple
+edges share the same vertex pair. `curve` has no effect on these edges;
+`parallel_spread` governs both their curvature magnitude and how far
+apart they fan. A value of `0` collapses all edges in a group onto the
+same position; increasing values progressively open the fan. Self-loops
+behave the same way: a single loop uses `parallel_spread` to set its own
+size, and multiple loops at the same node fan out accordingly. A
+built-in minimum, tied to `arrow_size` and node size, keeps small
+`parallel_spread` values from producing a loop whose arrowhead looks
+skewed against its own curvature.
+
+**loop_direction** determines where self-loops sit relative to their
+node. `"adaptive"` (default) points each loop in the direction that
+faces away from the graph's centroid. `"opposite"` is a two-sided
+arrangement: loops are split into two groups placed above and below the
+node. A numeric angle (in degrees) places all loops at a fixed direction
+regardless of their node's position in the layout. When node position
+data is unavailable, `"adaptive"` silently falls back to `"opposite"`.
 
 ## Aesthetics
 
@@ -160,14 +206,13 @@ object.
 
 |  |  |
 |----|----|
-| **`x`, `y`, `xend`, `yend`** | Required (automatically supplied). |
+| **`x`, `y`, `xend`, `yend`** | Required; automatically supplied. |
 | `colour` | Edge colour (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
 | `alpha` | Transparency (see [aes_colour_fill_alpha](https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html)). |
 | `linetype` | Edge line type (see [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
 | `linewidth` | Edge line width (see [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
 
-Required aesthetics (`x`, `y`, `xend`, `yend`, ...) are supplied from
-the
+Required aesthetics (`x`, `y`, `xend`, `yend`) are supplied from the
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 object and do not need to be manually mapped.
 
@@ -177,25 +222,44 @@ layer. For example: `colour = "grey"`, `linetype = 2`, `linewidth = 1`.
 Arrows can be further adjusted by `arrow_size` and `arrow_offset`
 arguments (see *details*).
 
-## Integration with ggraph
+## Label aesthetics
 
-`geom_edgespace` is compatible with the `ggraph` methods. When used
-within a `ggraph()` call, the default `edgespace_handler()`
-automatically:
+When `label` is mapped via
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html), a text
+label is drawn at the visual midpoint of each edge. Labels follow the
+rendered edge geometry: the chord midpoint for straight edges, the
+Bezier midpoint for curved edges, and the loop apex for self-loops.
+Edges with `NA` labels are silently skipped.
 
-- Identifies the current `layout_ggraph`.
+The `label_colour` aesthetic defaults to the edge `colour`, and
+`label_alpha` defaults to the edge `alpha`. All other `label_*`
+aesthetics default to
+[`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)
+when not set.
 
-- Extracts the `x` and `y` coordinates calculated by `ggraph`.
-
-- Reconstructs a temporary `GraphSpace` object to inject spatial
-  metadata and user-chosen `ggraph` layout.
+|  |  |
+|----|----|
+| **`label`** | Required to activate label rendering. |
+| `label_colour` | Label text colour (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_alpha` | Transparency (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_fill` | Background colour (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_size` | Font size (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_angle` | Rotation angle (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_hjust` | Horizontal justification (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_vjust` | Vertical justification (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_lwd` | Border linewidth (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_lty` | Border linetype (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_family` | Font family (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_fontface` | Font face (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
+| `label_lineheight` | Line height (see [`geom_label`](https://ggplot2.tidyverse.org/reference/geom_text.html)). |
 
 ## See also
 
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md),
 [geom_nodespace](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md),
 [geom_graphspace](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md),
-[geom_segment](https://ggplot2.tidyverse.org/reference/geom_segment.html)
+[geom_segment](https://ggplot2.tidyverse.org/reference/geom_segment.html),
+[geom_label](https://ggplot2.tidyverse.org/reference/geom_text.html)
 
 ## Examples
 
@@ -210,13 +274,14 @@ data('gtoy1', package = 'RGraphSpace')
 # Create a GraphSpace object
 gs <- GraphSpace(gtoy1)
 #> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
 if (FALSE) { # \dontrun{
 
-ggplot() +
-  geom_edgespace(data = gs) +
-  geom_nodespace(data = gs) +
+ggplot(gs) +
+  geom_edgespace() +
+  geom_nodespace() +
   theme(aspect.ratio = 1)
 
 } # }

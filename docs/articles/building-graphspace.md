@@ -1,12 +1,12 @@
 # Building a Graph Space
 
   
-**Package**: RGraphSpace 1.4.1
+**Package**: RGraphSpace 1.4.2
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -40,13 +40,14 @@ gtoy1 <- make_star(5, mode="out")
 
 # Check whether the graph is directed or not
 is_directed(gtoy1)
-## [1] TRUE
+#> [1] TRUE
 
 # Check graph size
 vcount(gtoy1)
-## [1] 5
+#> [1] 5
+
 ecount(gtoy1)
-## [1] 4
+#> [1] 4
 
 # Assign 'x' and 'y' coordinates to each vertex;
 # ..this can be an arbitrary unit in (-Inf, +Inf)
@@ -68,7 +69,7 @@ plot(gtoy1)
 ``` r
 
 # Plot the 'gtoy1' using RGraphSpace
-plotGraphSpace(gtoy1, add.labels = TRUE)
+plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
 ![](building-graphspace_files/figure-html/Toy%20igraph%20-%203-1.png)
@@ -98,10 +99,10 @@ V(gtoy1)$nodeLineWidth <- 1
 V(gtoy1)$nodeLineColor <- "grey20"
 
 # Node labels ('NA' will omit labels)
-V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", "V5")
+V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
 
-# Node label size (in pts)
-V(gtoy1)$nodeLabelSize <- 8
+# Node label size (in mm)
+V(gtoy1)$nodeLabelSize <- 3
 
 # Node label color (Hexadecimal or color name)
 V(gtoy1)$nodeLabelColor <- "black"
@@ -171,7 +172,7 @@ function.
 ``` r
 
 # Plot the updated 'gtoy1' using RGraphSpace
-plotGraphSpace(gtoy1, add.labels = TRUE)
+plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
 ![](building-graphspace_files/figure-html/A%20shortcut%20for%20RGraphSpace-1.png)
@@ -189,11 +190,24 @@ data("gtoy1", package = 'RGraphSpace')
 # Create a GraphSpace object
 gs <- GraphSpace(gtoy1)
 #> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
 # Normalize the coordinates
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to graph space...
+
+gs
+#> A GraphSpace-class object for:
+#> IGRAPH b2723e1 DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c), nodeAlpha
+#> | (v/n), edgeLineType (e/c), edgeLineColor (e/c), edgeLineWidth (e/n),
+#> | arrowType (e/n), edgeAlpha (e/n)
+#> + node spatial boundaries: normalized to graph space
+#> | x: [-8, 2] -> [0, 1] (cols)
+#> | y: [-4, 2] -> [0, 1] (rows)
 ```
 
 The resulting `GraphSpace` integrates with *ggplot2*, allowing
@@ -203,8 +217,7 @@ graph-specific geoms to be combined with standard *ggplot2* layers.
 
 ggplot(gs) + 
   geom_edgespace() + 
-  geom_nodespace() + 
-  geom_text(aes(x = x, y = y, label = nodeLabel), size = 2) + 
+  geom_nodespace(aes(label = nodeLabel), label_size = 3) + 
   theme_gspace_coords(is_norm = TRUE)
 ```
 
@@ -219,7 +232,7 @@ vignettes.
 
 ## Session information
 
-    #> R version 4.6.0 (2026-04-24)
+    #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
     #> Running under: Ubuntu 24.04.4 LTS
     #> 
@@ -242,20 +255,20 @@ vignettes.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.2      RGraphSpace_1.4.1 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RGraphSpace_1.4.2 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
-    #>  [5] compiler_4.6.0     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
+    #>  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
     #>  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 
     #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          
     #> [17] generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1      
     #> [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3
-    #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.58          fs_2.1.0          
+    #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.59          fs_2.1.0          
     #> [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
-    #> [33] pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.5     digest_0.6.39     
-    #> [37] grid_4.6.0         rstudioapi_0.18.0  beeswarm_0.4.0     lifecycle_1.0.5   
+    #> [33] pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     
+    #> [37] grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0     lifecycle_1.0.5   
     #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
     #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
-    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.0        pkgconfig_2.0.3   
+    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   
     #> [53] htmltools_0.5.9

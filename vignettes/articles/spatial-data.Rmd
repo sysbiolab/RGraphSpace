@@ -46,7 +46,7 @@ This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/)
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.1"){
+if (packageVersion("RGraphSpace") < "1.4.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -104,36 +104,41 @@ Next, we create a `GraphSpace` from the `Seurat` object; the `as.GraphSpace()` c
 ```{r Create a GraphSpace - 1, eval=FALSE, message=FALSE, results='hide'}
 # Create a GraphSpace from 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "spatial", scale = "lowres")
-
-# Seurat object converted to GraphSpace:
-# ℹ space=spatial, layer=default, features=31053, samples=2696, scale="lowres"
-# Node spatial boundaries:
-# ℹ x: [76, 493] (cols)
-# ℹ y: [138, 541] (rows)
+#> Seurat object converted to GraphSpace:
+#> ℹ space=spatial, layer=default, features=31053, samples=2696, scale="lowres"
+#> Node spatial boundaries:
+#> ℹ x: [76, 493] (cols)
+#> ℹ y: [138, 541] (rows)
 ```
 
 ```{r Create a GraphSpace - 2, eval=FALSE, message=FALSE, results='hide'}
 # If available, add tissue image 
 gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
-
-# Image spatial boundaries:
-# ℹ x: [1, 600] (cols)
-# ℹ y: [1, 599] (rows)
+#> Image spatial boundaries:
+#> ℹ x: [1, 600] (cols)
+#> ℹ y: [1, 599] (rows)
 ```
 
 ```{r Create a GraphSpace - 3, eval=FALSE, message=FALSE, results='hide'}
 # Normalize node coordinates to the image space
 gs <- normalizeGraphSpace(gs)
-# Normalizing node coordinates to image space...
-# Flipping y-coordinates...
+#> Normalizing node coordinates to image space...
+#> Flipping y-coordinates...
 
 gs
-# A GraphSpace-class object for:
-# IGRAPH c4b5fdf UN-- 2696 0 -- 
-# + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), cell (v/c),
-# | orig.ident (v/x), nCount_Spatial (v/n), nFeature_Spatial (v/n), slice (v/n), region
-# | (v/c), arrowType (e/n)
-# + features: 31053 (Xkr4, Gm1992, Gm37381, Rp1, ...)
+#> A GraphSpace-class object for:
+#> IGRAPH 6fd732c UN-- 2696 0 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n), cell (v/c),
+#> | orig.ident (v/x), nCount_Spatial (v/n), nFeature_Spatial (v/n), slice (v/n), region
+#> | (v/c), arrowType (e/n)
+#> + features: 31053 (Xkr4, Gm1992, Gm37381, Rp1, ...)
+#> + samples: 2696 (AAACAAGTATCTCCCA-1, AAACACCAATAACTGC-1, ...)
+#> + node spatial boundaries: normalized to image space
+#> | x: [76, 493] -> [0, 1] (cols)
+#> | y: [138, 541] -> [0, 1] (rows)
+#> + image spatial boundaries: cropped to graph space
+#> | x: [1, 600] -> [1, 522] (cols)
+#> | y: [1, 599] -> [1, 522] (rows)
 ```
 
 # Spatial feature visualization
