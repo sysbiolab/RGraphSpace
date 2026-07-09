@@ -307,12 +307,12 @@ edgespace_handler <- function() {
     if (is_waiver(data)) return(NULL)
     
     if ( inherits(data, c("igraph", "layout_ggraph")) ) {
-      data <- gs_edges(GraphSpace(data, verbose = FALSE))
+      data <- gs_edges(GraphSpace(data, verbose = FALSE), render = TRUE)
     } else if (inherits(data, "GraphSpace")){
-      data <- gs_edges(data)
+      data <- gs_edges(data, render = TRUE)
     } else if (inherits(data, "gs_nodes")){
       if(inherits(attr(data, ".gs_graph"), "GraphSpace")){
-        data <- gs_edges(attr(data, ".gs_graph"))
+        data <- gs_edges(attr(data, ".gs_graph"), render = TRUE)
       } else {
         rlang::warn(
           message = c(

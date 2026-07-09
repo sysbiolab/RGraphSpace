@@ -259,13 +259,13 @@ nodespace_handler <- function(mapping = NULL) {
     if (is_waiver(data)) return(NULL)
     vars <- .detect_mapping_vars(mapping)
     if ( inherits(data, c("igraph", "layout_ggraph")) ) {
-      data <- gs_nodes(GraphSpace(data, verbose = FALSE))
+      data <- gs_nodes(GraphSpace(data, verbose = FALSE), render = TRUE)
     } else if (inherits(data, "GraphSpace")){
-      data <- gs_nodes(data, vars = vars)
+      data <- gs_nodes(data, vars = vars, render = TRUE)
     } else if (inherits(data, "gs_nodes")){
       graph <- attr(data, ".gs_graph")
       if(inherits(graph, "GraphSpace")){
-        data <- gs_nodes(graph, vars = vars)
+        data <- gs_nodes(graph, vars = vars, render = TRUE)
       }
     } else {
       rlang::abort(

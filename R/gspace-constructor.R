@@ -17,7 +17,7 @@
         image.space = FALSE,
         # Retained for backward compatibility
         image.layer = FALSE #not used
-        # Remove in the next release
+        # To remove in the next release
         )
     gs <- new(Class = "GraphSpace", 
         nodes = nodes, edges = edges, graph = gg, 

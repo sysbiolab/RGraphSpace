@@ -561,7 +561,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   nodes <- nodes[which(cx & cy), ]
   gs@nodes <- nodes
   
-  gs <- .update_crop_graph(gs, nodes)
+  gs <- .trim_graph_space(gs, nodes)
   
   return(gs)
   
@@ -604,7 +604,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   
   # Crop image
   gs@canvas <- canvas[row_s:row_e, col_s:col_e, drop = FALSE]
-  gs <- .update_crop_graph(gs, nodes)
+  gs <- .trim_graph_space(gs, nodes)
   
   return(gs)
   
@@ -616,35 +616,14 @@ setMethod("cropGraphSpace", "GraphSpace",
 }
 
 #-------------------------------------------------------------------------------
-.update_crop_graph <- function(gs, nodes) {
-  
-  # Remove edges whose endpoints are no longer in the node set
-  edges <- gs@edges
-  idx <- (edges$name1 %in% nodes$name) &
-    (edges$name2 %in% nodes$name)
-  edges <- edges[idx, ]
-  
-  # Re-map vertex index
-  nodes$vertex <- seq_len(nrow(nodes))
-  edges$vertex1 <- match(edges$name1, nodes$name)
-  edges$vertex2 <- match(edges$name2, nodes$name)
-  rownames(edges) <- NULL
-  gs@edges <- edges
-  gs@nodes <- nodes
-  
-  # Update graph vertices
-  idx <- V(gs@graph)$name %in% nodes$name
-  gs@graph <- igraph::delete_vertices(gs@graph, which(!idx))
-  
-  # Update fdata
-  if (nrow(gs@fdata) > 0) {
-    keep <- nodes$name[nodes$name %in% rownames(gs@fdata)]
-    gs@fdata <- gs@fdata[keep, , drop = FALSE]
-  }
-  
-  return(gs)
-  
+.denormalize_graph_space <- function(x) {
+  x@pars$is.normalized <- FALSE
+  x@pars$image.space   <- FALSE
+  x@canvas <- as.raster(matrix())
+  x@nodes <- .get_nodes(x@graph)
+  return(x)
 }
+
 
 
 

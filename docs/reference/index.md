@@ -16,6 +16,8 @@
 - [`normalizeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   : Normalize node coordinates to graph and image spaces
+- [`summary(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/summary-GraphSpace-method.md)
+  : Summarise a GraphSpace object
 
 ## Accessors
 
@@ -40,6 +42,25 @@
   [`` `$<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`as.igraph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   : Accessors and attribute utilities for GraphSpace objects
+
+## Graph manipulation
+
+- [`gs_subset_nodes()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md)
+  [`gs_subset_edges()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md)
+  : Filter nodes and edges in a GraphSpace object
+- [`` `gs_add_nodes<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.md)
+  : Add nodes to a GraphSpace object
+- [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
+  : Add edges to a GraphSpace object
+- [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  : Subscript operators for GraphSpace objects
+
+## Features
+
+- [`gs_fetch_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
+  [`gs_add_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
+  : Manipulate node features in a GraphSpace object
 
 ## ggplot2 integration
 
@@ -85,13 +106,8 @@
 
 ## Utilities
 
-- [`gs_fetch_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
-  [`gs_add_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
-  : Manipulate node features in a GraphSpace object
 - [`as_colorraster()`](https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.md)
   : Map numeric values to a color raster
-- [`summary(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/summary-GraphSpace-method.md)
-  : Summarise a GraphSpace object
 
 ## Data
 

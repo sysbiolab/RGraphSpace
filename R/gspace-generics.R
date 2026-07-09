@@ -39,7 +39,7 @@ setGeneric("gs_nodes", function(x, ...)
   package = "RGraphSpace"
 )
 
-setGeneric("gs_edges", function(x) 
+setGeneric("gs_edges", function(x, ...) 
   standardGeneric("gs_edges"),
   package = "RGraphSpace"
 )
@@ -51,6 +51,16 @@ setGeneric("gs_image", function(x)
 
 setGeneric("gs_image<-", function(x, value) 
   standardGeneric("gs_image<-"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_add_edges<-", function(x, value)
+  standardGeneric("gs_add_edges<-"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_add_nodes<-", function(x, value)
+  standardGeneric("gs_add_nodes<-"),
   package = "RGraphSpace"
 )
 

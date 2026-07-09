@@ -170,6 +170,14 @@
 ################################################################################
 ### Default RGraphSpace attributes
 ################################################################################
+.gs_protected_node_cols <- function() {
+    c("vertex", "name")
+}
+.gs_protected_edge_cols <- function() {
+    c("vertex1", "vertex2", "name1", "name2",
+        "curve_weight", "is_multiple", "is_loop")
+}
+#-------------------------------------------------------------------------------
 .get_required_vatt <- function() {
     atts <- list("x" = NA, "y" = NA, "name" = NA)
     return(atts)
@@ -192,7 +200,7 @@
     atts$weight <- 1
     return(atts)
 }
-# remove internally used hidden attributes
+# remove internally used intermediate attributes
 .remove_hidden_eatt <- function(g){
     atts <- names(.get_default_eatt(igraph::is_directed(g)))
     hidden <- setdiff(names(.get_empty_edgedf()), atts)

@@ -48,7 +48,7 @@
 
 \S4method{gs_nodes}{GraphSpace}(x, ...)
 
-\S4method{gs_edges}{GraphSpace}(x)
+\S4method{gs_edges}{GraphSpace}(x, ...)
 
 \S4method{gs_image}{GraphSpace}(x)
 

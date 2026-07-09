@@ -36,7 +36,7 @@ downstream node and edge components."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,7 @@ downstream node and edge components.</p>
 <span><span class="fu">gs_nodes</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
-<span><span class="fu">gs_edges</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu">gs_edges</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
 <span><span class="fu">gs_image</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
@@ -228,30 +228,25 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n3      3 -2  2   n3        V3             3          black        23        5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n4      4 -4 -4   n4        V4             3          black        24       10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n5      5 -8  0   n5        V5             3          black        25        5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    nodeColor nodeLineWidth nodeLineColor nodeAlpha  away_angle</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n1       red             1        grey20         1    9.462322</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n2   #00ad39             1        grey20         1    5.194429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n3    grey80             1        grey20         1   80.537678</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n4 lightblue             1        grey20         1 -113.962489</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n5      cyan             1        grey20         1  175.914383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    nodeColor nodeLineWidth nodeLineColor nodeAlpha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n1       red             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n2   #00ad39             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n3    grey80             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n4 lightblue             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n5      cyan             1        grey20         1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get a data frame with edges</span></span></span>
 <span class="r-in"><span><span class="fu">gs_edges</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   x y xend yend offset_start offset_end vertex1 vertex2 name1 name2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0 0    2    0            8          5       1       2    n1    n2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0 0   -2    2            8          5       1       3    n1    n3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0 0   -4   -4            8         10       1       4    n1    n4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0 0   -8    0            8          5       1       5    n1    n5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   edgeLineType edgeLineColor edgeLineWidth arrowType edgeAlpha curve_weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        solid           red           0.8         1         1            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           11         green           0.8         1         1            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       dashed          blue           0.8         1         1            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         2124         black           0.8         1         1            1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   is_multiple is_loop away_angle</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       FALSE   FALSE   6.709837</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       FALSE   FALSE  45.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       FALSE   FALSE -75.963757</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       FALSE   FALSE 165.963757</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertex1 vertex2 name1 name2 edgeLineType edgeLineColor edgeLineWidth</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1       2    n1    n2        solid           red           0.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1       3    n1    n3           11         green           0.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1       4    n1    n4       dashed          blue           0.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1       5    n1    n5         2124         black           0.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   arrowType edgeAlpha curve_weight is_multiple is_loop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         1         1            1       FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         1         1            1       FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         1         1            1       FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         1         1            1       FALSE   FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get vertex count</span></span></span>
 <span class="r-in"><span><span class="fu">gs_vcount</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>

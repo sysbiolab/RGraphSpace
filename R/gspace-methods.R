@@ -614,11 +614,13 @@ setMethod("gs_nodes", "GraphSpace", function(x, ...) {
   
   args <- list(...)
   
-  vars <- args$vars
+  vars <- args$vars %||% FALSE
   
-  nodes <- .gs_nodes(x)
+  render <- args$render %||% FALSE
   
-  if (!is.null(vars) && .all_characterValues(vars)) {
+  nodes <- if (isTRUE(render)) .gs_nodes(x) else x@nodes
+  
+  if (.all_characterValues(vars)) {
     
     signal_df <- gs_fetch_features(x, vars = vars, as_df = TRUE)
     
@@ -635,16 +637,26 @@ setMethod("gs_nodes", "GraphSpace", function(x, ...) {
     
   }
   
-  attr(nodes, "gs_handler_type") <- "node"
-  attr(nodes, "gs_id") <- x@uuid
-  class(nodes) <- c("gs_nodes", class(nodes))
+  if (render) {
+    attr(nodes, "gs_handler_type") <- "node"
+    attr(nodes, "gs_id") <- x@uuid
+    class(nodes) <- c("gs_nodes", class(nodes))
+  }
+  
   return(nodes)
   
 })
 
 #' @rdname GraphSpace-accessors
 #' @export
-setMethod("gs_edges", "GraphSpace", function(x) {
+setMethod("gs_edges", "GraphSpace", function(x, ...) {
+  
+  args <- list(...)
+  
+  render <- args$render %||% FALSE
+  
+  if(isFALSE(render)) return(x@edges)
+  
   edges <- .gs_edges(x)
   attr(edges, "gs_id") <- x@uuid
   attr(edges, "gs_handler_type") <- "edge"
@@ -769,24 +781,13 @@ setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ...) {
 #' @export
 setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
   
-  # 'vertex' and 'name' attributes are protected
-  if (name %in% "vertex") {
-    rlang::abort(
-      message = c(
-        "x" = "The 'vertex' attribute is read-only.",
-        "i" = "Modifying vertex identifiers directly would break node-edge coherence.",
-        "*" = "To change the graph structure, please modify the underlying igraph object."
-      )
-    )
-  }
-  if (name %in% "name") {
-    rlang::abort(
-      message = c(
-        "x" = "The 'name' attribute is read-only.",
-        "i" = "Modifying vertex names directly would break node-edge coherence.",
-        "*" = "Use the 'nodeLabel' attribute instead."
-      )
-    )
+  # Check protected attributes
+  if (name %in% .gs_protected_node_cols()) {
+    rlang::abort(c(
+      x = sprintf("'%s' is a read-only edge attribute.", name),
+      i = "It is maintained internally and cannot be set directly.",
+      "*" = "To change the graph structure, modify the underlying igraph object directly."
+    ))
   }
   
   g <- x@graph
@@ -824,24 +825,13 @@ setMethod("gs_edge_attr", "GraphSpace", function(x, name, ...) {
 #' @export
 setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   
-  # 'vertex' and 'name' attributes are protected
-  if (name %in% c("vertex1","vertex2")) {
-    rlang::abort(
-      message = c(
-        "x" = "The 'vertex1' and 'vertex2' attributes are read-only.",
-        "i" = "Modifying vertex identifiers directly would break node-edge coherence.",
-        "*" = "To change the graph structure, please modify the underlying igraph object."
-      )
-    )
-  }
-  if (name %in% c("name1","name2")) {
-    rlang::abort(
-      message = c(
-        "x" = "The 'name1' and 'name2' attributes are read-only.",
-        "i" = "Modifying vertex names directly would break node-edge coherence.",
-        "*" = "To change the graph structure, please modify the underlying igraph object."
-      )
-    )
+  # Check protected attributes
+  if (name %in% .gs_protected_edge_cols()) {
+    rlang::abort(c(
+      x = sprintf("'%s' is a read-only edge attribute.", name),
+      i = "It is maintained internally and cannot be set directly.",
+      "*" = "To change the graph structure, modify the underlying igraph object directly."
+    ))
   }
   
   g <- x@graph

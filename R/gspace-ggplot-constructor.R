@@ -88,7 +88,7 @@ ggplot.GraphSpace <- function(data, mapping = NULL, ...) {
 #' @importFrom ggplot2 fortify
 #' @export
 fortify.GraphSpace <- function(model, data, ...) {
-  res <- gs_nodes(model)
+  res <- gs_nodes(model, render = TRUE)
   attr(res, ".gs_graph") <- model
   class(res) <- c("gspace_data", class(res))
   return(res)
@@ -249,8 +249,8 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   } else if(identical(node_data, edge_data)){
     data <- .get_gs_graph(node_data)
     if(inherits(data, "GraphSpace")){
-      node_data <- gs_nodes(data)
-      edge_data <- gs_edges(data)
+      node_data <- gs_nodes(data, render = TRUE)
+      edge_data <- gs_edges(data, render = TRUE)
     }
   }
   

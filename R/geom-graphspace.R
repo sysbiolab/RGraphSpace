@@ -89,8 +89,8 @@ geom_graphspace <- function(mapping = NULL, data,
     ...)
   
   data <- .graphspace_handler(data)
-  edges <- gs_edges(data)
-  data <- gs_nodes(data, vars = .detect_mapping_vars(mapping))
+  edges <- gs_edges(data, render = TRUE)
+  data <- gs_nodes(data, vars = .detect_mapping_vars(mapping), render = TRUE)
   params <- .params_graphspace(params, mapping, data, edges)
   
   ggplot2::layer(

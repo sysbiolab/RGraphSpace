@@ -18,7 +18,7 @@ gs_names(x)
 gs_nodes(x, ...)
 
 # S4 method for class 'GraphSpace'
-gs_edges(x)
+gs_edges(x, ...)
 
 # S4 method for class 'GraphSpace'
 gs_image(x)
@@ -151,30 +151,25 @@ gs_nodes(gs)
 #> n3      3 -2  2   n3        V3             3          black        23        5
 #> n4      4 -4 -4   n4        V4             3          black        24       10
 #> n5      5 -8  0   n5        V5             3          black        25        5
-#>    nodeColor nodeLineWidth nodeLineColor nodeAlpha  away_angle
-#> n1       red             1        grey20         1    9.462322
-#> n2   #00ad39             1        grey20         1    5.194429
-#> n3    grey80             1        grey20         1   80.537678
-#> n4 lightblue             1        grey20         1 -113.962489
-#> n5      cyan             1        grey20         1  175.914383
+#>    nodeColor nodeLineWidth nodeLineColor nodeAlpha
+#> n1       red             1        grey20         1
+#> n2   #00ad39             1        grey20         1
+#> n3    grey80             1        grey20         1
+#> n4 lightblue             1        grey20         1
+#> n5      cyan             1        grey20         1
 
 # Get a data frame with edges
 gs_edges(gs)
-#>   x y xend yend offset_start offset_end vertex1 vertex2 name1 name2
-#> 1 0 0    2    0            8          5       1       2    n1    n2
-#> 2 0 0   -2    2            8          5       1       3    n1    n3
-#> 3 0 0   -4   -4            8         10       1       4    n1    n4
-#> 4 0 0   -8    0            8          5       1       5    n1    n5
-#>   edgeLineType edgeLineColor edgeLineWidth arrowType edgeAlpha curve_weight
-#> 1        solid           red           0.8         1         1            1
-#> 2           11         green           0.8         1         1            1
-#> 3       dashed          blue           0.8         1         1            1
-#> 4         2124         black           0.8         1         1            1
-#>   is_multiple is_loop away_angle
-#> 1       FALSE   FALSE   6.709837
-#> 2       FALSE   FALSE  45.000000
-#> 3       FALSE   FALSE -75.963757
-#> 4       FALSE   FALSE 165.963757
+#>   vertex1 vertex2 name1 name2 edgeLineType edgeLineColor edgeLineWidth
+#> 1       1       2    n1    n2        solid           red           0.8
+#> 2       1       3    n1    n3           11         green           0.8
+#> 3       1       4    n1    n4       dashed          blue           0.8
+#> 4       1       5    n1    n5         2124         black           0.8
+#>   arrowType edgeAlpha curve_weight is_multiple is_loop
+#> 1         1         1            1       FALSE   FALSE
+#> 2         1         1            1       FALSE   FALSE
+#> 3         1         1            1       FALSE   FALSE
+#> 4         1         1            1       FALSE   FALSE
 
 # Get vertex count
 gs_vcount(gs)

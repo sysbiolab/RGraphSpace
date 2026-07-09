@@ -74,11 +74,23 @@ reference:
     - updateGraphSpace
     - normalizeGraphSpace
     - cropGraphSpace
-
+    - summary,GraphSpace-method
+    
 - title: Accessors
   contents:
     - GraphSpace-accessors
-
+    
+- title: Graph manipulation
+  contents:
+    - gs_subset
+    - gs_add_nodes
+    - gs_add_edges
+    - GraphSpace-subscript
+    
+- title: Features
+  contents:
+    - gs_features-utils
+    
 - title: ggplot2 integration
   contents:
     - ggplot-GraphSpace
@@ -104,9 +116,7 @@ reference:
 
 - title: Utilities
   contents:
-    - gs_features-utils
     - as_colorraster
-    - summary,GraphSpace-method
 
 - title: Data
   contents:

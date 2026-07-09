@@ -1,7 +1,7 @@
 # Getting Started with RGraphSpace
 
   
-**Package**: RGraphSpace 1.4.2
+**Package**: RGraphSpace 1.4.3
 
 ## Introductory vignettes
 
