@@ -20,16 +20,20 @@
 #' Useful for aligning nodes with image backgrounds, which often use an 
 #' inverted coordinate system. Defaults to \code{image.space}.
 #' @param flip.x Logical; whether to flip the node coordinates along the x-axis.
-#' @param rotate.xy Logical; whether to rotate x-y coordinates.
 #' @param flip.v Logical; whether to vertically flip the background image  
 #' matrix (top-to-bottom) to align with the graph coordinate system.
 #' @param flip.h Logical; whether to horizontally flip the background image  
 #' matrix (left-to-right) to align with the graph coordinate system.
+#' @param swap.xy Logical; whether to swap x and y node coordinates. 
+#' Useful when the graph coordinate system is transposed relative to the
+#' image or reference map.
 #' @param crop.coord An optional numeric vector of length four specifying a  
 #' cropping region (xmin, xmax, ymin, ymax), with values in normalized 
 #' coordinates \code{[0,1]}.
 #' @param verbose A single logical value specifying to display detailed 
 #' messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).
+#' @param rotate.xy Deprecated from RGraphSpace 1.4.3; use 
+#' \code{swap.xy} instead.
 #' @param use_image Deprecated from RGraphSpace 1.4.0; use 
 #' \code{image.space} instead.
 #' 
@@ -41,7 +45,7 @@
 #'   \code{image.space = FALSE}) or maps them to pixel coordinates (when 
 #'   \code{image.space = TRUE} and an image is provided; see \link{gs_image}). 
 #'   It handles image-to-graph alignment via \code{flip.\*} and 
-#'   \code{rotate.\*} arguments, used to adjust the graph origin with the 
+#'   \code{swap.\*} arguments, used to adjust the graph origin with the 
 #'   image matrix layout. Users should be aware of the potential discrepancy 
 #'   between image matrix orientation (top-down) and graph coordinates 
 #'   (bottom-up). The function attempts to automatically adjust the y-axis to 
@@ -85,14 +89,22 @@
 #' @export
 setMethod("normalizeGraphSpace", "GraphSpace",
   function(gs, mar = 0.1, image.space = .has_image(gs), 
-    flip.x = FALSE, flip.y = image.space, rotate.xy = FALSE, 
-    flip.v = FALSE, flip.h = FALSE, verbose = TRUE, 
-    use_image = deprecated()){
+    flip.x = FALSE, flip.y = image.space,  
+    flip.v = FALSE, flip.h = FALSE, 
+    swap.xy = FALSE, verbose = TRUE, 
+    rotate.xy = deprecated(), use_image = deprecated()){
     
     gs <- updateGraphSpace(gs)
     
+    if (lifecycle::is_present(rotate.xy)) {
+      deprecate_soft("1.4.2", "normalizeGraphSpace(rotate.xy)",
+        with = "normalizeGraphSpace(swap.xy)")
+      swap.xy <- rotate.xy
+    }
+    
     if (lifecycle::is_present(use_image)) {
-      deprecate_soft("1.4.0", "normalizeGraphSpace(use_image)")
+      deprecate_soft("1.4.0", "normalizeGraphSpace(use_image)",
+        with = "normalizeGraphSpace(image.space)")
       image.space <- .has_image(gs)
     }
     
@@ -101,7 +113,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     .validate_gs_args("singleLogical", "flip.h", flip.h)
     .validate_gs_args("singleLogical", "flip.x", flip.x)
     .validate_gs_args("singleLogical", "flip.y", flip.y)
-    .validate_gs_args("singleLogical", "rotate.xy", rotate.xy)
+    .validate_gs_args("singleLogical", "swap.xy", swap.xy)
     .validate_gs_args("singleLogical", "verbose", verbose)
     .validate_gs_args("singleNumber", "mar", mar)
     
@@ -124,10 +136,10 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     if(gs_vcount(gs)>0){
       if(image.space){
         gs <- .normalizeGraphSpace.image(gs, mar, flip.x, flip.y, 
-          rotate.xy, flip.v, flip.h, verbose)
+          swap.xy, flip.v, flip.h, verbose)
       } else {
         gs <- .normalizeGraphSpace.graph(gs, mar, flip.x, flip.y, 
-          rotate.xy, verbose)
+          swap.xy, verbose)
       }
     }
     
@@ -137,17 +149,17 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 )
 
 .normalizeGraphSpace.graph <- function(gs, mar, flip.x, flip.y, 
-  rotate.xy, verbose){
+  swap.xy, verbose){
   
   nodes <- .get_nodes(gs@graph)
-  nodes <- .setCoordToGraph(nodes, flip.x, flip.y, rotate.xy, verbose)
+  nodes <- .setCoordToGraph(nodes, flip.x, flip.y, swap.xy, verbose)
   if(verbose) rlang::inform("Normalizing node coordinates to graph space...")
   gs@nodes <- .fit_graph_space(nodes, mar)
   gs@pars$image.space <- FALSE
   gs@pars$is.normalized <- TRUE
   gs@pars$flip.x <- flip.x
   gs@pars$flip.y <- flip.y
-  gs@pars$rotate.xy <- rotate.xy
+  gs@pars$swap.xy <- swap.xy
   gs@pars$mar <- mar
   
   return(gs)
@@ -155,7 +167,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 }
 
 .normalizeGraphSpace.image <- function(gs, mar, flip.x, flip.y, 
-  rotate.xy, flip.v, flip.h, verbose){
+  swap.xy, flip.v, flip.h, verbose){
   
   nodes <- .get_nodes(gs@graph)
   image <- .get_image(gs)
@@ -172,7 +184,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     image <- image[, rev(seq_len(ncol(image))), drop = FALSE]
   } 
   
-  nodes <- .setCoordToImage(nodes, image, flip.x, flip.y, rotate.xy, verbose)
+  nodes <- .setCoordToImage(nodes, image, flip.x, flip.y, swap.xy, verbose)
   
   l_temp <- .fitImageNodes(nodes, image, mar)
   
@@ -183,7 +195,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   gs@pars$flip.v <- flip.v
   gs@pars$flip.x <- flip.x
   gs@pars$flip.y <- flip.y
-  gs@pars$rotate.xy <- rotate.xy
+  gs@pars$swap.xy <- swap.xy
   gs@pars$mar <- mar
   
   return(gs)
@@ -231,12 +243,12 @@ setMethod("cropGraphSpace", "GraphSpace",
 ### Graph adjusts
 ################################################################################
 .setCoordToGraph <- function(nodes, flip.x = FALSE, flip.y = FALSE, 
-  rotate.xy= FALSE, verbose = TRUE){
+  swap.xy= FALSE, verbose = TRUE){
   
-  # Rotated coordinates
+  # swap coordinates
   coord <- nodes[,c("x","y")]
-  if(rotate.xy){
-    if(verbose) rlang::inform("Rotating xy-coordinates...")
+  if(swap.xy){
+    if(verbose) rlang::inform("Swapping xy-coordinates...")
     coord$x2 <- coord$y
     coord$y2 <- coord$x
   } else {
@@ -299,13 +311,13 @@ setMethod("cropGraphSpace", "GraphSpace",
 ### Graph-to-image adjusts
 ################################################################################
 .setCoordToImage <- function(nodes, image, 
-  flip.x = FALSE, flip.y = FALSE, rotate.xy = FALSE, 
+  flip.x = FALSE, flip.y = FALSE, swap.xy = FALSE, 
   verbose = TRUE){
   
-  # Rotated coordinates
+  # swap coordinates
   coords <- nodes[,c("x","y")]
-  if(rotate.xy){
-    if(verbose) rlang::inform("Rotating xy-coordinates...")
+  if(swap.xy){
+    if(verbose) rlang::inform("Swapping xy-coordinates...")
     coords$x2 <- coords$y
     coords$y2 <- coords$x
   } else {
@@ -367,7 +379,7 @@ setMethod("cropGraphSpace", "GraphSpace",
       
     ms_x2 <- c(">" = sprintf("Image dimensions: %s cols x %s rows.", d[2], d[1]))
     
-    ms_a1 <- c("*" = "Try adjusting 'flip' and 'rotate' in `normalizeGraphSpace()`.")
+    ms_a1 <- c("*" = "Try adjusting 'flip' and 'swap' in `normalizeGraphSpace()`.")
     ms_a2 <- c("*" = "Or set `image.space = FALSE` to skip image-index mapping.")
     
     footer = c(

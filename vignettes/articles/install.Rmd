@@ -32,6 +32,7 @@ install.packages("sf")
 install.packages("maps")
 install.packages("geometry")
 install.packages("ggnewscale")
+install.packages("patchwork")
 
 install.packages("Seurat")
 remotes::install_github("satijalab/seurat-data")

@@ -62,6 +62,7 @@
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -97,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-09</h4>
+            <h4 data-toc-skip class="date">2026-07-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/interactive.Rmd" class="external-link"><code>vignettes/articles/interactive.Rmd</code></a></small>
       <div class="d-none name"><code>interactive.Rmd</code></div>
@@ -108,7 +109,7 @@ Team</h4>
 <p><br><strong>Package</strong>: RGraphSpace 1.4.3</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.2"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.3"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -251,13 +252,15 @@ adjustments.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/resetRedeR.html" class="external-link">resetRedeR</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Send 'gtoy2' to the RedeR interface</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/addGraphToRedeR.html" class="external-link">addGraphToRedeR</a></span><span class="op">(</span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_graph</a></span><span class="op">(</span><span class="va">gs_gtoy2</span><span class="op">)</span>, unit<span class="op">=</span><span class="st">"npc"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/addGraphToRedeR.html" class="external-link">addGraphToRedeR</a></span><span class="op">(</span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_graph</a></span><span class="op">(</span><span class="va">gs_gtoy2</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"npc"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- Fine-tune the force-directed layout:</span></span>
 <span><span class="co"># p1: edge target length (default = 100)</span></span>
 <span><span class="co"># p2: edge stiffness (default = 100)</span></span>
 <span><span class="co"># p5: node movement limit (default = 100)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/relaxRedeR.html" class="external-link">relaxRedeR</a></span><span class="op">(</span>p1 <span class="op">=</span> <span class="fl">10</span>, p2 <span class="op">=</span> <span class="fl">50</span>, p5 <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Allow a few seconds for the layout to stabilize</span></span>
 <span></span>
 <span><span class="co"># Update the graph layout</span></span>
 <span><span class="va">gtoy2_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/updateLayoutFromRedeR.html" class="external-link">updateLayoutFromRedeR</a></span><span class="op">(</span>g <span class="op">=</span> <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_graph</a></span><span class="op">(</span><span class="va">gs_gtoy2</span><span class="op">)</span><span class="op">)</span></span>
@@ -293,7 +296,7 @@ adjustments.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] igraph_2.3.3      RedeR_3.8.0       RGraphSpace_1.4.3 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] igraph_2.3.3      RedeR_3.8.1       RGraphSpace_1.4.3 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    </span></span>

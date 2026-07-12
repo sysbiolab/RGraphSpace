@@ -22,6 +22,8 @@ library(bs4cards)
 <br/>
 **Package**: RGraphSpace `r packageVersion('RGraphSpace')`
 
+For a self-contained introduction that works offline, run **vignette("RGraphSpace")** after installing the package.
+
 # Introductory vignettes
 
 These tutorials introduce *RGraphSpace* using simple toy examples: [*building a graph space*](building-graphspace.html) walks through basic graph conventions; [*customizing aesthetics*](customizing-aesthetics.html) demonstrates how to set up `geoms` to handle graph data types; and [*fine-tuning scales*](scales-and-offsets.html) describes the trade-offs involved in synchronizing node and edge layers.

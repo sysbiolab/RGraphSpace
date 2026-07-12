@@ -76,9 +76,8 @@ relative to the plotting area.
 
 **Data Structure:** The resulting object stores nodes and edges in
 separate internal slots, preserving metadata such as `nodeSize` and
-`edgeLineColor`. If an `igraph` object is provided without specific
-styling attributes, `GraphSpace` will assign the default values defined
-in the
+`edgeColor`. If an `igraph` object is provided without specific styling
+attributes, `GraphSpace` will assign the default values defined in the
 [`geom_graphspace`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
 aesthetics. Users can also specify custom variables in the input graph
 to be used as aesthetics within the `ggplot2` grammar.
@@ -111,7 +110,7 @@ The following attributes in `g` are evaluated by the constructor:
 |  |  |
 |----|----|
 | `edgeLineWidth` | Edge thickness; see [`gpar`](https://rdrr.io/r/grid/gpar.html). |
-| `edgeLineColor` | A valid color name or hexadecimal code. |
+| `edgeColor` | A valid color name or hexadecimal code. |
 | `edgeLineType` | Line style (e.g., "solid", "dashed"); see [`gpar`](https://rdrr.io/r/grid/gpar.html). |
 | `arrowType` | Arrowhead style (see *Arrowhead types* section). |
 
@@ -170,7 +169,7 @@ gtoy1 <- make_full_graph(15)
 
 # Custom attributes
 V(gtoy1)$nodeSize <- 5
-E(gtoy1)$edgeLineColor <- "red"
+E(gtoy1)$edgeColor <- "red"
 E(gtoy1)$arrowType <- "-->"
 
 # Create a GraphSpace

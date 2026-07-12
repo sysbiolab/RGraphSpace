@@ -54,6 +54,7 @@ the normalized coordinate state are not affected."><style>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -110,10 +111,9 @@ endpoints. Two column naming conventions are accepted:</p><ul><li><p><code>from<
 useful when constructing <code>value</code> directly from <code><a href="GraphSpace-accessors.html">gs_edges()</a></code>.</p></li>
 </ul><p>If both conventions are present, <code>from</code>/<code>to</code> takes priority.
 Any additional columns are treated as edge attributes and passed through
-to <code>@edges</code>. Standard visual attributes (<code>edgeLineColor</code>,
-<code>edgeLineWidth</code>, <code>arrowType</code>, etc.) are filled from package
-defaults when omitted; analytical attributes such as <code>weight</code> are
-stored as-is.</p></dd>
+to <code>@edges</code>. Standard visual attributes (<code>edgeColor</code>,
+<code>arrowType</code>, etc.) are filled from package defaults when omitted;
+analytical attributes such as <code>weight</code> are stored as-is.</p></dd>
 
 </dl></div>
     <div class="section level2">

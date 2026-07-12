@@ -62,6 +62,7 @@
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -97,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-09</h4>
+            <h4 data-toc-skip class="date">2026-07-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/interoperability.Rmd" class="external-link"><code>vignettes/articles/interoperability.Rmd</code></a></small>
       <div class="d-none name"><code>interoperability.Rmd</code></div>
@@ -148,7 +149,7 @@ Before proceeding, ensure that all packages described in the <a href="install.ht
 installed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.2"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.3"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -226,6 +227,7 @@ data.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_legend</a></span><span class="op">(</span>discrete_fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Option 2: Passing an 'igraph' object to RGraphSpace geoms</span></span>
+<span><span class="co"># inject_nodespace() required — no GraphSpace object passed to ggplot()</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">map_sf</span>, fill <span class="op">=</span> <span class="st">"grey95"</span>, color <span class="op">=</span> <span class="st">"grey60"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"grey40"</span>, curve <span class="op">=</span> <span class="fl">0.1</span>, data <span class="op">=</span> <span class="va">igraph_cities</span><span class="op">)</span> <span class="op">+</span></span>
@@ -237,6 +239,7 @@ data.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_legend</a></span><span class="op">(</span>discrete_fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Option 3: Passing a 'tbl_graph' object to RGraphSpace geoms</span></span>
+<span><span class="co"># inject_nodespace() required — no GraphSpace object passed to ggplot()</span></span>
 <span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidygraph.data-imaginist.com/reference/tbl_graph.html" class="external-link">as_tbl_graph</a></span><span class="op">(</span><span class="va">igraph_cities</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">map_sf</span>, fill <span class="op">=</span> <span class="st">"grey95"</span>, color <span class="op">=</span> <span class="st">"grey60"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -248,6 +251,7 @@ data.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_legend</a></span><span class="op">(</span>discrete_fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Option 4: Integrating RGraphSpace geoms into a ggraph workflow</span></span>
+<span><span class="co"># inject_nodespace() required — no GraphSpace object passed to ggplot()</span></span>
 <span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidygraph.data-imaginist.com/reference/tbl_graph.html" class="external-link">as_tbl_graph</a></span><span class="op">(</span><span class="va">igraph_cities</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggraph.data-imaginist.com/reference/ggraph.html" class="external-link">ggraph</a></span><span class="op">(</span>graph <span class="op">=</span> <span class="va">gr</span>, x<span class="op">=</span> <span class="va">gr</span><span class="op">$</span><span class="va">x</span>, y <span class="op">=</span> <span class="va">gr</span><span class="op">$</span><span class="va">y</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">map_sf</span>, fill <span class="op">=</span> <span class="st">"grey95"</span>, color <span class="op">=</span> <span class="st">"grey60"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -259,11 +263,13 @@ data.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_legend</a></span><span class="op">(</span>discrete_fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Although all four approaches produce the same visualization, only
 <em>Option 1</em> provides automatic node-edge synchronization. When a
-<em>GraphSpace</em> object is supplied directly to
-<code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot()</a></code>, clipping metadata are propagated automatically
-between the node and edge layers. In all other workflows,
-<code><a href="../reference/inject_nodespace.html">inject_nodespace()</a></code> must be called explicitly to synchronize
-clipping offsets.</p>
+<code>GraphSpace</code> object is passed directly to
+<code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot()</a></code> (Option 1), clipping metadata propagate
+automatically between node and edge layers and no additional calls are
+needed. In all other workflows (Options 2–4),
+<code><a href="../reference/inject_nodespace.html">inject_nodespace()</a></code> must be called explicitly to trigger
+this synchronization. This is the only functional difference between the
+four approaches; the visual output is identical.</p>
 <p><img src="cards/interoperability.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">

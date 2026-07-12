@@ -65,8 +65,8 @@ remaining members of that group, the full edge table is recomputed from
 **Note on parallel edges**: in non-simplified graphs containing parallel
 edges between the same vertex pair, integer or logical indexing is the
 most reliable approach. A predicate expression that matches a shared
-attribute (such as `edgeLineColor`) will match all parallel instances
-simultaneously, which is usually the intended behaviour.
+attribute (such as `edgeColor`) will match all parallel instances
+simultaneously, which is usually the intended behavior.
 
 ## See also
 

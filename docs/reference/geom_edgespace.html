@@ -56,6 +56,7 @@ in GeomEdgeSpace."><style>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -267,9 +268,8 @@ is unavailable, <code>"adaptive"</code> silently falls back to <code>"opposite"<
 <p><code>geom_edgespace()</code> understands <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a> aesthetics.</p>
 <p>If these aesthetics are not explicitly provided in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>, they
 are automatically retrieved from the <a href="GraphSpace-methods.html">GraphSpace</a> object.</p>
-<table class="table table"><tr><td><strong><code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code></strong></td><td>Required; automatically supplied.</td></tr><tr><td><code>colour</code></td><td>Edge colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>linetype</code></td><td>Edge line type (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>linewidth</code></td><td>Edge line width (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>Required aesthetics (<code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code>)
-are supplied from the <a href="GraphSpace-methods.html">GraphSpace</a> object and do not need to be
-manually mapped.</p>
+<table class="table table"><tr><td><strong><code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code></strong></td><td>Required; automatically supplied.</td></tr><tr><td><code>colour</code></td><td>Edge colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>linetype</code></td><td>Edge line type (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>linewidth</code></td><td>Edge line width (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>All required aesthetics are supplied from the <a href="GraphSpace-methods.html">GraphSpace</a> object and
+do not need to be manually mapped.</p>
 <p>Additional parameters can be passed to control fixed values for the layer.
 For example: <code>colour = "grey"</code>, <code>linetype = 2</code>, <code>linewidth = 1</code>.</p>
 <p>Arrows can be further adjusted by <code>arrow_size</code> and <code>arrow_offset</code>

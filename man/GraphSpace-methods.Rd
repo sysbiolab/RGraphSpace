@@ -60,7 +60,7 @@ plotting area.
 
 \strong{Data Structure:}
 The resulting object stores nodes and edges in separate internal slots,
-preserving metadata such as \code{nodeSize} and \code{edgeLineColor}.
+preserving metadata such as \code{nodeSize} and \code{edgeColor}.
 If an \code{igraph} object is provided without specific styling attributes,
 \code{GraphSpace} will assign the default values defined in the
 \code{\link{geom_graphspace}} aesthetics. Users can also specify custom
@@ -95,7 +95,7 @@ The following attributes in \code{g} are evaluated by the constructor:
 
 \tabular{ll}{
 \code{edgeLineWidth} \tab Edge thickness; see \code{\link[grid]{gpar}}. \cr
-\code{edgeLineColor} \tab A valid color name or hexadecimal code. \cr
+\code{edgeColor} \tab A valid color name or hexadecimal code. \cr
 \code{edgeLineType}  \tab Line style (e.g., "solid", "dashed"); see \code{\link[grid]{gpar}}. \cr
 \code{arrowType}     \tab Arrowhead style (see \emph{Arrowhead types} section).
 }
@@ -147,7 +147,7 @@ gtoy1 <- make_full_graph(15)
 
 # Custom attributes
 V(gtoy1)$nodeSize <- 5
-E(gtoy1)$edgeLineColor <- "red"
+E(gtoy1)$edgeColor <- "red"
 E(gtoy1)$arrowType <- "-->"
 
 # Create a GraphSpace

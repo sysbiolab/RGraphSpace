@@ -70,8 +70,8 @@
 #'   \code{stroke}  \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
 #' }
 #' 
-#' Required aesthetics \strong{\code{x}} and \strong{\code{y}} are supplied 
-#' from the \link{GraphSpace} object and do not need to be manually mapped.
+#' Required aesthetics are supplied from the \link{GraphSpace} object and  
+#' do not need to be manually mapped.
 #' 
 #' Additional parameters can be passed to control fixed values for the layer.
 #' For example: `fill = "red"`, `stroke = 3`, `alpha = 0.5`, or `shape = 21`.
@@ -188,6 +188,8 @@ geom_nodespace <- function(mapping = NULL, data = NULL,
     data <- nodespace_handler(mapping)(data)
   }
   
+  user_aes = .get_user_aes(mapping, ...)
+  
   mapping <- .mapping_nodespace(mapping)
   
   params <- rlang::list2(
@@ -196,6 +198,7 @@ geom_nodespace <- function(mapping = NULL, data = NULL,
     dpi = dpi, 
     dev = dev, 
     scale = scale, 
+    .user_aes = user_aes,
     ...)
   
   params$.size_unit <- if("size" %in% names(mapping)) "mm" else "npc"
@@ -211,6 +214,12 @@ geom_nodespace <- function(mapping = NULL, data = NULL,
     params = params
   )
   
+}
+
+#-------------------------------------------------------------------------------
+.get_user_aes <- function(mapping, ...){
+  pars <- list(...)
+  unique(c(names(mapping), names(pars)))
 }
 
 #-------------------------------------------------------------------------------
@@ -241,8 +250,9 @@ StatNodeSpace <- ggproto(
   optional_aes = c("nodeSize", "nodeShape", "nodeLineWidth",  
     "nodeColor", "nodeLineColor", "nodeAlpha", 
     "nodeLabel", "nodeLabelSize", "nodeLabelColor"),
-  setup_data = function(data, params) {
-    data <- .params_nodespace(params, data)
+  extra_params = c("na.rm",".user_aes"),
+  finish_layer = function(data, params) {
+    data <- .finish_nodespace(data, params)
     return(data)
   },
   compute_panel = function(data, scales){
@@ -329,51 +339,48 @@ nodespace_handler <- function(mapping = NULL) {
 }
 
 #-------------------------------------------------------------------------------
-.params_nodespace <- function(params, nodes, mapping){
+.finish_nodespace <- function(nodes, params){
   
-  # Note: 'mapping' is read from colnames(nodes) because, at this
-  # stage, ggplot2 has already evaluated aes() and pruned unmapped
-  # columns. Any standard aesthetic name present here (e.g. "size",
-  # "fill") was explicitly mapped by the user.
-  if(missing(mapping)){
-    mapping <- colnames(nodes)
-  } else {
-    mapping <- names(mapping)
-  }
+  if(nrow(nodes)==0) return(nodes)
   
+  # Note: This hook runs after scales have been applied, making it the 
+  # right place to assign graph attribute identity values without 
+  # interfering with scale training of other geoms.
+  user_aes <- params$.user_aes
+
   # Node attributes
   
-  if(is.null(params[["size"]]) && !"size" %in% mapping){
+  if(is.null(params[["size"]]) && !"size" %in% user_aes){
     if("nodeSize" %in% names(nodes) ){
       nodes[["size"]] <- nodes[["nodeSize"]]
     }
   }
   
-  if(is.null(params[["stroke"]]) && !"stroke" %in% mapping ){
+  if(is.null(params[["stroke"]]) && !"stroke" %in% user_aes ){
     if("nodeLineWidth" %in% names(nodes) ){
       nodes[["stroke"]] <- nodes[["nodeLineWidth"]]
     }
   }
   
-  if(is.null(params[["shape"]]) && !"shape" %in% mapping ){
+  if(is.null(params[["shape"]]) && !"shape" %in% user_aes ){
     if("nodeShape" %in% names(nodes) ){
       nodes[["shape"]] <- nodes[["nodeShape"]]
     }
   }
   
-  if(is.null(params[["fill"]]) && !"fill" %in% mapping ){
+  if(is.null(params[["fill"]]) && !"fill" %in% user_aes ){
     if("nodeColor" %in% names(nodes) ){
       nodes[["fill"]] <- nodes[["nodeColor"]]
     }
   }
   
-  if(is.null(params[["colour"]]) && !"colour" %in% mapping ){
+  if(is.null(params[["colour"]]) && !"colour" %in% user_aes ){
     if("nodeLineColor" %in% names(nodes) ){
       nodes[["colour"]] <- nodes[["nodeLineColor"]]
     }
   }
   
-  if(is.null(params[["alpha"]]) && !"alpha" %in% mapping ){
+  if(is.null(params[["alpha"]]) && !"alpha" %in% user_aes ){
     if("nodeAlpha" %in% names(nodes) ){
       nodes[["alpha"]] <- nodes[["nodeAlpha"]]
     }
@@ -383,13 +390,13 @@ nodespace_handler <- function(mapping = NULL) {
   # Note: 'nodeLabel' mapping is controlled upstream by the caller;
   # Here, only the styling attributes are resolved
   
-  if(is.null(params[["label_size"]]) && !"label_size" %in% mapping ){
+  if(is.null(params[["label_size"]]) && !"label_size" %in% user_aes ){
     if("nodeLabelSize" %in% names(nodes) ){
       nodes[["label_size"]] <- nodes[["nodeLabelSize"]]
     }
   }
   
-  if(is.null(params[["label_colour"]]) && !"label_colour" %in% mapping ){
+  if(is.null(params[["label_colour"]]) && !"label_colour" %in% user_aes ){
     if("nodeLabelColor" %in% names(nodes) ){
       nodes[["label_colour"]] <- nodes[["nodeLabelColor"]]
     }
@@ -440,7 +447,7 @@ GeomNodeSpace <- ggproto(
   optional_aes = c("label_alpha", "label_angle", "label_hjust",
     "label_vjust", "label_family", "label_fontface", "label_lineheight"),
   
-  non_missing_aes = c("size", "stroke", "shape", "colour"),
+  non_missing_aes = c("size", "stroke", "shape"),
   
   default_aes = aes(
     size = 5,

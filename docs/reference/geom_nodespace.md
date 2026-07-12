@@ -144,7 +144,7 @@ object.
 | `size` | Node size (see *drawing* section and [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
 | `stroke` | Node line width (see [gg_par](https://ggplot2.tidyverse.org/reference/gg_par.html) and [aes_linetype_size_shape](https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html)). |
 
-Required aesthetics **`x`** and **`y`** are supplied from the
+Required aesthetics are supplied from the
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 object and do not need to be manually mapped.
 

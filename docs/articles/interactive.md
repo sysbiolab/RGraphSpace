@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -169,13 +169,15 @@ startRedeR()
 resetRedeR()
 
 # Send 'gtoy2' to the RedeR interface
-addGraphToRedeR(gs_graph(gs_gtoy2), unit="npc")
+addGraphToRedeR(gs_graph(gs_gtoy2), unit = "npc")
 
 #--- Fine-tune the force-directed layout:
 # p1: edge target length (default = 100)
 # p2: edge stiffness (default = 100)
 # p5: node movement limit (default = 100)
 relaxRedeR(p1 = 10, p2 = 50, p5 = 1)
+
+# Allow a few seconds for the layout to stabilize
 
 # Update the graph layout
 gtoy2_2 <- updateLayoutFromRedeR(g = gs_graph(gs_gtoy2))
@@ -211,7 +213,7 @@ plotGraphSpace(gtoy2_2, node.labels = FALSE)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RedeR_3.8.0       RGraphSpace_1.4.3 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RedeR_3.8.1       RGraphSpace_1.4.3 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    

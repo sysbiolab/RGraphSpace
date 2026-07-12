@@ -64,6 +64,7 @@
     <li><a class="dropdown-item" href="articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -100,19 +101,18 @@
 <ul>
 <li>Native <em>ggplot2</em> interface for <em>igraph</em> objects</li>
 <li>Optimized <em>geoms</em> for large-scale network visualization</li>
-<li>Spatial alignment of networks with reference backgrounds</li>
-<li>Interoperability with <em>ggraph</em> and <em>tidygraph</em> workflows</li>
+<li>Dual-anchor normalization for precise node and edge alignment</li>
+<li>Spatial alignment of networks with reference maps and images</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h3>
-<p><em>RGraphSpace</em> is an R package that generates <em>ggplot2</em> graphics for <em>igraph</em> objects (<a href="#ref-nepusz">Csardi and Nepusz 2006</a>), scaling nodes and edges to a unit space. The package implements new <em>ggplot2</em> prototypes (<a href="#ref-wickham">Wickham 2016</a>), optimized for representing large networks. This enables extensive customization of aesthetics and visual style, including interoperability with <em>ggraph</em> and <em>tidygraph</em> workflows (<a href="#ref-pedersen">Pedersen 2024</a>). Two specialized <code>geoms</code> translate graph data into geometric layers.</p>
+<p><em>RGraphSpace</em> is an R package that generates <em>ggplot2</em> graphics for <em>igraph</em> objects (<a href="#ref-nepusz">Csardi and Nepusz 2006</a>), scaling nodes and edges to a unit space. The package implements new <em>ggplot2</em> prototypes (<a href="#ref-wickham">Wickham 2016</a>) optimized for large-scale network visualization, enabling extensive customization of aesthetics and visual style. A dual-anchor normalization approach ensures that edge endpoints remain pinned to node boundaries regardless of node size, which is particularly useful when graph elements must be spatially aligned with reference maps and images. The package also supports interoperability with <em>ggraph</em> and <em>tidygraph</em> workflows (<a href="#ref-pedersen">Pedersen 2024</a>). Three specialized geoms translate graph data into geometric layers.</p>
 <ol style="list-style-type: decimal">
-<li>
-<strong><code><a href="reference/geom_nodespace.html">geom_nodespace()</a></code></strong>: Renders network nodes. Extends <code>GeomPoint</code> aesthetic mappings and exposes node state information to the edge layer.</li>
-<li>
-<strong><code><a href="reference/geom_edgespace.html">geom_edgespace()</a></code></strong>: Renders the relationships between nodes. Extends <code>GeomSegment</code> aesthetic mappings; unlike standard segments, it is node-aware and dynamically adjusts start and end points based on node position and size.</li>
+<li><p><strong><code><a href="reference/geom_nodespace.html">geom_nodespace()</a></code></strong>: Renders network nodes. Extends <code>GeomPoint</code> aesthetic mappings and exposes node state information to the edge layer.</p></li>
+<li><p><strong><code><a href="reference/geom_edgespace.html">geom_edgespace()</a></code></strong>: Renders the relationships between nodes. Extends <code>GeomSegment</code> aesthetic mappings; unlike standard segments, it is node-aware and dynamically adjusts start and end points based on node position and size.</p></li>
+<li><p><strong><code><a href="reference/geom_graphspace.html">geom_graphspace()</a></code></strong>: A convenience wrapper that calls <code><a href="reference/geom_nodespace.html">geom_nodespace()</a></code> and <code><a href="reference/geom_edgespace.html">geom_edgespace()</a></code> in sequence. Use this for the common case; use the individual geoms directly when independent control of node and edge layers is needed.</p></li>
 </ol>
 </div>
 <div class="section level3">

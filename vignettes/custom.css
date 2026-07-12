@@ -151,6 +151,48 @@ ol, ul {
     width: 100% !important;
 }
 
+.copy-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: pointer;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  background: #f8f8f8;
+  padding: 2px 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.copy-btn:hover .copy-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.copy-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  background: #333;
+  color: #fff;
+  font-size: 11px;
+  font-family: sans-serif;
+  text-align: center;
+  padding: 3px 8px;
+  border-radius: 4px;
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  white-space: nowrap;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+
+pre.r, pre.sourceCode {
+  min-height: 2.5em;
+}
 
 
 

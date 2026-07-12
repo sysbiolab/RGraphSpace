@@ -70,7 +70,7 @@ theme_gspace_legend(
 
 - bg_colour:
 
-  A color name or hex code specifying the panel background.
+  A colour name or hex code specifying the panel background.
 
 - discrete_fill:
 

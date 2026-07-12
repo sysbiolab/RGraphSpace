@@ -160,16 +160,16 @@ gs_nodes(gs)
 
 # Get a data frame with edges
 gs_edges(gs)
-#>   vertex1 vertex2 name1 name2 edgeLineType edgeLineColor edgeLineWidth
-#> 1       1       2    n1    n2        solid           red           0.8
-#> 2       1       3    n1    n3           11         green           0.8
-#> 3       1       4    n1    n4       dashed          blue           0.8
-#> 4       1       5    n1    n5         2124         black           0.8
-#>   arrowType edgeAlpha curve_weight is_multiple is_loop
-#> 1         1         1            1       FALSE   FALSE
-#> 2         1         1            1       FALSE   FALSE
-#> 3         1         1            1       FALSE   FALSE
-#> 4         1         1            1       FALSE   FALSE
+#>   vertex1 vertex2 name1 name2 edgeLineType edgeColor edgeLineWidth arrowType
+#> 1       1       2    n1    n2        solid       red           0.8         1
+#> 2       1       3    n1    n3           11     green           0.8         1
+#> 3       1       4    n1    n4       dashed      blue           0.8         1
+#> 4       1       5    n1    n5         2124     black           0.8         1
+#>   edgeAlpha curve_weight is_multiple is_loop
+#> 1         1            1       FALSE   FALSE
+#> 2         1            1       FALSE   FALSE
+#> 3         1            1       FALSE   FALSE
+#> 4         1            1       FALSE   FALSE
 
 # Get vertex count
 gs_vcount(gs)
@@ -230,7 +230,7 @@ gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
 gs_vertex_attr(gs, "nodeSize") <- 10
 
 # Access a specific edge attribute
-gs_edge_attr(gs, "edgeLineColor")
+gs_edge_attr(gs, "edgeColor")
 #> [1] "red"   "green" "blue"  "black"
 
 # Replace an entire edge attribute

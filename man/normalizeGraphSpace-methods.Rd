@@ -13,10 +13,11 @@
   image.space = .has_image(gs),
   flip.x = FALSE,
   flip.y = image.space,
-  rotate.xy = FALSE,
   flip.v = FALSE,
   flip.h = FALSE,
+  swap.xy = FALSE,
   verbose = TRUE,
+  rotate.xy = deprecated(),
   use_image = deprecated()
 )
 
@@ -42,16 +43,21 @@ Images can be inspected and assigned with \code{\link{gs_image}}.}
 Useful for aligning nodes with image backgrounds, which often use an
 inverted coordinate system. Defaults to \code{image.space}.}
 
-\item{rotate.xy}{Logical; whether to rotate x-y coordinates.}
-
 \item{flip.v}{Logical; whether to vertically flip the background image
 matrix (top-to-bottom) to align with the graph coordinate system.}
 
 \item{flip.h}{Logical; whether to horizontally flip the background image
 matrix (left-to-right) to align with the graph coordinate system.}
 
+\item{swap.xy}{Logical; whether to swap x and y node coordinates.
+Useful when the graph coordinate system is transposed relative to the
+image or reference map.}
+
 \item{verbose}{A single logical value specifying to display detailed
 messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).}
+
+\item{rotate.xy}{Deprecated from RGraphSpace 1.4.3; use
+\code{swap.xy} instead.}
 
 \item{use_image}{Deprecated from RGraphSpace 1.4.0; use
 \code{image.space} instead.}
@@ -77,7 +83,7 @@ These functions provide different strategies for coordinate transformation:
 \code{image.space = FALSE}) or maps them to pixel coordinates (when
 \code{image.space = TRUE} and an image is provided; see \link{gs_image}).
 It handles image-to-graph alignment via \code{flip.\*} and
-\code{rotate.\*} arguments, used to adjust the graph origin with the
+\code{swap.\*} arguments, used to adjust the graph origin with the
 image matrix layout. Users should be aware of the potential discrepancy
 between image matrix orientation (top-down) and graph coordinates
 (bottom-up). The function attempts to automatically adjust the y-axis to

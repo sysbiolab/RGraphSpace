@@ -6,23 +6,13 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
 ```
 
 ## Quick start
-
-This section will create a toy `igraph` object to demonstrate the basic
-*RGraphSpace* workflow. The input data is configured manually to ensure
-that users can easily view the basic graph attributes. We will use the
-igraph’s [`make_star()`](https://r.igraph.org/reference/make_star.html)
-function to create a simple star-like graph and then the
-[`V()`](https://r.igraph.org/reference/V.html) and
-[`E()`](https://r.igraph.org/reference/E.html) functions to set
-attributes for vertices and edges, respectively. *RGraphSpace* will
-require that all vertices have `x`, `y`, and `name` attributes.
 
 ``` r
 
@@ -32,11 +22,18 @@ library("igraph")
 library("ggplot2")
 ```
 
+This section will create a toy `igraph` from scratch to demonstrate the
+vertex and edge attributes that *RGraphSpace* parses automatically. This
+shows exactly what the package expects as input. We will use `igraph`’s
+[`make_star()`](https://r.igraph.org/reference/make_star.html) function
+and then [`V()`](https://r.igraph.org/reference/V.html) and
+[`E()`](https://r.igraph.org/reference/E.html) to assign attributes.
+
 ``` r
 
 # Make a 'toy' igraph with 5 nodes and 4 edges;
 # ..either a directed or undirected graph
-gtoy1 <- make_star(5, mode="out")
+gtoy1 <- make_star(5, mode = "out")
 
 # Check whether the graph is directed or not
 is_directed(gtoy1)
@@ -60,19 +57,11 @@ V(gtoy1)$name <- paste0("n", 1:5)
 
 ``` r
 
-# Plot the 'gtoy1' using standard R graphics
-plot(gtoy1)
-```
-
-![](building-graphspace_files/figure-html/Toy%20igraph%20-%202-1.png)
-
-``` r
-
-# Plot the 'gtoy1' using RGraphSpace
+# The most direct call: pass an igraph to plotGraphSpace()
 plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
-![](building-graphspace_files/figure-html/Toy%20igraph%20-%203-1.png)
+![](building-graphspace_files/figure-html/Toy%20igraph%20-%202-1.png)
 
 ## *RGraphSpace* attributes
 
@@ -83,14 +72,17 @@ Next, we list all vertex and edge attributes that can be passed to
 
 ``` r
 
+# Node color (Hexadecimal or color name)
+V(gtoy1)$nodeColor <- c("red", "#00ad39", "grey80", "lightblue", "cyan")
+
+# Node transparency (in [0,1])
+V(gtoy1)$nodeAlpha <- 1
+
 # Node size (numeric in [0, 100], as '%' of the plot space)
 V(gtoy1)$nodeSize <- c(8, 5, 5, 10, 5)
 
 # Node shape (integer code between 0 and 25; see 'help(points)')
 V(gtoy1)$nodeShape <- c(21, 22, 23, 24, 25)
-
-# Node color (Hexadecimal or color name)
-V(gtoy1)$nodeColor <- c("red", "#00ad39", "grey80", "lightblue", "cyan")
 
 # Node line width (as in 'lwd' standard graphics; see 'help(gpar)')
 V(gtoy1)$nodeLineWidth <- 1
@@ -98,7 +90,7 @@ V(gtoy1)$nodeLineWidth <- 1
 # Node line color (Hexadecimal or color name)
 V(gtoy1)$nodeLineColor <- "grey20"
 
-# Node labels ('NA' will omit labels)
+# Node labels ('NA' will omit the label)
 V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
 
 # Node label size (in mm)
@@ -106,9 +98,6 @@ V(gtoy1)$nodeLabelSize <- 3
 
 # Node label color (Hexadecimal or color name)
 V(gtoy1)$nodeLabelColor <- "black"
-
-# Node transparency (in [0,1])
-V(gtoy1)$nodeAlpha <- 1
 ```
 
 ### Edge attributes
@@ -120,18 +109,21 @@ in the data.
 
 ``` r
 
-# Edge width (as in 'lwd' standard graphics; see 'help(gpar)')
-E(gtoy1)$edgeLineWidth <- 0.8
-
 # Edge color (Hexadecimal or color name)
-E(gtoy1)$edgeLineColor <- c("red","green","blue","black")
-
-# Edge type (as in 'lty' standard graphics; see 'help(gpar)')
-E(gtoy1)$edgeLineType <- c("solid", "11", "dashed", "2124")
+E(gtoy1)$edgeColor <- c("red","green","blue","black")
 
 # Edge transparency (in [0,1])
 E(gtoy1)$edgeAlpha <- 1
+
+# Edge line width (as in 'lwd' standard graphics; see 'help(gpar)')
+E(gtoy1)$edgeLineWidth <- 0.8
+
+# Edge line type (as in 'lty' standard graphics; see 'help(gpar)')
+E(gtoy1)$edgeLineType <- c("solid", "11", "dashed", "2124")
 ```
+
+Note: `edgeLineColor` is deprecated as of version 1.4.3 and replaced by
+`edgeColor`.
 
 ### Arrowhead attributes
 
@@ -157,21 +149,20 @@ the coding below.
 # Arrowhead types in undirected graphs
 ## Integer or character code:
 ##  0 = "---"
-##  1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->",
-## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|", 
-E(gtoy1)$arrowType <- 1
-# Note: in undirected graphs, this attribute overrides 
-# the edge's orientation in the edge list
+##  1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->"
+## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|"
+gtoy1_undir <- igraph::as_undirected(gtoy1, edge.attr.comb = "first")
+E(gtoy1_undir)$arrowType <- 1
+# Note: in undirected graphs, this attribute overrides
+# the edge's orientation in the edge list and adds arrowheads
+# to edges that would otherwise be drawn without any
 ```
 
-… and plot the updated `igraph` object. The most straightforward call
-simply passes an `igraph` directly to the wrapper
-[`plotGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.md)
-function.
+… and plot the fully attributed `gtoy1` object.
 
 ``` r
 
-# Plot the updated 'gtoy1' using RGraphSpace
+# Plot the fully attributed 'gtoy1'
 plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
@@ -180,12 +171,14 @@ plotGraphSpace(gtoy1, node.labels = TRUE)
 ## Passing graphs to *geoms*
 
 Alternatively, an `igraph` can be converted to a `GraphSpace` object and
-passed directly to *ggplot2* geoms.
+passed directly to *ggplot2* geoms. This gives full access to the
+*ggplot2* layer system for combining graph elements with other plot
+types.
 
 ``` r
 
 # Load the toy graph used in the previous example
-data("gtoy1", package = 'RGraphSpace')
+data("gtoy1", package = "RGraphSpace")
 
 # Create a GraphSpace object
 gs <- GraphSpace(gtoy1)
@@ -199,22 +192,31 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH b2723e1 DN-- 5 4 -- 
+#> IGRAPH 5fb8aab DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
 #> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
 #> | nodeColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c), nodeAlpha
-#> | (v/n), edgeLineType (e/c), edgeLineColor (e/c), edgeLineWidth (e/n),
+#> | (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth (e/n),
 #> | arrowType (e/n), edgeAlpha (e/n)
 #> + node spatial boundaries: normalized to graph space
 #> | x: [-8, 2] -> [0, 1] (cols)
 #> | y: [-4, 2] -> [0, 1] (rows)
 ```
 
-The resulting `GraphSpace` integrates with *ggplot2*, allowing
-graph-specific geoms to be combined with standard *ggplot2* layers.
+[`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+maps all vertex coordinates to a `[0, 1]` unit interval and computes the
+per-node clipping offsets that allow
+[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
+to terminate edges precisely at node boundaries. This step is handled
+automatically when you use
+[`plotGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.md),
+but must be called explicitly when building a plot layer by layer.
 
 ``` r
 
+# Build a layered ggplot2 graph
+# geom_edgespace() draws edges; geom_nodespace() draws nodes
+# aes(label = nodeLabel) maps the 'nodeLabel' vertex attribute to node labels
 ggplot(gs) + 
   geom_edgespace() + 
   geom_nodespace(aes(label = nodeLabel), label_size = 3) + 
@@ -229,6 +231,69 @@ aesthetics*](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthe
 and [*interoperability with ggraph &
 sf*](https://sysbiolab.github.io/RGraphSpace/articles/interoperability.md)
 vignettes.
+
+## Choosing an entry point
+
+*RGraphSpace* provides three levels of access, each suited to a
+different workflow.
+
+**Level 1 — Direct plot from an `igraph`**: The simplest call requires
+no intermediate objects. Use this for quick inspection or when no
+*ggplot2* customization is needed.
+
+``` r
+
+# The simplest call
+plotGraphSpace(gtoy1, node.labels = TRUE)
+```
+
+**Level 2 — Layered plot via
+[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)**:
+Convert the `igraph` to a `GraphSpace` object first, then pass it to
+*ggplot2*.
+[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
+adds node and edge layers in a single call and gives full access to
+*ggplot2* themes, scales, and annotations.
+
+``` r
+
+# Adds node and edge layers in a single call
+gs <- GraphSpace(gtoy1)
+ggplot(gs) +
+  geom_graphspace(aes(label = nodeLabel))
+```
+
+**Level 3 — Independent node and edge layers**: Use
+[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
+and
+[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
+directly when node and edge layers require separate aesthetic mappings
+or independent scale control.
+
+``` r
+
+# Set some variables
+V(gtoy1)$node_var <- runif(vcount(gtoy1))
+E(gtoy1)$edge_var <- runif(ecount(gtoy1))
+
+# Independent node and edge layers
+gs <- GraphSpace(gtoy1)
+ggplot(gs) +
+  geom_edgespace(aes(colour = edge_var)) +
+  geom_nodespace(aes(fill = node_var))
+```
+
+The `layout` argument of
+[`GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
+can be used at levels 2 and 3 to supply coordinates from any *igraph*
+layout algorithm when the graph has no pre-existing `x` and `y` vertex
+attributes:
+
+``` r
+
+# Entry point layout
+gs <- GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
+```
 
 ## Session information
 

@@ -104,8 +104,8 @@ are automatically retrieved from the \link{GraphSpace} object.
 \code{stroke}  \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
 }
 
-Required aesthetics \strong{\code{x}} and \strong{\code{y}} are supplied
-from the \link{GraphSpace} object and do not need to be manually mapped.
+Required aesthetics are supplied from the \link{GraphSpace} object and
+do not need to be manually mapped.
 
 Additional parameters can be passed to control fixed values for the layer.
 For example: \code{fill = "red"}, \code{stroke = 3}, \code{alpha = 0.5}, or \code{shape = 21}.

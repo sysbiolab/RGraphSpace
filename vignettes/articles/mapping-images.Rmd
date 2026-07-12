@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -91,7 +91,7 @@ Observe that the nodes (open circles) are precisely aligned with the pixels (dar
 plotGraphSpace(gs, add.image = TRUE)
 ```
 
-**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
+**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `swap.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
 
 ```{r Mapping images - 4, eval=TRUE, message=FALSE}
 # Alternatively, passing to the underlying geoms
@@ -106,6 +106,43 @@ ggplot(gs) +
 # ggsave(filename = "./vignettes/articles/cards/mapping_images.png", height=4, width=4,
 #   units="in", device="png", dpi=200, plot = p)
 ```
+
+# Orientation controls
+
+The `normalizeGraphSpace()` function provides five arguments to adjust the alignment between graph coordinates and the background image. Arguments `flip.x`, `flip.y`, and `swap.xy` transform node coordinates; `flip.v` and `flip.h` transform the image matrix itself. The reference card below illustrates each argument using the `volcano` dataset introduced in the previous section, where nodes are precisely aligned with their corresponding dark pixels in the default configuration. Each panel shows
+how that alignment changes when a single argument is modified.
+
+Note that `flip.y` defaults to `TRUE` when `image.space = TRUE`, since image matrices use a top-down row indexing that is the inverse of the standard graph coordinate system. The panel labelled `flip.y = FALSE` shows what happens when this default correction is suppressed.
+
+```{r Orientation reference, eval=TRUE, message=FALSE, fig.width=12, fig.height=8, out.width="100%"}
+library("patchwork")
+
+# Helper: build and render one panel
+make_panel <- function(..., title) {
+  gs <- GraphSpace(gtoy3)
+  gs_image(gs) <- as_colorraster(volcano2)
+  gs <- normalizeGraphSpace(gs, image.space = TRUE, ...)
+  plotGraphSpace(gs, add.image = TRUE) +
+    ggplot2::labs(title = title) +
+    ggplot2::theme(
+      plot.title = element_text(
+        size = 12, hjust = 0.5, face = "plain"),
+      plot.margin = ggplot2::margin(1, 1, 10, 1)
+    )
+}
+
+# One panel per orientation argument
+p1 <- make_panel(title = "default")
+p2 <- make_panel(flip.x  = TRUE,  title = "flip.x = TRUE")
+p3 <- make_panel(flip.y  = FALSE, title = "flip.y = FALSE")
+p4 <- make_panel(swap.xy = TRUE,  title = "swap.xy = TRUE")
+p5 <- make_panel(flip.v  = TRUE,  title = "flip.v = TRUE")
+p6 <- make_panel(flip.h  = TRUE,  title = "flip.h = TRUE")
+
+# 3x2 reference grid
+(p1 | p2 | p3) / (p4 | p5 | p6)
+```
+
 
 # Advanced workflows
 

@@ -103,7 +103,7 @@
     n <- numeric(); c <- character()
     edges <- data.frame(n, n, c, c, c, c, n, n, n)
     colnames(edges) <- c("vertex1","vertex2", "name1", "name2", 
-        "edgeLineType", "edgeLineColor", "edgeLineWidth",
+        "edgeLineType", "edgeColor", "edgeLineWidth",
         "arrowType", "weight")
     return(edges)
 }

@@ -3,7 +3,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -51,7 +51,7 @@ g <- add_edges(g, c(6,5, 6,5, 5,4))
 # Set node and edge colors via igraph attributes directly, rather than
 # through a geom, as these values will be fixed (not data-driven)
 V(g)$nodeColor <- "steelblue1"
-E(g)$edgeLineColor <- "purple"
+E(g)$edgeColor <- "purple"
 E(g)$label <- seq_len(ecount(g))
   
 # Build a GraphSpace with a circular layout; simplify = FALSE keeps the
@@ -69,9 +69,9 @@ gs_toy <- normalizeGraphSpace(gs_toy)
 
 gs_toy
 #> A GraphSpace-class object for:
-#> IGRAPH bf1fed2 DN-- 10 27 -- 
+#> IGRAPH dcab537 DN-- 10 27 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
-#> | nodeColor (v/c), edgeLineColor (e/c), arrowType (e/n), label (e/n)
+#> | nodeColor (v/c), edgeColor (e/c), arrowType (e/n), label (e/n)
 #> + node spatial boundaries: normalized to graph space
 #> | x: [-1, 1] -> [0, 1] (cols)
 #> | y: [-1, 1] -> [0, 1] (rows)

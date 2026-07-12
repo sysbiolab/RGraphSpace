@@ -14,10 +14,11 @@ normalizeGraphSpace(
   image.space = .has_image(gs),
   flip.x = FALSE,
   flip.y = image.space,
-  rotate.xy = FALSE,
   flip.v = FALSE,
   flip.h = FALSE,
+  swap.xy = FALSE,
   verbose = TRUE,
+  rotate.xy = deprecated(),
   use_image = deprecated()
 )
 
@@ -57,10 +58,6 @@ cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
   for aligning nodes with image backgrounds, which often use an inverted
   coordinate system. Defaults to `image.space`.
 
-- rotate.xy:
-
-  Logical; whether to rotate x-y coordinates.
-
 - flip.v:
 
   Logical; whether to vertically flip the background image matrix
@@ -71,10 +68,20 @@ cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
   Logical; whether to horizontally flip the background image matrix
   (left-to-right) to align with the graph coordinate system.
 
+- swap.xy:
+
+  Logical; whether to swap x and y node coordinates. Useful when the
+  graph coordinate system is transposed relative to the image or
+  reference map.
+
 - verbose:
 
   A single logical value specifying to display detailed messages (when
   `verbose=TRUE`) or not (when `verbose=FALSE`).
+
+- rotate.xy:
+
+  Deprecated from RGraphSpace 1.4.3; use `swap.xy` instead.
 
 - use_image:
 
@@ -100,7 +107,7 @@ transformation:
   or maps them to pixel coordinates (when `image.space = TRUE` and an
   image is provided; see
   [gs_image](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)).
-  It handles image-to-graph alignment via `flip.\*` and `rotate.\*`
+  It handles image-to-graph alignment via `flip.\*` and `swap.\*`
   arguments, used to adjust the graph origin with the image matrix
   layout. Users should be aware of the potential discrepancy between
   image matrix orientation (top-down) and graph coordinates (bottom-up).

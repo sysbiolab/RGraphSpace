@@ -3,6 +3,9 @@
   
 **Package**: RGraphSpace 1.4.3
 
+For a self-contained introduction that works offline, run
+**vignette(“RGraphSpace”)** after installing the package.
+
 ## Introductory vignettes
 
 These tutorials introduce *RGraphSpace* using simple toy examples:

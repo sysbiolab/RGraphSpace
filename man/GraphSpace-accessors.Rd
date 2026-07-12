@@ -148,7 +148,7 @@ gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
 gs_vertex_attr(gs, "nodeSize") <- 10
 
 # Access a specific edge attribute
-gs_edge_attr(gs, "edgeLineColor")
+gs_edge_attr(gs, "edgeColor")
 
 # Replace an entire edge attribute
 gs_edge_attr(gs, "edgeLineWidth") <- 1

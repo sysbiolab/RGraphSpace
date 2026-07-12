@@ -97,7 +97,7 @@ gtoy_star <- make_full_graph(15)
 
 # Example of setting node and edge attributes
 V(gtoy_star)$nodeSize <- 5
-E(gtoy_star)$edgeLineColor <- "red"
+E(gtoy_star)$edgeColor <- "red"
 E(gtoy_star)$arrowType <- "<->"
 
 # Create a GraphSpace object

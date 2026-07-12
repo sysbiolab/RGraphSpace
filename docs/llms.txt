@@ -14,28 +14,41 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 
 - Native *ggplot2* interface for *igraph* objects
 - Optimized *geoms* for large-scale network visualization
-- Spatial alignment of networks with reference backgrounds
-- Interoperability with *ggraph* and *tidygraph* workflows
+- Dual-anchor normalization for precise node and edge alignment
+- Spatial alignment of networks with reference maps and images
 
 ### Overview
 
 *RGraphSpace* is an R package that generates *ggplot2* graphics for
 *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes
 and edges to a unit space. The package implements new *ggplot2*
-prototypes ([Wickham 2016](#ref-wickham)), optimized for representing
-large networks. This enables extensive customization of aesthetics and
-visual style, including interoperability with *ggraph* and *tidygraph*
-workflows ([Pedersen 2024](#ref-pedersen)). Two specialized `geoms`
-translate graph data into geometric layers.
+prototypes ([Wickham 2016](#ref-wickham)) optimized for large-scale
+network visualization, enabling extensive customization of aesthetics
+and visual style. A dual-anchor normalization approach ensures that edge
+endpoints remain pinned to node boundaries regardless of node size,
+which is particularly useful when graph elements must be spatially
+aligned with reference maps and images. The package also supports
+interoperability with *ggraph* and *tidygraph* workflows ([Pedersen
+2024](#ref-pedersen)). Three specialized geoms translate graph data into
+geometric layers.
 
 1.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
     Renders network nodes. Extends `GeomPoint` aesthetic mappings and
     exposes node state information to the edge layer.
+
 2.  **[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)**:
     Renders the relationships between nodes. Extends `GeomSegment`
     aesthetic mappings; unlike standard segments, it is node-aware and
     dynamically adjusts start and end points based on node position and
     size.
+
+3.  **[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)**:
+    A convenience wrapper that calls
+    [`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
+    and
+    [`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
+    in sequence. Use this for the common case; use the individual geoms
+    directly when independent control of node and edge layers is needed.
 
 ### Citation
 
@@ -140,6 +153,8 @@ The *RGraphSpace* package is distributed under
 - [`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
   [`edgespace_handler()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
   : Draw edge elements in a 2D graph layout
+- [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
+  : Convenience wrapper for node and edge geoms
 
 ## Annotation
 
@@ -182,8 +197,6 @@ The *RGraphSpace* package is distributed under
 
 - [`GeomEdgeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.md)
   : GeomEdgeSpace: a ggplot2 prototype for GraphSpace-class methods
-- [`GeomGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomGraphSpace.md)
-  : GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods
 - [`GeomNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.md)
   : GeomNodeSpace: a ggplot2 prototype for GraphSpace-class methods
 - [`StatEdgeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/StatEdgeSpace.md)
@@ -197,11 +210,6 @@ The *RGraphSpace* package is distributed under
   [`RGraphSpace-package`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
   : RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2'
   Graphics
-
-## Deprecated
-
-- [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
-  : Draw node and edge elements in a 2D graph layout
 
 # Articles
 

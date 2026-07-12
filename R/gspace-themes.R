@@ -5,7 +5,7 @@
 #' 
 #' @param txt_size Numeric value to scale plot- and axis-related text elements.
 #' @param leg_size Numeric value to scale legend-related elements.
-#' @param bg_colour A color name or hex code specifying the panel background.
+#' @param bg_colour A colour name or hex code specifying the panel background.
 #' @param discrete_fill Logical; if TRUE, treats the fill legend as discrete 
 #' to adjust key size.
 #' @param discrete_colour Logical; if TRUE, treats the colour legend as discrete 

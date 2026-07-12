@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -161,13 +161,15 @@ startRedeR()
 resetRedeR()
 
 # Send 'gtoy2' to the RedeR interface
-addGraphToRedeR(gs_graph(gs_gtoy2), unit="npc")
+addGraphToRedeR(gs_graph(gs_gtoy2), unit = "npc")
 
 #--- Fine-tune the force-directed layout:
 # p1: edge target length (default = 100)
 # p2: edge stiffness (default = 100)
 # p5: node movement limit (default = 100)
 relaxRedeR(p1 = 10, p2 = 50, p5 = 1)
+
+# Allow a few seconds for the layout to stabilize
 
 # Update the graph layout
 gtoy2_2 <- updateLayoutFromRedeR(g = gs_graph(gs_gtoy2))

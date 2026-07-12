@@ -10,24 +10,34 @@
 ### Highlights
 * Native *ggplot2* interface for *igraph* objects
 * Optimized *geoms* for large-scale network visualization
-* Spatial alignment of networks with reference backgrounds
-* Interoperability with *ggraph* and *tidygraph* workflows
+* Dual-anchor normalization for precise node and edge alignment
+* Spatial alignment of networks with reference maps and images
 
 ### Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects 
-([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a unit space. 
-The package implements new *ggplot2* prototypes ([Wickham 2016](#ref-wickham)), 
-optimized for representing large networks. This enables extensive customization of 
-aesthetics and visual style, including interoperability with *ggraph* and *tidygraph* 
-workflows ([Pedersen 2024](#ref-pedersen)). Two specialized `geoms` translate graph 
-data into geometric layers.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph*
+objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a
+unit space. The package implements new *ggplot2* prototypes
+([Wickham 2016](#ref-wickham)) optimized for large-scale network
+visualization, enabling extensive customization of aesthetics and visual
+style. A dual-anchor normalization approach ensures that edge endpoints remain
+pinned to node boundaries regardless of node size, which is particularly
+useful when graph elements must be spatially aligned with reference maps and
+images. The package also supports interoperability with *ggraph* and
+*tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized
+geoms translate graph data into geometric layers.
 
-1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint` aesthetic 
-mappings and exposes node state information to the edge layer.
-2. **`geom_edgespace()`**: Renders the relationships between nodes. Extends 
-`GeomSegment` aesthetic mappings; unlike standard segments, it is node-aware 
+1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint`
+aesthetic mappings and exposes node state information to the edge layer.
+
+2. **`geom_edgespace()`**: Renders the relationships between nodes. Extends
+`GeomSegment` aesthetic mappings; unlike standard segments, it is node-aware
 and dynamically adjusts start and end points based on node position and size.
+
+3. **`geom_graphspace()`**: A convenience wrapper that calls
+`geom_nodespace()` and `geom_edgespace()` in sequence. Use this for the
+common case; use the individual geoms directly when independent control of
+node and edge layers is needed.
 
 ### Citation
 

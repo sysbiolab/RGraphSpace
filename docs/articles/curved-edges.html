@@ -55,13 +55,14 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/install.html">Install</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get Started</a></li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -97,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-09</h4>
+            <h4 data-toc-skip class="date">2026-07-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/curved-edges.Rmd" class="external-link"><code>vignettes/articles/curved-edges.Rmd</code></a></small>
       <div class="d-none name"><code>curved-edges.Rmd</code></div>
@@ -107,7 +108,7 @@ Team</h4>
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.2"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.3"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -148,7 +149,7 @@ otherwise removed by default when a graph is validated.</p>
 <span><span class="co"># Set node and edge colors via igraph attributes directly, rather than</span></span>
 <span><span class="co"># through a geom, as these values will be fixed (not data-driven)</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span> <span class="op">&lt;-</span> <span class="st">"steelblue1"</span></span>
-<span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">edgeLineColor</span> <span class="op">&lt;-</span> <span class="st">"purple"</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">edgeColor</span> <span class="op">&lt;-</span> <span class="st">"purple"</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">label</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://r.igraph.org/reference/gsize.html" class="external-link">ecount</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="co"># Build a GraphSpace with a circular layout; simplify = FALSE keeps the</span></span>
@@ -166,9 +167,9 @@ otherwise removed by default when a graph is validated.</p>
 <span></span>
 <span><span class="va">gs_toy</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH bf1fed2 DN-- 10 27 -- </span></span>
+<span><span class="co">#&gt; IGRAPH dcab537 DN-- 10 27 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
-<span><span class="co">#&gt; | nodeColor (v/c), edgeLineColor (e/c), arrowType (e/n), label (e/n)</span></span>
+<span><span class="co">#&gt; | nodeColor (v/c), edgeColor (e/c), arrowType (e/n), label (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: normalized to graph space</span></span>
 <span><span class="co">#&gt; | x: [-1, 1] -&gt; [0, 1] (cols)</span></span>
 <span><span class="co">#&gt; | y: [-1, 1] -&gt; [0, 1] (rows)</span></span></code></pre></div>

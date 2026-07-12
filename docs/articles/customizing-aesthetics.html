@@ -62,6 +62,7 @@
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -97,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-09</h4>
+            <h4 data-toc-skip class="date">2026-07-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/customizing-aesthetics.Rmd" class="external-link"><code>vignettes/articles/customizing-aesthetics.Rmd</code></a></small>
       <div class="d-none name"><code>customizing-aesthetics.Rmd</code></div>
@@ -108,7 +109,7 @@ Team</h4>
 <p><br><strong>Package</strong>: RGraphSpace 1.4.3</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.2"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.3"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -128,21 +129,24 @@ to <em>ggplot2</em> aesthetics such as <code>colour</code>,
 <code>size</code>, and <code>shape</code>, and rendered through standard
 scales, which automatically generate synchronized legends.</p></li>
 </ul>
-<p><em>RGraphSpace</em> implements two specialized <code>geoms</code>
-for handling graph data within a <em>ggplot2</em> workflow. Both use a
-dual-anchor normalization strategy to keep layers aligned, which is
-essential when network elements must remain accurately referenced to a
-spatial map or image.</p>
+<p><em>RGraphSpace</em> implements three specialized <code>geoms</code>
+for handling graph data within a <em>ggplot2</em> workflow. These
+<code>geoms</code> use a dual-anchor normalization strategy to keep
+layers aligned, which is essential when network elements must remain
+accurately referenced to a spatial map or image.</p>
 <ol style="list-style-type: decimal">
-<li>
-<strong><code><a href="../reference/geom_nodespace.html">geom_nodespace()</a></code></strong>: Renders network
+<li><p><strong><code><a href="../reference/geom_nodespace.html">geom_nodespace()</a></code></strong>: Renders network
 nodes. Extends <code>GeomPoint</code> aesthetic mappings and exposes
-node state information to the edge layer.</li>
-<li>
-<strong><code><a href="../reference/geom_edgespace.html">geom_edgespace()</a></code></strong>: Renders the
+node state information to the edge layer.</p></li>
+<li><p><strong><code><a href="../reference/geom_edgespace.html">geom_edgespace()</a></code></strong>: Renders the
 relationships between nodes. Extends <code>GeomSegment</code> aesthetic
 mappings; unlike standard segments, it is node-aware and dynamically
-adjusts start and end points based on node position and size.</li>
+adjusts start and end points based on node position and size.</p></li>
+<li><p><strong><code><a href="../reference/geom_graphspace.html">geom_graphspace()</a></code></strong>: A convenience
+wrapper that calls <code><a href="../reference/geom_nodespace.html">geom_nodespace()</a></code> and
+<code><a href="../reference/geom_edgespace.html">geom_edgespace()</a></code> in sequence. Use this for the common case;
+use the individual geoms directly when independent control of node and
+edge layers is needed.</p></li>
 </ol>
 </div>
 <div class="section level2">
@@ -158,6 +162,7 @@ variables of different types to demonstrate how <em>RGraphSpace</em>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a toy modular graph</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">gtoy2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/sample_islands.html" class="external-link">sample_islands</a></span><span class="op">(</span></span>
 <span>  islands.n <span class="op">=</span> <span class="fl">3</span>,       <span class="co"># number of modules</span></span>
 <span>  islands.size <span class="op">=</span> <span class="fl">30</span>,   <span class="co"># nodes per module</span></span>
@@ -187,33 +192,32 @@ variables of different types to demonstrate how <em>RGraphSpace</em>
 <span></span>
 <span><span class="va">gs</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 6944e78 UN-- 90 340 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 191f8ea UN-- 90 329 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/n), edge_var (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
-<span><span class="co">#&gt; | x: [-10, 8] (cols)</span></span>
-<span><span class="co">#&gt; | y: [-9, 8] (rows)</span></span></code></pre></div>
+<span><span class="co">#&gt; | x: [-8, 11] (cols)</span></span>
+<span><span class="co">#&gt; | y: [-10, 7] (rows)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="plotting-identity-values">Plotting identity values<a class="anchor" aria-label="anchor" href="#plotting-identity-values"></a>
 </h2>
 <p>In this example, <code>nodeColor</code> already contains the final
 colour values stored in the <code>GraphSpace</code> object. The colours
-will be displayed as-is by the <code><a href="../reference/geom_nodespace.html">geom_nodespace()</a></code> function.
+will be displayed as-is by the <code><a href="../reference/geom_graphspace.html">geom_graphspace()</a></code> function.
 This approach is useful when nodes have been pre-processed with specific
 attributes and you want the visual output without further mapping.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_graphspace.html">geom_graphspace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="customizing-aesthetics_files/figure-html/Plot%20identity%20values-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
-<p>The trade-off on this approach is that, on one hand, all attributes
-reflect the original data directly, but no legend is accessible. This is
-because identity scales bypass the legend-building process of
-<em>ggplot2</em>. If a legend is required to explain the meaning of
-these colors, the attribute should be mapped via aesthetics (e.g.,
+<p>The trade-off of this approach is that all attributes reflect the
+original data directly, but no legend is accessible. This is because
+identity scales bypass the legend-building process of <em>ggplot2</em>.
+If a legend is required to explain the meaning of these colours, the
+attribute should be mapped via aesthetics (e.g.,
 <code>aes(fill = attribute)</code>) and modified by a
 <code>scale_*()</code> function.</p>
 </div>
@@ -221,8 +225,9 @@ these colors, the attribute should be mapped via aesthetics (e.g.,
 <h2 id="mapping-categorical-variables">Mapping categorical variables<a class="anchor" aria-label="anchor" href="#mapping-categorical-variables"></a>
 </h2>
 <p>In this example, the node categorical variable
-<code>node_group</code> is mapped to the <code>fill</code>
-aesthetic.</p>
+<code>node_group</code> is mapped to the <code>fill</code> aesthetic and
+we use the individual geoms directly for independent control of node and
+edge layers.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>

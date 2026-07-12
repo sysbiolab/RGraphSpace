@@ -50,6 +50,7 @@ or by mapping them to pixel coordinates of a background image."><style>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -92,10 +93,11 @@ or by mapping them to pixel coordinates of a background image.</p>
 <span>  image.space <span class="op">=</span> <span class="fu">.has_image</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span>,</span>
 <span>  flip.x <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  flip.y <span class="op">=</span> <span class="va">image.space</span>,</span>
-<span>  rotate.xy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  flip.v <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  flip.h <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  swap.xy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rotate.xy <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  use_image <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -136,10 +138,6 @@ Useful for aligning nodes with image backgrounds, which often use an
 inverted coordinate system. Defaults to <code>image.space</code>.</p></dd>
 
 
-<dt id="arg-rotate-xy">rotate.xy<a class="anchor" aria-label="anchor" href="#arg-rotate-xy"></a></dt>
-<dd><p>Logical; whether to rotate x-y coordinates.</p></dd>
-
-
 <dt id="arg-flip-v">flip.v<a class="anchor" aria-label="anchor" href="#arg-flip-v"></a></dt>
 <dd><p>Logical; whether to vertically flip the background image
 matrix (top-to-bottom) to align with the graph coordinate system.</p></dd>
@@ -150,9 +148,20 @@ matrix (top-to-bottom) to align with the graph coordinate system.</p></dd>
 matrix (left-to-right) to align with the graph coordinate system.</p></dd>
 
 
+<dt id="arg-swap-xy">swap.xy<a class="anchor" aria-label="anchor" href="#arg-swap-xy"></a></dt>
+<dd><p>Logical; whether to swap x and y node coordinates.
+Useful when the graph coordinate system is transposed relative to the
+image or reference map.</p></dd>
+
+
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>A single logical value specifying to display detailed
 messages (when <code>verbose=TRUE</code>) or not (when <code>verbose=FALSE</code>).</p></dd>
+
+
+<dt id="arg-rotate-xy">rotate.xy<a class="anchor" aria-label="anchor" href="#arg-rotate-xy"></a></dt>
+<dd><p>Deprecated from RGraphSpace 1.4.3; use
+<code>swap.xy</code> instead.</p></dd>
 
 
 <dt id="arg-use-image">use_image<a class="anchor" aria-label="anchor" href="#arg-use-image"></a></dt>
@@ -178,7 +187,7 @@ and <code>image</code> slots.</p>
 <code>image.space = FALSE</code>) or maps them to pixel coordinates (when
 <code>image.space = TRUE</code> and an image is provided; see <a href="GraphSpace-accessors.html">gs_image</a>).
 It handles image-to-graph alignment via <code>flip.\*</code> and
-<code>rotate.\*</code> arguments, used to adjust the graph origin with the
+<code>swap.\*</code> arguments, used to adjust the graph origin with the
 image matrix layout. Users should be aware of the potential discrepancy
 between image matrix orientation (top-down) and graph coordinates
 (bottom-up). The function attempts to automatically adjust the y-axis to

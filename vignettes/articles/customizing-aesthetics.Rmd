@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -41,10 +41,13 @@ This section illustrates how *RGraphSpace* integrates with *ggplot2* using `geom
 
 * **Dynamic aesthetic mapping:** Attributes are mapped to *ggplot2* aesthetics such as `colour`, `size`, and `shape`, and rendered through standard scales, which automatically generate synchronized legends.
 
-*RGraphSpace* implements two specialized `geoms` for handling graph data within a *ggplot2* workflow. Both use a dual-anchor normalization strategy to keep layers aligned, which is essential when network elements must remain accurately referenced to a spatial map or image.
+*RGraphSpace* implements three specialized `geoms` for handling graph data within a *ggplot2* workflow. These `geoms` use a dual-anchor normalization strategy to keep layers aligned, which is essential when network elements must remain accurately referenced to a spatial map or image.
 
 1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint` aesthetic mappings and exposes node state information to the edge layer.
+
 2. **`geom_edgespace()`**: Renders the relationships between nodes. Extends `GeomSegment` aesthetic mappings; unlike standard segments, it is node-aware and dynamically adjusts start and end points based on node position and size.
+
+3. **`geom_graphspace()`**: A convenience wrapper that calls `geom_nodespace()` and `geom_edgespace()` in sequence. Use this for the common case; use the individual geoms directly when independent control of node and edge layers is needed.
 
 # Setting basic input data
 
@@ -59,6 +62,7 @@ library("ggplot2")
 
 ```{r Load a toy graph, eval=TRUE, message=TRUE}
 # Make a toy modular graph
+set.seed(42)
 gtoy2 <- sample_islands(
   islands.n = 3,       # number of modules
   islands.size = 30,   # nodes per module
@@ -86,7 +90,7 @@ gs
 
 # Plotting identity values
 
-In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_nodespace()` function. This approach is useful when nodes have been pre-processed with specific attributes and you want the visual output without further mapping.
+In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is useful when nodes have been pre-processed with specific attributes and you want the visual output without further mapping.
 
 ```{r, eval=TRUE, message=FALSE, include = FALSE}
 edge_var <- node_var <- nodeColor <- node_group <- NULL
@@ -94,16 +98,15 @@ edge_var <- node_var <- nodeColor <- node_group <- NULL
 
 ```{r Plot identity values, eval=TRUE, message=FALSE}
 ggplot(gs) + 
-  geom_edgespace() +
-  geom_nodespace(colour = "grey") +
+  geom_graphspace() +
   theme(aspect.ratio = 1)
 ```
 
-The trade-off on this approach is that, on one hand, all attributes reflect the original data directly, but no legend is accessible. This is because identity scales bypass the legend-building process of *ggplot2*. If a legend is required to explain the meaning of these colors, the attribute should be mapped via aesthetics (e.g., `aes(fill = attribute)`) and modified by a `scale_*()` function.
+The trade-off of this approach is that all attributes reflect the original data directly, but no legend is accessible. This is because identity scales bypass the legend-building process of *ggplot2*. If a legend is required to explain the meaning of these colours, the attribute should be mapped via aesthetics (e.g., `aes(fill = attribute)`) and modified by a `scale_*()` function.
 
 # Mapping categorical variables
 
-In this example, the node categorical variable `node_group` is mapped to the `fill` aesthetic.
+In this example, the node categorical variable `node_group` is mapped to the `fill` aesthetic and we use the individual geoms directly for independent control of node and edge layers.
 
 ```{r Map aesthetics to categorical variables, eval=TRUE, message=FALSE}
 ggplot(gs) + 

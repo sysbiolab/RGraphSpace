@@ -157,9 +157,8 @@ are automatically retrieved from the \link{GraphSpace} object.
 \code{linewidth} \tab Edge line width (see \link[ggplot2]{aes_linetype_size_shape}).
 }
 
-Required aesthetics (\code{x}, \code{y}, \code{xend}, \code{yend})
-are supplied from the \link{GraphSpace} object and do not need to be
-manually mapped.
+All required aesthetics are supplied from the \link{GraphSpace} object and
+do not need to be manually mapped.
 
 Additional parameters can be passed to control fixed values for the layer.
 For example: \code{colour = "grey"}, \code{linetype = 2}, \code{linewidth = 1}.

@@ -77,6 +77,8 @@
 - [`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
   [`edgespace_handler()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
   : Draw edge elements in a 2D graph layout
+- [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
+  : Convenience wrapper for node and edge geoms
 
 ## Annotation
 
@@ -119,8 +121,6 @@
 
 - [`GeomEdgeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.md)
   : GeomEdgeSpace: a ggplot2 prototype for GraphSpace-class methods
-- [`GeomGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomGraphSpace.md)
-  : GeomGraphSpace: a ggplot2 prototype for GraphSpace-class methods
 - [`GeomNodeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.md)
   : GeomNodeSpace: a ggplot2 prototype for GraphSpace-class methods
 - [`StatEdgeSpace`](https://sysbiolab.github.io/RGraphSpace/reference/StatEdgeSpace.md)
@@ -134,8 +134,3 @@
   [`RGraphSpace-package`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
   : RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2'
   Graphics
-
-## Deprecated
-
-- [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
-  : Draw node and edge elements in a 2D graph layout

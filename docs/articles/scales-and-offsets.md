@@ -7,7 +7,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -50,7 +50,7 @@ V(gtoy_star)$nodeSize <- seq_len(vcount(gtoy_star)) * 2
 
 # Set node and edge colors
 V(gtoy_star)$nodeColor <- adjustcolor("blue", 0.1)
-E(gtoy_star)$edgeLineColor <- "darkred"
+E(gtoy_star)$edgeColor <- "darkred"
 
 # Assign random arrow types, either '-->' or '--|'
 E(gtoy_star)$arrowType <- sample(c(1, -1), ecount(gtoy_star), replace = T)
@@ -64,9 +64,9 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH 618366b DN-- 20 19 -- 
+#> IGRAPH ea250b8 DN-- 20 19 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
-#> | nodeColor (v/c), num_var (v/n), edgeLineColor (e/c), arrowType (e/n)
+#> | nodeColor (v/c), num_var (v/n), edgeColor (e/c), arrowType (e/n)
 #> + node spatial boundaries: raw graph
 #> | x: [-1, 1] (cols)
 #> | y: [-1, 1] (rows)

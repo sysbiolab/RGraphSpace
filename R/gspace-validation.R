@@ -6,9 +6,11 @@
     verbose = FALSE) {
     
     if (verbose) rlang::inform("Validating the 'igraph' object...")
+    
     if (!inherits(g, "igraph")) {
         rlang::abort("'g' should be an 'igraph' object.")
     }
+    
     if (!is.null(layout)) {
         if (nrow(layout) != vcount(g)) {
             msg <- paste("'layout' must have xy-coordinates",
@@ -26,6 +28,7 @@
             "computing layout...")
         if (verbose) rlang::inform(msg)
     }
+    
     if (is.null(igraph::V(g)$name)) {
         msg <- "Vertex attribute 'name' missing; assigning names... "
         if (verbose) rlang::inform(msg)
@@ -62,12 +65,15 @@
         g <- igraph::simplify(g, remove.loops = TRUE, remove.multiple = TRUE,
             edge.attr.comb = list(weight = "max", "first"))
     }
+    
     if (is.null(igraph::V(g)$nodeLabel)){
         igraph::V(g)$nodeLabel <- as.character(igraph::V(g)$name)
     }
+    
     if (is.null(igraph::V(g)$nodeSize)){
         igraph::V(g)$nodeSize <- .get_default_vatt()[["nodeSize"]]
     }
+    
     if (is.null(igraph::E(g)$arrowType)){
         if (is_directed(g)) {
             igraph::E(g)$arrowType <- 1
@@ -75,6 +81,20 @@
             igraph::E(g)$arrowType <- 0
         }
     }
+
+    # Deprecation: edgeLineColor -> edgeColor
+    if (!is.null(igraph::E(g)$edgeLineColor)) {
+        rlang::warn(paste0(
+            "Edge attribute 'edgeLineColor' is deprecated as of ",
+            "RGraphSpace 1.4.3; use 'edgeColor' instead."),
+            .frequency = "once",
+            .frequency_id = "edgeLineColor_deprecated"
+            )
+        if (is.null(igraph::E(g)$edgeColor))
+            igraph::E(g)$edgeColor <- igraph::E(g)$edgeLineColor
+        g <- igraph::delete_edge_attr(g, "edgeLineColor")
+    }
+    
     if(verbose){
         d_names <- igraph::graph_attr_names(g)
         if (length(d_names) > 0){
@@ -85,7 +105,7 @@
             ))
         } 
     }
-
+    
     g <- .validate_attributes(g)
     
     return(g)
@@ -190,7 +210,7 @@
     return(atts)
 }
 .get_default_eatt <- function(is.directed = FALSE) {
-    atts <- list("edgeLineType" = "solid", "edgeLineColor" = "grey80",
+    atts <- list("edgeLineType" = "solid", "edgeColor" = "grey80",
         "edgeLineWidth" = 0.5)
     if (is.directed) {
         atts$arrowType <- 1
@@ -272,8 +292,8 @@
             rlang::abort("'edgeLineWidth' should be a vector of numeric values >0")
         }
     }
-    if (!is.null(atts$edgeLineColor)) {
-        .validate_gs_colors("allColors", "edgeLineColor", atts$edgeLineColor)
+    if (!is.null(atts$edgeColor)) {
+        .validate_gs_colors("allColors", "edgeColor", atts$edgeColor)
     }
     if (!is.null(atts$arrowType)) {
         .validate_gs_args("allCharacterOrInteger", "arrowType", atts$arrowType)

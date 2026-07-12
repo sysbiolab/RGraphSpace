@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -58,7 +58,7 @@ g <- add_edges(g, c(6,5, 6,5, 5,4))
 # Set node and edge colors via igraph attributes directly, rather than
 # through a geom, as these values will be fixed (not data-driven)
 V(g)$nodeColor <- "steelblue1"
-E(g)$edgeLineColor <- "purple"
+E(g)$edgeColor <- "purple"
 E(g)$label <- seq_len(ecount(g))
   
 # Build a GraphSpace with a circular layout; simplify = FALSE keeps the

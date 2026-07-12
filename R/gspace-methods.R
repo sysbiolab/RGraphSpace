@@ -45,7 +45,7 @@
 #' 
 #' \strong{Data Structure:}
 #' The resulting object stores nodes and edges in separate internal slots, 
-#' preserving metadata such as \code{nodeSize} and \code{edgeLineColor}. 
+#' preserving metadata such as \code{nodeSize} and \code{edgeColor}. 
 #' If an \code{igraph} object is provided without specific styling attributes, 
 #' \code{GraphSpace} will assign the default values defined in the 
 #' \code{\link{geom_graphspace}} aesthetics. Users can also specify custom 
@@ -77,7 +77,7 @@
 #' 
 #' \tabular{ll}{
 #'   \code{edgeLineWidth} \tab Edge thickness; see \code{\link[grid]{gpar}}. \cr
-#'   \code{edgeLineColor} \tab A valid color name or hexadecimal code. \cr
+#'   \code{edgeColor} \tab A valid color name or hexadecimal code. \cr
 #'   \code{edgeLineType}  \tab Line style (e.g., "solid", "dashed"); see \code{\link[grid]{gpar}}. \cr
 #'   \code{arrowType}     \tab Arrowhead style (see \emph{Arrowhead types} section).
 #' }
@@ -130,7 +130,7 @@
 #' 
 #' # Custom attributes
 #' V(gtoy1)$nodeSize <- 5
-#' E(gtoy1)$edgeLineColor <- "red"
+#' E(gtoy1)$edgeColor <- "red"
 #' E(gtoy1)$arrowType <- "-->"
 #' 
 #' # Create a GraphSpace
@@ -309,7 +309,7 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' 
 #' # Example of setting node and edge attributes
 #' V(gtoy_star)$nodeSize <- 5
-#' E(gtoy_star)$edgeLineColor <- "red"
+#' E(gtoy_star)$edgeColor <- "red"
 #' E(gtoy_star)$arrowType <- "<->"
 #' 
 #' # Create a GraphSpace object
@@ -565,7 +565,7 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
 #' gs_vertex_attr(gs, "nodeSize") <- 10
 #' 
 #' # Access a specific edge attribute
-#' gs_edge_attr(gs, "edgeLineColor")
+#' gs_edge_attr(gs, "edgeColor")
 #' 
 #' # Replace an entire edge attribute
 #' gs_edge_attr(gs, "edgeLineWidth") <- 1

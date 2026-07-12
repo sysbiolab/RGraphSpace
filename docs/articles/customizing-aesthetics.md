@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -26,19 +26,29 @@ the `GraphSpace` object can be handled in two ways:
   aesthetics such as `colour`, `size`, and `shape`, and rendered through
   standard scales, which automatically generate synchronized legends.
 
-*RGraphSpace* implements two specialized `geoms` for handling graph data
-within a *ggplot2* workflow. Both use a dual-anchor normalization
-strategy to keep layers aligned, which is essential when network
-elements must remain accurately referenced to a spatial map or image.
+*RGraphSpace* implements three specialized `geoms` for handling graph
+data within a *ggplot2* workflow. These `geoms` use a dual-anchor
+normalization strategy to keep layers aligned, which is essential when
+network elements must remain accurately referenced to a spatial map or
+image.
 
 1.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
     Renders network nodes. Extends `GeomPoint` aesthetic mappings and
     exposes node state information to the edge layer.
+
 2.  **[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)**:
     Renders the relationships between nodes. Extends `GeomSegment`
     aesthetic mappings; unlike standard segments, it is node-aware and
     dynamically adjusts start and end points based on node position and
     size.
+
+3.  **[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)**:
+    A convenience wrapper that calls
+    [`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
+    and
+    [`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
+    in sequence. Use this for the common case; use the individual geoms
+    directly when independent control of node and edge layers is needed.
 
 ## Setting basic input data
 
@@ -57,6 +67,7 @@ library("ggplot2")
 ``` r
 
 # Make a toy modular graph
+set.seed(42)
 gtoy2 <- sample_islands(
   islands.n = 3,       # number of modules
   islands.size = 30,   # nodes per module
@@ -86,13 +97,13 @@ gs <- GraphSpace(gtoy2)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 6944e78 UN-- 90 340 -- 
+#> IGRAPH 191f8ea UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-10, 8] (cols)
-#> | y: [-9, 8] (rows)
+#> | x: [-8, 11] (cols)
+#> | y: [-10, 7] (rows)
 ```
 
 ## Plotting identity values
@@ -100,7 +111,7 @@ gs
 In this example, `nodeColor` already contains the final colour values
 stored in the `GraphSpace` object. The colours will be displayed as-is
 by the
-[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
+[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
 function. This approach is useful when nodes have been pre-processed
 with specific attributes and you want the visual output without further
 mapping.
@@ -108,24 +119,24 @@ mapping.
 ``` r
 
 ggplot(gs) + 
-  geom_edgespace() +
-  geom_nodespace(colour = "grey") +
+  geom_graphspace() +
   theme(aspect.ratio = 1)
 ```
 
 ![](customizing-aesthetics_files/figure-html/Plot%20identity%20values-1.png)
 
-The trade-off on this approach is that, on one hand, all attributes
-reflect the original data directly, but no legend is accessible. This is
-because identity scales bypass the legend-building process of *ggplot2*.
-If a legend is required to explain the meaning of these colors, the
+The trade-off of this approach is that all attributes reflect the
+original data directly, but no legend is accessible. This is because
+identity scales bypass the legend-building process of *ggplot2*. If a
+legend is required to explain the meaning of these colours, the
 attribute should be mapped via aesthetics (e.g.,
 `aes(fill = attribute)`) and modified by a `scale_*()` function.
 
 ## Mapping categorical variables
 
 In this example, the node categorical variable `node_group` is mapped to
-the `fill` aesthetic.
+the `fill` aesthetic and we use the individual geoms directly for
+independent control of node and edge layers.
 
 ``` r
 

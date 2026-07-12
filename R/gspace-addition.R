@@ -23,10 +23,9 @@
 #' }
 #' If both conventions are present, \code{from}/\code{to} takes priority.
 #' Any additional columns are treated as edge attributes and passed through
-#' to \code{@edges}. Standard visual attributes (\code{edgeLineColor},
-#' \code{edgeLineWidth}, \code{arrowType}, etc.) are filled from package
-#' defaults when omitted; analytical attributes such as \code{weight} are
-#' stored as-is.
+#' to \code{@edges}. Standard visual attributes (\code{edgeColor}, 
+#' \code{arrowType}, etc.) are filled from package defaults when omitted; 
+#' analytical attributes such as \code{weight} are stored as-is.
 #'
 #' @details
 #' Adding edges does not invalidate the normalized layout. Node coordinates

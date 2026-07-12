@@ -49,9 +49,9 @@
 #' \strong{Note on parallel edges}: in non-simplified graphs containing
 #' parallel edges between the same vertex pair, integer or logical
 #' indexing is the most reliable approach. A predicate expression that
-#' matches a shared attribute (such as \code{edgeLineColor}) will match
+#' matches a shared attribute (such as \code{edgeColor}) will match
 #' all parallel instances simultaneously, which is usually the intended
-#' behaviour.
+#' behavior.
 #'
 #' @return A \code{\link{GraphSpace}} object with the selected subset
 #' of nodes or edges.

@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -61,7 +61,7 @@ V(gtoy_star)$nodeSize <- seq_len(vcount(gtoy_star)) * 2
 
 # Set node and edge colors
 V(gtoy_star)$nodeColor <- adjustcolor("blue", 0.1)
-E(gtoy_star)$edgeLineColor <- "darkred"
+E(gtoy_star)$edgeColor <- "darkred"
 
 # Assign random arrow types, either '-->' or '--|'
 E(gtoy_star)$arrowType <- sample(c(1, -1), ecount(gtoy_star), replace = T)

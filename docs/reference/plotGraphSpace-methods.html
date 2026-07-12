@@ -48,6 +48,7 @@ igraph and GraphSpace data objects into ggplot2 layers."><style>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -216,7 +217,7 @@ See <code><a href="https://rdrr.io/pkg/ggrastr/man/rasterise.html" class="extern
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example of setting node and edge attributes</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">$</span><span class="va">edgeLineColor</span> <span class="op">&lt;-</span> <span class="st">"red"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">$</span><span class="va">edgeColor</span> <span class="op">&lt;-</span> <span class="st">"red"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">$</span><span class="va">arrowType</span> <span class="op">&lt;-</span> <span class="st">"&lt;-&gt;"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a GraphSpace object</span></span></span>

@@ -2,53 +2,54 @@
 % Please edit documentation in R/geom-graphspace.R
 \name{geom_graphspace}
 \alias{geom_graphspace}
-\title{Draw node and edge elements in a 2D graph layout}
+\title{Convenience wrapper for node and edge geoms}
 \usage{
-geom_graphspace(
-  mapping = NULL,
-  data,
-  stat = "identity",
-  position = "identity",
-  ...,
-  na.rm = FALSE,
-  show.legend = NA,
-  inherit.aes = FALSE,
-  arrow_size = 0.5,
-  arrow_offset = 0.01,
-  curve = 0,
-  edge_spread = 0.2,
-  loop_direction = "adaptive",
-  raster = FALSE,
-  dpi = NULL,
-  dev = "cairo",
-  scale = 1
-)
+geom_graphspace(mapping = NULL, node.params = list(), edge.params = list())
 }
 \arguments{
-\item{mapping, data, stat, position, na.rm, show.legend, inherit.aes}{See \code{\link{geom_edgespace}} and \code{\link{geom_nodespace}}.}
+\item{mapping}{An optional \code{\link[ggplot2]{aes}} call passed to
+\code{\link{geom_nodespace}}. The most common use is supplying node
+label aesthetics, e.g. \code{aes(label = nodeLabel)}.}
 
-\item{...}{Additional arguments passed to the underlying geoms.}
+\item{node.params}{A named list of additional arguments forwarded
+to \code{\link{geom_nodespace}}.}
 
-\item{arrow_size, arrow_offset, curve, edge_spread, loop_direction}{See \code{\link{geom_edgespace}}.}
-
-\item{raster, dpi, dev, scale}{See \code{\link{geom_nodespace}}.}
+\item{edge.params}{A named list of additional arguments forwarded
+to \code{\link{geom_edgespace}}.}
 }
 \value{
-A ggplot2 layer.
+A list of two \pkg{ggplot2} layers, which \pkg{ggplot2}
+flattens automatically when added to a plot with \code{+}.
 }
 \description{
-\lifecycle{deprecated}
+\code{geom_graphspace()} adds both node and edge layers to a \pkg{ggplot2}
+plot by calling \code{\link{geom_nodespace}} and \code{\link{geom_edgespace}}
+in sequence. It is a convenience wrapper with no logic of its own; any
+argument accepted by either underlying geom can be passed via
+\code{node.params} or \code{edge.params}.
 
-Deprecated as of v1.4.2. Use
-\code{\link{geom_edgespace}() + \link{geom_nodespace}()} instead. These
-geoms support all current features including node-edge synchronization,
-labels, multiple edges, and self-loops.
+For independent control of node and edge layers, use
+\code{\link{geom_nodespace}} and \code{\link{geom_edgespace}} directly.
 }
-\note{
-This function is deprecated. Replace \code{geom_graphspace(data = gs)}
-with \code{geom_edgespace() + geom_nodespace()} in your \code{ggplot(gs)}
-call.
+\examples{
+library(ggplot2)
+data("gtoy1", package = "RGraphSpace")
+gs <- GraphSpace(gtoy1)
+
+# Simplest use
+ggplot(gs) + geom_graphspace()
+
+# With node labels
+ggplot(gs) + geom_graphspace(aes(label = nodeLabel))
+
+# With independent node and edge customization
+ggplot(gs) + geom_graphspace(
+  node.params = list(aes(label = nodeLabel)),
+  edge.params = list(curve = 0.3)
+)
+
 }
 \seealso{
-\link{geom_nodespace}, \link{geom_edgespace}
+\code{\link{geom_nodespace}}, \code{\link{geom_edgespace}},
+\code{\link{plotGraphSpace}}
 }

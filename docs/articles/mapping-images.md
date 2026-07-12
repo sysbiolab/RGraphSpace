@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -76,7 +76,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 9f0daf2 DN-- 39 0 -- 
+#> IGRAPH 8eec09d DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space
@@ -109,7 +109,7 @@ misalignment may occur if the input image and node coordinates differ in
 axis orientation (e.g., top-left versus bottom-left origins). To
 accommodate these differences,
 [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
-provides orientation controls through the `rotate.xy`, `flip.x`, and
+provides orientation controls through the `swap.xy`, `flip.x`, and
 `flip.y` arguments. If the nodes appear misaligned with the input image,
 try combinations of these parameters to correct the alignment.
 Alternatively, try `flip.v` and `flip.h` arguments to apply flipping
@@ -125,6 +125,56 @@ ggplot(gs) +
 ```
 
 ![](mapping-images_files/figure-html/Mapping%20images%20-%204-1.png)
+
+## Orientation controls
+
+The
+[`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+function provides five arguments to adjust the alignment between graph
+coordinates and the background image. Arguments `flip.x`, `flip.y`, and
+`swap.xy` transform node coordinates; `flip.v` and `flip.h` transform
+the image matrix itself. The reference card below illustrates each
+argument using the `volcano` dataset introduced in the previous section,
+where nodes are precisely aligned with their corresponding dark pixels
+in the default configuration. Each panel shows how that alignment
+changes when a single argument is modified.
+
+Note that `flip.y` defaults to `TRUE` when `image.space = TRUE`, since
+image matrices use a top-down row indexing that is the inverse of the
+standard graph coordinate system. The panel labelled `flip.y = FALSE`
+shows what happens when this default correction is suppressed.
+
+``` r
+
+library("patchwork")
+
+# Helper: build and render one panel
+make_panel <- function(..., title) {
+  gs <- GraphSpace(gtoy3)
+  gs_image(gs) <- as_colorraster(volcano2)
+  gs <- normalizeGraphSpace(gs, image.space = TRUE, ...)
+  plotGraphSpace(gs, add.image = TRUE) +
+    ggplot2::labs(title = title) +
+    ggplot2::theme(
+      plot.title = element_text(
+        size = 12, hjust = 0.5, face = "plain"),
+      plot.margin = ggplot2::margin(1, 1, 10, 1)
+    )
+}
+
+# One panel per orientation argument
+p1 <- make_panel(title = "default")
+p2 <- make_panel(flip.x  = TRUE,  title = "flip.x = TRUE")
+p3 <- make_panel(flip.y  = FALSE, title = "flip.y = FALSE")
+p4 <- make_panel(swap.xy = TRUE,  title = "swap.xy = TRUE")
+p5 <- make_panel(flip.v  = TRUE,  title = "flip.v = TRUE")
+p6 <- make_panel(flip.h  = TRUE,  title = "flip.h = TRUE")
+
+# 3x2 reference grid
+(p1 | p2 | p3) / (p4 | p5 | p6)
+```
+
+![](mapping-images_files/figure-html/Orientation%20reference-1.png)
 
 ## Advanced workflows
 
@@ -157,7 +207,7 @@ tutorial for examples using a reference image.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
+    #> [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       

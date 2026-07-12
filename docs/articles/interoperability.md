@@ -46,7 +46,7 @@ are installed.
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -129,6 +129,7 @@ ggplot(gs) +
   theme_gspace_legend(discrete_fill = TRUE)
 
 # Option 2: Passing an 'igraph' object to RGraphSpace geoms
+# inject_nodespace() required — no GraphSpace object passed to ggplot()
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", curve = 0.1, data = igraph_cities) +
@@ -140,6 +141,7 @@ ggplot() +
   theme_gspace_legend(discrete_fill = TRUE)
 
 # Option 3: Passing a 'tbl_graph' object to RGraphSpace geoms
+# inject_nodespace() required — no GraphSpace object passed to ggplot()
 gr <- as_tbl_graph(igraph_cities)
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
@@ -151,6 +153,7 @@ ggplot() +
   theme_gspace_legend(discrete_fill = TRUE)
 
 # Option 4: Integrating RGraphSpace geoms into a ggraph workflow
+# inject_nodespace() required — no GraphSpace object passed to ggplot()
 gr <- as_tbl_graph(igraph_cities)
 ggraph(graph = gr, x= gr$x, y = gr$y) +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
@@ -164,12 +167,15 @@ ggraph(graph = gr, x= gr$x, y = gr$y) +
 
 Although all four approaches produce the same visualization, only
 *Option 1* provides automatic node-edge synchronization. When a
-*GraphSpace* object is supplied directly to
-[`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html),
-clipping metadata are propagated automatically between the node and edge
-layers. In all other workflows,
+`GraphSpace` object is passed directly to
+[`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html)
+(Option 1), clipping metadata propagate automatically between node and
+edge layers and no additional calls are needed. In all other workflows
+(Options 2–4),
 [`inject_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/inject_nodespace.md)
-must be called explicitly to synchronize clipping offsets.
+must be called explicitly to trigger this synchronization. This is the
+only functional difference between the four approaches; the visual
+output is identical.
 
 ![](cards/interoperability.png)
 

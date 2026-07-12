@@ -50,6 +50,7 @@ metadata for optimized rendering in RGraphSpace."><style>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -150,7 +151,7 @@ construction. This converts vertex positions to Normalized Parent Coordinates
 plotting area.</p>
 <p><strong>Data Structure:</strong>
 The resulting object stores nodes and edges in separate internal slots,
-preserving metadata such as <code>nodeSize</code> and <code>edgeLineColor</code>.
+preserving metadata such as <code>nodeSize</code> and <code>edgeColor</code>.
 If an <code>igraph</code> object is provided without specific styling attributes,
 <code>GraphSpace</code> will assign the default values defined in the
 <code><a href="geom_graphspace.html">geom_graphspace</a></code> aesthetics. Users can also specify custom
@@ -173,7 +174,7 @@ types in directed or undirected graphs (e.g., activation vs. inhibition).</p>
 
 
 <p>The following attributes in <code>g</code> are evaluated by the constructor:</p>
-<table class="table table"><tr><td><code>edgeLineWidth</code></td><td>Edge thickness; see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>edgeLineColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>edgeLineType</code></td><td>Line style (e.g., "solid", "dashed"); see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>arrowType</code></td><td>Arrowhead style (see <em>Arrowhead types</em> section).</td></tr></table></div>
+<table class="table table"><tr><td><code>edgeLineWidth</code></td><td>Edge thickness; see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>edgeColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>edgeLineType</code></td><td>Line style (e.g., "solid", "dashed"); see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>arrowType</code></td><td>Arrowhead style (see <em>Arrowhead types</em> section).</td></tr></table></div>
     <div class="section level2">
     <h2 id="arrowhead-types">Arrowhead types<a class="anchor" aria-label="anchor" href="#arrowhead-types"></a></h2>
 
@@ -216,7 +217,7 @@ backward, or bidirectional arrowheads.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom attributes</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&lt;-</span> <span class="fl">5</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">edgeLineColor</span> <span class="op">&lt;-</span> <span class="st">"red"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">edgeColor</span> <span class="op">&lt;-</span> <span class="st">"red"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">arrowType</span> <span class="op">&lt;-</span> <span class="st">"--&gt;"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a GraphSpace</span></span></span>

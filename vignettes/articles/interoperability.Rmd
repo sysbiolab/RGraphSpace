@@ -38,7 +38,7 @@ While *ggraph* is a wonderful framework for relational data, precise edge-node a
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.2"){
+if (packageVersion("RGraphSpace") < "1.4.3"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -109,6 +109,7 @@ ggplot(gs) +
   theme_gspace_legend(discrete_fill = TRUE)
 
 # Option 2: Passing an 'igraph' object to RGraphSpace geoms
+# inject_nodespace() required — no GraphSpace object passed to ggplot()
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
   geom_edgespace(color = "grey40", curve = 0.1, data = igraph_cities) +
@@ -120,6 +121,7 @@ ggplot() +
   theme_gspace_legend(discrete_fill = TRUE)
 
 # Option 3: Passing a 'tbl_graph' object to RGraphSpace geoms
+# inject_nodespace() required — no GraphSpace object passed to ggplot()
 gr <- as_tbl_graph(igraph_cities)
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
@@ -131,6 +133,7 @@ ggplot() +
   theme_gspace_legend(discrete_fill = TRUE)
 
 # Option 4: Integrating RGraphSpace geoms into a ggraph workflow
+# inject_nodespace() required — no GraphSpace object passed to ggplot()
 gr <- as_tbl_graph(igraph_cities)
 ggraph(graph = gr, x= gr$x, y = gr$y) +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
@@ -142,7 +145,7 @@ ggraph(graph = gr, x= gr$x, y = gr$y) +
   theme_gspace_legend(discrete_fill = TRUE)
 ```
 
-Although all four approaches produce the same visualization, only *Option 1* provides automatic node-edge synchronization. When a *GraphSpace* object is supplied directly to `ggplot()`, clipping metadata are propagated automatically between the node and edge layers. In all other workflows, `inject_nodespace()` must be called explicitly to synchronize clipping offsets.
+Although all four approaches produce the same visualization, only *Option 1* provides automatic node-edge synchronization. When a `GraphSpace` object is passed directly to `ggplot()` (Option 1), clipping metadata propagate automatically between node and edge layers and no additional calls are needed. In all other workflows (Options 2–4), `inject_nodespace()` must be called explicitly to trigger this synchronization. This is the only functional difference between the four approaches; the visual output is identical.
 
 ```{r toy_sf.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
 # gs <- GraphSpace(igraph_cities)

@@ -67,7 +67,7 @@ theme_gspace_legend(
 
 \item{leg_size}{Numeric value to scale legend-related elements.}
 
-\item{bg_colour}{A color name or hex code specifying the panel background.}
+\item{bg_colour}{A colour name or hex code specifying the panel background.}
 
 \item{discrete_fill}{Logical; if TRUE, treats the fill legend as discrete
 to adjust key size.}

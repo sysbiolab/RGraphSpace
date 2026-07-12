@@ -1,6 +1,6 @@
 # Attribute Processing for GeomEdgeSpace
 
-Manage visual attribute precedence (color, size, shape) for
+Manage visual attribute precedence (colour, size, shape) for
 `GeomEdgeSpace` objects.
 
 ## Usage

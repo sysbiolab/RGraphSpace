@@ -35,9 +35,9 @@ gs_add_edges(x) <- value
 
   If both conventions are present, `from`/`to` takes priority. Any
   additional columns are treated as edge attributes and passed through
-  to `@edges`. Standard visual attributes (`edgeLineColor`,
-  `edgeLineWidth`, `arrowType`, etc.) are filled from package defaults
-  when omitted; analytical attributes such as `weight` are stored as-is.
+  to `@edges`. Standard visual attributes (`edgeColor`, `arrowType`,
+  etc.) are filled from package defaults when omitted; analytical
+  attributes such as `weight` are stored as-is.
 
 ## Value
 

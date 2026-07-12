@@ -10,7 +10,7 @@ A \code{ggproto} object.
 StatEdgeSpace
 }
 \description{
-Manage visual attribute precedence (color, size, shape) for \code{GeomEdgeSpace}
+Manage visual attribute precedence (colour, size, shape) for \code{GeomEdgeSpace}
 objects.
 }
 \section{Attribute Priority}{

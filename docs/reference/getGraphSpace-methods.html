@@ -48,6 +48,7 @@ individual slots available in a GraphSpace object."><style>
     <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -122,13 +123,13 @@ Options: "graph", "nodes", "edges", "pars", "misc", "image",
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get the 'graph' slot in gs</span></span></span>
 <span class="r-in"><span><span class="fu">getGraphSpace</span><span class="op">(</span><span class="va">gs</span>, what <span class="op">=</span> <span class="st">'graph'</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b2723e1 DN-- 5 4 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 5fb8aab DN-- 5 4 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | nodeColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c), nodeAlpha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | (v/n), edgeLineType (e/c), edgeLineColor (e/c), edgeLineWidth (e/n),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth (e/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), edgeAlpha (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from b2723e1 (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 5fb8aab (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] n1-&gt;n2 n1-&gt;n3 n1-&gt;n4 n1-&gt;n5</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

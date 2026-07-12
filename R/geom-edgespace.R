@@ -93,9 +93,8 @@
 #'   \code{linewidth} \tab Edge line width (see \link[ggplot2]{aes_linetype_size_shape}).
 #' }
 #' 
-#' Required aesthetics (\code{x}, \code{y}, \code{xend}, \code{yend})  
-#' are supplied from the \link{GraphSpace} object and do not need to be 
-#' manually mapped.
+#' All required aesthetics are supplied from the \link{GraphSpace} object and  
+#' do not need to be manually mapped.
 #' 
 #' Additional parameters can be passed to control fixed values for the layer.
 #' For example: `colour = "grey"`, `linetype = 2`, `linewidth = 1`.
@@ -228,6 +227,8 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
     data <- edgespace_handler()(data)
   }
   
+  user_aes = .get_user_aes(mapping, ...)
+  
   mapping <- .mapping_edgespace(mapping)
   
   params <- list2(
@@ -239,12 +240,13 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
     loop_direction = loop_direction,
     lineend = lineend,
     linejoin = linejoin,
-    .size_unit = "mm",
-    .nodes = NULL, 
     raster = raster, 
     dpi = dpi, 
     dev = dev, 
     scale = scale,
+    .user_aes = user_aes,
+    .size_unit = "mm",
+    .nodes = NULL, 
     ...)
   
   ggplot2::layer(
@@ -263,7 +265,7 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
 #-------------------------------------------------------------------------------
 #' Attribute Processing for GeomEdgeSpace
 #'
-#' Manage visual attribute precedence (color, size, shape) for `GeomEdgeSpace` 
+#' Manage visual attribute precedence (colour, size, shape) for `GeomEdgeSpace` 
 #' objects.
 #'
 #' @section Attribute Priority:
@@ -285,11 +287,11 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
 #' @export
 StatEdgeSpace <- ggproto(
   "StatEdgeSpace", ggplot2::Stat,
-  optional_aes = c("edgeLineColor", "edgeLineWidth", 
-    "edgeLineType", "edgeAlpha", "curve_weight", 
-    "away_angle", "is_multiple", "is_loop"),
-  setup_data = function(data, params) {
-    data <- .params_edgespace(params, data)
+  optional_aes = c("edgeColor", "edgeLineWidth", 
+    "edgeLineType", "edgeAlpha"),
+  extra_params = c("na.rm", ".user_aes"),
+  finish_layer = function(data, params) {
+    data <- .finish_edgespace(data, params)
     return(data)
   },
   compute_panel = function(data, scales){
@@ -350,7 +352,7 @@ edgespace_handler <- function() {
   
   offset_start <- offset_end <- curve_weight <- away_angle <- is_multiple <- is_loop <- NULL
   
-  edgeLineColor <- edgeLineWidth <- edgeLineType <- edgeAlpha <- NULL
+  edgeColor <- edgeLineWidth <- edgeLineType <- edgeAlpha <- NULL
   
   default_mapping <- ggplot2::aes(
     x = x, y = y, xend = xend, yend = yend,
@@ -365,7 +367,7 @@ edgespace_handler <- function() {
   )
   
   optional_mapping <- ggplot2::aes(
-    edgeLineColor = edgeLineColor, 
+    edgeColor = edgeColor, 
     edgeLineWidth = edgeLineWidth,
     edgeLineType = edgeLineType,
     edgeAlpha = edgeAlpha)
@@ -381,46 +383,44 @@ edgespace_handler <- function() {
 }
 
 #-------------------------------------------------------------------------------
-.params_edgespace <- function(params, edges, mapping){
+.finish_edgespace <- function(edges, params){
   
-  # Note: 'mapping' is read from colnames(edges) because, at this
-  # stage, ggplot2 has already evaluated aes() and pruned unmapped
-  # columns. Any standard aesthetic name present here (e.g. "colour") 
-  # was explicitly mapped by the user.
-  if(missing(mapping)){
-    mapping <- colnames(edges)
-  } else {
-    mapping <- names(mapping)
-  }
+  if(nrow(edges)==0) return(edges)
+    
+  # Note: This hook runs after scales have been applied, making it the 
+  # right place to assign graph attribute identity values without 
+  # interfering with scale training of other geoms.
+  user_aes <- params$.user_aes
   
-  if(is.null(params[["colour"]]) &&  !"colour" %in% mapping){
-    if("edgeLineColor" %in% names(edges) ){
-      edges[["colour"]] <- edges[["edgeLineColor"]]
+  if(is.null(params[["colour"]]) &&  !"colour" %in% user_aes){
+    if("edgeColor" %in% names(edges) ){
+      edges[["colour"]] <- edges[["edgeColor"]]
     }
   }
   
-  if(is.null(params[["linewidth"]]) && !"linewidth" %in% mapping ){
+  if(is.null(params[["linewidth"]]) && !"linewidth" %in% user_aes ){
     if("edgeLineWidth" %in% names(edges) ){
       edges[["linewidth"]] <- edges[["edgeLineWidth"]]
     }
   }
   
-  if(is.null(params[["linetype"]]) && !"linetype" %in% mapping ){
+  if(is.null(params[["linetype"]]) && !"linetype" %in% user_aes ){
     if("edgeLineType" %in% names(edges) ){
       edges[["linetype"]] <- edges[["edgeLineType"]]
     }
   }
   
-  if(is.null(params[["alpha"]]) && !"alpha" %in% mapping ){
+  if(is.null(params[["alpha"]]) && !"alpha" %in% user_aes ){
     if("edgeAlpha" %in% names(edges) ){
       edges[["alpha"]] <- edges[["edgeAlpha"]]
     }
   }
   
+  # Fallback for backward compatibility; to be removed in a future version.
   edges$curve_weight <- edges$curve_weight %||% 1
-  edges$is_multiple  <- edges$is_multiple  %||% FALSE
-  edges$is_loop      <- edges$is_loop      %||% FALSE
-  edges$away_angle   <- edges$away_angle   %||% NA_real_
+  edges$is_multiple <- edges$is_multiple %||% FALSE
+  edges$is_loop <- edges$is_loop %||% FALSE
+  edges$away_angle <- edges$away_angle %||% NA_real_
   
   return(edges)
   
@@ -453,7 +453,9 @@ GeomEdgeSpace <- ggproto(
   required_aes = c(
     "x", "y", "xend", "yend", 
     "vertex1", "vertex2", "arrowType", 
-    "offset_start", "offset_end"),
+    "offset_start", "offset_end", 
+    "curve_weight", "away_angle", 
+    "is_multiple", "is_loop"),
   
   optional_aes = c("label", "label_size", "label_colour", 
     "label_fill", "label_alpha","label_angle", "label_hjust", 
@@ -671,7 +673,7 @@ GeomEdgeSpace <- ggproto(
       y1 = arrows$ends$exy$yend,
       arrow = arrows$ends$arrow,
       gp = ggplot2::gg_par(
-        col = arrows$ends$color,
+        col = arrows$ends$colour,
         lwd = arrows$ends$linewidth, lty = "solid",
         lineend = lineend, linejoin = linejoin
       )
@@ -688,7 +690,7 @@ GeomEdgeSpace <- ggproto(
       y1 = arrows$starts$exy$yend,
       arrow = arrows$starts$arrow,
       gp = ggplot2::gg_par(
-        col = arrows$starts$color,
+        col = arrows$starts$colour,
         lwd = arrows$starts$linewidth, lty = "solid",
         lineend = lineend, linejoin = linejoin
       )
@@ -1227,7 +1229,7 @@ GeomEdgeSpace <- ggproto(
   arrow <- grid::arrow(angle = edges$arrowAngleStart,
     type = "open", ends = "first",
     length = grid::unit(edges$arrowSize1, size_unit))
-  return(list(exy=exy, arrow = arrow, color = edges$colour, 
+  return(list(exy=exy, arrow = arrow, colour = edges$colour, 
     linewidth = edges$linewidth))
 }
 .arrow_ends <- function(edges, size_unit){
@@ -1239,7 +1241,7 @@ GeomEdgeSpace <- ggproto(
   arrow <- grid::arrow(angle = edges$arrowAngleEnd,
     type = "open", ends = "last",
     length = grid::unit(edges$arrowSize2, size_unit))
-  return(list(exy=exy, arrow = arrow, color = edges$colour, 
+  return(list(exy=exy, arrow = arrow, colour = edges$colour, 
     linewidth = edges$linewidth))
 }
 
