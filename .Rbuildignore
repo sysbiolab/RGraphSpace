@@ -13,4 +13,4 @@
 ^vignettes/articles/.*$
 ^\.zip$
 ^\.lintr$
-
+^paper$

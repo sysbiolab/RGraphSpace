@@ -1,24 +1,25 @@
-# Extending ggplot2 Grammar to High-Dimensional Data
+# Using RGraphSpace with Seurat Objects
 
 **Package**: RGraphSpace 1.4.3  
 
 ## Overview
 
-While developing *RGraphSpace*, the challenge of representing graph
-structures in *ggplot2* highlighted a core design restriction: that
-plotting data must be expressed in tabular form, typically as a single
-`data.frame` (Wickham 2016). This approach works remarkably well for
-most applications, but becomes too restrictive when dealing with data
-objects composed of multiple interdependent components.
+While developing *RGraphSpace*, representing graph structures in ggplot2
+highlighted a feature of its input model: each plot layer consumes a
+single table and is resolved independently (Wickham 2016), so the
+components of a graph are not kept coherent during rendering. This works
+well for most applications, but becomes restrictive for data objects
+composed of multiple interdependent components.
 
-In this vignette, we explore how the `ggplot-GraphSpace` interface can
-be applied to high-dimensional data, enabling direct interaction with
-the *ggplot2* grammar and its aesthetic mapping mechanisms without
-repeated conversion into flat tabular representations. We demonstrate
-this approach using the *Seurat* package (Hao et al. 2024). `Seurat`
-objects encapsulate multiple coordinated representations of single-cell
-data, making them representative examples of high-dimensional data that
-cannot be naturally expressed as a single `data.frame`.
+In this vignette, we apply *RGraphSpace* to a complex data container,
+rendering its graph and spatial components within the ggplot2 grammar.
+As an S4 class, a `GraphSpace` object holds high-dimensional feature
+data in a dedicated slot (`@fdata`), kept aligned to nodes without being
+merged into the node table, so these features remain available for
+aesthetic mapping. We demonstrate this using the *Seurat* package (Hao
+et al. 2024). `Seurat` objects encapsulate multiple coordinated
+representations of single-cell data, and serve as a representative
+example of such containers.
 
 ## Before you start
 
@@ -107,51 +108,12 @@ seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
 # seurat_obj <- RunUMAP(seurat_obj, dims = 1:30)
 ```
 
-## *Seurat* reference plots
-
-Before introducing the `ggplot-GraphSpace` interface, we first reproduce
-two typical *Seurat* visualizations: a cluster-level embedding
-(`DimPlot`) and a feature expression map (`FeaturePlot`). These examples
-provide a useful baseline for the corresponding visualizations
-constructed later with `ggplot-GraphSpace`.
-
-``` r
-
-cpal <- DiscretePalette(nlevels(seurat_obj$seurat_annotations), 
-  palette = "polychrome")
-
-# Left: cluster-level embedding
-p1 <- DimPlot(seurat_obj, pt.size = 1, cols = cpal) + 
-  theme_minimal() + theme(aspect.ratio = 1)
-p1
-
-# Right: feature expression map
-p2 <- FeaturePlot(seurat_obj, features = "LYZ", 
-  cols = c("lightgrey", "blue"), pt.size = 1) + 
-  theme_minimal() + theme(aspect.ratio = 1)
-p2
-
-# Plot side-by-side
-# p1 + p2
-```
-
-![](figs_dev/Seurat_DimFeaturePlot.png)
-
-Note that `DimPlot` and `FeaturePlot` are high-level functions.
-Internally, *Seurat* extracts the relevant data and generates `ggplot`
-objects. While convenient, the underlying data structures are not
-directly exposed to the user, making advanced use of the *ggplot2*
-grammar more difficult. For example, defining custom aesthetic mappings
-or interoperating with other visualization workflows would require extra
-data extraction steps.
-
-## Exposing the *ggplot2* grammar
-
 We now apply
 [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
-to expose the `Seurat` object’s underlying high-dimensional data
-directly to *ggplot2* (for additional details, see the [*coercing
-high-dimensional
+to coerce the `Seurat` object into a `GraphSpace`, bringing its graph
+and spatial components into *RGraphSpace*’s rendering model, with
+feature data available for aesthetic mapping (for additional details,
+see the [*coercing high-dimensional
 data*](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.html#hd-coercion)
 section).
 
@@ -181,8 +143,10 @@ gs
 #> | y: [-9, 14] (rows)
 ```
 
-With the `GraphSpace` object ready, we reproduce the same plots using
-*ggplot2* geoms and aesthetic mappings.
+With the `GraphSpace` object ready, we generate *ggplot2* plots: a
+cluster-level embedding and a feature expression map. Here `LYZ`, a
+feature held in `@fdata`, is mapped to `fill` like any standard
+aesthetic, without being added to the node table.
 
 ``` r
 
@@ -190,33 +154,29 @@ cpal <- DiscretePalette(nlevels(gs$seurat_annotations),
   palette = "polychrome")
 
 # Left: cluster-level embedding
-p3 <- ggplot(gs) + 
+p1 <- ggplot(gs) + 
   geom_nodespace(mapping = aes(fill = seurat_annotations),
     size = 1.5, color = "grey90", stroke = 0.3) +
   scale_fill_manual(values = cpal) +
   labs(x = "UMAP_1", y = "UMAP_2") +
   theme_gspace_legend(discrete_fill = TRUE) +
   theme_minimal() + theme(aspect.ratio = 1)
-p3
+p1
 
 # Right: feature expression map
-p4 <- ggplot(gs) + 
+p2 <- ggplot(gs) + 
   geom_nodespace(mapping = aes(fill = LYZ), 
     size = 1.5, color = "lightgrey", stroke = 0.3) +
   scale_fill_continuous(palette = c("lightgrey", "blue")) +
   labs(x = "UMAP_1", y = "UMAP_2")  +
   theme_minimal() + theme(aspect.ratio = 1)
-p4
+p2
 
 ## Plot side-by-side
-# p3 + p4 
+# p1 + p2 
 ```
 
 ![](figs_dev/ggplot_seurat_1_2.png)
-
-The resulting plots are essentially the same, but users now have full
-flexibility to interact directly with *ggplot2* and its rich ecosystem
-of extensions and companion packages.
 
 ## Coercing high-dimensional data
 
@@ -316,7 +276,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [76] RcppAnnoy_0.0.23       ggrepel_0.9.8          RANN_2.6.2            
     #>  [79] pillar_1.11.1          stringr_1.6.0          spam_2.11-4           
     #>  [82] RcppHNSW_0.7.0         later_1.4.8            splines_4.6.1         
-    #>  [85] dplyr_1.2.1            lattice_0.22-9         survival_3.8-6        
+    #>  [85] dplyr_1.2.1            lattice_0.22-9         survival_3.8-9        
     #>  [88] deldir_2.0-4           tidyselect_1.2.1       miniUI_0.1.2          
     #>  [91] pbapply_1.7-4          knitr_1.51             gridExtra_2.3.1       
     #>  [94] scattermore_1.2        xfun_0.59              matrixStats_1.5.0     

@@ -6,12 +6,13 @@
 ## Overview
 
 *RGraphSpace* is designed to be a seamless extension to existing network
-analysis workflows, not a replacement. Whether using *igraph* for
-heavy-duty computations or *tidygraph* for tidy data manipulation,
-*RGraphSpace* `geoms` automatically recognize these objects on the fly.
-The main motivation behind *RGraphSpace* was to address the challenge of
-scaling network elements without disrupting alignment with image
-features. For practical examples, see [*mapping graphs to
+analysis workflows, not a replacement. Whether using *igraph* (Csardi
+and Nepusz 2006) for heavy-duty computations or *tidygraph* (Pedersen
+2025) for tidy data manipulation, *RGraphSpace* `geoms` automatically
+recognize these objects on the fly. The main motivation behind
+*RGraphSpace* was to address the challenge of scaling network elements
+without disrupting alignment with image features. For practical
+examples, see [*mapping graphs to
 images*](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md);
 see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/)
 tutorials for use-case scenarios involving reference image backgrounds.
@@ -230,6 +231,13 @@ output is identical.
 
 ## References
 
+Csardi, Gabor, and Tamas Nepusz. 2006. “The Igraph Software Package for
+Complex Network Research.” *InterJournal* Complex Systems: 1695.
+<https://igraph.org/>.
+
 Pebesma, Edzer, and Roger Bivand. 2023. *Spatial Data Science: With
 Applications in R*. Chapman; Hall/CRC.
 <https://doi.org/10.1201/9780429459016>.
+
+Pedersen, Thomas Lin. 2025. *Tidygraph: A Tidy API for Graph
+Manipulation*. <https://tidygraph.data-imaginist.com>.

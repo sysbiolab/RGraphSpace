@@ -1,5 +1,5 @@
 ---
-title: "Extending ggplot2 Grammar to Spatial Transcriptomics Data"
+title: "Using RGraphSpace with Spatial Transcriptomics Data"
 author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: ../bibliography.bib
@@ -26,11 +26,11 @@ knitr::opts_chunk$set(
 
 # Overview
 
-This vignette demonstrates how *RGraphSpace* extends the *ggplot2* grammar to spatial transcriptomics data. We use spatial data from the *SeuratData* package to illustrate direct mapping of spatial variables to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
+This vignette demonstrates how *RGraphSpace* renders the graph and spatial components of spatial transcriptomics data within the *ggplot2* grammar. Using spatial data from the *SeuratData* package, we show how a graph can be registered to its spatial coordinates and its features mapped to *ggplot2* aesthetics through the `GraphSpace` interface.
 
 # Before you start
 
-This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/){target="_blank" rel="noopener"} [@Yuhan2024], particularly for handling spatial transcriptomics data.
+This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/){target="_blank" rel="noopener"} [@Hao2024], particularly for handling spatial transcriptomics data.
 
 `r fontawesome::fa("exclamation-triangle", fill = "orange")` **Note:** If you are new to *Seurat*, we recommend reviewing its [spatial analysis tutorials](https://satijalab.org/seurat/articles/spatial_vignette){target="_blank" rel="noopener"} before proceeding.
 
@@ -68,7 +68,7 @@ library("SeuratData")
 
 ## Loading the dataset
 
-We will use the `stxBrain` dataset from the *SeuratData* package, consisting of spatial transcriptomics data from sagittal mouse brain sections generated with Visium v1 technology. This dataset is commonly used to demonstrate *Seurat* spatial workflows [@Yuhan2024]. We apply `as.GraphSpace()` to coerce the `Seurat` object into a `GraphSpace` and show how spatial high-dimensional variables can be mapped directly to *ggplot2* aesthetics, anchored to the tissue image from which the data were sampled.
+We will use the `stxBrain` dataset from the *SeuratData* package, consisting of spatial transcriptomics data from sagittal mouse brain sections generated with Visium v1 technology. This dataset is commonly used to demonstrate *Seurat* spatial workflows [@Hao2024]. We apply `as.GraphSpace()` to coerce the `Seurat` object into a `GraphSpace` and show how its spatial features can be mapped to *ggplot2* aesthetics, anchored to the tissue image from which the data were sampled.
 
 ```{r Intall dataset, eval=FALSE, message=FALSE, results='hide'}
 # Install a Seurat dataset (required only once)
@@ -99,7 +99,7 @@ seurat_obj <- NormalizeData(seurat_obj)
 
 ## Creating a GraphSpace object
 
-Next, we create a `GraphSpace` from the `Seurat` object; the `as.GraphSpace()` converts the *Seurat* object into a `GraphSpace`, exposing its spatial coordinates and feature data to the *ggplot2* grammar. We then attach the tissue image and normalize node coordinates to the image space.
+Next, we create a `GraphSpace` from the `Seurat` object; `as.GraphSpace()` brings its spatial coordinates and feature data into the `GraphSpace`, making them available for aesthetic mapping. We then attach the tissue image and normalize node coordinates to the image space.
 
 ```{r Create a GraphSpace - 1, eval=FALSE, message=FALSE, results='hide'}
 # Create a GraphSpace from 'seurat_obj'
@@ -143,7 +143,7 @@ gs
 
 # Spatial feature visualization
 
-With the `GraphSpace` object ready, we can reproduce a typical *Seurat* spatial feature plot using standard *ggplot2* syntax. Here we map expression of the `Ttr` gene to the colour aesthetic and display the tissue image as a background reference.
+With the `GraphSpace` object ready, we can reproduce a spatial feature plot of the kind familiar from *Seurat*, using standard *ggplot2* syntax. Here we map expression of the `Ttr` gene to the `colour` aesthetic and display the tissue image as a background reference.
 
 ```{r Feature plot, eval=FALSE, message=FALSE, results='hide'}
 cpal <- hcl.colors(100, palette = "Spectral", rev = TRUE)
@@ -180,7 +180,7 @@ ggplot(gs) +
 knitr::include_graphics("figs_dev/ggplot_seurat_3.png")
 ```
 
-**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `rotate.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
+**Note on image alignment**: Proper spatial alignment between nodes and the background image requires consistent coordinate conventions. Spatial misalignment may occur if the input image and node coordinates differ in axis orientation (e.g., top-left versus bottom-left origins). To accommodate these differences, `normalizeGraphSpace()` provides orientation controls through the `swap.xy`, `flip.x`, and `flip.y` arguments. If the nodes appear misaligned with the input image, try combinations of these parameters to correct the alignment. Alternatively, try `flip.v` and `flip.h` arguments to apply flipping directly to the background image.
 
 # Spatial cluster visualization
 
@@ -201,7 +201,7 @@ seurat_obj <- FindClusters(seurat_obj, verbose = FALSE)
 
 ## Spatial cluster visualization
 
-With clusters assigned, we rebuild the `GraphSpace` object from the updated `seurat_obj` and reproduce a typical Seurat spatial cluster plot, mapping cluster identity to the `fill` aesthetic and overlaying the tissue image as a dimmed background.
+With clusters assigned, we rebuild the `GraphSpace` object from the updated `seurat_obj` and reproduce a spatial cluster plot, mapping cluster identity to the `fill` aesthetic and overlaying the tissue image as a dimmed background.
 
 ```{r Metadata plot - 1, eval=FALSE, message=FALSE, results='hide'}
 # Re-create a GraphSpace from the updated 'seurat_obj'

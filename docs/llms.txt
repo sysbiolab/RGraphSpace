@@ -13,7 +13,7 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 ### Highlights
 
 - Native *ggplot2* interface for *igraph* objects
-- Optimized *geoms* for large-scale network visualization
+- Optimized *geoms* for high-dimensional data
 - Dual-anchor normalization for precise node and edge alignment
 - Spatial alignment of networks with reference maps and images
 
@@ -22,9 +22,9 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 *RGraphSpace* is an R package that generates *ggplot2* graphics for
 *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes
 and edges to a unit space. The package implements new *ggplot2*
-prototypes ([Wickham 2016](#ref-wickham)) optimized for large-scale
-network visualization, enabling extensive customization of aesthetics
-and visual style. A dual-anchor normalization approach ensures that edge
+prototypes ([Wickham 2016](#ref-wickham)) optimized for high-dimensional
+data visualization, enabling extensive customization of aesthetics and
+visual style. A dual-anchor normalization approach ensures that edge
 endpoints remain pinned to node boundaries regardless of node size,
 which is particularly useful when graph elements must be spatially
 aligned with reference maps and images. The package also supports
@@ -223,8 +223,8 @@ The *RGraphSpace* package is distributed under
   Aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md):
 - [Getting Started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/get-started.md):
-- [Extending ggplot2 Grammar to High-Dimensional
-  Data](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md):
+- [Using RGraphSpace with Seurat
+  Objects](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md):
 - [Installation
   Instructions](https://sysbiolab.github.io/RGraphSpace/articles/install.md):
 - [Interactive
@@ -237,5 +237,5 @@ The *RGraphSpace* package is distributed under
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md):
 - [Fine-Tuning Scales and
   Offsets](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md):
-- [Extending ggplot2 Grammar to Spatial Transcriptomics
+- [Using RGraphSpace with Spatial Transcriptomics
   Data](https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.md):

@@ -1,13 +1,14 @@
-# Extending ggplot2 Grammar to Spatial Transcriptomics Data
+# Using RGraphSpace with Spatial Transcriptomics Data
 
 **Package**: RGraphSpace 1.4.3  
 
 ## Overview
 
-This vignette demonstrates how *RGraphSpace* extends the *ggplot2*
-grammar to spatial transcriptomics data. We use spatial data from the
-*SeuratData* package to illustrate direct mapping of spatial variables
-to *ggplot2* aesthetics via the `ggplot-GraphSpace` interface.
+This vignette demonstrates how *RGraphSpace* renders the graph and
+spatial components of spatial transcriptomics data within the *ggplot2*
+grammar. Using spatial data from the *SeuratData* package, we show how a
+graph can be registered to its spatial coordinates and its features
+mapped to *ggplot2* aesthetics through the `GraphSpace` interface.
 
 ## Before you start
 
@@ -66,10 +67,9 @@ sections generated with Visium v1 technology. This dataset is commonly
 used to demonstrate *Seurat* spatial workflows (Hao et al. 2024). We
 apply
 [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
-to coerce the `Seurat` object into a `GraphSpace` and show how spatial
-high-dimensional variables can be mapped directly to *ggplot2*
-aesthetics, anchored to the tissue image from which the data were
-sampled.
+to coerce the `Seurat` object into a `GraphSpace` and show how its
+spatial features can be mapped to *ggplot2* aesthetics, anchored to the
+tissue image from which the data were sampled.
 
 ``` r
 
@@ -109,11 +109,11 @@ seurat_obj <- NormalizeData(seurat_obj)
 
 ### Creating a GraphSpace object
 
-Next, we create a `GraphSpace` from the `Seurat` object; the
+Next, we create a `GraphSpace` from the `Seurat` object;
 [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
-converts the *Seurat* object into a `GraphSpace`, exposing its spatial
-coordinates and feature data to the *ggplot2* grammar. We then attach
-the tissue image and normalize node coordinates to the image space.
+brings its spatial coordinates and feature data into the `GraphSpace`,
+making them available for aesthetic mapping. We then attach the tissue
+image and normalize node coordinates to the image space.
 
 ``` r
 
@@ -160,10 +160,10 @@ gs
 
 ## Spatial feature visualization
 
-With the `GraphSpace` object ready, we can reproduce a typical *Seurat*
-spatial feature plot using standard *ggplot2* syntax. Here we map
-expression of the `Ttr` gene to the colour aesthetic and display the
-tissue image as a background reference.
+With the `GraphSpace` object ready, we can reproduce a spatial feature
+plot of the kind familiar from *Seurat*, using standard *ggplot2*
+syntax. Here we map expression of the `Ttr` gene to the `colour`
+aesthetic and display the tissue image as a background reference.
 
 ``` r
 
@@ -186,7 +186,7 @@ misalignment may occur if the input image and node coordinates differ in
 axis orientation (e.g., top-left versus bottom-left origins). To
 accommodate these differences,
 [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
-provides orientation controls through the `rotate.xy`, `flip.x`, and
+provides orientation controls through the `swap.xy`, `flip.x`, and
 `flip.y` arguments. If the nodes appear misaligned with the input image,
 try combinations of these parameters to correct the alignment.
 Alternatively, try `flip.v` and `flip.h` arguments to apply flipping
@@ -219,9 +219,9 @@ seurat_obj <- FindClusters(seurat_obj, verbose = FALSE)
 ### Spatial cluster visualization
 
 With clusters assigned, we rebuild the `GraphSpace` object from the
-updated `seurat_obj` and reproduce a typical Seurat spatial cluster
-plot, mapping cluster identity to the `fill` aesthetic and overlaying
-the tissue image as a dimmed background.
+updated `seurat_obj` and reproduce a spatial cluster plot, mapping
+cluster identity to the `fill` aesthetic and overlaying the tissue image
+as a dimmed background.
 
 ``` r
 
@@ -350,7 +350,7 @@ gs <- normalizeGraphSpace(gs)
     #>  [79] RANN_2.6.2             pillar_1.11.1          stringr_1.6.0         
     #>  [82] spam_2.11-4            RcppHNSW_0.7.0         later_1.4.8           
     #>  [85] splines_4.6.1          dplyr_1.2.1            lattice_0.22-9        
-    #>  [88] survival_3.8-6         deldir_2.0-4           tidyselect_1.2.1      
+    #>  [88] survival_3.8-9         deldir_2.0-4           tidyselect_1.2.1      
     #>  [91] miniUI_0.1.2           pbapply_1.7-4          knitr_1.51            
     #>  [94] gridExtra_2.3.1        scattermore_1.2        xfun_0.59             
     #>  [97] matrixStats_1.5.0      stringi_1.8.7          lazyeval_0.2.3        

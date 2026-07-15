@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-*RGraphSpace* is designed to be a seamless extension to existing network analysis workflows, not a replacement. Whether using *igraph* for heavy-duty computations or *tidygraph* for tidy data manipulation, *RGraphSpace* `geoms` automatically recognize these objects on the fly. The main motivation behind *RGraphSpace* was to address the challenge of scaling network elements without disrupting alignment with image features. For practical examples, see [*mapping graphs to images*](mapping-images.html); see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/) tutorials for use-case scenarios involving reference image backgrounds.
+*RGraphSpace* is designed to be a seamless extension to existing network analysis workflows, not a replacement. Whether using *igraph* [@Nepusz2006] for heavy-duty computations or *tidygraph* [@Pedersen2025_1] for tidy data manipulation, *RGraphSpace* `geoms` automatically recognize these objects on the fly. The main motivation behind *RGraphSpace* was to address the challenge of scaling network elements without disrupting alignment with image features. For practical examples, see [*mapping graphs to images*](mapping-images.html); see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/) tutorials for use-case scenarios involving reference image backgrounds.
 
 **Why use *RGraphSpace* with *ggraph*?**
 
