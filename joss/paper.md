@@ -7,7 +7,7 @@ tags:
   - high-dimensional data
   - spatial anchors
 authors:
-  - name: Flávio Gabriel Carazza Kessler
+  - name: Flávio Gabriel Carazza-Kessler
     orcid: 0000-0002-5309-8043
     equal-contrib: true
     affiliation: 1
@@ -34,3 +34,6 @@ date: 13 July 2026
 bibliography: paper.bib
 ---
 
+# Summary
+
+Network visualization is a fundamental component of computational biology and systems science research. While R offers powerful tools for network analysis through `igraph` [@Nepusz:2006] and sophisticated plotting capabilities through `ggplot2` [@Wickham:2016], integrating these frameworks for spatial network visualization has remained challenging. `RGraphSpace` addresses this gap by providing a lightweight interface that seamlessly integrates `igraph` objects with `ggplot2` graphics within a normalized coordinate system. The package implements new geometric objects using `ggplot2` prototypes, specifically customized for side-by-side visualization of multiple graphs. By scaling shapes and graph elements to fit within a standardized unit space, `RGraphSpace` enables layered visualizations with consistent spatial alignment, making it particularly valuable for comparative network analysis and spatial mapping applications.
