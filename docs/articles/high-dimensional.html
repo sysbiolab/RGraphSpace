@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-15</h4>
+            <h4 data-toc-skip class="date">2026-07-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/high-dimensional.Rmd" class="external-link"><code>vignettes/articles/high-dimensional.Rmd</code></a></small>
       <div class="d-none name"><code>high-dimensional.Rmd</code></div>
@@ -111,21 +111,20 @@ Team</h4>
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>While developing <em>RGraphSpace</em>, representing graph structures
-in ggplot2 highlighted a feature of its input model: each plot layer
-consumes a single table and is resolved independently <span class="citation">(Wickham 2016)</span>, so the components of a graph are
+in <em>ggplot2</em> highlighted a feature of its input model: each plot
+layer consumes a single table and is resolved independently <span class="citation">(Wickham 2016)</span>, so the components of a graph are
 not kept coherent during rendering. This works well for most
 applications, but becomes restrictive for data objects composed of
 multiple interdependent components.</p>
 <p>In this vignette, we apply <em>RGraphSpace</em> to a complex data
-container, rendering its graph and spatial components within the ggplot2
-grammar. As an S4 class, a <code>GraphSpace</code> object holds
-high-dimensional feature data in a dedicated slot (<code>@fdata</code>),
-kept aligned to nodes without being merged into the node table, so these
-features remain available for aesthetic mapping. We demonstrate this
-using the <em>Seurat</em> package <span class="citation">(Hao et al.
-2024)</span>. <code>Seurat</code> objects encapsulate multiple
-coordinated representations of single-cell data, and serve as a
-representative example of such containers.</p>
+container, rendering its graph and spatial components within the
+<em>ggplot2</em> grammar. As an S4 class, a <code>GraphSpace</code>
+object holds high-dimensional feature data in a dedicated slot
+(<code>@fdata</code>), kept aligned to nodes without being merged into
+the node table, so these features remain available for aesthetic
+mapping. We demonstrate this using the <em>Seurat</em> package <span class="citation">(Hao et al. 2024)</span>. <code>Seurat</code> objects
+encapsulate multiple coordinated representations of single-cell data,
+and serve as a representative example of such containers.</p>
 </div>
 <div class="section level2">
 <h2 id="before-you-start">Before you start<a class="anchor" aria-label="anchor" href="#before-you-start"></a>

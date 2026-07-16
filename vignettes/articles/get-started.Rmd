@@ -85,7 +85,7 @@ ps_cards2 %>%
 
 
 ```{r, include=FALSE}
-title <- c("High-Dimensional Data", "Spatial Data")
+title <- c("High-Dimensional Data", "Spatial Omics Data")
 image <- c("cards/high_dim.png", "cards/spatial_data.png")
 link <- c("high-dimensional.html","spatial-data.html")
 ps_cards3 <- data.frame(title = title, image = image, link = link)

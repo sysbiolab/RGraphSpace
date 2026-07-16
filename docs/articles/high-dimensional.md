@@ -4,15 +4,15 @@
 
 ## Overview
 
-While developing *RGraphSpace*, representing graph structures in ggplot2
-highlighted a feature of its input model: each plot layer consumes a
-single table and is resolved independently (Wickham 2016), so the
-components of a graph are not kept coherent during rendering. This works
-well for most applications, but becomes restrictive for data objects
-composed of multiple interdependent components.
+While developing *RGraphSpace*, representing graph structures in
+*ggplot2* highlighted a feature of its input model: each plot layer
+consumes a single table and is resolved independently (Wickham 2016), so
+the components of a graph are not kept coherent during rendering. This
+works well for most applications, but becomes restrictive for data
+objects composed of multiple interdependent components.
 
 In this vignette, we apply *RGraphSpace* to a complex data container,
-rendering its graph and spatial components within the ggplot2 grammar.
+rendering its graph and spatial components within the *ggplot2* grammar.
 As an S4 class, a `GraphSpace` object holds high-dimensional feature
 data in a dedicated slot (`@fdata`), kept aligned to nodes without being
 merged into the node table, so these features remain available for

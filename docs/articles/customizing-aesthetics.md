@@ -97,7 +97,7 @@ gs <- GraphSpace(gtoy2)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 7fd3cca UN-- 90 329 -- 
+#> IGRAPH f146124 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/n), edge_var (e/n)
