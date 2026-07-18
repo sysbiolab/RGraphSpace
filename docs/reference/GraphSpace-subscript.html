@@ -188,7 +188,7 @@ modify slot contents.</p>
 <span class="r-in"><span><span class="co"># Node-induced subgraph: keep named nodes, prune dangling edges</span></span></span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n2"</span>, <span class="st">"n3"</span><span class="op">)</span>, <span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 27b7466 DNW- 3 2 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 739fbb2 DNW- 3 2 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -198,7 +198,7 @@ modify slot contents.</p>
 <span class="r-in"><span><span class="co"># Node-induced subgraph by integer position</span></span></span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 38e117e DNW- 4 3 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b83d476 DNW- 4 3 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -208,7 +208,7 @@ modify slot contents.</p>
 <span class="r-in"><span><span class="co"># Node-induced subgraph by pre-evaluated logical mask</span></span></span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span><span class="va">gs</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&gt;</span> <span class="fl">5</span>, <span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH cea3e3c DNW- 6 0 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 75d512a DNW- 6 0 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -218,7 +218,7 @@ modify slot contents.</p>
 <span class="r-in"><span><span class="co"># Edge selection only: keep all nodes</span></span></span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH ed2c77e DNW- 10 3 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b634947 DNW- 10 3 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -226,7 +226,7 @@ modify slot contents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | y: [-4, 4] -&gt; [0, 1] (rows)</span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 92cfa98 DNW- 10 3 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 60da898 DNW- 10 3 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -238,7 +238,7 @@ modify slot contents.</p>
 <span class="r-in"><span><span class="co"># Use gs_subset_edges() for unquoted predicate expressions instead.</span></span></span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 027c786 DNW- 10 9 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH db0715f DNW- 10 9 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -246,7 +246,7 @@ modify slot contents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | y: [-4, 4] -&gt; [0, 1] (rows)</span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span> <span class="op">&amp;</span> <span class="fu"><a href="GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">name2</span> <span class="op">==</span> <span class="st">"n2"</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH d5f9a62 DNW- 10 1 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH fda328d DNW- 10 1 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -254,7 +254,7 @@ modify slot contents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | y: [-4, 4] -&gt; [0, 1] (rows)</span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span> <span class="op">&amp;</span> <span class="va">name2</span> <span class="op">==</span> <span class="st">"n2"</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 533f900 DNW- 10 1 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 3d59a2c DNW- 10 1 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -266,7 +266,7 @@ modify slot contents.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No edges matched the filter expression.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> The returned object contains no edges.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH dcda660 DNW- 3 0 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH bdccbdf DNW- 3 0 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -274,7 +274,7 @@ modify slot contents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | y: [-1, 4] -&gt; [0, 1] (rows)</span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n2"</span>, <span class="st">"n3"</span><span class="op">)</span>, <span class="fu"><a href="GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A GraphSpace-class object for:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH b735eb5 DNW- 3 2 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 4e36e82 DNW- 3 2 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + node spatial boundaries: normalized to graph space</span>
@@ -317,10 +317,10 @@ modify slot contents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8   FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9   FALSE</span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[[</span><span class="st">"graph"</span><span class="op">]</span><span class="op">]</span>   <span class="co"># same as getGraphSpace(gs, "graph")</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH 027c786 DNW- 10 9 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> IGRAPH db0715f DNW- 10 9 -- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | arrowType (e/n), weight (e/n)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from 027c786 (vertex names):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> + edges from db0715f (vertex names):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] n1-&gt;n2  n1-&gt;n3  n1-&gt;n4  n1-&gt;n5  n1-&gt;n6  n1-&gt;n7  n1-&gt;n8  n1-&gt;n9  n1-&gt;n10</span>
 <span class="r-in"><span><span class="va">gs</span><span class="op">[[</span><span class="st">"fdata"</span><span class="op">]</span><span class="op">]</span>   <span class="co"># same as getGraphSpace(gs, "fdata")</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0 x 0 diagonal matrix of class "ldiMatrix"</span>

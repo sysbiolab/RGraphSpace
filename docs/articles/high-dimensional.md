@@ -1,20 +1,12 @@
-# Using RGraphSpace with Seurat Objects
+# Using RGraphSpace with High-Dimensional Data
 
 **Package**: RGraphSpace 1.4.3  
 
 ## Overview
 
-While developing *RGraphSpace*, representing graph structures in
-*ggplot2* highlighted a feature of its input model: each plot layer
-consumes a single table and is resolved independently (Wickham 2016), so
-the components of a graph are not kept coherent during rendering. This
-works well for most applications, but becomes restrictive for data
-objects composed of multiple interdependent components.
-
-In this vignette, we apply *RGraphSpace* to a complex data container,
-rendering its graph and spatial components within the *ggplot2* grammar.
-As an S4 class, a `GraphSpace` object holds high-dimensional feature
-data in a dedicated slot (`@fdata`), kept aligned to nodes without being
+In this vignette, we apply *RGraphSpace* to a complex data container. As
+an S4 class, a `GraphSpace` object holds high-dimensional feature data
+in a dedicated slot (`@fdata`), kept aligned to nodes without being
 merged into the node table, so these features remain available for
 aesthetic mapping. We demonstrate this using the *Seurat* package (Hao
 et al. 2024). `Seurat` objects encapsulate multiple coordinated
@@ -110,10 +102,10 @@ seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
 
 We now apply
 [`as.GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.md)
-to coerce the `Seurat` object into a `GraphSpace`, bringing its graph
-and spatial components into *RGraphSpace*’s rendering model, with
-feature data available for aesthetic mapping (for additional details,
-see the [*coercing high-dimensional
+to coerce the `Seurat` object into a `GraphSpace`, bringing its
+components into *RGraphSpace*’s rendering model, with feature data
+available for aesthetic mapping (for additional details, see the
+[*coercing high-dimensional
 data*](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.html#hd-coercion)
 section).
 
@@ -295,6 +287,3 @@ Hao, Yuhan, Tim Stuart, Madeline H Kowalski, et al. 2024. “Dictionary
 Learning for Integrative, Multimodal and Scalable Single-Cell Analysis.”
 *Nature Biotechnology* 42 (2): 293–304.
 <https://doi.org/10.1038/s41587-023-01767-y>.
-
-Wickham, Hadley. 2016. *Ggplot2: Elegant Graphics for Data Analysis*.
-Springer-Verlag New York. <https://ggplot2.tidyverse.org>.

@@ -86,7 +86,7 @@ demonstrates manual graph layout refinement.
 
 [](https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.md)
 
-###### Spatial Omics Data
+###### Spatial Feature Data
 
 ## *PathwaySpace* workflows
 

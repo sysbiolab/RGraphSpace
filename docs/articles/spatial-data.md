@@ -1,4 +1,4 @@
-# Using RGraphSpace with Spatial Transcriptomics Data
+# Using RGraphSpace with Spatial Feature Data
 
 **Package**: RGraphSpace 1.4.3  
 
