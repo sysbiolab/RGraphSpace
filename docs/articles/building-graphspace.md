@@ -1,4 +1,4 @@
-# Building a Graph Space
+# Building a GraphSpace
 
   
 **Package**: RGraphSpace 1.4.3
@@ -20,11 +20,13 @@ if (packageVersion("RGraphSpace") < "1.4.3"){
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
+library("tidygraph")
 ```
 
-This section will create a toy `igraph` from scratch to demonstrate the
-vertex and edge attributes that *RGraphSpace* parses automatically. This
-shows exactly what the package expects as input. We will use `igraph`’s
+This section creates a toy `igraph` from scratch to demonstrate the
+vertex and edge attributes that *RGraphSpace* parses automatically,
+showing exactly what the package expects as input. The same graph can
+also be supplied as a *tidygraph* object. Here we use `igraph`’s
 [`make_star()`](https://r.igraph.org/reference/make_star.html) function
 and then [`V()`](https://r.igraph.org/reference/V.html) and
 [`E()`](https://r.igraph.org/reference/E.html) to assign attributes.
@@ -62,6 +64,43 @@ plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
 ![](building-graphspace_files/figure-html/Toy%20igraph%20-%202-1.png)
+
+The same graph can be supplied as a *tidygraph* object; every
+*RGraphSpace* entry point accepts it through the same interface.
+
+``` r
+
+# Same toy graph, as tidygraph
+gr <- as_tbl_graph(gtoy1)
+gr
+#> # A tbl_graph: 5 nodes and 4 edges
+#> #
+#> # A rooted tree
+#> #
+#> # Node Data: 5 × 3 (active)
+#>       x     y name 
+#>   <dbl> <dbl> <chr>
+#> 1     0     0 n1   
+#> 2     2     0 n2   
+#> 3    -2     2 n3   
+#> 4    -4    -4 n4   
+#> 5    -8     0 n5   
+#> #
+#> # Edge Data: 4 × 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     2
+#> 2     1     3
+#> 3     1     4
+#> # ℹ 1 more row
+```
+
+``` r
+
+plotGraphSpace(gr, node.labels = TRUE)
+```
+
+![](building-graphspace_files/figure-html/Toy%20igraph%20-%204-1.png)
 
 ## *RGraphSpace* attributes
 
@@ -320,7 +359,7 @@ gs <- GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
@@ -329,11 +368,11 @@ gs <- GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
     #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          
     #> [17] generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1      
     #> [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3
-    #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.59          fs_2.1.0          
-    #> [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
-    #> [33] pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     
-    #> [37] grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0     lifecycle_1.0.5   
-    #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
-    #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
+    #> [25] rlang_1.2.0        utf8_1.2.6         cachem_1.1.0       xfun_0.59         
+    #> [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
+    #> [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5    
+    #> [37] digest_0.6.39      grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0    
+    #> [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       
+    #> [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        
     #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   
     #> [53] htmltools_0.5.9

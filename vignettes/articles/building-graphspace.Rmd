@@ -1,5 +1,5 @@
 ---
-title: "Building a Graph Space"
+title: "Building a GraphSpace"
 author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: ../bibliography.bib
@@ -40,9 +40,10 @@ if (packageVersion("RGraphSpace") < "1.4.3"){
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
+library("tidygraph")
 ```
 
-This section will create a toy `igraph` from scratch to demonstrate the vertex and edge attributes that *RGraphSpace* parses automatically. This shows exactly what the package expects as input. We will use `igraph`'s `make_star()` function and then `V()` and `E()` to assign attributes.
+This section creates a toy `igraph` from scratch to demonstrate the vertex and edge attributes that *RGraphSpace* parses automatically, showing exactly what the package expects as input. The same graph can also be supplied as a *tidygraph* object. Here we use `igraph`'s `make_star()` function and then `V()` and `E()` to assign attributes.
 
 ```{r Toy igraph - 1, eval=TRUE, message=TRUE}
 # Make a 'toy' igraph with 5 nodes and 4 edges;
@@ -70,6 +71,19 @@ V(gtoy1)$name <- paste0("n", 1:5)
 # The most direct call: pass an igraph to plotGraphSpace()
 plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
+
+The same graph can be supplied as a *tidygraph* object; every *RGraphSpace* entry point accepts it through the same interface.
+
+```{r Toy igraph - 3, eval=TRUE, message=FALSE}
+# Same toy graph, as tidygraph
+gr <- as_tbl_graph(gtoy1)
+gr
+```
+
+```{r Toy igraph - 4, eval=TRUE, message=FALSE}
+plotGraphSpace(gr, node.labels = TRUE)
+```
+
 
 # *RGraphSpace* attributes
 
