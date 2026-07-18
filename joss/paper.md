@@ -51,7 +51,7 @@ A gap remains in how a graph's components are held together during rendering. Be
 
 # State of the field
 
-The Grammar of Graphics [@Wilkinson2005] constructs statistical graphics by decomposing a plot into independent, composable elements: data, aesthetic mappings, geometric objects, scales, coordinate systems, and statistical transformations. A graphic is then built declaratively by combining these components. In R, the *ggplot2* package [@Wickham2016] implements a layered form of this grammar [@Wickham2010], assembling graphics by adding successive layers to a shared coordinate system, and has become the dominant visualization framework in the R ecosystem.
+The Grammar of Graphics [@Wilkinson2005] constructs statistical graphics by decomposing a plot into independent, composable elements: data, aesthetic mappings, geometric objects, scales, coordinate systems, and statistical transformations. A graphic is then built declaratively by combining these components. In R, the *ggplot2* package implements a layered form of this grammar [@Wickham2010], assembling graphics by adding successive layers to a shared coordinate system, and has become the dominant visualization framework in the R ecosystem.
 
 Central to this design is how *ggplot2* consumes data: each layer is bound to a single rectangular table and resolved independently, applying its own transformations, scales, and position adjustments before being drawn [@Wickham2016]. This independence is a deliberate strength, since layers can be freely combined, reordered, and reused, and it pairs naturally with the tidy data convention [@Wickham2014], in which each variable is a column and each observation a row.
 
