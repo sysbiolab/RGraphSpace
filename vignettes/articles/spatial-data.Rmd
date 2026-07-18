@@ -1,5 +1,5 @@
 ---
-title: "Using RGraphSpace with Spatial Transcriptomics Data"
+title: "Using RGraphSpace with Spatial Feature Data"
 author: "Sysbiolab Team"
 date: "`r Sys.Date()`"
 bibliography: ../bibliography.bib

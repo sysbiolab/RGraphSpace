@@ -3,147 +3,92 @@ title: 'RGraphSpace: A lightweight interface between igraph and ggplot2 graphics
 tags:
 - R
 - graph visualization
-- ggplot2
-- igraph
 - network analysis
-- spatial visualization
-date: "`r Sys.Date()`"
-output:
-  html_document:
-    df_print: paged
+- "high-dimensional data"
+- spatial anchors
+date: "16 July 2026"
+output: pdf_document
 authors:
-- name: Flávio Gabriel Carazza-Kessler
+- name: Flávio Gabriel Carazza Kessler
   orcid: "0000-0002-5309-8043"
-  affiliation: '1'
+  equal-contrib: true
+  affiliation: 1
 - name: Jonathan André Back
   orcid: "0009-0008-7338-1197"
-  affiliation: '1'
+  equal-contrib: true
+  affiliation: 1
 - name: Lana Bazan Peters Querne
   orcid: "0000-0001-9967-028X"
-  affiliation: '1'
+  equal-contrib: true
+  affiliation: 1
 - name: Victor Henrique Apolonio dos Santos
   orcid: "0000-0002-6394-5840"
-  affiliation: '1'
-- name: Vinícius de Saraiva Chagas
-  orcid: "0000-0001-5160-0450"
-  affiliation: '1'
-- name: Mauro Antônio Alves Castro
+  affiliation: 1
+- name: Mauro Antonio Alves Castro
   orcid: "0000-0003-4942-8131"
   corresponding: true
-  affiliation: '1'
+  affiliation: 1
 bibliography: paper.bib
 affiliations:
-- name: "Bioinformatics and Systems Biology Laboratory, Federal University of Paraná,
-    Curitiba, Paraná, 81520-260, Brazil"
+- name: "Bioinformatics and Systems Biology Laboratory, Federal University of Paraná, Curitiba, PR, 81520-260, Brazil"
   index: 1
+  ror: 05syd6y78
 ---
 
 # Summary
 
-Network visualization is a fundamental component of computational biology and systems science. While R offers powerful tools for network analysis through `igraph` [@Nepusz:2006] and sophisticated plotting capabilities through `ggplot2` [@Wickham:2016], integrating these frameworks for spatial network visualization remains challenging. `RGraphSpace` addresses this gap by providing a lightweight interface that integrates `igraph` objects with `ggplot2` graphics within a normalized coordinate system. The package implements new geometric objects using `ggplot2` prototypes, specifically customized for side-by-side visualization of multiple graphs. Moreover, `RGraphSpace` also provides high-level alignment of graph coordinates with background images through a normalized coordinate system, thereby ensuring accurate visualization of image-refereced networks. By scaling shapes and graph elements to fit within a standardized unit space, `RGraphSpace` enables layered visualizations with consistent spatial alignment, making it particularly valuable for comparative network analysis and spatial mapping applications, including spatial transcriptomics.
+A graph describes a network structure of nodes connected by edges, used across many areas of science to represent relationships between entities. In R, *igraph* [@Nepusz2006] provides powerful tools for network analysis, and the *ggplot2* ecosystem [@Wickham2016] for graph visualization, where nodes and edges are drawn as separate layers. Integrating the two remains challenging, however, because the geometry of these layers is not fully coordinated at rendering time, a consequence of *ggplot2*'s input model, in which each plot layer consumes a single rectangular table and is resolved independently. This design works remarkably well for most applications, but is restrictive for structures with mutually dependent components. Because layers do not share transformed state, the scaled geometry is not preserved between node and edge tables, and the two are not rendered as a single coherent object. Here we introduce *RGraphSpace*, a lightweight interface that integrates *igraph* objects with *ggplot2* graphics within a normalized coordinate space. It synchronizes node and edge layers, jointly resolving their geometry under standard aesthetic mappings. *RGraphSpace* also supports registration against external coordinate systems, such as images and spatial maps, so that a graph becomes a spatial object aligned to a wider context rather than an isolated diagram. *RGraphSpace* is available from CRAN, with comprehensive tutorials provided on GitHub (<https://sysbiolab.github.io/RGraphSpace>).
 
 # Statement of need
 
-Visualizing graphs in spatial contexts is often necessary when working with networks, such as overlaying networks on geographical maps, comparing multiple networks side-by-side, or creating layered visualizations where network topology is constrained to specific spatial regions. While `igraph` provides comprehensive network analysis capabilities, its native plotting functions lack the flexibility and aesthetic control offered by modern `ggplot2` graphics. Conversely, while `ggplot2` excels at creating publication-quality visualizations with extensive customization options, it does not natively support network graph objects.
+Graph visualization in R rests on two mature foundations: *igraph* [@Nepusz2006] for graph computation and *ggplot2* [@Wickham2016] for layered graphics. Tools such as *ggraph* [@Pedersen2025_2] and *GGally* [@Schloerke2025] bridge these, exposing graph layouts as *ggplot2* layers styled through standard aesthetic mappings. Graph data access has similarly matured through *tidygraph* [@Pedersen2025_1], which exposes graphs as tidy node and edge tables, and through the broader tidyomics ecosystem [@Hutchison2024], which extends this idiom to complex multi-component containers common in computational biology.
 
-Existing solutions typically require researchers to manually convert `igraph` objects into data frames, calculate edge coordinates, and handle scaling issues --a process that is both time-consuming and error-prone. Furthermore, dealing with multiple graphs or attempting to overlay networks on background images, maintaining consistent scaling and spatial alignment becomes increasingly complex.
+A gap remains in how a graph's components are held together during rendering. Because *ggplot2* resolves each layer independently, node and edge layers are not geometrically synchronized. Positional coordinates are shared and remain consistent, but other aesthetics are resolved per layer, so an edge cannot account for the scaled extent of the nodes it connects. Existing graph-oriented extensions such as *ggraph* [@Pedersen2025_2] do not synchronize node and edge geometry, regardless of how the layout was produced.
 
-`RGraphSpace` was designed to solve these challenges by providing:
+*RGraphSpace* addresses this by treating a graph as a single coherent object throughout rendering. It takes an *igraph* object and scales the graph into a normalized coordinate space in which nodes, edges, and their associated elements are resolved together. Because node and edge geometry are synchronized at rendering time, edges are drawn with respect to the scaled extent of the nodes they connect, and this correspondence is maintained as aesthetics are mapped through the standard *ggplot2* grammar. The normalized space serves a second purpose: it gives the graph a common spatial reference, allowing graphs to be registered against external coordinate systems, such as images (\autoref{fig:figure1}), placing the graph within a broader spatial context.
 
-1.  **Seamless integration**: Direct conversion of `igraph` objects and other relational data structures into `ggplot2`-compatible graphics without requiring manual data transformation
-2.  **Normalized coordinate system**: Automatic scaling of graph elements to fit within a standardized unit space (0-1), enabling consistent visualization across multiple graphs
-3.  **Spatial awareness**: Support for background images with proper coordinate mapping, allowing networks to be overlaid on spatial maps or other contextual imagery
-4.  **Flexible customization**: Full access to `ggplot2`'s extensive theming and aesthetic options while maintaining network-specific attributes
-5.  **Edge and node scaling**: Handling of edge arrows, node shapes, and other graph elements that scale appropriately with the visualization space
-6.  **Interoperability with other packages**: The package provides a simple yet robust infraestructure for connecting existing network analysis workflows to the extensive figure-customization offered by `ggplot2`
-
-The package can be particularly relevant for researchers in systems biology, neuroscience, spatial transcriptomics, social network analysis, or any field requiring visualization of networks within spatial contexts. By standardizing common coordinate-transformation and plotting operations, `RGraphSpace` supports reproducible spatial network visualization workflows.
+![Spatial registration. A graph is aligned to a background image within the normalized reference frame, so that nodes and edges are positioned against an external spatial reference such as a tissue image.\label{fig:figure1}](figure1.png){width="100%"}
 
 # State of the field
 
-Several R packages address network visualization, each with different strengths and limitations:
+The Grammar of Graphics [@Wilkinson2005] constructs statistical graphics by decomposing a plot into independent, composable elements: data, aesthetic mappings, geometric objects, scales, coordinate systems, and statistical transformations. A graphic is then built declaratively by combining these components. In R, the *ggplot2* package [@Wickham2016] implements a layered form of this grammar [@Wickham2010], assembling graphics by adding successive layers to a shared coordinate system, and has become the dominant visualization framework in the R ecosystem.
 
--   **`igraph`** [@Nepusz:2006]: Provides comprehensive network analysis and basic plotting capabilities but lacks the aesthetic flexibility and customization options of modern visualization frameworks. Its plotting system is based on base R graphics, which can be limiting for publication-quality figures.
+Central to this design is how *ggplot2* consumes data: each layer is bound to a single rectangular table and resolved independently, applying its own transformations, scales, and position adjustments before being drawn [@Wickham2016]. This independence is a deliberate strength, since layers can be freely combined, reordered, and reused, and it pairs naturally with the tidy data convention [@Wickham2014], in which each variable is a column and each observation a row.
 
--   **`ggraph`** [@Pedersen:2025]: Extends `ggplot2` to support network visualizations and offers excellent integration with the tidyverse ecosystem. However, it is primarily designed for standalone network plots and does not emphasize spatial mapping or the normalization of coordinates for multi-graph comparisons. `ggraph` excels at traditional network layouts (force-directed, hierarchical, etc.) but is less suited for situations where network coordinates are predetermined by spatial constraints.
+This design has allowed *ggplot2* to accommodate data structures beyond simple flat tables. The *sf* package [@Pebesma2018], for example, represents spatial vector geometry as list-columns and integrates with *ggplot2* through a dedicated `geom_sf` layer, extending the grammar to non-tabular representations while preserving its declarative interface. Graph data has received similar attention. The *ggraph* package [@Pedersen2025_2] extends *ggplot2* with an extensive family of node and edge geometries, bringing graph layouts into the grammar, while earlier tools such as the *GGally* package [@Schloerke2025] plot networks from adjacency and edge-list inputs. These packages establish that the node and edge tables of a graph can be expressed as *ggplot2* layers and styled through standard aesthetic mappings.
 
--   **`RedeR`** [@Castro:2012]: An R/Bioconductor package that provides interactive network visualization with support for nested networks and hierarchical structures. While `RedeR` offers rich interactivity through a Java-based interface, it operates in a separate visualization environment rather than integrating with `ggplot2`. `RGraphSpace` complements `RedeR` by providing static, publication-ready visualizations using familiar `ggplot2` syntax.
-
--   **`visNetwork`** [@Almende:2025]: Offers interactive network visualizations using the vis.js JavaScript library, but focuses on web-based interactivity rather than static publication graphics and spatial integration.
-
-`RGraphSpace` is intended for applications  in which networks must be visualized in spatial contexts (\textit{e.g.}, overlaid on maps or images) while retaining the customization capabilities of `ggplot2`. Its coordinate-normalization approach supports visualizations in which graphs are displayed using consistent spatial scaling.
-
-# Software design
-
-![**Schematic RGraphSpace architecture.** \label{fig:network-layout}](figures/Architecture_transparent_highres.png){width="80%"}
-
-
-The general architecture of RGraphSpace is shown in \autoref{fig:network-layout}. `RGraphSpace` is built around an S4 class system that wraps `igraph` objects and manages their transformation into `ggplot2`-compatible data structures. In addition, `RGraphSpace` also coerce other relational data -- including `Seurat` objects, tbl_graph objects and edges data frame. The core workflow involves:
-
-1.  **Graph preprocessing**: The `GraphSpace()` constructor accepts an `igraph` object with `x`, `y`, and `name` vertex attributes, along with optional layout matrices or background images. The constructor validates graph attributes and creates the GraphSpace object. The `as.GraphSpace()` coercion function also identify additional relational data and convert them to GraphSpace object, this improve interoperability with established packaged, including `ggraph` [@Pedersen:2025] and `Seurat`[@Hao:2023].
-
-2.  **Coordinate Normalization**: The `normalizeGraphSpace()` function creates a \textit{normalized coordinate system} in which the (x)- and (y)-coordinates are aligned with a referece images stored in the `image` slot of the `GraphSpace` object. Although normalization is optional, it is recommended when the spatial coordinates must be aligned with the background image. Node coordinates are anchored to the raster image at pixel-level resolution.
-
-3. **Attribute management**: The package recognizes standard `igraph` vertex attributes (e.g., `nodeSize`, `nodeShape`, `nodeColor`, `nodeLineColor`, `nodeLineWidth`) and edge attributes (e.g., `edgeLineWidth`, `edgeLineColor`, `edgeLineType`, `arrowType`, `arrowLength`) and automatically maps them to appropriate `ggplot2` aesthetics.
-
-4.  **Geometric objects**: `RGraphSpace` implements custom `ggproto` objects that extend `ggplot2`'s geom system. Three specialized `geoms` translate graph data into geometric layers. These `geoms` use a dual-anchor normalization approach to align layers, required for analysis where network elements must be accurately referenced to a spatial map.
-
--   `geom_nodespace()`: Dedicated to rendering nodes. Inherits `GeomPoint` aesthetic mappings, modified to inform the edge layer on node states. It can be used with the `inject_nodespace()` function to handle the scaling of node shapes to ensure they maintain consistent size relative to the plot space.
--   `geom_edgespace()`: Handles the relational data between nodes. Inherits `GeomSegment` aesthetic mappings; unlike standard segments, it is “node-aware” and dynamically calibrates start and end points.
--   `geom_graphspace()`: A high-level layer that processes both nodes and edges in a single call.
-
-5.  **Edge rendering**: The package includes sophisticated edge rendering that handles both directed and undirected graphs, calculates appropriate arrow coordinates, and supports self-loops and multiple edges between the same vertices.
-
-6.  **Theming system**: Multiple pre-configured themes (`th0`, `th1`, `th2`, `th3`) provide different aesthetic styles while remaining fully customizable through standard `ggplot2` theme functions.
-
-# Example Usage
-
-Incluir figura painel que apresenta exemplos de uso com breve descrição (seguir sintaxe de inclusão de figura e citação de figura usada acima). 
+Alongside these visualization tools, a parallel line of work has focused on making complex data structures accessible to the tidyverse [@Wickham2019], a collection of R packages sharing a common design for data manipulation. The *tidygraph* package [@Pedersen2025_1] exposes a graph as a pair of tidy node and edge tables, allowing graph manipulation through familiar tidyverse verbs while preserving its relational structure. This tidy philosophy extends to multi-component containers common in computational biology, including *Seurat* [@Hao2024], *SummarizedExperiment* [@Huber2015], *SingleCellExperiment* [@Amezquita2020], and *SpatialExperiment* [@Righelli2022], which bundle components such as assays, metadata, reductions, spatial coordinates, and graphs within a single object. The tidyomics ecosystem [@Hutchison2024] provides interfaces for these containers (e.g., *tidyseurat* [@Mangiola2021]), exposing them to tidyverse tools, including *ggplot2*. Data access to these structures is therefore increasingly well supported, and *RGraphSpace* builds on this foundation to contribute the rendering step.
 
 # Research impact statement
 
-`RGraphSpace` was designed aiming to support a wide range of research applications in computational biology and network science. The package enables researchers to create sophisticated visualizations that combine network topology with spatial information.
+*RGraphSpace* serves as the spatial rendering foundation for *PathwaySpace* [@PathwaySpace], a package that projects network-derived signals onto spatial representations of biological pathways. This integration has supported published analyses in systems biology [@Tercan2025; @Ellrott2025], demonstrating that *RGraphSpace* provides a practical basis for downstream spatial analysis tools.
 
-Potential applications include:
+# Software design
 
--   **Systems biology**: Overlaying molecular interaction networks on cellular compartment maps or tissue sections
--   **Neuroscience**: Visualizing brain connectivity networks in anatomical space
--   **Spatial transcriptomics**: Integrating expression data to background tissue images
--   **Social networks**: Mapping social connections within geographical contexts
--   **Ecological networks**: Displaying species interaction networks over habitat maps
+*RGraphSpace* is built around the `GraphSpace` S4 class, which encapsulates a graph together with the components required for coherent rendering: node and edge tables, the source `igraph` object, an optional background image, and a sparse feature matrix (\autoref{fig:figure2}A). Object validity enforces alignment between these components, so node identifiers, graph vertices, and feature rows always correspond.
+
+Rather than embedding node-associated features as node attributes, `GraphSpace` stores them in `@fdata`, a dedicated sparse-matrix slot aligned to nodes but structurally independent of the node table. When a feature is referenced in an aesthetic mapping, only the requested feature is retrieved and joined for the current plot, so graphs carrying thousands of features are never expanded into dense node tables.
+
+The package interoperates with existing graph and container tools rather than replacing them. Graphs can be supplied as either `igraph` or `tidygraph` objects through a common interface (\autoref{fig:figure2}B). *RGraphSpace* also works with *ggraph*, accepting its layouts as input and providing geometries that can be used within *ggraph* plots. Coercion methods extend the same interface to selected multi-component containers, loading their node-associated features into the `@fdata` slot.
+
+Node coordinates are normalized either to a unit square or to the pixel space of a background image, with both the source image and a render-ready copy stored in the object. This establishes a stable reference frame for registering graphs to external images and spatial maps.
+
+Rendering extends *ggplot2* through its standard build mechanisms. A `GraphSpace` supplied to `ggplot()` produces a subclassed plot that verifies the node and edge layers originate from the same graph before coordinating them. *RGraphSpace* then intercepts the build pipeline after the node layer has been fully processed, and the resulting node geometry is propagated to the edge layer, allowing edge construction to use the final rendered node representation. This synchronization makes edges node-aware, maintaining their geometric correspondence with the nodes they connect, and is available through three geometries: `geom_nodespace()`, `geom_edgespace()`, and the convenience wrapper `geom_graphspace()`.
+
+![Architecture of RGraphSpace. (**A**) The `GraphSpace` S4 class stores a graph, its node and edge tables, node-aligned feature data as a sparse matrix, and paired source and render-ready images; object validity enforces a shared node identity across all three. (**B**) Graph inputs (`igraph` or `tidygraph`) are used to construct a `GraphSpace`; selected non-graph objects are handled through coercion and accessors (inset). Coordinates are normalized to a unit square or to the pixel space of a background image. At the *ggplot2* build step, the node and edge layers are synchronized, producing node-aware edges over an optional background image.\label{fig:figure2}](figure2.png){width="100%"}
 
 # Availability and documentation
 
-`RGraphSpace` is available on CRAN and can be installed using standard R package installation procedures. The development version is hosted on GitHub at <https://github.com/sysbiolab/RGraphSpace>. Comprehensive documentation is provided through:
+*RGraphSpace* is available on CRAN and can be installed using standard R package installation procedures. The development version is hosted on GitHub at <https://github.com/sysbiolab/RGraphSpace>, and full documentation and tutorials are available at <https://sysbiolab.github.io/RGraphSpace>. Documentation includes vignettes demonstrating the base workflow, from an `igraph` object to customized *ggplot2* visualizations (\autoref{fig:figure3}A), graph registration to background images (\autoref{fig:figure3}B), and application to single-cell and spatial feature data (\autoref{fig:figure3}C).
 
--   *Detailed vignettes demonstrating suggesting workflows and examples of usage*
--   Function-level documentation accessible through R's help system
--   *Example datasets that facilitate learning and testing*
-
-The package requires R ≥4.5 and depends on `igraph`, `ggplot2`, `methods`, and several utility packages (`grDevices`, `scales`, `grid`). Continuous integration testing ensures compatibility across platforms. Moreover, all current and futures vignettes of the package can be found in [Get Started](https://sysbiolab.github.io/RGraphSpace/articles/get-started.html) section from `RGraphSpace's` GitHub.
-
-# Citations
-
-If the reader want to cite **RGraphSpace**, is possible to cite this manuscript and also the publication on CRAN:
-
-```         
-@Manual{SysbiolabTeam:2026, 
-title = {RGraphSpace: A lightweight interface between ‘igraph’ and ‘ggplot2’ graphics}, 
-author = {Sysbiolab Team},
-year = {2026},
-note = {R package version 1.2.0}, 
-organization = {CRAN}, 
-doi = {10.32614/CRAN.package.RGraphSpace}, 
-url = {https://cran.r-project.org/web/packages/RGraphSpace/index.html}
-}
-```
+![Selected tutorials available at <https://sysbiolab.github.io/RGraphSpace>. (**A**) Graph construction: a graph rendered from an `igraph` object using standard *ggplot2* layers. (**B**) Image registration: a graph mapped to a background image within a shared reference frame. (**C**) Spatial feature data: graph and feature data rendered in a spatial context, illustrated with spatial transcriptomics.\label{fig:figure3}](figure3.png){width="100%"}
 
 # AI usage disclosure
 
-During this work's preparation, generative AI tools includind ChatGPT (OpenAI, California USA) and Claude (Anthropic, California USA) were used by the authors to improve the comprehensibility of the R package’s documentation, figure layout and final text cohesion. The authors carefully reviewed and polished the content as needed after using this tool/service and assume full responsibility for the published content.
+During the preparation of this work, the authors used ChatGPT (OpenAI) and Claude Code (Anthropic) to improve text readability and to audit code while using RStudio Desktop (<https://posit.co/>). The authors carefully reviewed and edited the content as needed after using these tools and assume full responsibility for the published content.
 
 # Acknowledgements
 
-We acknowledge the broader R community, particularly the developers of `igraph` and `ggplot2`, whose excellent software made this integration possible. This work was funded by CNPq (316622/2021-4; 440412/2022-6), CAPES (88882.632783/2021-01), and Fundação Araucária (NAPI Bioinformática) and supported by the Bioinformatics and Systems Biology Laboratory at the Federal University of Paraná, Brazil.
+This work was funded by CNPq (440412/2022-6 and 307144/2025-9), CAPES (Finance Code 001), and Fundação Araucária (NAPI Bioinformática).
 
 # References
