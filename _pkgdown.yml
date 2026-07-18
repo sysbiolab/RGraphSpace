@@ -60,7 +60,7 @@ navbar:
         header: true
       - text: "High-dimensional data"
         href: articles/high-dimensional.html
-      - text: "Spatial transcriptomics data"
+      - text: "Spatial feature data"
         href: articles/spatial-data.html
     - text: Index
       href: reference/index.html
