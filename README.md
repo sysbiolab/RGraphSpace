@@ -72,7 +72,7 @@ The *RGraphSpace* package is distributed under [Artistic-2.0](https://www.r-proj
 
 <a name="ref-wickham"></a>
 
-* Wickham H: *ggplot2: Elegant Graphics for Data Analysis*. Springer-Verlag New York, 2016. [https://ggplot2.tidyverse.org](https://ggplot2.tidyverse.org)
+* Wickham H: *ggplot2: Elegant Graphics for Data Analysis*. Springer New York, 2016. [https://ggplot2.tidyverse.org](https://ggplot2.tidyverse.org)
 
 <a name="ref-nepusz"></a>
 
