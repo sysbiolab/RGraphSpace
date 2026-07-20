@@ -15,7 +15,7 @@
 
 ### Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a unit space. The package implements new *ggplot2* prototypes ([Wickham 2016](#ref-wickham)) optimized for high-dimensional data, enabling extensive customization of aesthetics and visual style. A layer synchronization approach ensures that edge endpoints remain pinned to node boundaries regardless of node size, which is particularly useful when graph elements must be spatially aligned with reference images. The package also supports interoperability with *ggraph* and *tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized geoms translate graph data into geometric layers.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)) within a normalized coordinate system. The package implements new geometries that treat a graph as a single coherent object, synchronizing node and edge layers under standard aesthetic mappings. Node features are resolved on demand, supporting high-dimensional data without expanding node tables. Spatial registration is available at the pixel level, with node coordinates anchored to pixel centers through a half-pixel offset, enabling precise alignment against external reference frames such as images and maps. The package also interoperates with *ggraph* and *tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized geoms translate graph data into geometric layers.
 
 1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint`
 aesthetic mappings and exposes node state information to the edge layer.
