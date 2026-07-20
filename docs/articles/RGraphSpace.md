@@ -1,26 +1,25 @@
 # Getting started with RGraphSpace
 
   
-**Package**: RGraphSpace 1.4.3
+**Package**: RGraphSpace 1.4.4
 
 ## Highlights
 
 - Native *ggplot2* interface for *igraph* objects
-- Optimized *geoms* for large-scale network visualization
-- Dual-anchor normalization for precise node and edge alignment
-- Spatial alignment of networks with reference maps and images
+- Coherent rendering of node and edge layers
+- Optimized *geoms* for high-dimensional data
+- Spatial alignment to external reference frames
 
 ## Overview
 
 *RGraphSpace* is an R package that generates *ggplot2* graphics for
 *igraph* objects (Csardi and Nepusz 2006), scaling nodes and edges to a
 unit space. The package implements new *ggplot2* geometric prototypes
-(Wickham 2016) that use a dual-anchor normalization approach to align
-node and edge layers, ensuring that edge endpoints remain pinned to node
-boundaries regardless of node size. This is particularly useful when
-graph elements must be spatially aligned with reference maps or images.
-For extended documentation and use cases, see the [online
-tutorials](https://sysbiolab.github.io/RGraphSpace/).
+(Wickham 2016) that synchronize node and edge layers, ensuring that edge
+endpoints remain pinned to node boundaries regardless of node size. This
+is particularly useful when graph elements must be spatially aligned
+with reference images. For extended documentation and use cases, see the
+[online tutorials](https://sysbiolab.github.io/RGraphSpace/).
 
 ## Quick start
 
@@ -381,7 +380,7 @@ If you use *RGraphSpace*, please cite:
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       

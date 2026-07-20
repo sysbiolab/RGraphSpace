@@ -9,23 +9,13 @@
 
 ### Highlights
 * Native *ggplot2* interface for *igraph* objects
+* Coherent rendering of node and edge layers
 * Optimized *geoms* for high-dimensional data
-* Dual-anchor normalization for precise node and edge alignment
-* Spatial alignment of networks with reference maps and images
+* Spatial alignment to external reference frames
 
 ### Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* 
-objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a 
-unit space. The package implements new *ggplot2* prototypes 
-([Wickham 2016](#ref-wickham)) optimized for high-dimensional data 
-visualization, enabling extensive customization of aesthetics and visual 
-style. A dual-anchor normalization approach ensures that edge endpoints remain 
-pinned to node boundaries regardless of node size, which is particularly 
-useful when graph elements must be spatially aligned with reference maps and 
-images. The package also supports interoperability with *ggraph* and 
-*tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized 
-geoms translate graph data into geometric layers.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)), scaling nodes and edges to a unit space. The package implements new *ggplot2* prototypes ([Wickham 2016](#ref-wickham)) optimized for high-dimensional data, enabling extensive customization of aesthetics and visual style. A layer synchronization approach ensures that edge endpoints remain pinned to node boundaries regardless of node size, which is particularly useful when graph elements must be spatially aligned with reference images. The package also supports interoperability with *ggraph* and *tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized geoms translate graph data into geometric layers.
 
 1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint`
 aesthetic mappings and exposes node state information to the edge layer.

@@ -1,14 +1,14 @@
 # Using RGraphSpace with Spatial Feature Data
 
-**Package**: RGraphSpace 1.4.3  
+**Package**: RGraphSpace 1.4.4  
 
 ## Overview
 
-This vignette demonstrates how *RGraphSpace* renders the graph and
-spatial components of spatial transcriptomics data within the *ggplot2*
-grammar. Using spatial data from the *SeuratData* package, we show how a
-graph can be registered to its spatial coordinates and its features
-mapped to *ggplot2* aesthetics through the `GraphSpace` interface.
+This vignette demonstrates how *RGraphSpace* renders spatial
+transcriptomics data. Using spatial data from the *SeuratData* package,
+we show how a graph is registered to spatial coordinates and
+high-dimensional features mapped to *ggplot2* aesthetics through the
+`GraphSpace` interface.
 
 ## Before you start
 
@@ -162,7 +162,7 @@ gs
 
 With the `GraphSpace` object ready, we can reproduce a spatial feature
 plot of the kind familiar from *Seurat*, using standard *ggplot2*
-syntax. Here we map expression of the `Ttr` gene to the `colour`
+mappings. Here we map expression of the `Ttr` gene to the `colour`
 aesthetic and display the tissue image as a background reference.
 
 ``` r
@@ -317,7 +317,7 @@ gs <- normalizeGraphSpace(gs)
     #> [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 
     #> [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    
     #> [5] Seurat_5.5.1              SeuratObject_5.4.0       
-    #> [7] sp_2.2-1                  RGraphSpace_1.4.3        
+    #> [7] sp_2.2-1                  RGraphSpace_1.4.4        
     #> [9] ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):

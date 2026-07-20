@@ -1,7 +1,7 @@
 # Customizing Aesthetics
 
   
-**Package**: RGraphSpace 1.4.3
+**Package**: RGraphSpace 1.4.4
 
 ``` r
 
@@ -15,8 +15,8 @@ if (packageVersion("RGraphSpace") < "1.4.3"){
 ## Overview
 
 This section illustrates how *RGraphSpace* integrates with *ggplot2*
-using `geoms` building blocks (Wickham 2016). Graph attributes stored in
-the `GraphSpace` object can be handled in two ways:
+using its building blocks (Wickham 2016). Graph attributes stored in the
+`GraphSpace` object can be handled in two ways:
 
 - **Identity mapping:** Attributes such as `nodeColor`, `nodeSize`, and
   `nodeShape` are treated as literal values and displayed exactly as
@@ -27,10 +27,9 @@ the `GraphSpace` object can be handled in two ways:
   standard scales, which automatically generate synchronized legends.
 
 *RGraphSpace* implements three specialized `geoms` for handling graph
-data within a *ggplot2* workflow. These `geoms` use a dual-anchor
-normalization strategy to keep layers aligned, which is essential when
-network elements must remain accurately referenced to a spatial map or
-image.
+data within a *ggplot2* workflow. These `geoms` synchronize node and
+edge layers, which is essential when network elements must remain
+accurately aligned with a reference frame.
 
 1.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
     Renders network nodes. Extends `GeomPoint` aesthetic mappings and
@@ -47,8 +46,9 @@ image.
     [`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
     and
     [`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
-    in sequence. Use this for the common case; use the individual geoms
-    directly when independent control of node and edge layers is needed.
+    in sequence. Use this for the common case; use the individual
+    `geoms` directly when independent control of node and edge layers is
+    needed.
 
 ## Setting basic input data
 
@@ -97,7 +97,7 @@ gs <- GraphSpace(gtoy2)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 54bc7ca UN-- 90 329 -- 
+#> IGRAPH 9f5bc62 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/n), edge_var (e/n)
@@ -135,7 +135,7 @@ attribute should be mapped via aesthetics (e.g.,
 ## Mapping categorical variables
 
 In this example, the node categorical variable `node_group` is mapped to
-the `fill` aesthetic and we use the individual geoms directly for
+the `fill` aesthetic and we use the individual `geoms` directly for
 independent control of node and edge layers.
 
 ``` r
@@ -217,7 +217,7 @@ ggplot(data = gs) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] ggnewscale_0.5.2  igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
+    #> [1] ggnewscale_0.5.2  igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    

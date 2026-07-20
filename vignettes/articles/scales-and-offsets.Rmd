@@ -76,7 +76,7 @@ gs_star
 
 # The problem: static vs. dynamic sizes
 
-In the first example, the `GraphSpace` object provides all graph attributes. Using predefined node sizes allows for consistent arrow offsets, as all network elements are scaled to `npc` (Normalized Parent Coordinates) units. No matter how the plotting area is resized, nodes, edges, and arrows will remain proportional to the viewport. This behavior is especially useful when overlaying networks on top of reference images (such as photomicrography or medical scans), where nodes must stay locked to specific pixel positions regardless of the output resolution.
+In the first example, the `GraphSpace` object provides all graph attributes. Using predefined node sizes allows for consistent arrow offsets, as all network elements are scaled to `npc` (Normalized Parent Coordinates) units. No matter how the plotting area is resized, nodes, edges, and arrows will remain proportional to the viewport. This behavior is especially useful when overlaying networks on top of reference images (such as microscopy images and medical scans), where nodes must stay locked to specific pixel positions regardless of the output resolution.
 
 ```{r Adjusting scales - 2, eval=TRUE, message=FALSE}
 ggplot(gs_star) + 

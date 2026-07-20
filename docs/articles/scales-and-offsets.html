@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-18</h4>
+            <h4 data-toc-skip class="date">2026-07-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/scales-and-offsets.Rmd" class="external-link"><code>vignettes/articles/scales-and-offsets.Rmd</code></a></small>
       <div class="d-none name"><code>scales-and-offsets.Rmd</code></div>
@@ -107,7 +107,7 @@ Team</h4>
     
     
 <p><br></p>
-<p><strong>Package</strong>: RGraphSpace 1.4.3</p>
+<p><strong>Package</strong>: RGraphSpace 1.4.4</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.4.3"</span><span class="op">)</span><span class="op">{</span></span>
@@ -163,7 +163,7 @@ values.</p>
 <span></span>
 <span><span class="va">gs_star</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 3cd117d DN-- 20 19 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 75eea0e DN-- 20 19 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), num_var (v/n), edgeColor (e/c), arrowType (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
@@ -180,7 +180,7 @@ arrow offsets, as all network elements are scaled to <code>npc</code>
 (Normalized Parent Coordinates) units. No matter how the plotting area
 is resized, nodes, edges, and arrows will remain proportional to the
 viewport. This behavior is especially useful when overlaying networks on
-top of reference images (such as photomicrography or medical scans),
+top of reference images (such as microscopy images and medical scans),
 where nodes must stay locked to specific pixel positions regardless of
 the output resolution.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -263,7 +263,7 @@ Otherwise, except for labels, <em>RGraphSpace</em> defaults to using
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       </span></span>

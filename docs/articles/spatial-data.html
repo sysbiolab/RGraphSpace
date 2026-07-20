@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-18</h4>
+            <h4 data-toc-skip class="date">2026-07-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/spatial-data.Rmd" class="external-link"><code>vignettes/articles/spatial-data.Rmd</code></a></small>
       <div class="d-none name"><code>spatial-data.Rmd</code></div>
@@ -106,16 +106,15 @@ Team</h4>
 
     
     
-<p><strong>Package</strong>: RGraphSpace 1.4.3 <br></p>
+<p><strong>Package</strong>: RGraphSpace 1.4.4 <br></p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>This vignette demonstrates how <em>RGraphSpace</em> renders the graph
-and spatial components of spatial transcriptomics data within the
-<em>ggplot2</em> grammar. Using spatial data from the
-<em>SeuratData</em> package, we show how a graph can be registered to
-its spatial coordinates and its features mapped to <em>ggplot2</em>
-aesthetics through the <code>GraphSpace</code> interface.</p>
+<p>This vignette demonstrates how <em>RGraphSpace</em> renders spatial
+transcriptomics data. Using spatial data from the <em>SeuratData</em>
+package, we show how a graph is registered to spatial coordinates and
+high-dimensional features mapped to <em>ggplot2</em> aesthetics through
+the <code>GraphSpace</code> interface.</p>
 </div>
 <div class="section level2">
 <h2 id="before-you-start">Before you start<a class="anchor" aria-label="anchor" href="#before-you-start"></a>
@@ -245,7 +244,7 @@ image and normalize node coordinates to the image space.</p>
 </h2>
 <p>With the <code>GraphSpace</code> object ready, we can reproduce a
 spatial feature plot of the kind familiar from <em>Seurat</em>, using
-standard <em>ggplot2</em> syntax. Here we map expression of the
+standard <em>ggplot2</em> mappings. Here we map expression of the
 <code>Ttr</code> gene to the <code>colour</code> aesthetic and display
 the tissue image as a background reference.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -385,7 +384,7 @@ data</em></a> tutorial.</p>
 <span><span class="co">#&gt; [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 </span></span>
 <span><span class="co">#&gt; [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    </span></span>
 <span><span class="co">#&gt; [5] Seurat_5.5.1              SeuratObject_5.4.0       </span></span>
-<span><span class="co">#&gt; [7] sp_2.2-1                  RGraphSpace_1.4.3        </span></span>
+<span><span class="co">#&gt; [7] sp_2.2-1                  RGraphSpace_1.4.4        </span></span>
 <span><span class="co">#&gt; [9] ggplot2_4.0.3            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>

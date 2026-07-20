@@ -109,8 +109,7 @@ ggplot(gs) +
 
 # Orientation controls
 
-The `normalizeGraphSpace()` function provides five arguments to adjust the alignment between graph coordinates and the background image. Arguments `flip.x`, `flip.y`, and `swap.xy` transform node coordinates; `flip.v` and `flip.h` transform the image matrix itself. The reference card below illustrates each argument using the `volcano` dataset introduced in the previous section, where nodes are precisely aligned with their corresponding dark pixels in the default configuration. Each panel shows
-how that alignment changes when a single argument is modified.
+The `normalizeGraphSpace()` function provides five arguments to adjust the alignment between graph coordinates and the background image. Arguments `flip.x`, `flip.y`, and `swap.xy` transform node coordinates; `flip.v` and `flip.h` transform the image matrix itself. The reference card below illustrates each argument using the `volcano` dataset introduced in the previous section, where nodes are precisely aligned with their corresponding dark pixels in the default configuration. Each panel shows how that alignment changes when a single argument is modified.
 
 Note that `flip.y` defaults to `TRUE` when `image.space = TRUE`, since image matrices use a top-down row indexing that is the inverse of the standard graph coordinate system. The panel labelled `flip.y = FALSE` shows what happens when this default correction is suppressed.
 

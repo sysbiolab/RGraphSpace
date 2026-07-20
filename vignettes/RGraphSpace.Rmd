@@ -40,13 +40,13 @@ if (!identical(Sys.getenv("IN_PKGDOWN"), "true")) {
 
 # Highlights
 * Native *ggplot2* interface for *igraph* objects
-* Optimized *geoms* for large-scale network visualization
-* Dual-anchor normalization for precise node and edge alignment
-* Spatial alignment of networks with reference maps and images
+* Coherent rendering of node and edge layers
+* Optimized *geoms* for high-dimensional data
+* Spatial alignment to external reference frames
 
 # Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016] that use a dual-anchor normalization approach to align node and edge layers, ensuring that edge endpoints remain pinned to node boundaries regardless of node size. This is particularly useful when graph elements must be spatially aligned with reference maps or images. For extended documentation and use cases, see the [online tutorials](https://sysbiolab.github.io/RGraphSpace/).
+*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects [@Nepusz2006], scaling nodes and edges to a unit space. The package implements new *ggplot2* geometric prototypes [@Wickham2016] that synchronize node and edge layers, ensuring that edge endpoints remain pinned to node boundaries regardless of node size. This is particularly useful when graph elements must be spatially aligned with reference images. For extended documentation and use cases, see the [online tutorials](https://sysbiolab.github.io/RGraphSpace/).
 
 # Quick start
 

@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-This vignette demonstrates how *RGraphSpace* renders the graph and spatial components of spatial transcriptomics data within the *ggplot2* grammar. Using spatial data from the *SeuratData* package, we show how a graph can be registered to its spatial coordinates and its features mapped to *ggplot2* aesthetics through the `GraphSpace` interface.
+This vignette demonstrates how *RGraphSpace* renders spatial transcriptomics data. Using spatial data from the *SeuratData* package, we show how a graph is registered to spatial coordinates and high-dimensional features mapped to *ggplot2* aesthetics through the `GraphSpace` interface.
 
 # Before you start
 
@@ -143,7 +143,7 @@ gs
 
 # Spatial feature visualization
 
-With the `GraphSpace` object ready, we can reproduce a spatial feature plot of the kind familiar from *Seurat*, using standard *ggplot2* syntax. Here we map expression of the `Ttr` gene to the `colour` aesthetic and display the tissue image as a background reference.
+With the `GraphSpace` object ready, we can reproduce a spatial feature plot of the kind familiar from *Seurat*, using standard *ggplot2* mappings. Here we map expression of the `Ttr` gene to the `colour` aesthetic and display the tissue image as a background reference.
 
 ```{r Feature plot, eval=FALSE, message=FALSE, results='hide'}
 cpal <- hcl.colors(100, palette = "Spectral", rev = TRUE)

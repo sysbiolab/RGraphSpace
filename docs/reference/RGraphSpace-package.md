@@ -1,14 +1,14 @@
 # RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics
 
-An interface to integrate 'igraph' and 'ggplot2' graphics within a
-normalized coordinate system. 'RGraphSpace' extends 'ggplot2' with
-graph-aware geometries optimized for large networks. The 'GraphSpace'
-class integrates directly with 'ggplot2' through specialized 'geoms' and
-lazy resolution of node attributes, supporting customization of
-aesthetics and visual styles. These 'geoms' use a dual-anchor
-normalization approach to align layers, particularly useful for analyses
-in which network elements must be spatially aligned with reference maps
-and images.
+An interface for rendering 'igraph' objects within 'ggplot2' using a
+normalized coordinate system. 'RGraphSpace' implements new geometries
+that treat a graph as a single coherent object, synchronizing node and
+edge layers under standard aesthetic mappings. Node features are
+resolved on demand, supporting high-dimensional data without expanding
+node tables. Spatial registration is also supported at the pixel level,
+with node coordinates anchored to pixel centers through a half-pixel
+offset, enabling precise alignment against external reference frames
+such as images and maps.
 
 ## Details
 
@@ -22,7 +22,7 @@ the RGraphSpace package from the package list.
 ## References
 
 Sysbiolab Team (2026). *RGraphSpace: A lightweight interface between
-'igraph' and 'ggplot2' graphics*. R package version 1.4.3 (Doi:
+'igraph' and 'ggplot2' graphics*. R package version 1.4.4 (Doi:
 10.32614/CRAN.package.RGraphSpace),
 <https://CRAN.R-project.org/package=RGraphSpace>.
 

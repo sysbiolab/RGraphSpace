@@ -2,7 +2,7 @@
 
   
 
-**Package**: RGraphSpace 1.4.3
+**Package**: RGraphSpace 1.4.4
 
 ``` r
 
@@ -64,7 +64,7 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH 3cd117d DN-- 20 19 -- 
+#> IGRAPH 75eea0e DN-- 20 19 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), num_var (v/n), edgeColor (e/c), arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -80,7 +80,7 @@ offsets, as all network elements are scaled to `npc` (Normalized Parent
 Coordinates) units. No matter how the plotting area is resized, nodes,
 edges, and arrows will remain proportional to the viewport. This
 behavior is especially useful when overlaying networks on top of
-reference images (such as photomicrography or medical scans), where
+reference images (such as microscopy images and medical scans), where
 nodes must stay locked to specific pixel positions regardless of the
 output resolution.
 
@@ -179,7 +179,7 @@ network elements.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       

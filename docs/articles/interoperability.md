@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.4.3
+**Package**: RGraphSpace 1.4.4
 
 ## Overview
 
@@ -22,19 +22,19 @@ tutorials for use-case scenarios involving reference image backgrounds.
 While *ggraph* is a wonderful framework for relational data, precise
 edge-node alignment requires additional handling when node sizes vary
 dynamically. This limitation arises from a fundamental trade-off in
-*ggplot2*: scaling the point `size` aesthetic is tied to a fixed
-physical legend representation, causing node dimensions to depend on
-device scaling rather than the normalized coordinate space. For most
-applications this is not an issue, but it becomes critical when graphs
-must be spatially aligned with reference images. *RGraphSpace* addresses
-this through specialized `geoms` that automatically compensate for
-alignment shifts introduced by node scaling. The trade-off for this
-higher level of automation is that the user has fewer customization
-options compared to the *ggraph* approach. This is exactly why using
-*RGraphSpace* alongside *ggraph* makes sense: it provides precise
-spatial alignment between graph elements and reference backgrounds while
-preserving interoperability with the extensive layout and styling
-flexibility of the *ggraph* grammar.
+*ggplot2*: scaling `size` aesthetic is tied to a fixed physical legend
+representation, causing node dimensions to depend on device scaling
+rather than the normalized coordinate space. For most applications this
+is not an issue, but it becomes critical when graphs must be spatially
+aligned with reference images. *RGraphSpace* addresses this through
+specialized `geoms` that automatically compensate for alignment shifts
+introduced by node scaling. The trade-off for this higher level of
+automation is that the user has fewer customization options compared to
+the *ggraph* approach. This is exactly why using *RGraphSpace* alongside
+*ggraph* makes sense: it provides precise spatial alignment between
+graph elements and reference frames while preserving interoperability
+with the extensive layout and styling flexibility of the *ggraph*
+grammar.
 
 ## Required packages
 
@@ -206,7 +206,7 @@ output is identical.
     #> 
     #> other attached packages:
     #> [1] ggraph_2.2.2      tidygraph_1.3.1   geometry_0.5.2    maps_3.4.3       
-    #> [5] sf_1.1-1          igraph_2.3.3      RGraphSpace_1.4.3 ggplot2_4.0.3    
+    #> [5] sf_1.1-1          igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.59          bslib_0.11.0      

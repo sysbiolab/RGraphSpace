@@ -35,19 +35,19 @@ if (packageVersion("RGraphSpace") < "1.4.3"){
 
 # Overview
 
-This section illustrates how *RGraphSpace* integrates with *ggplot2* using `geoms` building blocks [@Wickham2016]. Graph attributes stored in the `GraphSpace` object can be handled in two ways:
+This section illustrates how *RGraphSpace* integrates with *ggplot2* using its building blocks [@Wickham2016]. Graph attributes stored in the `GraphSpace` object can be handled in two ways:
 
 * **Identity mapping:** Attributes such as `nodeColor`, `nodeSize`, and `nodeShape` are treated as literal values and displayed exactly as specified, without scaling or transformation.
 
 * **Dynamic aesthetic mapping:** Attributes are mapped to *ggplot2* aesthetics such as `colour`, `size`, and `shape`, and rendered through standard scales, which automatically generate synchronized legends.
 
-*RGraphSpace* implements three specialized `geoms` for handling graph data within a *ggplot2* workflow. These `geoms` use a dual-anchor normalization strategy to keep layers aligned, which is essential when network elements must remain accurately referenced to a spatial map or image.
+*RGraphSpace* implements three specialized `geoms` for handling graph data within a *ggplot2* workflow. These `geoms` synchronize node and edge layers, which is essential when network elements must remain accurately aligned with a reference frame.
 
 1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint` aesthetic mappings and exposes node state information to the edge layer.
 
 2. **`geom_edgespace()`**: Renders the relationships between nodes. Extends `GeomSegment` aesthetic mappings; unlike standard segments, it is node-aware and dynamically adjusts start and end points based on node position and size.
 
-3. **`geom_graphspace()`**: A convenience wrapper that calls `geom_nodespace()` and `geom_edgespace()` in sequence. Use this for the common case; use the individual geoms directly when independent control of node and edge layers is needed.
+3. **`geom_graphspace()`**: A convenience wrapper that calls `geom_nodespace()` and `geom_edgespace()` in sequence. Use this for the common case; use the individual `geoms` directly when independent control of node and edge layers is needed.
 
 # Setting basic input data
 
@@ -106,7 +106,7 @@ The trade-off of this approach is that all attributes reflect the original data 
 
 # Mapping categorical variables
 
-In this example, the node categorical variable `node_group` is mapped to the `fill` aesthetic and we use the individual geoms directly for independent control of node and edge layers.
+In this example, the node categorical variable `node_group` is mapped to the `fill` aesthetic and we use the individual `geoms` directly for independent control of node and edge layers.
 
 ```{r Map aesthetics to categorical variables, eval=TRUE, message=FALSE}
 ggplot(gs) + 
