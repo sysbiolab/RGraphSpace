@@ -6,7 +6,7 @@
 \alias{RGraphSpace-package}
 \title{RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics}
 \description{
-An interface for rendering 'igraph' objects as 'ggplot2' graphics within a normalized coordinate system. 'RGraphSpace' implements new geometries that treat a graph as a single coherent object, synchronizing node and edge layers under standard aesthetic mappings. Node features are resolved on demand, supporting high-dimensional data without expanding node tables. Spatial registration is available at the pixel level, with node coordinates anchored to pixel centers through a half-pixel offset, enabling precise alignment against external reference frames such as images and maps.
+An interface for rendering 'igraph' objects as 'ggplot2' graphics within a normalized coordinate space. 'RGraphSpace' implements new geometries that treat a graph as a single coherent object, synchronizing node and edge layers under standard aesthetic mappings. Node features are resolved on demand, supporting high-dimensional data without expanding node tables. Spatial alignment is available at the pixel level, with node coordinates anchored to pixel centers through a half-pixel offset, enabling precise node positioning over external reference frames such as images and maps.
 }
 \details{
 For a hands-on introduction, see the vignette:

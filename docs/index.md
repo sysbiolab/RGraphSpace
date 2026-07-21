@@ -21,16 +21,16 @@ Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](http
 
 *RGraphSpace* is an R package that generates *ggplot2* graphics for
 *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)) within a
-normalized coordinate system. The package implements new geometries that
+normalized coordinate space. The package implements new geometries that
 treat a graph as a single coherent object, synchronizing node and edge
 layers under standard aesthetic mappings. Node features are resolved on
 demand, supporting high-dimensional data without expanding node tables.
-Spatial registration is available at the pixel level, with node
-coordinates anchored to pixel centers through a half-pixel offset,
-enabling precise alignment against external reference frames such as
-images and maps. The package also interoperates with *ggraph* and
-*tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three
-specialized geoms translate graph data into geometric layers.
+Spatial alignment is available at the pixel level, with node coordinates
+anchored to pixel centers through a half-pixel offset, enabling precise
+node placement over external reference frames such as images and maps.
+The package also interoperates with *ggraph* and *tidygraph* workflows
+([Pedersen 2024](#ref-pedersen)). Three specialized geoms translate
+graph data into geometric layers.
 
 1.  **[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)**:
     Renders network nodes. Extends `GeomPoint` aesthetic mappings and

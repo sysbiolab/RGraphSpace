@@ -6,8 +6,8 @@
 
 This vignette demonstrates how *RGraphSpace* renders spatial
 transcriptomics data. Using spatial data from the *SeuratData* package,
-we show how a graph is registered to spatial coordinates and
-high-dimensional features mapped to *ggplot2* aesthetics through the
+we show how a graph is overlaid on a reference tissue image and
+high-dimensional features are mapped to *ggplot2* aesthetics through the
 `GraphSpace` interface.
 
 ## Before you start
@@ -38,7 +38,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.3"){
+if (packageVersion("RGraphSpace") < "1.4.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -338,11 +338,11 @@ gs <- normalizeGraphSpace(gs)
     #>  [43] textshaping_1.0.5      progressr_0.19.0       spatstat.sparse_3.2-0 
     #>  [46] httr_1.4.8             polyclip_1.10-7        abind_1.4-8           
     #>  [49] compiler_4.6.1         withr_3.0.3            S7_0.2.2              
-    #>  [52] fastDummies_1.7.6      MASS_7.3-65            rappdirs_0.3.4        
+    #>  [52] fastDummies_1.7.6      MASS_7.3-66            rappdirs_0.3.4        
     #>  [55] tools_4.6.1            vipor_0.4.7            lmtest_0.9-40         
     #>  [58] otel_0.2.0             beeswarm_0.4.0         httpuv_1.6.17         
     #>  [61] future.apply_1.20.2    goftest_1.2-3          glue_1.8.1            
-    #>  [64] nlme_3.1-169           promises_1.5.0         grid_4.6.1            
+    #>  [64] nlme_3.1-170           promises_1.5.0         grid_4.6.1            
     #>  [67] Rtsne_0.17             cluster_2.1.8.2        reshape2_1.4.5        
     #>  [70] generics_0.1.4         gtable_0.3.6           spatstat.data_3.1-9   
     #>  [73] tidyr_1.3.2            data.table_1.18.4      tidygraph_1.3.1       

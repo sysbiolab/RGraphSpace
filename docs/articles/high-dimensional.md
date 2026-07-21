@@ -41,7 +41,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.3"){
+if (packageVersion("RGraphSpace") < "1.4.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -257,10 +257,10 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [43] progressr_0.19.0       spatstat.sparse_3.2-0  httr_1.4.8            
     #>  [46] polyclip_1.10-7        abind_1.4-8            compiler_4.6.1        
     #>  [49] withr_3.0.3            S7_0.2.2               fastDummies_1.7.6     
-    #>  [52] MASS_7.3-65            rappdirs_0.3.4         tools_4.6.1           
+    #>  [52] MASS_7.3-66            rappdirs_0.3.4         tools_4.6.1           
     #>  [55] vipor_0.4.7            lmtest_0.9-40          otel_0.2.0            
     #>  [58] beeswarm_0.4.0         httpuv_1.6.17          future.apply_1.20.2   
-    #>  [61] goftest_1.2-3          glue_1.8.1             nlme_3.1-169          
+    #>  [61] goftest_1.2-3          glue_1.8.1             nlme_3.1-170          
     #>  [64] promises_1.5.0         grid_4.6.1             Rtsne_0.17            
     #>  [67] cluster_2.1.8.2        reshape2_1.4.5         generics_0.1.4        
     #>  [70] gtable_0.3.6           spatstat.data_3.1-9    tidyr_1.3.2           

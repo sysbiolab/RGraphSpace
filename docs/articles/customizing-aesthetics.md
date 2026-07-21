@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.3"){
+if (packageVersion("RGraphSpace") < "1.4.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -97,7 +97,7 @@ gs <- GraphSpace(gtoy2)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH a6f412b UN-- 90 329 -- 
+#> IGRAPH 57e2c98 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/n), edge_var (e/n)

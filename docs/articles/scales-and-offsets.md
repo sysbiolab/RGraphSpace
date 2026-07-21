@@ -7,7 +7,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.3"){
+if (packageVersion("RGraphSpace") < "1.4.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -64,7 +64,7 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH 123b08f DN-- 20 19 -- 
+#> IGRAPH f9082a0 DN-- 20 19 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), num_var (v/n), edgeColor (e/c), arrowType (e/n)
 #> + node spatial boundaries: raw graph

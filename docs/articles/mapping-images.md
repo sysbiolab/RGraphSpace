@@ -6,7 +6,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.3"){
+if (packageVersion("RGraphSpace") < "1.4.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -76,7 +76,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH b450e9c DN-- 39 0 -- 
+#> IGRAPH 053f462 DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space

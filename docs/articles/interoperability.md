@@ -47,7 +47,7 @@ are installed.
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.3"){
+if (packageVersion("RGraphSpace") < "1.4.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -217,7 +217,7 @@ output is identical.
     #> [21] farver_2.1.2       textshaping_1.0.5  ggforce_0.5.0      fontawesome_0.5.3 
     #> [25] graphlayouts_1.2.4 vipor_0.4.7        htmltools_0.5.9    class_7.3-23      
     #> [29] sass_0.4.10        yaml_2.3.12        pillar_1.11.1      pkgdown_2.2.0     
-    #> [33] jquerylib_0.1.4    tidyr_1.3.2        MASS_7.3-65        classInt_0.4-11   
+    #> [33] jquerylib_0.1.4    tidyr_1.3.2        MASS_7.3-66        classInt_0.4-11   
     #> [37] cachem_1.1.0       viridis_0.6.5      abind_1.4-8        tidyselect_1.2.1  
     #> [41] digest_0.6.39      dplyr_1.2.1        purrr_1.2.2        magic_1.6-1       
     #> [45] polyclip_1.10-7    fastmap_1.2.0      grid_4.6.1         cli_3.6.6         

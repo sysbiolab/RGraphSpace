@@ -3,25 +3,18 @@
   
 **Package**: RGraphSpace 1.4.4
 
-## Highlights
-
-- Native *ggplot2* interface for *igraph* objects
-- Coherent rendering of node and edge layers
-- Optimized *geoms* for high-dimensional data
-- Spatial alignment to external reference frames
-
 ## Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for
-*igraph* objects (Csardi and Nepusz 2006), scaling nodes and edges to a
-unit space. The package implements new *ggplot2* geometric prototypes
-(Wickham 2016) that synchronize node and edge layers, ensuring that edge
-endpoints remain pinned to node boundaries regardless of node size. This
-is particularly useful when graph elements must be spatially aligned
-with reference images. For extended documentation and use cases, see the
-[online tutorials](https://sysbiolab.github.io/RGraphSpace/).
+*RGraphSpace* is an R package that generates *ggplot2* graphics (Wickham
+2016) for *igraph* objects (Csardi and Nepusz 2006) within a normalized
+coordinate space. This is particularly useful when graph elements must
+be spatially aligned with reference frames. For comprehensive
+documentation and use cases, see the [online
+tutorials](https://sysbiolab.github.io/RGraphSpace/).
 
 ## Quick start
+
+To get started, we load a toy `igraph` and plot it.
 
 ``` r
 
@@ -42,12 +35,11 @@ plotGraphSpace(gtoy1, node.labels = TRUE)
 
 ![](RGraphSpace_files/figure-html/Quick%20start%20-%201-1.png)
 
-Next, we will re-create this toy `igraph` from scratch to demonstrate
-the vertex and edge attributes that *RGraphSpace* parses automatically.
-This shows exactly what the package expects as input. We will use
-`igraph`’s
+Next, we build this toy `igraph` from scratch to demonstrate the vertex
+and edge attributes that *RGraphSpace* parses automatically. This shows
+exactly what the package expects as input. We use `igraph`’s
 [`make_star()`](https://r.igraph.org/reference/make_star.html) function
-and then [`V()`](https://r.igraph.org/reference/V.html) and
+with [`V()`](https://r.igraph.org/reference/V.html) and
 [`E()`](https://r.igraph.org/reference/E.html) to assign attributes.
 
 *RGraphSpace* requires that every vertex carries `x`, `y`, and `name`
@@ -55,7 +47,7 @@ attributes. If your graph has no pre-existing spatial coordinates, you
 can supply any *igraph* layout matrix directly via the `layout` argument
 of
 [`GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md),
-which assigns coordinates internally:
+which assigns coordinates internally.
 
 ``` r
 
@@ -269,69 +261,6 @@ ggplot(gs) +
 ```
 
 ![](RGraphSpace_files/figure-html/Using%20geoms%20-%202-1.png)
-
-## Choosing an entry point
-
-*RGraphSpace* provides three levels of access, each suited to a
-different workflow.
-
-**Level 1 — Direct plot from an `igraph`**: The simplest call requires
-no intermediate objects. Use this for quick inspection or when no
-*ggplot2* customization is needed.
-
-``` r
-
-# The simplest call
-plotGraphSpace(gtoy1, node.labels = TRUE)
-```
-
-**Level 2 — Layered plot via
-[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)**:
-Convert the `igraph` to a `GraphSpace` object first, then pass it to
-*ggplot2*.
-[`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
-adds node and edge layers in a single call and gives full access to
-*ggplot2* themes, scales, and annotations.
-
-``` r
-
-# Adds node and edge layers in a single call
-gs <- GraphSpace(gtoy1)
-ggplot(gs) +
-  geom_graphspace(aes(label = nodeLabel))
-```
-
-**Level 3 — Independent node and edge layers**: Use
-[`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md)
-and
-[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
-directly when node and edge layers require separate aesthetic mappings
-or independent scale control.
-
-``` r
-
-# Set some variables
-V(gtoy1)$node_var <- runif(vcount(gtoy1))
-E(gtoy1)$edge_var <- runif(ecount(gtoy1))
-
-# Independent node and edge layers
-gs <- GraphSpace(gtoy1)
-ggplot(gs) +
-  geom_edgespace(aes(colour = edge_var)) +
-  geom_nodespace(aes(fill = node_var))
-```
-
-The `layout` argument of
-[`GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
-can be used at levels 2 and 3 to supply coordinates from any *igraph*
-layout algorithm when the graph has no pre-existing `x` and `y` vertex
-attributes:
-
-``` r
-
-# Entry point layout
-gs <- GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
-```
 
 ## Online tutorials
 

@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-This vignette demonstrates how *RGraphSpace* renders spatial transcriptomics data. Using spatial data from the *SeuratData* package, we show how a graph is registered to spatial coordinates and high-dimensional features mapped to *ggplot2* aesthetics through the `GraphSpace` interface.
+This vignette demonstrates how *RGraphSpace* renders spatial transcriptomics data. Using spatial data from the *SeuratData* package, we show how a graph is overlaid on a reference tissue image and high-dimensional features are mapped to *ggplot2* aesthetics through the `GraphSpace` interface.
 
 # Before you start
 
@@ -46,7 +46,7 @@ This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/)
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.3"){
+if (packageVersion("RGraphSpace") < "1.4.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
