@@ -8,6 +8,7 @@ tags:
 - spatial anchors
 date: "16 July 2026"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 authors:
@@ -50,9 +51,9 @@ A gap remains in how a graph's components are held together during rendering. Be
 
 *RGraphSpace* addresses this by treating a graph as a single coherent object throughout rendering. It takes an *igraph* object and scales the graph into a normalized coordinate space in which nodes, edges, and their associated elements are resolved together. Because node and edge geometries are synchronized at rendering time, edges are drawn with respect to the scaled extent of the nodes they connect, and this correspondence is maintained as aesthetics are mapped through the *ggplot2* grammar.
 
-The normalization serves a second purpose: it enables the graph to be aligned to reference images, placing the graph within a broader spatial context (\autoref{fig:figure1}A). This requires consistent coordinate conventions between the graph and the image; a mismatch in axis orientation, for example, a top-left versus bottom-left origin, can cause the nodes and the image to be misaligned. Moreover, because each pixel cell occupies a finite square area, a half-pixel offset is needed to prevent node positions from drifting toward the image border (\autoref{fig:figure1}B). This may seem negligible in most cases, but can matter when high-resolution alignment is required, as in microscopy images.
+The normalization serves a second purpose: it enables the graph to be aligned to reference images, placing the graph within a broader spatial context. This requires consistent coordinate conventions between the graph and the image; a mismatch in axis orientation, for example, a top-left versus bottom-left origin, leaves the nodes reflected relative to the image (\autoref{fig:figure1}A). Moreover, because each pixel cell occupies a finite square area, a half-pixel offset is needed to prevent node positions from drifting toward the image border (\autoref{fig:figure1}B). This may seem negligible in most cases, but can matter when high-resolution alignment is required, as in microscopy images.
 
-![Spatial alignment. (**A**) A graph positioned against an external reference frame such as a microscopy image. Node coordinates are assumed to be expressed as pixel indices, with orientation mismatches resolved by axis reflection and transposition. (**B**) Two normalization schemes. *Anchors at pixel centers* use $(i-\tfrac{1}{2})/n$, introducing a half-pixel offset. *Anchors at image borders* use $(i-1)/(n-1)$, mapping positions across the full normalized interval $[0,1]$. The two coincide mid-axis but drift apart toward the ends.\label{fig:figure1}](figure1.png){width="100%"}
+![Spatial alignment. (**A**) Aligning a toy graph to a background image. Node coordinates are assumed to be pixel indices of the reference image, but the objects need to be normalized to the same coordinate space in order to render in *ggplot2*. With a graph y-flip both are rendered in correspondence; otherwise the graph reflects relative to the image. (**B**) Two normalization schemes, where `i` denotes a pixel or node index along the axis. *Anchors at pixel centers* use $(i-\tfrac{1}{2})/n$, introducing a half-pixel offset. *Anchors at image borders* use $(i-1)/(n-1)$, mapping positions across the full normalized interval $[0,1]$. The two coincide mid-axis but drift apart toward the ends. *RGraphSpace* applies the y-flip and pixel-center anchoring by default. \label{fig:figure1}](figure1.png){width="100%"}
 
 # State of the field
 
@@ -68,7 +69,7 @@ A related task arises in the context of multi-component containers, when graphs 
 
 # Research impact statement
 
-*RGraphSpace* provides the spatial foundation for the *PathwaySpace* package [@PathwaySpace], which projects network-derived signals along geodesic paths, highlighting relationships and signal strengths between network vertices. This integration has supported published analyses in systems biology [@Tercan2025; @Ellrott2025], demonstrating that *RGraphSpace* offers a practical basis for downstream spatial analysis tools.
+*RGraphSpace* provides the spatial foundation for the *PathwaySpace* package [@PathwaySpace], which projects network-derived signals onto the normalized coordinate space, transforming discrete vertex signals into continuous surfaces over the graph topology. This integration has supported published analyses in systems biology [@Tercan2025; @Ellrott2025], demonstrating *RGraphSpace*'s utility for downstream spatial analysis tools.
 
 # Software design
 
@@ -78,9 +79,9 @@ Graphs can be supplied as either `igraph` or `tidygraph` objects through a commo
 
 The `normalizeGraphSpace()` function scales node coordinates into a unit square aligned to a reference frame. By default, this frame is the graph's own extent, centered within the square; when a background image is available, the image space is used instead. In this case, node coordinates are assumed to be expressed as pixel indices of the image matrix, and the alignment reduces to resolving orientation mismatches through independent axis reflection and transposition (\autoref{fig:figure1}A). Pixel-level precision is maintained by applying an explicit half-pixel offset that anchors each node to the center of its corresponding pixel, preventing positional drift toward the image boundaries (\autoref{fig:figure1}B).
 
-A `GraphSpace` supplied to `ggplot()` produces a subclassed plot that verifies, through a shared `@uuid`, that the node and edge layers originate from the same graph before coordinating them. *RGraphSpace* then intercepts the build pipeline after the node layer has been fully processed, and the resulting rendered sizes are passed to the edge layer, allowing edge construction to use the final node representation. This synchronization makes edges node-aware, maintaining their geometric correspondence with the nodes they connect, and is available through three geometries: `geom_nodespace()`, `geom_edgespace()`, and the convenience wrapper `geom_graphspace()`.
+A `GraphSpace` supplied to `ggplot()` produces a subclassed plot that verifies, through a shared `@uuid`, that the node and edge layers originate from the same graph before coordinating them. *RGraphSpace* then intercepts the build pipeline after the node layer has been fully processed, and the resulting rendered sizes are passed to the edge layer, allowing edge construction to use the final node representation. This synchronization is available through three geometries: `geom_nodespace()`, `geom_edgespace()`, and the convenience wrapper `geom_graphspace()`.
 
-![Architecture of RGraphSpace. (**A**) The `GraphSpace` S4 class stores a graph, its node and edge tables, feature data, source and render-ready images, and metadata. Node identity is enforced by `setValidity`. (**B**) Graph inputs (`igraph` or `tidygraph`) are used to construct a `GraphSpace`; selected non-graph objects are handled through coercion and accessors (inset). Coordinates are normalized to a unit square, centered on the graph's own extent or aligned to a background image. At the *ggplot2* build step, the node and edge layers are synchronized, producing node-aware edges over an optional background image.\label{fig:figure2}](figure2.png){width="100%"}
+![Architecture of RGraphSpace. (**A**) The `GraphSpace` S4 class stores a graph, its node and edge tables, feature data, source and render-ready images, and metadata. Node identity is enforced by `setValidity`. (**B**) Graph inputs (`igraph` or `tidygraph`) are used to construct a `GraphSpace`; selected non-graph objects are handled through coercion and accessors (inset). Coordinates are normalized to a unit square, centered on the graph's own extent or aligned to a background image. At the *ggplot2* build step, the node and edge layers are synchronized, producing edges that match the nodes' final rendered sizes, over an optional background image.\label{fig:figure2}](figure2.png){width="100%"}
 
 # Availability and documentation
 
