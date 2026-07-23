@@ -1,15 +1,23 @@
 # Add edges to a GraphSpace object
 
-`gs_add_edges<-` adds one or more edges to a
+`gs_add_edges()` and `gs_add_edges<-` add one or more edges to a
 [`GraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 object. Both endpoints of every new edge must already exist in the node
 set. The `@graph`, `@edges`, and all derived edge quantities are updated
 consistently; the node set and the normalized coordinate state are not
 affected.
 
+`gs_add_edges(x, value)` is the pipe-friendly functional form and
+returns the modified object. `gs_add_edges(x) <- value` is the in-place
+replacement form and modifies `x` by reference in the calling
+environment. Both forms are equivalent.
+
 ## Usage
 
 ``` r
+# S4 method for class 'GraphSpace'
+gs_add_edges(x, value, ...)
+
 # S4 method for class 'GraphSpace'
 gs_add_edges(x) <- value
 ```
@@ -39,6 +47,10 @@ gs_add_edges(x) <- value
   etc.) are filled from package defaults when omitted; analytical
   attributes such as `weight` are stored as-is.
 
+- ...:
+
+  Additional arguments (currently unused; reserved for future use).
+
 ## Value
 
 A
@@ -64,7 +76,8 @@ each assignment.
 
 ## See also
 
-`gs_add_nodes<-`, `gs_edge_attr<-`,
+[`gs_add_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.md),
+[`gs_edge_attr`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md),
 [`gs_subset_edges`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md),
 [`gs_edges`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
 
@@ -84,18 +97,24 @@ gs <- GraphSpace(g)
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to graph space...
 
-# Add a single edge using from/to convention
+# Functional form (pipe-friendly): returns a modified copy
+gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
+
+# Assignment form: modifies gs in place
 gs_add_edges(gs) <- data.frame(from = "n2", to = "n3")
+#> Warning: ! 1 parallel edge(s) ignored: simplified GraphSpace do not allow parallel edges.
+#> ℹ n2 -> n3
+#> • Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges.
 
 # Add multiple edges with an analytical attribute
-gs_add_edges(gs) <- data.frame(
+gs <- gs_add_edges(gs, data.frame(
   from   = c("n2", "n3"),
   to     = c("n4", "n5"),
   weight = c(0.8, 0.4)
-)
+))
 
 # name1/name2 convention also accepted (e.g. from gs_edges() output)
-gs_add_edges(gs) <- data.frame(name1 = "n2", name2 = "n3")
+gs <- gs_add_edges(gs, data.frame(name1 = "n2", name2 = "n3"))
 #> Warning: ! 1 parallel edge(s) ignored: simplified GraphSpace do not allow parallel edges.
 #> ℹ n2 -> n3
 #> • Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges.

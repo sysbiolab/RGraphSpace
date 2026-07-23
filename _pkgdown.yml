@@ -124,6 +124,7 @@ reference:
 - title: Data
   contents:
     - gtoys
+    - gs_image_toy
     
 - title: Internal
   contents:

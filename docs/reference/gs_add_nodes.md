@@ -1,6 +1,6 @@
 # Add nodes to a GraphSpace object
 
-`gs_add_nodes<-` adds one or more nodes to a
+`gs_add_nodes()` and `gs_add_nodes<-` add one or more nodes to a
 [`GraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 object. The `@graph`, `@nodes`, and `@fdata` slots are updated
 consistently. Because new nodes introduce coordinates into the existing
@@ -8,9 +8,17 @@ layout, the normalized state is invalidated and
 [`normalizeGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
 must be re-run afterwards.
 
+`gs_add_nodes(x, value)` is the pipe-friendly functional form and
+returns the modified object. `gs_add_nodes(x) <- value` is the in-place
+replacement form and modifies `x` by reference in the calling
+environment. Both forms are equivalent.
+
 ## Usage
 
 ``` r
+# S4 method for class 'GraphSpace'
+gs_add_nodes(x, value, ...)
+
 # S4 method for class 'GraphSpace'
 gs_add_nodes(x) <- value
 ```
@@ -35,6 +43,10 @@ gs_add_nodes(x) <- value
   attributes (`nodeSize`, `nodeColor`, `nodeShape`, etc.) are filled
   from package defaults when omitted. The column `vertex` is reserved
   and stripped automatically if present.
+
+- ...:
+
+  Additional arguments (currently unused; reserved for future use).
 
 ## Value
 
@@ -66,10 +78,10 @@ feature matrix remains aligned with `@nodes`.
 
 ## See also
 
-`gs_add_edges<-`, `gs_vertex_attr<-`,
+[`gs_add_edges`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md),
+[`gs_vertex_attr`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md),
 [`gs_subset_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md),
-[`gs_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md),
-[`normalizeGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+[`gs_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
 
 ## Examples
 
@@ -85,17 +97,18 @@ gs <- GraphSpace(g)
 #> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
-# Add a single node with coordinates
-gs_add_nodes(gs) <- data.frame(name = "n6", x = 0.5, y = 0.5)
+# Functional form (pipe-friendly): returns a modified copy
+gs <- gs_add_nodes(gs, data.frame(name = "n6", x = 0.5, y = 0.5))
+
+# Assignment form: modifies gs in place
+gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
 
 # Add multiple nodes with visual attributes
-gs_add_nodes(gs) <- data.frame(
-  name      = c("n7", "n8"),
+gs <- gs_add_nodes(gs, data.frame(
+  name      = c("n8", "n9"),
   x         = c(0.5, 0.8),
   y         = c(0.5, 0.2),
   nodeSize  = c(8, 5),
   nodeColor = c("steelblue", "tomato")
-)
-gs <- normalizeGraphSpace(gs)
-#> Normalizing node coordinates to graph space...
+))
 ```

@@ -331,10 +331,9 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' @export
 setMethod("plotGraphSpace", "GraphSpace", 
   function(gs, theme = "th0", xlab = "Graph coordinates 1", 
-    ylab = "Graph coordinates 2", 
-    node.labels = FALSE, label.size = 3, label.color = "grey20",
-    add.image = TRUE, raster = FALSE, dpi = 300, dev = "cairo_png",
-    add.labels = deprecated(), font.size = deprecated(), 
+    ylab = "Graph coordinates 2", node.labels = FALSE, label.size = 3, 
+    label.color = "grey20", add.image = TRUE, raster = FALSE, dpi = 300, 
+    dev = "cairo_png", add.labels = deprecated(), font.size = deprecated(), 
     bg.color = deprecated()) {
     
     if (lifecycle::is_present(add.labels)) {
@@ -378,7 +377,14 @@ setMethod("plotGraphSpace", "GraphSpace",
       plotLabel <- NULL
       label_aes <- aes(label = plotLabel)
     }
-
+    
+    if(missing(label.size)){
+      label.size <- gs$nodeLabelSize %||% label.size
+    }
+    
+    if(missing(label.color)){
+      label.color <- gs$nodeLabelColor %||% label.color
+    }
     
     #--- initialize a ggplot object
     if(.has_image(gs) && add.image){
@@ -762,19 +768,25 @@ setMethod("gs_ecount", "GraphSpace", function(x) {
 
 #' @rdname GraphSpace-accessors
 #' @export
-setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ...) {
-  g <- x@graph
-  if(missing(name)){
-    att <- igraph::vertex_attr(graph = g, ...=...)
-  } else {
-    if(name %in% igraph::vertex_attr_names(g)){
-      att <- igraph::vertex_attr(graph = g, name = name, ...=...)
-      if(name!="name") names(att) <- V(g)$name
+setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ..., value) {
+  if(missing(value)){
+    g <- x@graph
+    if(missing(name)){
+      att <- igraph::vertex_attr(graph = g, ...=...)
     } else {
-      att <- NULL
+      if(name %in% igraph::vertex_attr_names(g)){
+        att <- igraph::vertex_attr(graph = g, name = name, ...=...)
+        if(name!="name") names(att) <- V(g)$name
+      } else {
+        att <- NULL
+      }
     }
+    return(att)    
+  } else {
+    gs_vertex_attr(x, name, ...) <- value
+    return(x)
   }
-  return(att)
+
 })
 
 #' @rdname GraphSpace-accessors
@@ -811,14 +823,19 @@ setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
 
 #' @rdname GraphSpace-accessors
 #' @export
-setMethod("gs_edge_attr", "GraphSpace", function(x, name, ...) {
-  g <- x@graph
-  if(missing(name)){
-    att <- igraph::edge_attr(graph = g, ...=...)
+setMethod("gs_edge_attr", "GraphSpace", function(x, name, ..., value) {
+  if (missing(value)) {
+    g <- x@graph
+    if(missing(name)){
+      att <- igraph::edge_attr(graph = g, ...=...)
+    } else {
+      att <- igraph::edge_attr(graph = g, name = name, ...=...)
+    }
+    return(att)
   } else {
-    att <- igraph::edge_attr(graph = g, name = name, ...=...)
+    gs_edge_attr(x, name, ...) <- value
+    return(x)
   }
-  return(att)
 })
 
 #' @rdname GraphSpace-accessors
@@ -869,7 +886,6 @@ setMethod("$", "GraphSpace", function(x, name) {
   nodes <- x@nodes
   
   if (!(name %in% names(nodes))) {
-    rlang::warn(paste0("Column '", name, "' not found in nodes."))
     return(NULL)
   }
   

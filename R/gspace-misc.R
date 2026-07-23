@@ -24,6 +24,8 @@
 ################################################################################
 ### Documentation for some 'toy' datasets
 ################################################################################
+
+#-------------------------------------------------------------------------------
 #' @title Toy 'igraph' objects
 #'
 #' @description Small 'igraph' objects used for workflow demonstrations.
@@ -47,6 +49,27 @@
 #' library(RGraphSpace)
 #' data(gtoy1)
 #' data(gtoy2)
+NULL
+
+#-------------------------------------------------------------------------------
+#' @title Toy 'GraphSpace' object
+#'
+#' @description A small \code{GraphSpace} object used for workflow demonstrations.
+#' It includes an embedded image, with node coordinates representing image indices.
+#'
+#' @format An \link{GraphSpace} object ready for rendering.
+#'
+#' @usage data(gs_image_toy)
+#'
+#' @source This package.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name gs_image_toy
+#' @return A pre-processed \link{GraphSpace} object.
+#' @examples
+#' library(RGraphSpace)
+#' data(gs_image_toy)
 NULL
 
 #-------------------------------------------------------------------------------

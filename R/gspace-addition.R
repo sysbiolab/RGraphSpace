@@ -7,11 +7,16 @@
 #' @title Add edges to a GraphSpace object
 #'
 #' @description
-#' \code{gs_add_edges<-} adds one or more edges to a
+#' \code{gs_add_edges()} and \code{gs_add_edges<-} add one or more edges to a
 #' \code{\link{GraphSpace}} object. Both endpoints of every new edge must
 #' already exist in the node set. The \code{@graph}, \code{@edges}, and
 #' all derived edge quantities are updated consistently; the node set and
 #' the normalized coordinate state are not affected.
+#'
+#' \code{gs_add_edges(x, value)} is the pipe-friendly functional form and
+#' returns the modified object. \code{gs_add_edges(x) <- value} is the
+#' in-place replacement form and modifies \code{x} by reference in the
+#' calling environment. Both forms are equivalent.
 #'
 #' @param x A \code{\link{GraphSpace}} object.
 #' @param value A data frame with at least two columns identifying the edge
@@ -23,9 +28,10 @@
 #' }
 #' If both conventions are present, \code{from}/\code{to} takes priority.
 #' Any additional columns are treated as edge attributes and passed through
-#' to \code{@edges}. Standard visual attributes (\code{edgeColor}, 
-#' \code{arrowType}, etc.) are filled from package defaults when omitted; 
+#' to \code{@edges}. Standard visual attributes (\code{edgeColor},
+#' \code{arrowType}, etc.) are filled from package defaults when omitted;
 #' analytical attributes such as \code{weight} are stored as-is.
+#' @param ... Additional arguments (currently unused; reserved for future use).
 #'
 #' @details
 #' Adding edges does not invalidate the normalized layout. Node coordinates
@@ -46,7 +52,7 @@
 #' @return A \code{\link{GraphSpace}} object with the new edges appended.
 #'
 #' @seealso
-#' \code{\link{gs_add_nodes<-}}, \code{\link{gs_edge_attr<-}},
+#' \code{\link{gs_add_nodes}}, \code{\link{gs_edge_attr}},
 #' \code{\link{gs_subset_edges}}, \code{\link{gs_edges}}
 #'
 #' @examples
@@ -57,22 +63,32 @@
 #' gs <- GraphSpace(g)
 #' gs <- normalizeGraphSpace(gs)
 #'
-#' # Add a single edge using from/to convention
+#' # Functional form (pipe-friendly): returns a modified copy
+#' gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
+#'
+#' # Assignment form: modifies gs in place
 #' gs_add_edges(gs) <- data.frame(from = "n2", to = "n3")
 #'
 #' # Add multiple edges with an analytical attribute
-#' gs_add_edges(gs) <- data.frame(
+#' gs <- gs_add_edges(gs, data.frame(
 #'   from   = c("n2", "n3"),
 #'   to     = c("n4", "n5"),
 #'   weight = c(0.8, 0.4)
-#' )
+#' ))
 #'
 #' # name1/name2 convention also accepted (e.g. from gs_edges() output)
-#' gs_add_edges(gs) <- data.frame(name1 = "n2", name2 = "n3")
+#' gs <- gs_add_edges(gs, data.frame(name1 = "n2", name2 = "n3"))
 #'
 #' @name gs_add_edges
 #' @aliases gs_add_edges<-
 NULL
+
+#-------------------------------------------------------------------------------
+#' @rdname gs_add_edges
+#' @export
+setMethod("gs_add_edges", "GraphSpace", function(x, value, ...) {
+  `gs_add_edges<-`(x, value = value)
+})
 
 #-------------------------------------------------------------------------------
 #' @rdname gs_add_edges
@@ -295,11 +311,16 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
 #' @title Add nodes to a GraphSpace object
 #'
 #' @description
-#' \code{gs_add_nodes<-} adds one or more nodes to a
+#' \code{gs_add_nodes()} and \code{gs_add_nodes<-} add one or more nodes to a
 #' \code{\link{GraphSpace}} object. The \code{@graph}, \code{@nodes}, and
 #' \code{@fdata} slots are updated consistently. Because new nodes introduce
 #' coordinates into the existing layout, the normalized state is invalidated
 #' and \code{\link{normalizeGraphSpace}} must be re-run afterwards.
+#'
+#' \code{gs_add_nodes(x, value)} is the pipe-friendly functional form and
+#' returns the modified object. \code{gs_add_nodes(x) <- value} is the
+#' in-place replacement form and modifies \code{x} by reference in the
+#' calling environment. Both forms are equivalent.
 #'
 #' @param x A \code{\link{GraphSpace}} object.
 #' @param value A data frame with at minimum three columns:
@@ -311,6 +332,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
 #' attributes (\code{nodeSize}, \code{nodeColor}, \code{nodeShape}, etc.)
 #' are filled from package defaults when omitted. The column \code{vertex}
 #' is reserved and stripped automatically if present.
+#' @param ... Additional arguments (currently unused; reserved for future use).
 #'
 #' @details
 #' Adding nodes always invalidates the normalized layout. The \code{@pars}
@@ -335,9 +357,8 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
 #' the normalized state cleared.
 #'
 #' @seealso
-#' \code{\link{gs_add_edges<-}}, \code{\link{gs_vertex_attr<-}},
-#' \code{\link{gs_subset_nodes}}, \code{\link{gs_nodes}},
-#' \code{\link{normalizeGraphSpace}}
+#' \code{\link{gs_add_edges}}, \code{\link{gs_vertex_attr}},
+#' \code{\link{gs_subset_nodes}}, \code{\link{gs_nodes}}
 #'
 #' @examples
 #' library(RGraphSpace)
@@ -346,22 +367,31 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
 #' g <- make_star(5, mode = "out")
 #' gs <- GraphSpace(g)
 #'
-#' # Add a single node with coordinates
-#' gs_add_nodes(gs) <- data.frame(name = "n6", x = 0.5, y = 0.5)
+#' # Functional form (pipe-friendly): returns a modified copy
+#' gs <- gs_add_nodes(gs, data.frame(name = "n6", x = 0.5, y = 0.5))
+#'
+#' # Assignment form: modifies gs in place
+#' gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
 #'
 #' # Add multiple nodes with visual attributes
-#' gs_add_nodes(gs) <- data.frame(
-#'   name      = c("n7", "n8"),
+#' gs <- gs_add_nodes(gs, data.frame(
+#'   name      = c("n8", "n9"),
 #'   x         = c(0.5, 0.8),
 #'   y         = c(0.5, 0.2),
 #'   nodeSize  = c(8, 5),
 #'   nodeColor = c("steelblue", "tomato")
-#' )
-#' gs <- normalizeGraphSpace(gs)
+#' ))
 #'
 #' @name gs_add_nodes
 #' @aliases gs_add_nodes<-
 NULL
+
+#-------------------------------------------------------------------------------
+#' @rdname gs_add_nodes
+#' @export
+setMethod("gs_add_nodes", "GraphSpace", function(x, value, ...) {
+  `gs_add_nodes<-`(x, value = value)
+})
 
 #-------------------------------------------------------------------------------
 #' @rdname gs_add_nodes

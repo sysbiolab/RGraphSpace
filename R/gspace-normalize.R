@@ -326,7 +326,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   }
   
   if(flip.y){
-    if(verbose) rlang::inform("Flipping y-coordinates...")
+    if(verbose) rlang::inform("Flipping y-coordinates over image axis...")
     y <- coords$y2
     y <- -(y - max(y)) + nrow(image) - max(y) + 1
     coords$y2 <- y
@@ -334,7 +334,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   
   # Flip x-coordinates over image axis
   if(flip.x){
-    if(verbose) rlang::inform("Flipping x-coordinates...")
+    if(verbose) rlang::inform("Flipping x-coordinates over image axis...")
     x <- coords$x2
     x <- -(x - max(x)) + ncol(image) - max(x) + 1
     coords$x2 <- x

@@ -72,11 +72,11 @@ gs_image(gs) <- as_colorraster(volcano2)
 # y-coordinates will be flipped (see comments below).
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to image space...
-#> Flipping y-coordinates...
+#> Flipping y-coordinates over image axis...
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 053f462 DN-- 39 0 -- 
+#> IGRAPH af3a85e DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space

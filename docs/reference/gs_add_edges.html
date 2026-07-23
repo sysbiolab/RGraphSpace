@@ -5,15 +5,23 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Add edges to a GraphSpace object — gs_add_edges"><meta name="description" content="gs_add_edges&amp;lt;- adds one or more edges to a
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Add edges to a GraphSpace object — gs_add_edges"><meta name="description" content="gs_add_edges() and gs_add_edges&amp;lt;- add one or more edges to a
 GraphSpace object. Both endpoints of every new edge must
 already exist in the node set. The @graph, @edges, and
 all derived edge quantities are updated consistently; the node set and
-the normalized coordinate state are not affected."><meta property="og:description" content="gs_add_edges&amp;lt;- adds one or more edges to a
+the normalized coordinate state are not affected.
+gs_add_edges(x, value) is the pipe-friendly functional form and
+returns the modified object. gs_add_edges(x) &amp;lt;- value is the
+in-place replacement form and modifies x by reference in the
+calling environment. Both forms are equivalent."><meta property="og:description" content="gs_add_edges() and gs_add_edges&amp;lt;- add one or more edges to a
 GraphSpace object. Both endpoints of every new edge must
 already exist in the node set. The @graph, @edges, and
 all derived edge quantities are updated consistently; the node set and
-the normalized coordinate state are not affected."><style>
+the normalized coordinate state are not affected.
+gs_add_edges(x, value) is the pipe-friendly functional form and
+returns the modified object. gs_add_edges(x) &amp;lt;- value is the
+in-place replacement form and modifies x by reference in the
+calling environment. Both forms are equivalent."><style>
   .contents h1, .page-header h1 {
     font-size: 2.2rem !important;
     font-weight: 700 !important;
@@ -83,16 +91,23 @@ the normalized coordinate state are not affected."><style>
     </div>
 
     <div class="ref-description section level2">
-    <p><code>gs_add_edges&lt;-</code> adds one or more edges to a
+    <p><code>gs_add_edges()</code> and <code>gs_add_edges&lt;-</code> add one or more edges to a
 <code><a href="GraphSpace-methods.html">GraphSpace</a></code> object. Both endpoints of every new edge must
 already exist in the node set. The <code>@graph</code>, <code>@edges</code>, and
 all derived edge quantities are updated consistently; the node set and
 the normalized coordinate state are not affected.</p>
+<p><code>gs_add_edges(x, value)</code> is the pipe-friendly functional form and
+returns the modified object. <code>gs_add_edges(x) &lt;- value</code> is the
+in-place replacement form and modifies <code>x</code> by reference in the
+calling environment. Both forms are equivalent.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'GraphSpace'</span></span>
+<span><span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">x</span>, <span class="va">value</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'GraphSpace'</span></span>
 <span><span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span></code></pre></div>
     </div>
 
@@ -114,6 +129,10 @@ Any additional columns are treated as edge attributes and passed through
 to <code>@edges</code>. Standard visual attributes (<code>edgeColor</code>,
 <code>arrowType</code>, etc.) are filled from package defaults when omitted;
 analytical attributes such as <code>weight</code> are stored as-is.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments (currently unused; reserved for future use).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -137,7 +156,7 @@ for all members of that group, the full edge table is recomputed from
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code>gs_add_nodes&lt;-</code>, <code>gs_edge_attr&lt;-</code>,
+    <div class="dont-index"><p><code><a href="gs_add_nodes.html">gs_add_nodes</a></code>, <code><a href="GraphSpace-accessors.html">gs_edge_attr</a></code>,
 <code><a href="gs_subset.html">gs_subset_edges</a></code>, <code><a href="GraphSpace-accessors.html">gs_edges</a></code></p></div>
     </div>
 
@@ -156,18 +175,24 @@ for all members of that group, the full edge table is recomputed from
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Normalizing node coordinates to graph space...</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add a single edge using from/to convention</span></span></span>
+<span class="r-in"><span><span class="co"># Functional form (pipe-friendly): returns a modified copy</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from <span class="op">=</span> <span class="st">"n2"</span>, to <span class="op">=</span> <span class="st">"n3"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Assignment form: modifies gs in place</span></span></span>
 <span class="r-in"><span><span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from <span class="op">=</span> <span class="st">"n2"</span>, to <span class="op">=</span> <span class="st">"n3"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 1 parallel edge(s) ignored: simplified GraphSpace do not allow parallel edges.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> n2 -&gt; n3</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add multiple edges with an analytical attribute</span></span></span>
-<span class="r-in"><span><span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  from   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n2"</span>, <span class="st">"n3"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  to     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n4"</span>, <span class="st">"n5"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># name1/name2 convention also accepted (e.g. from gs_edges() output)</span></span></span>
-<span class="r-in"><span><span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>name1 <span class="op">=</span> <span class="st">"n2"</span>, name2 <span class="op">=</span> <span class="st">"n3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>name1 <span class="op">=</span> <span class="st">"n2"</span>, name2 <span class="op">=</span> <span class="st">"n3"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 1 parallel edge(s) ignored: simplified GraphSpace do not allow parallel edges.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> n2 -&gt; n3</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges.</span>

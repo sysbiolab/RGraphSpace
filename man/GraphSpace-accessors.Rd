@@ -68,11 +68,11 @@
 
 \S4method{gs_ecount}{GraphSpace}(x)
 
-\S4method{gs_vertex_attr}{GraphSpace}(x, name, ...)
+\S4method{gs_vertex_attr}{GraphSpace}(x, name, ..., value)
 
 \S4method{gs_vertex_attr}{GraphSpace}(x, name, ...) <- value
 
-\S4method{gs_edge_attr}{GraphSpace}(x, name, ...)
+\S4method{gs_edge_attr}{GraphSpace}(x, name, ..., value)
 
 \S4method{gs_edge_attr}{GraphSpace}(x, name, ...) <- value
 

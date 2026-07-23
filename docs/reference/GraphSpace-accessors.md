@@ -48,13 +48,13 @@ gs_vcount(x)
 gs_ecount(x)
 
 # S4 method for class 'GraphSpace'
-gs_vertex_attr(x, name, ...)
+gs_vertex_attr(x, name, ..., value)
 
 # S4 method for class 'GraphSpace'
 gs_vertex_attr(x, name, ...) <- value
 
 # S4 method for class 'GraphSpace'
-gs_edge_attr(x, name, ...)
+gs_edge_attr(x, name, ..., value)
 
 # S4 method for class 'GraphSpace'
 gs_edge_attr(x, name, ...) <- value

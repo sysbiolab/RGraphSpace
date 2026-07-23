@@ -48,9 +48,11 @@
 - [`gs_subset_nodes()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md)
   [`gs_subset_edges()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md)
   : Filter nodes and edges in a GraphSpace object
-- [`` `gs_add_nodes<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.md)
+- [`gs_add_nodes(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.md)
+  [`` `gs_add_nodes<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.md)
   : Add nodes to a GraphSpace object
-- [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
+- [`gs_add_edges(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
+  [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   : Add edges to a GraphSpace object
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
@@ -116,6 +118,8 @@
 - [`gtoy1`](https://sysbiolab.github.io/RGraphSpace/reference/gtoys.md)
   [`gtoy2`](https://sysbiolab.github.io/RGraphSpace/reference/gtoys.md)
   : Toy 'igraph' objects
+- [`gs_image_toy`](https://sysbiolab.github.io/RGraphSpace/reference/gs_image_toy.md)
+  : Toy 'GraphSpace' object
 
 ## Internal
 
