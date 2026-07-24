@@ -151,9 +151,9 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 .normalizeGraphSpace.graph <- function(gs, mar, flip.x, flip.y, 
   swap.xy, verbose){
   
+  if(verbose) rlang::inform("Normalizing node coordinates to graph space...")
   nodes <- .get_nodes(gs@graph)
   nodes <- .setCoordToGraph(nodes, flip.x, flip.y, swap.xy, verbose)
-  if(verbose) rlang::inform("Normalizing node coordinates to graph space...")
   gs@nodes <- .fit_graph_space(nodes, mar)
   gs@pars$image.space <- FALSE
   gs@pars$is.normalized <- TRUE
@@ -169,10 +169,10 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 .normalizeGraphSpace.image <- function(gs, mar, flip.x, flip.y, 
   swap.xy, flip.v, flip.h, verbose){
   
+  if(verbose) rlang::inform("Normalizing node coordinates to image space...")
+  
   nodes <- .get_nodes(gs@graph)
   image <- .get_image(gs)
-  
-  if(verbose) rlang::inform("Normalizing node coordinates to image space...")
   
   if(flip.v){
     if(verbose) rlang::inform("Flipping image top-to-bottom...")  
@@ -258,14 +258,14 @@ setMethod("cropGraphSpace", "GraphSpace",
   
   # Flip y-coordinates
   if(flip.y){
-    if(verbose) rlang::inform("Flipping y-coordinates...")
+    if(verbose) rlang::inform("Flipping y-coordinates over graph center...")
     y <- coord$y2
     coord$y2 <- max(y) + min(y) - y
   }
   
   # Flip x-coordinates
   if(flip.x){
-    if(verbose) rlang::inform("Flipping x-coordinates...")
+    if(verbose) rlang::inform("Flipping x-coordinates over graph center...")
     x <- coord$x2
     coord$x2 <- max(x) + min(x) - x
   }
@@ -326,15 +326,14 @@ setMethod("cropGraphSpace", "GraphSpace",
   }
   
   if(flip.y){
-    if(verbose) rlang::inform("Flipping y-coordinates over image axis...")
+    if(verbose) rlang::inform("Flipping y-coordinates over image center...")
     y <- coords$y2
     y <- -(y - max(y)) + nrow(image) - max(y) + 1
     coords$y2 <- y
   }
   
-  # Flip x-coordinates over image axis
   if(flip.x){
-    if(verbose) rlang::inform("Flipping x-coordinates over image axis...")
+    if(verbose) rlang::inform("Flipping x-coordinates over image center...")
     x <- coords$x2
     x <- -(x - max(x)) + ncol(image) - max(x) + 1
     coords$x2 <- x

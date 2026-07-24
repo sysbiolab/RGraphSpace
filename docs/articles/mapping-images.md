@@ -1,12 +1,12 @@
 # Mapping Graphs to Images
 
   
-**Package**: RGraphSpace 1.4.4
+**Package**: RGraphSpace 1.5.0
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.4"){
+if (packageVersion("RGraphSpace") < "1.5.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -72,11 +72,11 @@ gs_image(gs) <- as_colorraster(volcano2)
 # y-coordinates will be flipped (see comments below).
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to image space...
-#> Flipping y-coordinates over image axis...
+#> Flipping y-coordinates over image center...
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH af3a85e DN-- 39 0 -- 
+#> IGRAPH f060209 DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space
@@ -207,7 +207,7 @@ tutorial for examples using a reference image.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    
+    #> [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       

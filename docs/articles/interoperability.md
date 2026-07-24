@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.4.4
+**Package**: RGraphSpace 1.5.0
 
 ## Overview
 
@@ -47,7 +47,7 @@ are installed.
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.4"){
+if (packageVersion("RGraphSpace") < "1.5.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -206,7 +206,7 @@ output is identical.
     #> 
     #> other attached packages:
     #> [1] ggraph_2.2.2      tidygraph_1.3.1   geometry_0.5.2    maps_3.4.3       
-    #> [5] sf_1.1-1          igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    
+    #> [5] sf_1.1-1          igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.59          bslib_0.11.0      

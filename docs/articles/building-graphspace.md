@@ -1,12 +1,12 @@
 # Building a GraphSpace
 
   
-**Package**: RGraphSpace 1.4.4
+**Package**: RGraphSpace 1.5.0
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.4.4"){
+if (packageVersion("RGraphSpace") < "1.5.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -359,7 +359,7 @@ gs <- GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.4.4 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       

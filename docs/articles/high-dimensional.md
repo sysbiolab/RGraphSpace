@@ -1,6 +1,6 @@
 # Using RGraphSpace with High-Dimensional Data
 
-**Package**: RGraphSpace 1.4.4  
+**Package**: RGraphSpace 1.5.0  
 
 ## Overview
 
@@ -41,7 +41,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.4.4"){
+if (packageVersion("RGraphSpace") < "1.5.0"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -237,7 +237,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [3] ssHippo.SeuratData_3.1.4  pbmc3k.SeuratData_3.1.4  
     #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.1             
     #>  [7] SeuratObject_5.4.0        sp_2.2-1                 
-    #>  [9] RGraphSpace_1.4.4         ggplot2_4.0.3            
+    #>  [9] RGraphSpace_1.5.0         ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.19.0      jsonlite_2.0.0        

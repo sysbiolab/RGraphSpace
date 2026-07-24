@@ -2,9 +2,12 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
-\section{CHANGES IN VERSION 1.4.2 (2026-07-10)}{
+\section{CHANGES IN VERSION 1.5.0 (2026-07-24)}{
   \itemize{
+    \item Improved compatibility with igraph and tidygraph objects.
     \item Added support for graphs with multiple edges and self-loops.
+    \item Added replacement and subsetting accessors.
+    \item Refactored the internal codebase.
   }
 }
 
