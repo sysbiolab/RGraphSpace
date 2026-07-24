@@ -76,7 +76,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH f060209 DN-- 39 0 -- 
+#> IGRAPH 9470b9b DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space
@@ -176,6 +176,120 @@ p6 <- make_panel(flip.h  = TRUE,  title = "flip.h = TRUE")
 
 ![](mapping-images_files/figure-html/Orientation%20reference-1.png)
 
+## Graph and image conventions
+
+Spatial alignment requires consistent coordinate conventions between the
+graph and the image; a mismatch in axis orientation, for example a
+top-left versus bottom-left origin, leaves the nodes reflected relative
+to the image.
+
+Next, we use a toy example to highlight that graphs and images follow
+different conventions and need to be transformed into the same
+coordinate space for layered visualization. This toy illustrates a
+scenario in which the image registration has already been performed,
+with graph nodes representing image features.
+
+``` r
+
+library("RGraphSpace")
+library("igraph")
+library("ggplot2")
+library("patchwork")
+
+# Load a toy GraphSpace object, which already
+# includes an embedded image, with node 
+# coordinates mapping to image indices.
+data("gs_image_toy")
+
+# Check node and image spatial boundaries
+gs_image_toy
+#> A GraphSpace-class object for:
+#> IGRAPH 2a25533 DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelColor
+#> | (v/c), nodeSize (v/n), nodeColor (v/c), edgeColor (e/c), arrowType
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [194, 493] (cols)
+#> | y: [237, 412] (rows)
+#> + image spatial boundaries: raw image
+#> | x: [1, 680] (cols)
+#> | y: [1, 640] (rows)
+```
+
+Node coordinates fall within the image’s spatial boundaries: nodes range
+`[194:493, 237:412]`, while the image spans `[1:680, 1:640]` (cols x
+rows), consistent with a common frame of reference. The image is
+composed of several amorphous shapes and a bluish feature region to
+which the graph nodes are registered. A red node is included to break
+visual symmetry, and a corresponding reddish mark in the feature region
+allows its position to be tracked against the image.
+
+``` r
+
+# Plot the un-normalized image
+p1 <- ggplot() +
+  annotation_gspace_image(gs_image_toy) +
+  scale_x_continuous(name = "Image coordinates 1", limits = c(0, 1)) +
+  scale_y_continuous(name = "Image coordinates 2", limits = c(0, 1)) +
+  theme(aspect.ratio = 1)
+
+# Plot the un-normalized graph
+p2 <- ggplot(gs_image_toy) +
+  geom_edgespace() + geom_nodespace() +
+  scale_x_continuous(name = "Graph coordinates 1", limits = c(190, 500)) +
+  scale_y_continuous(name = "Graph coordinates 2", limits = c(190, 500)) +
+  theme(aspect.ratio = 1)
+
+p1 + p2
+```
+
+![](mapping-images_files/figure-html/Coordinate%20conventions%20-%202-1.png)
+
+When rendered as separate plots, the image spans `[0,1]`, while the
+graph spans `~[190, 500]`, different coordinate spaces entirely, so a
+simple merge would misplace them. A separate mismatch is orientation:
+the red node and its corresponding reddish mark in the feature region
+show that the image is rendered top-down, while the graph is rendered
+bottom-up.
+
+Next,
+[`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+maps node coordinates to image space and converts the source image into
+a render-ready canvas. By default, it flips node y-coordinates over the
+image center to match the image’s orientation, then crops the image to
+the graph’s extent (plus a margin), so that the resulting canvas is
+centered on the graph.
+
+``` r
+
+gs_image_toy <- normalizeGraphSpace(gs_image_toy)
+#> Normalizing node coordinates to image space...
+#> Flipping y-coordinates over image center...
+
+ggplot(gs_image_toy) +
+  annotation_gspace_image(gs_image_toy) +
+  geom_edgespace() + geom_nodespace() +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+![](mapping-images_files/figure-html/Coordinate%20conventions%20-%203-1.png)
+
+For reference, here is the result when no flip is applied to node
+coordinates:
+
+``` r
+
+gs_image_toy <- normalizeGraphSpace(gs_image_toy, flip.y = FALSE)
+#> Normalizing node coordinates to image space...
+
+ggplot(gs_image_toy) +
+  annotation_gspace_image(gs_image_toy) +
+  geom_edgespace() + geom_nodespace() +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+![](mapping-images_files/figure-html/Coordinate%20conventions%20-%204-1.png)
+
 ## Advanced workflows
 
 See the [*Spatial
@@ -210,17 +324,17 @@ tutorial for examples using a reference image.
     #> [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
-    #>  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
-    #>  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 
-    #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          
-    #> [17] generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1      
-    #> [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3
-    #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.59          fs_2.1.0          
-    #> [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
-    #> [33] pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     
-    #> [37] grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0     lifecycle_1.0.5   
-    #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
-    #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
-    #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   
-    #> [53] htmltools_0.5.9
+    #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    
+    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.1        
+    #>  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-5      
+    #> [13] ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
+    #> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        tidygraph_1.3.1   
+    #> [21] withr_3.0.3        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        
+    #> [25] ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1        vctrs_0.7.3       
+    #> [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 
+    #> [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    
+    #> [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      
+    #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
+    #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
+    #> [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    
+    #> [53] compiler_4.6.1     S7_0.2.2

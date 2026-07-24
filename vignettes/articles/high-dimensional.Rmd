@@ -168,7 +168,7 @@ p2
 ##---
 
 # ggsave(filename = "./vignettes/articles/figs_dev/ggplot_seurat_1_2.png",
-#   height=4, width=10, units="in", device="png", dpi=400, plot = p1 + p2)
+#   height=5, width=10, units="in", device="png", dpi=400, plot = p1 + p2)
 ```
 
 ```{r ggplot_seurat1, echo=FALSE, out.width = '100%', purl=FALSE}

@@ -142,6 +142,70 @@ p6 <- make_panel(flip.h  = TRUE,  title = "flip.h = TRUE")
 (p1 | p2 | p3) / (p4 | p5 | p6)
 ```
 
+# Graph and image conventions
+
+Spatial alignment requires consistent coordinate conventions between the graph and the image; a mismatch in axis orientation, for example a top-left versus bottom-left origin, leaves the nodes reflected relative to the image.
+
+Next, we use a toy example to highlight that graphs and images follow different conventions and need to be transformed into the same coordinate space for layered visualization. This toy illustrates a scenario in which the image registration has already been performed, with graph nodes representing image features.
+
+```{r Coordinate conventions - 1, eval=TRUE, message=FALSE}
+library("RGraphSpace")
+library("igraph")
+library("ggplot2")
+library("patchwork")
+
+# Load a toy GraphSpace object, which already
+# includes an embedded image, with node 
+# coordinates mapping to image indices.
+data("gs_image_toy")
+
+# Check node and image spatial boundaries
+gs_image_toy
+```
+
+Node coordinates fall within the image's spatial boundaries: nodes range `[194:493, 237:412]`, while the image spans `[1:680, 1:640]` (cols x rows), consistent with a common frame of reference. The image is composed of several amorphous shapes and a bluish feature region to which the graph nodes are registered. A red node is included to break visual symmetry, and a corresponding reddish mark in the feature region allows its position to be tracked against the image.
+
+```{r Coordinate conventions - 2, eval=TRUE, message=FALSE, fig.width=6, fig.height=3, out.width="100%"}
+# Plot the un-normalized image
+p1 <- ggplot() +
+  annotation_gspace_image(gs_image_toy) +
+  scale_x_continuous(name = "Image coordinates 1", limits = c(0, 1)) +
+  scale_y_continuous(name = "Image coordinates 2", limits = c(0, 1)) +
+  theme(aspect.ratio = 1)
+
+# Plot the un-normalized graph
+p2 <- ggplot(gs_image_toy) +
+  geom_edgespace() + geom_nodespace() +
+  scale_x_continuous(name = "Graph coordinates 1", limits = c(190, 500)) +
+  scale_y_continuous(name = "Graph coordinates 2", limits = c(190, 500)) +
+  theme(aspect.ratio = 1)
+
+p1 + p2
+```
+
+When rendered as separate plots, the image spans `[0,1]`, while the graph spans `~[190, 500]`, different coordinate spaces entirely, so a simple merge would misplace them. A separate mismatch is orientation: the red node and its corresponding reddish mark in the feature region show that the image is rendered top-down, while the graph is rendered bottom-up.
+
+Next, `normalizeGraphSpace()` maps node coordinates to image space and converts the source image into a render-ready canvas. By default, it flips node y-coordinates over the image center to match the image's orientation, then crops the image to the graph's extent (plus a margin), so that the resulting canvas is centered on the graph.
+
+```{r Coordinate conventions - 3, eval=TRUE, message=TRUE}
+gs_image_toy <- normalizeGraphSpace(gs_image_toy)
+
+ggplot(gs_image_toy) +
+  annotation_gspace_image(gs_image_toy) +
+  geom_edgespace() + geom_nodespace() +
+  theme_gspace_coords(is_norm = TRUE)
+```
+
+For reference, here is the result when no flip is applied to node coordinates:
+
+```{r Coordinate conventions - 4, eval=TRUE, message=TRUE}
+gs_image_toy <- normalizeGraphSpace(gs_image_toy, flip.y = FALSE)
+
+ggplot(gs_image_toy) +
+  annotation_gspace_image(gs_image_toy) +
+  geom_edgespace() + geom_nodespace() +
+  theme_gspace_coords(is_norm = TRUE)
+```
 
 # Advanced workflows
 
