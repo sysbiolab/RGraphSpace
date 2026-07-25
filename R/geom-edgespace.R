@@ -6,12 +6,9 @@
 #' 
 #' Constructor for \link{GeomEdgeSpace} ggproto objects.
 #' 
-#' A wrapper around \link[ggplot2]{geom_segment} that enables direct use of
-#' edge attributes stored in \link{GraphSpace} objects as aesthetics.
-#'
-#' This \code{geom} is designed to create edge-level aesthetics such as
-#' \code{colour} and \code{linewidth}, or any custom aesthetics defined 
-#' in \link{GeomEdgeSpace}.
+#' A wrapper around \link[ggplot2]{geom_segment} that bridges \link{GraphSpace}
+#' edge attributes with ggplot2 rendering via two distinct aesthetic interfaces
+#' that coexist without collision (see \emph{Two aesthetic interfaces} section).
 #'
 #' @param mapping Set of aesthetic mappings created by [ggplot2::aes()].
 #' These mappings override global aesthetics and are not inherited 
@@ -96,11 +93,22 @@
 #' All required aesthetics are supplied from the \link{GraphSpace} object and  
 #' do not need to be manually mapped.
 #' 
-#' Additional parameters can be passed to control fixed values for the layer.
+#' Fixed identity values can also be passed directly as parameters, bypassing
+#' both graph attributes and scale training.
 #' For example: `colour = "grey"`, `linetype = 2`, `linewidth = 1`.
 #' 
 #' Arrows can be further adjusted by \code{arrow_size} and \code{arrow_offset} 
 #' arguments (see *details*).
+#' 
+#' @section Two aesthetic interfaces:
+#' 
+#' \code{geom_edgespace()} supports two interfaces that coexist without
+#' collision: graph attributes (camelCase names such as \code{edgeColor},
+#' \code{edgeLineWidth}) and ggplot2 mappings (via \code{aes()}). See comments
+#' in the vignette.
+#' 
+#' When multiple sources provide the same aesthetic, priority follows:
+#' \code{aes()} mapping > fixed parameter > graph attribute.
 #' 
 #' @section Label aesthetics:
 #' 

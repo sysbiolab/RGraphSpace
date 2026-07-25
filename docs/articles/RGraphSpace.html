@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-24</h4>
+            <h4 data-toc-skip class="date">2026-07-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/RGraphSpace.Rmd" class="external-link"><code>vignettes/RGraphSpace.Rmd</code></a></small>
       <div class="d-none name"><code>RGraphSpace.Rmd</code></div>
@@ -126,7 +126,8 @@ tutorials</a>.</p>
 <code class="sourceCode R"><span><span class="co">#--- Load required packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">"RGraphSpace"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://tidygraph.data-imaginist.com" class="external-link">"tidygraph"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the bundled toy igraph object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gtoy1"</span>, package <span class="op">=</span> <span class="st">"RGraphSpace"</span><span class="op">)</span></span>
@@ -138,28 +139,10 @@ tutorials</a>.</p>
 demonstrate the vertex and edge attributes that <em>RGraphSpace</em>
 parses automatically. This shows exactly what the package expects as
 input. We use <code>igraph</code>’s <code><a href="https://r.igraph.org/reference/make_star.html" class="external-link">make_star()</a></code> function
-with <code><a href="https://r.igraph.org/reference/V.html" class="external-link">V()</a></code> and <code><a href="https://r.igraph.org/reference/E.html" class="external-link">E()</a></code> to assign attributes.</p>
-<p><em>RGraphSpace</em> requires that every vertex carries
-<code>x</code>, <code>y</code>, and <code>name</code> attributes. If
-your graph has no pre-existing spatial coordinates, you can supply any
-<em>igraph</em> layout matrix directly via the <code>layout</code>
-argument of <code><a href="../reference/GraphSpace-methods.html">GraphSpace()</a></code>, which assigns coordinates
-internally.</p>
+with <code><a href="https://r.igraph.org/reference/V.html" class="external-link">V()</a></code> and <code><a href="https://r.igraph.org/reference/E.html" class="external-link">E()</a></code> to assign attributes.
+<em>RGraphSpace</em> requires that every vertex carries <code>x</code>,
+<code>y</code>, and <code>name</code> attributes.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># If your graph has no spatial coordinates, pass a layout directly:</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 5fb8aab DN-- 5 4 -- </span></span>
-<span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
-<span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
-<span><span class="co">#&gt; | nodeColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c), nodeAlpha</span></span>
-<span><span class="co">#&gt; | (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth (e/n),</span></span>
-<span><span class="co">#&gt; | arrowType (e/n), edgeAlpha (e/n)</span></span>
-<span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
-<span><span class="co">#&gt; | x: [-2, 2] (cols)</span></span>
-<span><span class="co">#&gt; | y: [-1, 2] (rows)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a 'toy' igraph with 5 nodes and 4 edges;</span></span>
 <span><span class="co"># ..either a directed or undirected graph</span></span>
 <span><span class="va">gtoy1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/make_star.html" class="external-link">make_star</a></span><span class="op">(</span><span class="fl">5</span>, mode <span class="op">=</span> <span class="st">"out"</span><span class="op">)</span></span>
@@ -182,21 +165,72 @@ internally.</p>
 <span></span>
 <span><span class="co"># Assign a name to each vertex</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"n"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the reconstructed 'gtoy1' using RGraphSpace</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="RGraphSpace_files/figure-html/Toy%20igraph%20-%202-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+<p>The same graph can be supplied as a <em>tidygraph</em> object; every
+<em>RGraphSpace</em> entry point accepts it through the same
+interface.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Same toy graph, as tidygraph</span></span>
+<span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidygraph.data-imaginist.com/reference/tbl_graph.html" class="external-link">as_tbl_graph</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span></span>
+<span><span class="va">gr</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tbl_graph: 5 nodes and 4 edges</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # A rooted tree</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; #</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # Node Data: 5 × 3 (active)</span></span></span>
+<span><span class="co">#&gt;       x     y name </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0     0 n1   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     0 n2   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>    -<span style="color: #BB0000;">2</span>     2 n3   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>    -<span style="color: #BB0000;">4</span>    -<span style="color: #BB0000;">4</span> n4   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>    -<span style="color: #BB0000;">8</span>     0 n5   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#</span></span></span>
+<span><span class="co"><span style="color: #949494;">#&gt; # Edge Data: 4 × 2</span></span></span>
+<span><span class="co">#&gt;    from    to</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1     3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more row</span></span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gr</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="RGraphSpace_files/figure-html/Toy%20igraph%20-%204-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+<p>If your graph has no pre-existing spatial coordinates, you can supply
+any <em>igraph</em> layout matrix directly via the <code>layout</code>
+argument of <code><a href="../reference/GraphSpace-methods.html">GraphSpace()</a></code>, which assigns coordinates
+internally.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># If your graph has no spatial coordinates, pass a layout directly:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
+<span><span class="co">#&gt; IGRAPH a4da031 DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
+<span><span class="co">#&gt; | arrowType (e/n)</span></span>
+<span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
+<span><span class="co">#&gt; | x: [-2, 2] (cols)</span></span>
+<span><span class="co">#&gt; | y: [-1, 2] (rows)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="rgraphspace-attributes">
 <em>RGraphSpace</em> attributes<a class="anchor" aria-label="anchor" href="#rgraphspace-attributes"></a>
 </h2>
+<p><em>RGraphSpace</em> provides two interfaces for styling nodes and
+edges: graph attributes (<em>camelCase</em> names such as
+<code>nodeColor</code> and <code>edgeColor</code>) and <em>ggplot2</em>
+mappings via <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>. The two interfaces coexist without
+collision; see the <em>Why camelCase attribute names?</em> section for
+details.</p>
 <p>Next, we list all vertex and edge attributes that can be passed to
 <em>RGraphSpace</em> methods.</p>
 <div class="section level3">
 <h3 id="vertex-attributes">Vertex attributes<a class="anchor" aria-label="anchor" href="#vertex-attributes"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Node color (Hexadecimal or color name)</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"#00ad39"</span>, <span class="st">"grey80"</span>, <span class="st">"lightblue"</span>, <span class="st">"cyan"</span><span class="op">)</span></span>
 <span></span>
@@ -231,7 +265,7 @@ internally.</p>
 for each pair of connected vertices. If there are multiple edges
 connecting the same node pair, it will display the attributes of the
 first occurrence in the data.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Edge color (Hexadecimal or color name)</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">edgeColor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="st">"green"</span>,<span class="st">"blue"</span>,<span class="st">"black"</span><span class="op">)</span></span>
 <span></span>
@@ -254,7 +288,7 @@ will be drawn for each edge according to its left-to-right orientation
 in the edge list (<em>e.g.</em> <code>A -&gt; B</code>). If there are
 mutual connections, the package will recode the mutual edges to
 represent a bidirectional flow.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Arrowhead types in directed graphs</span></span>
 <span><span class="co">## Integer or character code:</span></span>
 <span><span class="co">## 0 = "---", 1 = "--&gt;", -1 = "--|"</span></span>
@@ -262,7 +296,7 @@ represent a bidirectional flow.</p>
 <p><strong>Arrowhead in undirected graphs</strong>: By default, no arrow
 will be drawn for undirected graphs. However, arrowheads may be assigned
 according to the coding below.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Arrowhead types in undirected graphs</span></span>
 <span><span class="co">## Integer or character code:</span></span>
 <span><span class="co">##  0 = "---"</span></span>
@@ -274,7 +308,7 @@ according to the coding below.</p>
 <span><span class="co"># the edge's orientation in the edge list and adds arrowheads</span></span>
 <span><span class="co"># to edges that would otherwise be drawn without any</span></span></code></pre></div>
 <p>… and plot the fully attributed <code>gtoy1</code> object.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the fully attributed 'gtoy1'</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="RGraphSpace_files/figure-html/A%20shortcut%20for%20RGraphSpace-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
@@ -287,7 +321,7 @@ according to the coding below.</p>
 <code>GraphSpace</code> object and passed directly to <em>ggplot2</em>
 geoms. This gives full access to the <em>ggplot2</em> layer system for
 combining graph elements with other plot types.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the toy graph used in the previous example</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gtoy1"</span>, package <span class="op">=</span> <span class="st">"RGraphSpace"</span><span class="op">)</span></span>
 <span></span>
@@ -318,7 +352,7 @@ offsets that allow <code><a href="../reference/geom_edgespace.html">geom_edgespa
 precisely at node boundaries. This step is handled automatically when
 you use <code><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace()</a></code>, but must be called explicitly
 when building a plot layer by layer.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Build a layered ggplot2 graph</span></span>
 <span><span class="co"># geom_edgespace() draws edges; geom_nodespace() draws nodes</span></span>
 <span><span class="co"># aes(label = nodeLabel) maps the 'nodeLabel' vertex attribute to node labels</span></span>
@@ -327,6 +361,63 @@ when building a plot layer by layer.</p>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">nodeLabel</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="RGraphSpace_files/figure-html/Using%20geoms%20-%202-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
+<h2 id="why-camelcase-attribute-names">Why <em>camelCase</em> attribute names?<a class="anchor" aria-label="anchor" href="#why-camelcase-attribute-names"></a>
+</h2>
+<p>The node and edge attribute names above (<code>nodeColor</code>,
+<code>nodeSize</code>, etc.) are deliberately distinct from their
+<em>ggplot2</em> counterparts (<code>fill</code>, <code>size</code>,
+etc.). This is not a stylistic choice, it is a functional boundary
+between two different aesthetic interfaces.</p>
+<p>When a column in a data frame shares a name with a <em>ggplot2</em>
+aesthetic, <em>ggplot2</em> subjects it to scale training, which is
+designed for data-driven mappings. Graph attributes, however, carry
+<strong>final, pre-defined values</strong> (hex color codes, fixed
+sizes, specific shapes) that must be applied as-is without modification.
+The <em>camelCase</em> names make these attributes invisible to the
+scale system. They are assigned to their corresponding <em>ggplot2</em>
+aesthetics only after this step is complete, preventing other
+<code>geoms</code> from mixing incompatible values (e.g. hex colors and
+numeric variables) into their scale training.</p>
+<p>The practical consequence is that <code>V(g)$fill &lt;- "red"</code>
+and <code>V(g)$nodeColor &lt;- "red"</code> are <strong>not</strong>
+equivalent. The former is a regular user variable, available for
+data-driven mapping via <code>aes(fill = fill)</code>. The latter is a
+pre-defined identity value applied directly to the rendered nodes.</p>
+<p>This design allows the two interfaces to coexist cleanly. When
+multiple sources define the same aesthetic, the following priority
+applies (highest to lowest):</p>
+<table class="table">
+<colgroup>
+<col width="32%">
+<col width="28%">
+<col width="39%">
+</colgroup>
+<thead><tr class="header">
+<th align="center">Priority</th>
+<th align="center">Source</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">Aesthetic mapping</td>
+<td>Data-driven, scale-trained, shown in legends.</td>
+</tr>
+<tr class="even">
+<td align="center">2</td>
+<td align="center">Fixed parameter</td>
+<td>Identity value applied uniformly to all nodes or edges.</td>
+</tr>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center">Graph attribute</td>
+<td>Per-node or per-edge identity values from the
+<code>GraphSpace</code> object.</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="online-tutorials">Online tutorials<a class="anchor" aria-label="anchor" href="#online-tutorials"></a>
@@ -382,7 +473,7 @@ and ggplot2 graphics.” R package, 2023. Doi:
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       </span></span>
@@ -391,12 +482,12 @@ and ggplot2 graphics.” R package, 2023. Doi:
 <span><span class="co">#&gt; [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          </span></span>
 <span><span class="co">#&gt; [17] generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1      </span></span>
 <span><span class="co">#&gt; [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3</span></span>
-<span><span class="co">#&gt; [25] rlang_1.2.0        cachem_1.1.0       xfun_0.59          fs_2.1.0          </span></span>
-<span><span class="co">#&gt; [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         </span></span>
-<span><span class="co">#&gt; [33] pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     </span></span>
-<span><span class="co">#&gt; [37] grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0     lifecycle_1.0.5   </span></span>
-<span><span class="co">#&gt; [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    </span></span>
-<span><span class="co">#&gt; [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   </span></span>
+<span><span class="co">#&gt; [25] rlang_1.2.0        utf8_1.2.6         cachem_1.1.0       xfun_0.59         </span></span>
+<span><span class="co">#&gt; [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        </span></span>
+<span><span class="co">#&gt; [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5    </span></span>
+<span><span class="co">#&gt; [37] digest_0.6.39      grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0    </span></span>
+<span><span class="co">#&gt; [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       </span></span>
+<span><span class="co">#&gt; [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        </span></span>
 <span><span class="co">#&gt; [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   </span></span>
 <span><span class="co">#&gt; [53] htmltools_0.5.9</span></span></code></pre>
 </div>

@@ -6,13 +6,11 @@ ggproto objects.
 
 A wrapper around
 [geom_segment](https://ggplot2.tidyverse.org/reference/geom_segment.html)
-that enables direct use of edge attributes stored in
+that bridges
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
-objects as aesthetics.
-
-This `geom` is designed to create edge-level aesthetics such as `colour`
-and `linewidth`, or any custom aesthetics defined in
-[GeomEdgeSpace](https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.md).
+edge attributes with ggplot2 rendering via two distinct aesthetic
+interfaces that coexist without collision (see *Two aesthetic
+interfaces* section).
 
 ## Usage
 
@@ -216,11 +214,24 @@ All required aesthetics are supplied from the
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 object and do not need to be manually mapped.
 
-Additional parameters can be passed to control fixed values for the
-layer. For example: `colour = "grey"`, `linetype = 2`, `linewidth = 1`.
+Fixed identity values can also be passed directly as parameters,
+bypassing both graph attributes and scale training. For example:
+`colour = "grey"`, `linetype = 2`, `linewidth = 1`.
 
 Arrows can be further adjusted by `arrow_size` and `arrow_offset`
 arguments (see *details*).
+
+## Two aesthetic interfaces
+
+`geom_edgespace()` supports two interfaces that coexist without
+collision: graph attributes (camelCase names such as `edgeColor`,
+`edgeLineWidth`) and ggplot2 mappings (via
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html)). See
+comments in the vignette.
+
+When multiple sources provide the same aesthetic, priority follows:
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html) mapping \>
+fixed parameter \> graph attribute.
 
 ## Label aesthetics
 

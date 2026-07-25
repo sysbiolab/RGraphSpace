@@ -12,7 +12,7 @@ output:
   html_document:
     df_print: paged
 authors:
-- name: Flávio Gabriel Carazza Kessler
+- name: Flávio Gabriel Carazza-Kessler
   orcid: "0000-0002-5309-8043"
   equal-contrib: true
   affiliation: 1

@@ -22,6 +22,7 @@ To get started, we load a toy `igraph` and plot it.
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
+library("tidygraph")
 ```
 
 ``` r
@@ -41,30 +42,8 @@ exactly what the package expects as input. We use `igraph`’s
 [`make_star()`](https://r.igraph.org/reference/make_star.html) function
 with [`V()`](https://r.igraph.org/reference/V.html) and
 [`E()`](https://r.igraph.org/reference/E.html) to assign attributes.
-
 *RGraphSpace* requires that every vertex carries `x`, `y`, and `name`
-attributes. If your graph has no pre-existing spatial coordinates, you
-can supply any *igraph* layout matrix directly via the `layout` argument
-of
-[`GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md),
-which assigns coordinates internally.
-
-``` r
-
-# If your graph has no spatial coordinates, pass a layout directly:
-set.seed(42)
-GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
-#> A GraphSpace-class object for:
-#> IGRAPH 5fb8aab DN-- 5 4 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c), nodeAlpha
-#> | (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth (e/n),
-#> | arrowType (e/n), edgeAlpha (e/n)
-#> + node spatial boundaries: raw graph
-#> | x: [-2, 2] (cols)
-#> | y: [-1, 2] (rows)
-```
+attributes.
 
 ``` r
 
@@ -100,7 +79,70 @@ plotGraphSpace(gtoy1, node.labels = TRUE)
 
 ![](RGraphSpace_files/figure-html/Toy%20igraph%20-%202-1.png)
 
+The same graph can be supplied as a *tidygraph* object; every
+*RGraphSpace* entry point accepts it through the same interface.
+
+``` r
+
+# Same toy graph, as tidygraph
+gr <- as_tbl_graph(gtoy1)
+gr
+#> # A tbl_graph: 5 nodes and 4 edges
+#> #
+#> # A rooted tree
+#> #
+#> # Node Data: 5 × 3 (active)
+#>       x     y name 
+#>   <dbl> <dbl> <chr>
+#> 1     0     0 n1   
+#> 2     2     0 n2   
+#> 3    -2     2 n3   
+#> 4    -4    -4 n4   
+#> 5    -8     0 n5   
+#> #
+#> # Edge Data: 4 × 2
+#>    from    to
+#>   <int> <int>
+#> 1     1     2
+#> 2     1     3
+#> 3     1     4
+#> # ℹ 1 more row
+```
+
+``` r
+
+plotGraphSpace(gr, node.labels = TRUE)
+```
+
+![](RGraphSpace_files/figure-html/Toy%20igraph%20-%204-1.png)
+
+If your graph has no pre-existing spatial coordinates, you can supply
+any *igraph* layout matrix directly via the `layout` argument of
+[`GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md),
+which assigns coordinates internally.
+
+``` r
+
+# If your graph has no spatial coordinates, pass a layout directly:
+set.seed(42)
+GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
+#> A GraphSpace-class object for:
+#> IGRAPH a4da031 DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | arrowType (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-2, 2] (cols)
+#> | y: [-1, 2] (rows)
+```
+
 ## *RGraphSpace* attributes
+
+*RGraphSpace* provides two interfaces for styling nodes and edges: graph
+attributes (*camelCase* names such as `nodeColor` and `edgeColor`) and
+*ggplot2* mappings via
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). The two
+interfaces coexist without collision; see the *Why camelCase attribute
+names?* section for details.
 
 Next, we list all vertex and edge attributes that can be passed to
 *RGraphSpace* methods.
@@ -262,6 +304,39 @@ ggplot(gs) +
 
 ![](RGraphSpace_files/figure-html/Using%20geoms%20-%202-1.png)
 
+## Why *camelCase* attribute names?
+
+The node and edge attribute names above (`nodeColor`, `nodeSize`, etc.)
+are deliberately distinct from their *ggplot2* counterparts (`fill`,
+`size`, etc.). This is not a stylistic choice, it is a functional
+boundary between two different aesthetic interfaces.
+
+When a column in a data frame shares a name with a *ggplot2* aesthetic,
+*ggplot2* subjects it to scale training, which is designed for
+data-driven mappings. Graph attributes, however, carry **final,
+pre-defined values** (hex color codes, fixed sizes, specific shapes)
+that must be applied as-is without modification. The *camelCase* names
+make these attributes invisible to the scale system. They are assigned
+to their corresponding *ggplot2* aesthetics only after this step is
+complete, preventing other `geoms` from mixing incompatible values
+(e.g. hex colors and numeric variables) into their scale training.
+
+The practical consequence is that `V(g)$fill <- "red"` and
+`V(g)$nodeColor <- "red"` are **not** equivalent. The former is a
+regular user variable, available for data-driven mapping via
+`aes(fill = fill)`. The latter is a pre-defined identity value applied
+directly to the rendered nodes.
+
+This design allows the two interfaces to coexist cleanly. When multiple
+sources define the same aesthetic, the following priority applies
+(highest to lowest):
+
+| Priority | Source | Description |
+|:--:|:--:|----|
+| 1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. |
+| 2 | Fixed parameter | Identity value applied uniformly to all nodes or edges. |
+| 3 | Graph attribute | Per-node or per-edge identity values from the `GraphSpace` object. |
+
 ## Online tutorials
 
 For detailed integration with the *ggplot2* ecosystem, see the online
@@ -309,7 +384,7 @@ If you use *RGraphSpace*, please cite:
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
@@ -318,12 +393,12 @@ If you use *RGraphSpace*, please cite:
     #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          
     #> [17] generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4  tibble_3.3.1      
     #> [21] desc_1.4.3         bslib_0.11.0       pillar_1.11.1      RColorBrewer_1.1-3
-    #> [25] rlang_1.2.0        cachem_1.1.0       xfun_0.59          fs_2.1.0          
-    #> [29] sass_0.4.10        S7_0.2.2           otel_0.2.0         cli_3.6.6         
-    #> [33] pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5     digest_0.6.39     
-    #> [37] grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0     lifecycle_1.0.5   
-    #> [41] vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3        evaluate_1.0.5    
-    #> [45] glue_1.8.1         farver_2.1.2       ragg_1.5.2         tidygraph_1.3.1   
+    #> [25] rlang_1.2.0        utf8_1.2.6         cachem_1.1.0       xfun_0.59         
+    #> [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
+    #> [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5    
+    #> [37] digest_0.6.39      grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0    
+    #> [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       
+    #> [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        
     #> [49] purrr_1.2.2        rmarkdown_2.31     tools_4.6.1        pkgconfig_2.0.3   
     #> [53] htmltools_0.5.9
 

@@ -13,6 +13,9 @@
 * Optimized *geoms* for high-dimensional data
 * Spatial alignment to external reference frames
 
+### Tutorials
+* https://sysbiolab.github.io/RGraphSpace
+
 ### Overview
 
 *RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)) within a normalized coordinate space. The package implements new geometries that treat a graph as a single coherent object, synchronizing node and edge layers under standard aesthetic mappings. Node features are resolved on demand, supporting high-dimensional data without expanding node tables. Spatial alignment is available at the pixel level, with node coordinates anchored to pixel centers through a half-pixel offset, enabling precise node placement over external reference frames such as images and maps. The package also interoperates with *ggraph* and *tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized geoms translate graph data into geometric layers.
@@ -42,17 +45,11 @@ install.packages("remotes")
 remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 ```
 
-### Tutorials
-
-* https://sysbiolab.github.io/RGraphSpace
-
-* https://sysbiolab.github.io/PathwaySpace
-
 ### Citation
 
 If you use *RGraphSpace*, please cite:
 
-* Sysbiolab Team (2026). RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics. R package version 1.3.0. Doi: 10.32614/CRAN.package.RGraphSpace
+* Sysbiolab Team (2026). RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics. R package version 1.5.0. Doi: 10.32614/CRAN.package.RGraphSpace
 
 ### Licenses
 

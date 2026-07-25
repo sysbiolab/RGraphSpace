@@ -68,11 +68,9 @@ A ggplot2 layer that renders node glyphs defined by
 \description{
 Constructor for \link{GeomNodeSpace} ggproto objects.
 
-A wrapper around \link[ggplot2]{geom_point} that enables direct use of
-node attributes stored in \link{GraphSpace} objects as aesthetics.
-
-This geom is designed to map node-level attributes (e.g., \code{fill},
-\code{size}) or any aesthetics supported by \link[ggplot2]{GeomPoint}.
+A wrapper around \link[ggplot2]{geom_point} that bridges \link{GraphSpace}
+node attributes with ggplot2 rendering via two distinct aesthetic interfaces
+that coexist without collision (see \emph{Two aesthetic interfaces} section).
 }
 \details{
 The interpretation of \strong{\code{size}} depends on how it is provided:
@@ -107,8 +105,21 @@ are automatically retrieved from the \link{GraphSpace} object.
 Required aesthetics are supplied from the \link{GraphSpace} object and
 do not need to be manually mapped.
 
-Additional parameters can be passed to control fixed values for the layer.
+Fixed identity values can also be passed directly as parameters, bypassing
+both graph attributes and scale training.
 For example: \code{fill = "red"}, \code{stroke = 3}, \code{alpha = 0.5}, or \code{shape = 21}.
+}
+
+\section{Two aesthetic interfaces}{
+
+
+\code{geom_nodespace()} supports two interfaces that coexist without
+collision: graph attributes (camelCase names such as \code{nodeColor},
+\code{nodeSize}) and ggplot2 mappings (via \code{aes()}). See comments in
+the vignette.
+
+When multiple sources provide the same aesthetic, priority follows:
+\code{aes()} mapping > fixed parameter > graph attribute.
 }
 
 \section{Label aesthetics}{

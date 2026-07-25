@@ -31,7 +31,7 @@ node and edge layers is needed.
 
 ### Citation
 
-* Sysbiolab Team (2026). RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics. R package version 1.3.0. Doi: 10.32614/CRAN.package.RGraphSpace
+* Sysbiolab Team (2026). RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics. R package version 1.5.0. Doi: 10.32614/CRAN.package.RGraphSpace
 
 ### Licenses
 

@@ -6,13 +6,11 @@ ggproto objects.
 
 A wrapper around
 [geom_point](https://ggplot2.tidyverse.org/reference/geom_point.html)
-that enables direct use of node attributes stored in
+that bridges
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
-objects as aesthetics.
-
-This geom is designed to map node-level attributes (e.g., `fill`,
-`size`) or any aesthetics supported by
-[GeomPoint](https://ggplot2.tidyverse.org/reference/Geom.html).
+node attributes with ggplot2 rendering via two distinct aesthetic
+interfaces that coexist without collision (see *Two aesthetic
+interfaces* section).
 
 ## Usage
 
@@ -148,9 +146,21 @@ Required aesthetics are supplied from the
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
 object and do not need to be manually mapped.
 
-Additional parameters can be passed to control fixed values for the
-layer. For example: `fill = "red"`, `stroke = 3`, `alpha = 0.5`, or
-`shape = 21`.
+Fixed identity values can also be passed directly as parameters,
+bypassing both graph attributes and scale training. For example:
+`fill = "red"`, `stroke = 3`, `alpha = 0.5`, or `shape = 21`.
+
+## Two aesthetic interfaces
+
+`geom_nodespace()` supports two interfaces that coexist without
+collision: graph attributes (camelCase names such as `nodeColor`,
+`nodeSize`) and ggplot2 mappings (via
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html)). See
+comments in the vignette.
+
+When multiple sources provide the same aesthetic, priority follows:
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html) mapping \>
+fixed parameter \> graph attribute.
 
 ## Label aesthetics
 

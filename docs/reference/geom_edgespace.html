@@ -6,16 +6,12 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Draw edge elements in a 2D graph layout — geom_edgespace"><meta name="description" content="Constructor for GeomEdgeSpace ggproto objects.
-A wrapper around geom_segment that enables direct use of
-edge attributes stored in GraphSpace objects as aesthetics.
-This geom is designed to create edge-level aesthetics such as
-colour and linewidth, or any custom aesthetics defined
-in GeomEdgeSpace."><meta property="og:description" content="Constructor for GeomEdgeSpace ggproto objects.
-A wrapper around geom_segment that enables direct use of
-edge attributes stored in GraphSpace objects as aesthetics.
-This geom is designed to create edge-level aesthetics such as
-colour and linewidth, or any custom aesthetics defined
-in GeomEdgeSpace."><style>
+A wrapper around geom_segment that bridges GraphSpace
+edge attributes with ggplot2 rendering via two distinct aesthetic interfaces
+that coexist without collision (see Two aesthetic interfaces section)."><meta property="og:description" content="Constructor for GeomEdgeSpace ggproto objects.
+A wrapper around geom_segment that bridges GraphSpace
+edge attributes with ggplot2 rendering via two distinct aesthetic interfaces
+that coexist without collision (see Two aesthetic interfaces section)."><style>
   .contents h1, .page-header h1 {
     font-size: 2.2rem !important;
     font-weight: 700 !important;
@@ -86,11 +82,9 @@ in GeomEdgeSpace."><style>
 
     <div class="ref-description section level2">
     <p>Constructor for <a href="GeomEdgeSpace.html">GeomEdgeSpace</a> ggproto objects.</p>
-<p>A wrapper around <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a> that enables direct use of
-edge attributes stored in <a href="GraphSpace-methods.html">GraphSpace</a> objects as aesthetics.</p>
-<p>This <code>geom</code> is designed to create edge-level aesthetics such as
-<code>colour</code> and <code>linewidth</code>, or any custom aesthetics defined
-in <a href="GeomEdgeSpace.html">GeomEdgeSpace</a>.</p>
+<p>A wrapper around <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a> that bridges <a href="GraphSpace-methods.html">GraphSpace</a>
+edge attributes with ggplot2 rendering via two distinct aesthetic interfaces
+that coexist without collision (see <em>Two aesthetic interfaces</em> section).</p>
     </div>
 
     <div class="section level2">
@@ -270,10 +264,23 @@ is unavailable, <code>"adaptive"</code> silently falls back to <code>"opposite"<
 are automatically retrieved from the <a href="GraphSpace-methods.html">GraphSpace</a> object.</p>
 <table class="table table"><tr><td><strong><code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code></strong></td><td>Required; automatically supplied.</td></tr><tr><td><code>colour</code></td><td>Edge colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>linetype</code></td><td>Edge line type (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>linewidth</code></td><td>Edge line width (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>All required aesthetics are supplied from the <a href="GraphSpace-methods.html">GraphSpace</a> object and
 do not need to be manually mapped.</p>
-<p>Additional parameters can be passed to control fixed values for the layer.
+<p>Fixed identity values can also be passed directly as parameters, bypassing
+both graph attributes and scale training.
 For example: <code>colour = "grey"</code>, <code>linetype = 2</code>, <code>linewidth = 1</code>.</p>
 <p>Arrows can be further adjusted by <code>arrow_size</code> and <code>arrow_offset</code>
 arguments (see <em>details</em>).</p>
+    </div>
+    <div class="section level2">
+    <h2 id="two-aesthetic-interfaces">Two aesthetic interfaces<a class="anchor" aria-label="anchor" href="#two-aesthetic-interfaces"></a></h2>
+
+
+
+<p><code>geom_edgespace()</code> supports two interfaces that coexist without
+collision: graph attributes (camelCase names such as <code>edgeColor</code>,
+<code>edgeLineWidth</code>) and ggplot2 mappings (via <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>). See comments
+in the vignette.</p>
+<p>When multiple sources provide the same aesthetic, priority follows:
+<code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code> mapping &gt; fixed parameter &gt; graph attribute.</p>
     </div>
     <div class="section level2">
     <h2 id="label-aesthetics">Label aesthetics<a class="anchor" aria-label="anchor" href="#label-aesthetics"></a></h2>

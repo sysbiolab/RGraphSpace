@@ -14,6 +14,8 @@ if (packageVersion("RGraphSpace") < "1.5.0"){
 
 ## Quick start
 
+To get started, we load a toy `igraph` and plot it.
+
 ``` r
 
 #--- Load required packages
@@ -23,13 +25,25 @@ library("ggplot2")
 library("tidygraph")
 ```
 
-This section creates a toy `igraph` from scratch to demonstrate the
-vertex and edge attributes that *RGraphSpace* parses automatically,
-showing exactly what the package expects as input. The same graph can
-also be supplied as a *tidygraph* object. Here we use `igraph`’s
+``` r
+
+# Load the bundled toy igraph object
+data("gtoy1", package = "RGraphSpace")
+
+# The most direct call: pass an igraph to plotGraphSpace()
+plotGraphSpace(gtoy1, node.labels = TRUE)
+```
+
+![](building-graphspace_files/figure-html/Quick%20start%20-%201-1.png)
+
+Next, we build this toy `igraph` from scratch to demonstrate the vertex
+and edge attributes that *RGraphSpace* parses automatically. This shows
+exactly what the package expects as input. We use `igraph`’s
 [`make_star()`](https://r.igraph.org/reference/make_star.html) function
-and then [`V()`](https://r.igraph.org/reference/V.html) and
+with [`V()`](https://r.igraph.org/reference/V.html) and
 [`E()`](https://r.igraph.org/reference/E.html) to assign attributes.
+*RGraphSpace* requires that every vertex carries `x`, `y`, and `name`
+attributes.
 
 ``` r
 
@@ -59,7 +73,7 @@ V(gtoy1)$name <- paste0("n", 1:5)
 
 ``` r
 
-# The most direct call: pass an igraph to plotGraphSpace()
+# Plot the reconstructed 'gtoy1' using RGraphSpace
 plotGraphSpace(gtoy1, node.labels = TRUE)
 ```
 
@@ -102,7 +116,33 @@ plotGraphSpace(gr, node.labels = TRUE)
 
 ![](building-graphspace_files/figure-html/Toy%20igraph%20-%204-1.png)
 
+If your graph has no pre-existing spatial coordinates, you can supply
+any *igraph* layout matrix directly via the `layout` argument of
+[`GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md),
+which assigns coordinates internally.
+
+``` r
+
+# If your graph has no spatial coordinates, pass a layout directly:
+set.seed(42)
+GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
+#> A GraphSpace-class object for:
+#> IGRAPH c206bff DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | arrowType (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-2, 2] (cols)
+#> | y: [-1, 2] (rows)
+```
+
 ## *RGraphSpace* attributes
+
+*RGraphSpace* provides two interfaces for styling nodes and edges: graph
+attributes (*camelCase* names such as `nodeColor` and `edgeColor`) and
+*ggplot2* mappings via
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). The two
+interfaces coexist without collision; see the *Why camelCase attribute
+names?* section for details.
 
 Next, we list all vertex and edge attributes that can be passed to
 *RGraphSpace* methods.
@@ -322,17 +362,38 @@ ggplot(gs) +
   geom_nodespace(aes(fill = node_var))
 ```
 
-The `layout` argument of
-[`GraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
-can be used at levels 2 and 3 to supply coordinates from any *igraph*
-layout algorithm when the graph has no pre-existing `x` and `y` vertex
-attributes:
+## Why *camelCase* attribute names?
 
-``` r
+The node and edge attribute names above (`nodeColor`, `nodeSize`, etc.)
+are deliberately distinct from their *ggplot2* counterparts (`fill`,
+`size`, etc.). This is not a stylistic choice, it is a functional
+boundary between two different aesthetic interfaces.
 
-# Entry point layout
-gs <- GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
-```
+When a column in a data frame shares a name with a *ggplot2* aesthetic,
+*ggplot2* subjects it to scale training, which is designed for
+data-driven mappings. Graph attributes, however, carry **final,
+pre-defined values** (hex color codes, fixed sizes, specific shapes)
+that must be applied as-is without modification. The *camelCase* names
+make these attributes invisible to the scale system. They are assigned
+to their corresponding *ggplot2* aesthetics only after this step is
+complete, preventing other `geoms` from mixing incompatible values
+(e.g. hex colors and numeric variables) into their scale training.
+
+The practical consequence is that `V(g)$fill <- "red"` and
+`V(g)$nodeColor <- "red"` are **not** equivalent. The former is a
+regular user variable, available for data-driven mapping via
+`aes(fill = fill)`. The latter is a pre-defined identity value applied
+directly to the rendered nodes.
+
+This design allows the two interfaces to coexist cleanly. When multiple
+sources define the same aesthetic, the following priority applies
+(highest to lowest):
+
+| Priority | Source | Description |
+|:--:|:--:|----|
+| 1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. |
+| 2 | Fixed parameter | Identity value applied uniformly to all nodes or edges. |
+| 3 | Graph attribute | Per-node or per-edge identity values from the `GraphSpace` object. |
 
 ## Session information
 
