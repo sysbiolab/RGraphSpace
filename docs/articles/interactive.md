@@ -21,8 +21,8 @@ and global architecture of a network in real-time. By connecting
 fixed layouts to dynamic manipulation.
 
 The following example demonstrates interoperability between
-*RGraphSpace* and *RedeR*, an R/Bioconductor package for interactive
-network visualization and manipulation.
+*RGraphSpace* and *RedeR* (Castro et al. 2012), an R/Bioconductor
+package for interactive network visualization and manipulation.
 
 ## Required packages
 
@@ -230,3 +230,11 @@ plotGraphSpace(gtoy2_2, node.labels = FALSE)
     #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
     #> [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    
     #> [53] compiler_4.6.1     S7_0.2.2
+
+## References
+
+Castro, Mauro AA, Xin Wang, Michael NC Fletcher, Kerstin B Meyer, and
+Florian Markowetz. 2012. “RedeR: R/Bioconductor Package for Representing
+Modular Structures, Nested Networks and Multiple Levels of Hierarchical
+Associations.” *Genome Biology* 13 (4): R29.
+<https://doi.org/10.1186/gb-2012-13-4-r29>.

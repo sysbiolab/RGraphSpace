@@ -275,10 +275,10 @@ gs_image(gs) <- SeuratObject::GetImage(seurat_obj, mode = "raster")
 gs <- normalizeGraphSpace(gs)
 ```
 
-
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}
 sessionInfo()
 ```
 
+# References
 

@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-25</h4>
+            <h4 data-toc-skip class="date">2026-07-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/mapping-images.Rmd" class="external-link"><code>vignettes/articles/mapping-images.Rmd</code></a></small>
       <div class="d-none name"><code>mapping-images.Rmd</code></div>
@@ -118,16 +118,133 @@ Team</h4>
 </h2>
 <p>Images can be used as spatial references for graphs. When a raster
 image is provided, the pixel coordinates define where nodes are
-positioned, supporting the construction of graphs from image
-features.</p>
+positioned, supporting the construction of graphs from image features.
+However, spatial alignment requires consistent coordinate conventions
+between the graph and the image; a mismatch in axis orientation, for
+example a top-left versus bottom-left origin, leaves the nodes reflected
+relative to the image.</p>
 </div>
 <div class="section level2">
-<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
+<h2 id="graph-and-image-conventions">Graph and image conventions<a class="anchor" aria-label="anchor" href="#graph-and-image-conventions"></a>
 </h2>
-<p>As an example, next we extract features from the <code>volcano</code>
-matrix and map them to graph nodes. The graph is then visualized over
-the image matrix.</p>
+<p>We begin with a simple toy example that highlights how graphs and
+images follow different conventions and need to be transformed into the
+same coordinate space for layered visualization. This toy illustrates a
+scenario in which the image registration has already been performed (see
+<em>image registration</em> section), with graph nodes representing
+image features.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">"RGraphSpace"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://patchwork.data-imaginist.com" class="external-link">"patchwork"</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load a toy GraphSpace object, which already</span></span>
+<span><span class="co"># includes an embedded image, with node </span></span>
+<span><span class="co"># coordinates mapping to image indices.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gs_image_toy"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check node and image spatial boundaries</span></span>
+<span><span class="va">gs_image_toy</span></span>
+<span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
+<span><span class="co">#&gt; IGRAPH 2a25533 DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelColor</span></span>
+<span><span class="co">#&gt; | (v/c), nodeSize (v/n), nodeColor (v/c), edgeColor (e/c), arrowType</span></span>
+<span><span class="co">#&gt; | (e/n)</span></span>
+<span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
+<span><span class="co">#&gt; | x: [194, 493] (cols)</span></span>
+<span><span class="co">#&gt; | y: [237, 412] (rows)</span></span>
+<span><span class="co">#&gt; + image spatial boundaries: raw image</span></span>
+<span><span class="co">#&gt; | x: [1, 680] (cols)</span></span>
+<span><span class="co">#&gt; | y: [1, 640] (rows)</span></span></code></pre></div>
+<p>Node coordinates fall within the image’s spatial boundaries: nodes
+range <code>x:[194, 493]</code>(cols) and
+<code>y:[237, 412]</code>(rows), while the image spans
+<code>x:[1, 680]</code>(cols) and <code>y:[1, 640]</code>(rows),
+consistent with a common frame of reference. The image is composed of
+several amorphous shapes and a bluish feature region to which the graph
+nodes are registered. A red node is included to break visual symmetry,
+and a corresponding reddish mark in the feature region allows its
+position to be tracked against the image.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot the un-normalized image</span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Image coordinates 1"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Image coordinates 2"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot the un-normalized graph</span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Graph coordinates 1"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">190</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Graph coordinates 2"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">190</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
+<p><img src="mapping-images_files/figure-html/Coordinate%20conventions%20-%202-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p>When rendered as separate plots, the image spans <code>[0,1]</code>,
+while the graph spans <code>~[190, 500]</code>; these are different
+coordinate spaces entirely, so a simple merge would misplace them. A
+separate mismatch is orientation: the red node and its corresponding
+reddish mark in the feature region show that the image is rendered
+top-down, while the graph is rendered bottom-up.</p>
+<p>Next, <code><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace()</a></code> maps node coordinates to
+image space and converts the source image into a render-ready canvas. By
+default, it flips node y-coordinates over the image center to match the
+image’s orientation, then crops the image to the graph’s extent (plus a
+margin), so that the resulting canvas is centered on the graph.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gs_image_toy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Normalizing node coordinates to image space...</span></span>
+<span><span class="co">#&gt; Flipping y-coordinates over image center...</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="mapping-images_files/figure-html/Coordinate%20conventions%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+<p>For reference, here is the result when no flip is applied to node
+coordinates:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gs_image_toy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_image_toy</span>, flip.y <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Normalizing node coordinates to image space...</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="mapping-images_files/figure-html/Coordinate%20conventions%20-%204-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+<p><strong>Note on image alignment</strong>: Spatial misalignment may
+occur if the input image and node coordinates differ in axis orientation
+(e.g., top-left versus bottom-left origins). To accommodate these
+differences, <code><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace()</a></code> provides orientation
+controls through the <code>swap.xy</code>, <code>flip.x</code>, and
+<code>flip.y</code> arguments. If the nodes appear misaligned with the
+input image, try combinations of these parameters to correct the
+alignment. Alternatively, try <code>flip.v</code> and
+<code>flip.h</code> arguments to apply flipping directly to the
+background image (see the <em>orientation controls</em> subsection)</p>
+</div>
+<div class="section level2">
+<h2 id="image-registration">Image registration<a class="anchor" aria-label="anchor" href="#image-registration"></a>
+</h2>
+<p>Image registration is a broad field concerned with estimating a
+spatial transformation that aligns a query to a reference dataset <span class="citation">(Lewis et al. 2021; Balluff et al. 2022)</span>.
+<em>RGraphSpace</em> addresses a constrained case where the spatial
+correspondence between graph and image is known by construction, so the
+alignment task reduces to correcting axis-orientation mismatches, fixing
+node positions to their target pixels, and normalizing graph and image
+to a common coordinate space. In this section we exemplify this
+constrained workflow by extracting pixel coordinates from an image
+matrix and building a graph with nodes placed at those positions.</p>
+<div class="section level3">
+<h3 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
+</h3>
+<p>Next, we extract pixel coordinates at a specific intensity quantile
+from the <code>volcano</code> matrix and prepare an <code>igraph</code>
+for <em>RGraphSpace</em>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">"RGraphSpace"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
@@ -153,10 +270,10 @@ the image matrix.</p>
 <span><span class="va">bottom_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
 <span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span><span class="op">[</span><span class="va">bottom_row</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/adjustcolor.html" class="external-link">adjustcolor</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="fl">0.4</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="initialize-normalize-and-plot">Initialize, normalize, and plot<a class="anchor" aria-label="anchor" href="#initialize-normalize-and-plot"></a>
-</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="initialize-normalize-and-plot">Initialize, normalize, and plot<a class="anchor" aria-label="anchor" href="#initialize-normalize-and-plot"></a>
+</h3>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialize a GraphSpace object</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Validating the 'igraph' object...</span></span>
@@ -177,7 +294,7 @@ the image matrix.</p>
 <span></span>
 <span><span class="va">gs</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 67b1ce6 DN-- 39 0 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 4538ed1 DN-- 39 0 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), arrowType (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: normalized to image space</span></span>
@@ -193,22 +310,11 @@ resolution. This behavior is especially critical when the network
 elements represent image features at specific positions and must stay
 anchored to those features, avoiding overlap with adjacent, unrelated
 areas.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Render the graph with the raster as background</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, add.image <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mapping-images_files/figure-html/Mapping%20images%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
-<p><strong>Note on image alignment</strong>: Proper spatial alignment
-between nodes and the background image requires consistent coordinate
-conventions. Spatial misalignment may occur if the input image and node
-coordinates differ in axis orientation (e.g., top-left versus
-bottom-left origins). To accommodate these differences,
-<code><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace()</a></code> provides orientation controls through
-the <code>swap.xy</code>, <code>flip.x</code>, and <code>flip.y</code>
-arguments. If the nodes appear misaligned with the input image, try
-combinations of these parameters to correct the alignment.
-Alternatively, try <code>flip.v</code> and <code>flip.h</code> arguments
-to apply flipping directly to the background image.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Alternatively, passing to the underlying geoms</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span>
@@ -216,25 +322,24 @@ to apply flipping directly to the background image.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mapping-images_files/figure-html/Mapping%20images%20-%204-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level2">
-<h2 id="orientation-controls">Orientation controls<a class="anchor" aria-label="anchor" href="#orientation-controls"></a>
-</h2>
+<div class="section level3">
+<h3 id="orientation-controls">Orientation controls<a class="anchor" aria-label="anchor" href="#orientation-controls"></a>
+</h3>
 <p>The <code><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace()</a></code> function provides five
 arguments to adjust the alignment between graph coordinates and the
 background image. Arguments <code>flip.x</code>, <code>flip.y</code>,
 and <code>swap.xy</code> transform node coordinates; <code>flip.v</code>
 and <code>flip.h</code> transform the image matrix itself. The reference
 card below illustrates each argument using the <code>volcano</code>
-dataset introduced in the previous section, where nodes are precisely
-aligned with their corresponding dark pixels in the default
-configuration. Each panel shows how that alignment changes when a single
-argument is modified.</p>
+dataset, where nodes are precisely aligned with their corresponding dark
+pixels in the default configuration. Each panel shows how that alignment
+changes when a single argument is modified.</p>
 <p>Note that <code>flip.y</code> defaults to <code>TRUE</code> when
 <code>image.space = TRUE</code>, since image matrices use a top-down row
 indexing that is the inverse of the standard graph coordinate system.
 The panel labelled <code>flip.y = FALSE</code> shows what happens when
 this default correction is suppressed.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://patchwork.data-imaginist.com" class="external-link">"patchwork"</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Helper: build and render one panel</span></span>
@@ -263,99 +368,6 @@ this default correction is suppressed.</p>
 <span><span class="op">(</span><span class="va">p1</span> <span class="op">|</span> <span class="va">p2</span> <span class="op">|</span> <span class="va">p3</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">p4</span> <span class="op">|</span> <span class="va">p5</span> <span class="op">|</span> <span class="va">p6</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mapping-images_files/figure-html/Orientation%20reference-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level2">
-<h2 id="graph-and-image-conventions">Graph and image conventions<a class="anchor" aria-label="anchor" href="#graph-and-image-conventions"></a>
-</h2>
-<p>Spatial alignment requires consistent coordinate conventions between
-the graph and the image; a mismatch in axis orientation, for example a
-top-left versus bottom-left origin, leaves the nodes reflected relative
-to the image.</p>
-<p>Next, we use a toy example to highlight that graphs and images follow
-different conventions and need to be transformed into the same
-coordinate space for layered visualization. This toy illustrates a
-scenario in which the image registration has already been performed,
-with graph nodes representing image features.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">"RGraphSpace"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://patchwork.data-imaginist.com" class="external-link">"patchwork"</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Load a toy GraphSpace object, which already</span></span>
-<span><span class="co"># includes an embedded image, with node </span></span>
-<span><span class="co"># coordinates mapping to image indices.</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gs_image_toy"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Check node and image spatial boundaries</span></span>
-<span><span class="va">gs_image_toy</span></span>
-<span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 2a25533 DN-- 5 4 -- </span></span>
-<span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelColor</span></span>
-<span><span class="co">#&gt; | (v/c), nodeSize (v/n), nodeColor (v/c), edgeColor (e/c), arrowType</span></span>
-<span><span class="co">#&gt; | (e/n)</span></span>
-<span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
-<span><span class="co">#&gt; | x: [194, 493] (cols)</span></span>
-<span><span class="co">#&gt; | y: [237, 412] (rows)</span></span>
-<span><span class="co">#&gt; + image spatial boundaries: raw image</span></span>
-<span><span class="co">#&gt; | x: [1, 680] (cols)</span></span>
-<span><span class="co">#&gt; | y: [1, 640] (rows)</span></span></code></pre></div>
-<p>Node coordinates fall within the image’s spatial boundaries: nodes
-range <code>[194:493, 237:412]</code>, while the image spans
-<code>[1:680, 1:640]</code> (cols x rows), consistent with a common
-frame of reference. The image is composed of several amorphous shapes
-and a bluish feature region to which the graph nodes are registered. A
-red node is included to break visual symmetry, and a corresponding
-reddish mark in the feature region allows its position to be tracked
-against the image.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the un-normalized image</span></span>
-<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Image coordinates 1"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Image coordinates 2"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Plot the un-normalized graph</span></span>
-<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Graph coordinates 1"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">190</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Graph coordinates 2"</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">190</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
-<p><img src="mapping-images_files/figure-html/Coordinate%20conventions%20-%202-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<p>When rendered as separate plots, the image spans <code>[0,1]</code>,
-while the graph spans <code>~[190, 500]</code>, different coordinate
-spaces entirely, so a simple merge would misplace them. A separate
-mismatch is orientation: the red node and its corresponding reddish mark
-in the feature region show that the image is rendered top-down, while
-the graph is rendered bottom-up.</p>
-<p>Next, <code><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace()</a></code> maps node coordinates to
-image space and converts the source image into a render-ready canvas. By
-default, it flips node y-coordinates over the image center to match the
-image’s orientation, then crops the image to the graph’s extent (plus a
-margin), so that the resulting canvas is centered on the graph.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gs_image_toy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Normalizing node coordinates to image space...</span></span>
-<span><span class="co">#&gt; Flipping y-coordinates over image center...</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="mapping-images_files/figure-html/Coordinate%20conventions%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
-<p>For reference, here is the result when no flip is applied to node
-coordinates:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gs_image_toy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_image_toy</span>, flip.y <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Normalizing node coordinates to image space...</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="mapping-images_files/figure-html/Coordinate%20conventions%20-%204-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="advanced-workflows">Advanced workflows<a class="anchor" aria-label="anchor" href="#advanced-workflows"></a>
@@ -406,6 +418,23 @@ tutorial for examples using a reference image.</p>
 <span><span class="co">#&gt; [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        </span></span>
 <span><span class="co">#&gt; [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    </span></span>
 <span><span class="co">#&gt; [53] compiler_4.6.1     S7_0.2.2</span></span></code></pre>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Balluff2022" class="csl-entry">
+Balluff, Benjamin, Ron M. A. Heeren, and Alan M. Race. 2022. <span>“An
+Overview of Image Registration for Aligning Mass Spectrometry Imaging
+with Clinically Relevant Imaging Modalities.”</span> <em>Journal of Mass
+Spectrometry and Advances in the Clinical Lab</em> 23: 26–38. <a href="https://doi.org/10.1016/j.jmsacl.2021.12.006" class="external-link">https://doi.org/10.1016/j.jmsacl.2021.12.006</a>.
+</div>
+<div id="ref-Lewis2021" class="csl-entry">
+Lewis, Sabrina M., Marie-Liesse Asselin-Labat, Quan Nguyen, et al. 2021.
+<span>“Spatial Omics and Multiplexed Imaging to Explore Cancer
+Biology.”</span> <em>Nature Methods</em> 18 (9): 997–1012. <a href="https://doi.org/10.1038/s41592-021-01203-6" class="external-link">https://doi.org/10.1038/s41592-021-01203-6</a>.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -364,6 +364,8 @@ gs <- normalizeGraphSpace(gs)
     #> [121] scales_1.4.0           ggridges_0.5.7         crayon_1.5.3          
     #> [124] purrr_1.2.2            rlang_1.2.0            cowplot_1.2.0
 
+## References
+
 Hao, Yuhan, Tim Stuart, Madeline H Kowalski, et al. 2024. “Dictionary
 Learning for Integrative, Multimodal and Scalable Single-Cell Analysis.”
 *Nature Biotechnology* 42 (2): 293–304.

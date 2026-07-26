@@ -204,10 +204,10 @@ gs_fdata(gs) <- SeuratObject::LayerData(seurat_obj, layer = "data")
 gs <- normalizeGraphSpace(gs, mar = 0.01)
 ```
 
-
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}
 sessionInfo()
 ```
 
+# References
 

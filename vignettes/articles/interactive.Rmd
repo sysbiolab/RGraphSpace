@@ -37,7 +37,7 @@ if (packageVersion("RGraphSpace") < "1.5.0"){
 
 While static plots are essential for documentation and publication, interactive visualization allows us to explore the local neighborhoods and global architecture of a network in real-time. By connecting *RGraphSpace* with specialized interactive tools, we can move beyond fixed layouts to dynamic manipulation.
 
-The following example demonstrates interoperability between *RGraphSpace* and *RedeR*, an R/Bioconductor package for interactive network visualization and manipulation.
+The following example demonstrates interoperability between *RGraphSpace* and *RedeR* [@Castro2012], an R/Bioconductor package for interactive network visualization and manipulation.
 
 # Required packages
 
@@ -193,3 +193,4 @@ knitr::include_graphics("cards/interactive.png")
 sessionInfo()
 ```
 
+# References
