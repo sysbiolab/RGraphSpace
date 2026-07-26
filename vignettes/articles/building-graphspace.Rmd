@@ -215,7 +215,7 @@ gs <- normalizeGraphSpace(gs)
 gs
 ```
 
-`normalizeGraphSpace()` maps all vertex coordinates to a `[0, 1]` unit interval and computes the per-node clipping offsets that allow `geom_edgespace()` to terminate edges precisely at node boundaries. This step is handled automatically when you use `plotGraphSpace()`, but must be called explicitly when building a plot layer by layer.
+`normalizeGraphSpace()` maps all vertex coordinates to a `[0, 1]` unit interval. This step is handled automatically when passing an `igraph` to `plotGraphSpace()`; when building a plot layer by layer, it must be called explicitly.
 
 ```{r Using geoms - 2, eval=TRUE, message=FALSE}
 # Build a layered ggplot2 graph

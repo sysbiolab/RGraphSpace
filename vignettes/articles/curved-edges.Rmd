@@ -83,7 +83,7 @@ ggplot(gs_toy) +
   theme_gspace_coords(is_norm = TRUE)
 ```
 
-Increasing `curve` bows each simple edge through a control point displaced perpendicular to it, by `curve` times the edge length. Arrowheads, labels, and node-clipping offsets automatically follow the local curve direction, so they stay correctly oriented as the edge bends.
+Increasing `curve` bows simple edges away from a straight line. Arrowheads, labels, and node-clipping offsets automatically follow the local `curve` direction, so they stay correctly oriented as the edge bends.
 
 ```{r Gentle curve, eval=TRUE, message=TRUE}
 ggplot(gs_toy) +

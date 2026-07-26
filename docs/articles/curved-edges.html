@@ -167,7 +167,7 @@ otherwise removed by default when a graph is validated.</p>
 <span></span>
 <span><span class="va">gs_toy</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 2ebcdfa DN-- 10 27 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 176d95c DN-- 10 27 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), edgeColor (e/c), arrowType (e/n), label (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: normalized to graph space</span></span>
@@ -184,11 +184,10 @@ otherwise removed by default when a graph is validated.</p>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">nodeLabel</span><span class="op">)</span>, label_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="curved-edges_files/figure-html/Straight%20edges-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
-<p>Increasing <code>curve</code> bows each simple edge through a control
-point displaced perpendicular to it, by <code>curve</code> times the
-edge length. Arrowheads, labels, and node-clipping offsets automatically
-follow the local curve direction, so they stay correctly oriented as the
-edge bends.</p>
+<p>Increasing <code>curve</code> bows simple edges away from a straight
+line. Arrowheads, labels, and node-clipping offsets automatically follow
+the local <code>curve</code> direction, so they stay correctly oriented
+as the edge bends.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_toy</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">label</span><span class="op">)</span>, label_size <span class="op">=</span> <span class="fl">2</span>, curve <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span></span>

@@ -203,7 +203,7 @@ internally.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH c206bff DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 9d09737 DN-- 5 4 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
@@ -342,11 +342,9 @@ combining graph elements with other plot types.</p>
 <span><span class="co">#&gt; | x: [-8, 2] -&gt; [0, 1] (cols)</span></span>
 <span><span class="co">#&gt; | y: [-4, 2] -&gt; [0, 1] (rows)</span></span></code></pre></div>
 <p><code><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace()</a></code> maps all vertex coordinates to a
-<code>[0, 1]</code> unit interval and computes the per-node clipping
-offsets that allow <code><a href="../reference/geom_edgespace.html">geom_edgespace()</a></code> to terminate edges
-precisely at node boundaries. This step is handled automatically when
-you use <code><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace()</a></code>, but must be called explicitly
-when building a plot layer by layer.</p>
+<code>[0, 1]</code> unit interval. This step is handled automatically
+when passing an <code>igraph</code> to <code><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace()</a></code>;
+when building a plot layer by layer, it must be called explicitly.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Build a layered ggplot2 graph</span></span>
 <span><span class="co"># geom_edgespace() draws edges; geom_nodespace() draws nodes</span></span>

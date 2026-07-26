@@ -69,7 +69,7 @@ gs_toy <- normalizeGraphSpace(gs_toy)
 
 gs_toy
 #> A GraphSpace-class object for:
-#> IGRAPH 2ebcdfa DN-- 10 27 -- 
+#> IGRAPH 176d95c DN-- 10 27 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), edgeColor (e/c), arrowType (e/n), label (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -91,10 +91,9 @@ ggplot(gs_toy) +
 
 ![](curved-edges_files/figure-html/Straight%20edges-1.png)
 
-Increasing `curve` bows each simple edge through a control point
-displaced perpendicular to it, by `curve` times the edge length.
+Increasing `curve` bows simple edges away from a straight line.
 Arrowheads, labels, and node-clipping offsets automatically follow the
-local curve direction, so they stay correctly oriented as the edge
+local `curve` direction, so they stay correctly oriented as the edge
 bends.
 
 ``` r

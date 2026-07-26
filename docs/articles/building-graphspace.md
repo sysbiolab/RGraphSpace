@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH c206bff DN-- 5 4 -- 
+#> IGRAPH 9d09737 DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -283,13 +283,10 @@ gs
 ```
 
 [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
-maps all vertex coordinates to a `[0, 1]` unit interval and computes the
-per-node clipping offsets that allow
-[`geom_edgespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md)
-to terminate edges precisely at node boundaries. This step is handled
-automatically when you use
-[`plotGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.md),
-but must be called explicitly when building a plot layer by layer.
+maps all vertex coordinates to a `[0, 1]` unit interval. This step is
+handled automatically when passing an `igraph` to
+[`plotGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.md);
+when building a plot layer by layer, it must be called explicitly.
 
 ``` r
 
