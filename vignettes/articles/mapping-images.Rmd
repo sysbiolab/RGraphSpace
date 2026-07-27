@@ -81,7 +81,7 @@ When rendered as separate plots, the image spans `[0,1]`, while the graph spans 
 Next, `normalizeGraphSpace()` maps node coordinates to image space and converts the source image into a render-ready canvas. By default, it flips node y-coordinates over the image center to match the image's orientation, then crops the image to the graph's extent (plus a margin), so that the resulting canvas is centered on the graph.
 
 ```{r Coordinate conventions - 3, eval=TRUE, message=TRUE}
-gs_image_toy <- normalizeGraphSpace(gs_image_toy)
+gs_image_toy <- normalizeGraphSpace(gs_image_toy, mar = 0.1)
 
 ggplot(gs_image_toy) +
   annotation_gspace_image(gs_image_toy) +
@@ -89,7 +89,9 @@ ggplot(gs_image_toy) +
   theme_gspace_coords(is_norm = TRUE)
 ```
 
-For reference, here is the result when no flip is applied to node coordinates:
+The default `mar = 0.1` leaves a margin of `0.1` on each side, so the graph occupies the central `0.8` of the canvas.
+
+For reference, here is the result when **no** flip is applied to node coordinates:
 
 ```{r Coordinate conventions - 4, eval=TRUE, message=TRUE}
 gs_image_toy <- normalizeGraphSpace(gs_image_toy, flip.y = FALSE)

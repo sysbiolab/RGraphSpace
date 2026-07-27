@@ -101,11 +101,12 @@ maps node coordinates to image space and converts the source image into
 a render-ready canvas. By default, it flips node y-coordinates over the
 image center to match the image’s orientation, then crops the image to
 the graph’s extent (plus a margin), so that the resulting canvas is
-centered on the graph.
+centered on the graph. Here, `mar = 0.1` leaves a margin of `0.1` on
+each side, so the graph occupies the central `0.8` of the canvas.
 
 ``` r
 
-gs_image_toy <- normalizeGraphSpace(gs_image_toy)
+gs_image_toy <- normalizeGraphSpace(gs_image_toy, mar = 0.1)
 #> Normalizing node coordinates to image space...
 #> Flipping y-coordinates over image center...
 
@@ -214,7 +215,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 4538ed1 DN-- 39 0 -- 
+#> IGRAPH 93309db DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space

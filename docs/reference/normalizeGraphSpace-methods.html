@@ -114,11 +114,13 @@ or by mapping them to pixel coordinates of a background image.</p>
 
 
 <dt id="arg-mar">mar<a class="anchor" aria-label="anchor" href="#arg-mar"></a></dt>
-<dd><p>A single numeric value in <code>[0, 0.5]</code> controlling the size of
-the outer margins around the graph. Without an image, <code>mar</code> specifies
-symmetric margins as a fraction of the graph space. With an image,
-<code>mar</code> is interpreted as a fraction of the available image margins
-surrounding the graph.</p></dd>
+<dd><p>A single numeric value in <code>[0, 0.5]</code> setting the margins
+around the graph, as a fraction of the final normalized space. For example,
+<code>mar = 0.1</code> leaves a margin of 0.1 on each side, so the graph occupies
+the central 0.8 of the space. With an image, the image is cropped to the same
+proportions; if the graph lies close to an image border, the crop is shifted
+or truncated to stay within the image, and the requested margin may not be
+reached.</p></dd>
 
 
 <dt id="arg-image-space">image.space<a class="anchor" aria-label="anchor" href="#arg-image-space"></a></dt>

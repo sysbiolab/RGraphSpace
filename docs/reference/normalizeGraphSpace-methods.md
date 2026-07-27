@@ -34,11 +34,13 @@ cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
 
 - mar:
 
-  A single numeric value in `[0, 0.5]` controlling the size of the outer
-  margins around the graph. Without an image, `mar` specifies symmetric
-  margins as a fraction of the graph space. With an image, `mar` is
-  interpreted as a fraction of the available image margins surrounding
-  the graph.
+  A single numeric value in `[0, 0.5]` setting the margins around the
+  graph, as a fraction of the final normalized space. For example,
+  `mar = 0.1` leaves a margin of 0.1 on each side, so the graph occupies
+  the central 0.8 of the space. With an image, the image is cropped to
+  the same proportions; if the graph lies close to an image border, the
+  crop is shifted or truncated to stay within the image, and the
+  requested margin may not be reached.
 
 - image.space:
 

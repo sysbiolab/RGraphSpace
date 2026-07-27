@@ -195,7 +195,7 @@ default, it flips node y-coordinates over the image center to match the
 image’s orientation, then crops the image to the graph’s extent (plus a
 margin), so that the resulting canvas is centered on the graph.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gs_image_toy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_image_toy</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gs_image_toy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_image_toy</span>, mar <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Normalizing node coordinates to image space...</span></span>
 <span><span class="co">#&gt; Flipping y-coordinates over image center...</span></span>
 <span></span>
@@ -204,8 +204,11 @@ margin), so that the resulting canvas is centered on the graph.</p>
 <span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mapping-images_files/figure-html/Coordinate%20conventions%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
-<p>For reference, here is the result when no flip is applied to node
-coordinates:</p>
+<p>The default <code>mar = 0.1</code> leaves a margin of
+<code>0.1</code> on each side, so the graph occupies the central
+<code>0.8</code> of the canvas.</p>
+<p>For reference, here is the result when <strong>no</strong> flip is
+applied to node coordinates:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gs_image_toy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_image_toy</span>, flip.y <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Normalizing node coordinates to image space...</span></span>
@@ -294,7 +297,7 @@ for <em>RGraphSpace</em>.</p>
 <span></span>
 <span><span class="va">gs</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 4538ed1 DN-- 39 0 -- </span></span>
+<span><span class="co">#&gt; IGRAPH b9b270b DN-- 39 0 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), arrowType (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: normalized to image space</span></span>
