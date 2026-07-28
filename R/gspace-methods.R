@@ -498,10 +498,13 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
   } else if (what == "misc") {
     obj <- gs@misc
   } else if (what == "image") {
+    .check_outdated_gs(gs, c("image", "canvas"), type = "abort")
     obj <- gs@image
   } else if (what == "canvas") {
+    .check_outdated_gs(gs, c("image", "canvas"), type = "abort")
     obj <- gs@canvas
   } else if (what == "fdata") {
+    .check_outdated_gs(gs, "fdata", type = "abort")
     obj <- gs@fdata
   } else {
     obj <- gs@graph
@@ -673,6 +676,9 @@ setMethod("gs_edges", "GraphSpace", function(x, ...) {
 #' @rdname GraphSpace-accessors
 #' @export
 setMethod("gs_image", "GraphSpace", function(x) {
+  
+  .check_outdated_gs(x, c("image", "canvas"), type = "abort")
+  
   x <- .get_canvas(x)
   attr(x, "gs_handler_type") <- "image"
   class(x) <- c("gs_image", class(x))
@@ -683,6 +689,8 @@ setMethod("gs_image", "GraphSpace", function(x) {
 #' @export
 setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
 
+  .check_outdated_gs(x, c("image", "canvas"), type = "abort")
+  
   if(!is.raster(value)){
     .validate_gs_args("numeric_mtx", "value", value)
     rlang::inform(
@@ -720,7 +728,7 @@ setMethod("gs_graph", "GraphSpace", function(x) {
 #' @export
 setMethod("gs_fdata", "GraphSpace", function(x) {
   
-  .check_updated_gs(x, "fdata")
+  .check_outdated_gs(x, "fdata", type = "abort")
   
   x@fdata
   
@@ -729,7 +737,11 @@ setMethod("gs_fdata", "GraphSpace", function(x) {
 #' @rdname GraphSpace-accessors
 #' @export
 setReplaceMethod("gs_fdata", "GraphSpace", function(x, value) {
+  
+  .check_outdated_gs(x, "fdata", type = "abort")
+  
   x <- gs_add_features(x, value)
+  
   return(x)
 })
 
@@ -737,7 +749,7 @@ setReplaceMethod("gs_fdata", "GraphSpace", function(x, value) {
 #' @export
 setMethod("gs_nfeatures", "GraphSpace", function(x) {
   
-  .check_updated_gs(x, "fdata")
+  .check_outdated_gs(x, "fdata", type = "abort")
   
   ncol(x@fdata)
   
@@ -747,7 +759,7 @@ setMethod("gs_nfeatures", "GraphSpace", function(x) {
 #' @export
 setMethod("gs_features", "GraphSpace", function(x) {
   
-  .check_updated_gs(x, "fdata")
+  .check_outdated_gs(x, "fdata", type = "abort")
   
   colnames(x@fdata)
   

@@ -1,7 +1,7 @@
 # Mapping Graphs to Images
 
   
-**Package**: RGraphSpace 1.5.0
+**Package**: RGraphSpace 1.5.1
 
 ``` r
 
@@ -53,9 +53,6 @@ gs_image_toy
 #> + node spatial boundaries: raw graph
 #> | x: [194, 493] (cols)
 #> | y: [237, 412] (rows)
-#> + image spatial boundaries: raw image
-#> | x: [1, 680] (cols)
-#> | y: [1, 640] (rows)
 ```
 
 Node coordinates fall within the image’s spatial boundaries: nodes range
@@ -217,7 +214,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 76b40d5 DN-- 39 0 -- 
+#> IGRAPH 8ea75d3 DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space
@@ -336,7 +333,7 @@ tutorial for examples using a reference image.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
+    #> [1] patchwork_1.3.2    igraph_2.3.3       RGraphSpace_1.5.01 ggplot2_4.0.3     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    

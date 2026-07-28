@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.5.0
+**Package**: RGraphSpace 1.5.1
 
 ## Overview
 
@@ -205,8 +205,8 @@ output is identical.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] ggraph_2.2.2      tidygraph_1.3.1   geometry_0.5.2    maps_3.4.3       
-    #> [5] sf_1.1-1          igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
+    #> [1] ggraph_2.2.2       tidygraph_1.3.1    geometry_0.5.2     maps_3.4.3        
+    #> [5] sf_1.1-1           igraph_2.3.3       RGraphSpace_1.5.01 ggplot2_4.0.3     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.59          bslib_0.11.0      

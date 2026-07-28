@@ -1,6 +1,6 @@
 #' @importFrom methods setOldClass setClass
 #' @importFrom grDevices as.raster
-#' @importFrom igraph empty_graph
+#' @importFrom igraph make_empty_graph
 #' @importFrom tidygraph tbl_graph
 setOldClass("raster")
 setOldClass("igraph")
@@ -54,7 +54,7 @@ setClass("GraphSpace",
   prototype = list(
     nodes = data.frame(),
     edges = data.frame(),
-    graph = igraph::empty_graph(),
+    graph = igraph::make_empty_graph(),
     image = as.raster(matrix()),
     canvas = as.raster(matrix()),
     fdata = Matrix::Matrix(nrow = 0, ncol = 0),
@@ -201,24 +201,35 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
   }
   
   if(verbose){
-    rlang::inform(c(
-      "Outdated 'GraphSpace' object: updating on the fly.",
-      "i" = "Recently introduced feature slots may not be recoverable.",
-      "*" = "Rebuild the object from scratch to fully restore all components."
-    ))
+    if(.has_image(gs) || .has_fdata(gs)){
+      rlang::warn(c(
+        "!" = "Outdated 'GraphSpace' object detected.",
+        "x" = paste0("Missing slot(s): ", paste(missing_slots, collapse = ", "), "."),
+        "x" = "Image, canvas, and feature data cannot be safely reused and were reset to empty.",
+        "i" = "Preserved unchanged: nodes, edges, graph, parameters, misc.",
+        "*" = "Rebuild the object from scratch to restore the original image and features."
+      ))
+    } else {
+      rlang::inform(c(
+        "!" = "Outdated 'GraphSpace' object updated to the latest version.",
+        "i" = paste0("Slot(s) added with default values: ", paste(missing_slots, collapse = ", "), "."),
+        "i" = "Re-run normalizeGraphSpace() before plotting.",
+        "*" = "To ensure full compatibility, rebuild the object from scratch."
+      ))
+    }
   }
   
-  proto <- new("GraphSpace")
+  # Reset normalization
+  gs@pars$image.space <- FALSE
+  gs@pars$is.normalized <- FALSE
+  
   x <- new("GraphSpace",
     nodes = gs@nodes,
     edges = gs@edges,
     graph = gs@graph,
     pars = gs@pars,
     misc = gs@misc,
-    image = if (.hasSlot(gs, "image")) gs@image else proto@image,
-    canvas = if (.hasSlot(gs, "canvas")) gs@canvas else proto@canvas,
-    fdata = if (.hasSlot(gs, "fdata")) gs@fdata else proto@fdata,
-    uuid  = if (.hasSlot(gs, "uuid"))  gs@uuid  else .generate_gs_uuid()
+    uuid = if (.hasSlot(gs, "uuid")) gs@uuid else .generate_gs_uuid()
   )
   
   validObject(x)
@@ -229,21 +240,23 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
 
 #-------------------------------------------------------------------------------
 #' @keywords internal
-.check_updated_gs <- function(gs, slots = c("image", "canvas","fdata", "uuid")) {
+.check_outdated_gs <- function(gs, slots = c("image", "canvas", "fdata", "uuid"),
+  type = c("warn", "abort")) {
+  
+  type <- match.arg(type)
   
   check <- vapply(slots, function(s) .hasSlot(gs, s), logical(1))
   
   if (!all(check)) {
-    rlang::abort(c(
-      "x" = paste0(
-        "Outdated 'GraphSpace' object: missing slot(s): ",
-        paste(slots[!check], collapse = ", "), "."),
+    msg <- c(
+      "x" = paste0("Outdated 'GraphSpace' object, missing slot(s): ",
+            paste(slots[!check], collapse = ", "), "."),
       "i" = "Run 'updateGraphSpace(x)' to migrate the object."
-    ))
+    )
+    if (type == "abort") rlang::abort(msg) else rlang::warn(msg)
   }
   
-  invisible(TRUE)
-  
+  invisible(all(check))
 }
 
 #-------------------------------------------------------------------------------
@@ -274,7 +287,9 @@ setGeneric("summary", function(object, ...) standardGeneric("summary"))
 #' @exportMethod summary
 setMethod("summary", "GraphSpace",
   function(object, ...) {
+    
     igraph::print.igraph(object@graph, full = FALSE)
+    
     if (.hasSlot(object, "fdata")) {
       nfeat <- ncol(object@fdata)
       if (nfeat > 0) {
@@ -285,15 +300,21 @@ setMethod("summary", "GraphSpace",
         cat("+ samples: ", nsamp, " (", samp, ")\n", sep = "")
       }
     }
+    
     .inform_node_coord_status(object)
+    
     .inform_boundaries( .node_boundaries(.get_nodes(object@graph)),
       if (.is_normalized(object)) list(x = c(0,1), y = c(0,1)) else NULL )
-    if (.has_image(object)) {
+    
+    if (.has_image(object) && .has_canvas(object)) {
       .inform_image_coord_status(object)
       img <- if (.is_image_space(object)) object@canvas else object@image
       .inform_boundaries( .image_boundaries(object@image),
         if (.is_image_space(object)) .image_boundaries(img) else NULL )
     }
+    
+    .check_outdated_gs(object)
+    
     invisible(object)
   }
 )
@@ -329,10 +350,15 @@ setMethod("show", "GraphSpace",
 
 #' @keywords internal
 .node_boundaries <- function(nodes) {
-  list(
-    x = c(floor(min(nodes$x, na.rm = TRUE)), ceiling(max(nodes$x, na.rm = TRUE))),
-    y = c(floor(min(nodes$y, na.rm = TRUE)), ceiling(max(nodes$y, na.rm = TRUE)))
-  )
+  if(nrow(nodes)>0){
+    l <- list(
+      x = c(floor(min(nodes$x, na.rm = TRUE)), ceiling(max(nodes$x, na.rm = TRUE))),
+      y = c(floor(min(nodes$y, na.rm = TRUE)), ceiling(max(nodes$y, na.rm = TRUE)))
+    )
+  } else {
+    l <- list(x = c(NaN,NaN), y = c(NaN,NaN))
+  }
+  l
 }
 
 #' @keywords internal
@@ -395,6 +421,11 @@ setMethod("show", "GraphSpace",
 #' @keywords internal
 .has_image <- function(gs) {
   .hasSlot(gs, "image") && prod(dim(gs@image)) > 1
+}
+
+#' @keywords internal
+.has_fdata <- function(gs) {
+  .hasSlot(gs, "fdata") && prod(dim(gs@fdata)) > 1
 }
 
 #' @keywords internal

@@ -2,6 +2,12 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
+\section{CHANGES IN VERSION 1.5.01 (2026-07-28)}{
+  \itemize{
+    \item Restored compatibility with objects from older package versions.
+  }
+}
+
 \section{CHANGES IN VERSION 1.5.0 (2026-07-24)}{
   \itemize{
     \item Improved compatibility with igraph and tidygraph objects.

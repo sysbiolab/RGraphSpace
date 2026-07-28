@@ -1,7 +1,7 @@
 # Building a GraphSpace
 
   
-**Package**: RGraphSpace 1.5.0
+**Package**: RGraphSpace 1.5.1
 
 ``` r
 
@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH ffbe4ac DN-- 5 4 -- 
+#> IGRAPH 0dd05ff DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -417,7 +417,7 @@ sources define the same aesthetic, the following priority applies
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.0 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1    igraph_2.3.3       RGraphSpace_1.5.01 ggplot2_4.0.3     
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
