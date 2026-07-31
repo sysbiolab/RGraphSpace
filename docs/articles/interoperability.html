@@ -283,18 +283,19 @@ projections<a class="anchor" aria-label="anchor" href="#using-rgraphspace-with-s
 visualize graph data within an <em>sf</em> spatial coordinate system
 under a non-linear projection. The example uses Brazilian aviation data,
 in which airports are represented as nodes and flights as directed
-edges, drawn over a basemap of Brazil. Both the flight records and the
-airport registry are retrieved from the <em>flightsbr</em> package. The
-projection’s meridians converge toward the pole, so the graph needs to
-recognize the coordinate system in order to be drawn as part of the map
-rather than on top of it.</p>
+edges, drawn over a basemap of Brazil. We retrieve flight records from
+<em>flightsbr</em> <span class="citation">(Pereira 2022)</span> and
+airport registries from <em>airportr</em> <span class="citation">(Shkolnik 2019)</span>. The projection’s meridians
+converge toward the pole, so the graph needs to recognize the coordinate
+system in order to be drawn as part of the map rather than on top of
+it.</p>
 <div class="section level3">
 <h3 id="setting-basic-input-data-1">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data-1"></a>
 </h3>
 <p>Pre-processing sets up a reference map, retrieves the aviation data,
 and assembles it into node and edge tables. The basemap is a country
-outline from the <em>maps</em> package, converted to an <code>sf</code>
-object.</p>
+outline from the <em>maps</em> package <span class="citation">(Becker et
+al. 2025)</span>, converted to an <code>sf</code> object.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load a reference map</span></span>
 <span><span class="va">map_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/maps/man/map.html" class="external-link">map</a></span><span class="op">(</span><span class="st">"world"</span>, regions <span class="op">=</span> <span class="st">"Brazil"</span>, fill <span class="op">=</span> <span class="cn">TRUE</span>, plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -344,7 +345,7 @@ edge has endpoints in the node table.</p>
 <div class="section level3">
 <h3 id="building-the-graph">Building the graph<a class="anchor" aria-label="anchor" href="#building-the-graph"></a>
 </h3>
-<p>With the flight and airport datasets loaded, we can generate an
+<p>With the flight and airport tables prepared, we can generate an
 <code>igraph</code> object using the flights as edges and the airports
 as vertices. The graph is directed, preserving the direction of each
 departure-arrival pair, and edge counts represent the number of flights
@@ -470,6 +471,10 @@ repository.</p>
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Becker2025" class="csl-entry">
+Becker, Richard A., Allan R. Wilks, Ray Brownrigg, Thomas P. Minka, and
+Alex Deckmyn. 2025. <em>Maps: Draw Geographical Maps</em>. <a href="https://doi.org/10.32614/CRAN.package.maps" class="external-link">https://doi.org/10.32614/CRAN.package.maps</a>.
+</div>
 <div id="ref-Nepusz2006" class="csl-entry">
 Csardi, Gabor, and Tamas Nepusz. 2006. <span>“The Igraph Software
 Package for Complex Network Research.”</span> <em>InterJournal</em>
@@ -482,6 +487,15 @@ Applications in <span>R</span></em>. Chapman; Hall/CRC. <a href="https://doi.org
 <div id="ref-Pedersen2025_1" class="csl-entry">
 Pedersen, Thomas Lin. 2025. <em>Tidygraph: A Tidy API for Graph
 Manipulation</em>. <a href="https://tidygraph.data-imaginist.com" class="external-link">https://tidygraph.data-imaginist.com</a>.
+</div>
+<div id="ref-Pereira2022" class="csl-entry">
+Pereira, Rafael H. M. 2022. <span>“Flightsbr: Download Flight and
+Airport Data from Brazil.”</span> <em>OSF Preprints</em>, ahead of
+print. <a href="https://doi.org/10.31219/osf.io/jdv7u" class="external-link">https://doi.org/10.31219/osf.io/jdv7u</a>.
+</div>
+<div id="ref-Shkolnik2019" class="csl-entry">
+Shkolnik, Dmitry. 2019. <em>Airportr: Convenience Tools for Working with
+Airport Data</em>. <a href="https://doi.org/10.32614/CRAN.package.airportr" class="external-link">https://doi.org/10.32614/CRAN.package.airportr</a>.
 </div>
 </div>
 </div>

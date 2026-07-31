@@ -169,11 +169,11 @@ knitr::include_graphics("cards/interoperability.png")
 
 # Using *RGraphSpace* with *sf* under non-linear projections
 
-This vignette demonstrates how to use *RGraphSpace* to visualize graph data within an *sf* spatial coordinate system under a non-linear projection. The example uses Brazilian aviation data, in which airports are represented as nodes and flights as directed edges, drawn over a basemap of Brazil. Both the flight records and the airport registry are retrieved from the *flightsbr* package. The projection's meridians converge toward the pole, so the graph needs to recognize the coordinate system in order to be drawn as part of the map rather than on top of it.
+This vignette demonstrates how to use *RGraphSpace* to visualize graph data within an *sf* spatial coordinate system under a non-linear projection. The example uses Brazilian aviation data, in which airports are represented as nodes and flights as directed edges, drawn over a basemap of Brazil. We retrieve flight records from *flightsbr* [@Pereira2022] and airport registries from *airportr* [@Shkolnik2019]. The projection's meridians converge toward the pole, so the graph needs to recognize the coordinate system in order to be drawn as part of the map rather than on top of it.
 
 ## Setting basic input data
 
-Pre-processing sets up a reference map, retrieves the aviation data, and assembles it into node and edge tables. The basemap is a country outline from the *maps* package, converted to an `sf` object.
+Pre-processing sets up a reference map, retrieves the aviation data, and assembles it into node and edge tables. The basemap is a country outline from the *maps* package [@Becker2025], converted to an `sf` object.
 
 ```{r Interoperability sf - 1, eval=TRUE, message=FALSE}
 # Load a reference map
@@ -226,7 +226,7 @@ active_airports$departures <- tapply(flight_counts$counts,
 
 ## Building the graph
 
-With the flight and airport datasets loaded, we can generate an `igraph` object using the flights as edges and the airports as vertices. The graph is directed, preserving the direction of each departure-arrival pair, and edge counts represent the number of flights on each unique route.
+With the flight and airport tables prepared, we can generate an `igraph` object using the flights as edges and the airports as vertices. The graph is directed, preserving the direction of each departure-arrival pair, and edge counts represent the number of flights on each unique route.
 
 ```{r Interoperability sf - 4, eval=TRUE, message=FALSE}
 # Make an igraph with flight records
