@@ -39,11 +39,11 @@ if (packageVersion("RGraphSpace") < "1.5.1"){
 # Load packages
 library("RGraphSpace")
 library("igraph")
+library("tidygraph")
+library("ggraph")
 library("sf")
 library("maps")
 library("geometry")
-library("tidygraph")
-library("ggraph")
 library("flightsbr")
 library("airportr")
 ```
@@ -182,13 +182,16 @@ output is identical.
 
 ![](cards/interoperability.png)
 
-## Using *RGraphSpace* with *sf*
+## Using *RGraphSpace* with *sf* under non-linear projections
 
 This vignette demonstrates how to use *RGraphSpace* to visualize graph
-data within an *sf* spatial coordinate system. The example uses
-Brazilian aviation data, in which airports are represented as nodes and
-flights as directed edges. Both the flight records and the airport
-registry are retrieved from the *flightsbr* package.
+data within an *sf* spatial coordinate system under a non-linear
+projection. The example uses Brazilian aviation data, in which airports
+are represented as nodes and flights as directed edges, drawn over a
+basemap of Brazil. Both the flight records and the airport registry are
+retrieved from the *flightsbr* package. The projection’s meridians
+converge toward the pole, so the graph needs to recognize the coordinate
+system in order to be drawn as part of the map rather than on top of it.
 
 ### Setting basic input data
 
@@ -360,14 +363,14 @@ repository.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #>  [1] airportr_0.1.3    flightsbr_1.1.1   ggraph_2.2.2      tidygraph_1.3.1  
-    #>  [5] geometry_0.5.2    maps_3.4.3        sf_1.1-1          igraph_2.3.3     
+    #>  [1] airportr_0.1.3    flightsbr_1.1.1   geometry_0.5.2    maps_3.4.3       
+    #>  [5] sf_1.1-1          ggraph_2.2.2      tidygraph_1.3.1   igraph_2.3.3     
     #>  [9] RGraphSpace_1.5.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] tidyselect_1.2.1   viridisLite_0.4.3  dplyr_1.2.1        vipor_0.4.7       
     #>  [5] farver_2.1.2       viridis_0.6.5      S7_0.2.2           fastmap_1.2.0     
-    #>  [9] tweenr_2.0.3       janitor_2.2.1      digest_0.6.39      timechange_0.4.0  
+    #>  [9] janitor_2.2.1      tweenr_2.0.3       digest_0.6.39      timechange_0.4.0  
     #> [13] lifecycle_1.0.5    magrittr_2.0.5     compiler_4.6.1     rlang_1.2.0       
     #> [17] sass_0.4.10        tools_4.6.1        yaml_2.3.12        data.table_1.18.4 
     #> [21] knitr_1.51         labeling_0.4.3     graphlayouts_1.2.4 htmlwidgets_1.6.4 

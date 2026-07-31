@@ -44,11 +44,11 @@ if (packageVersion("RGraphSpace") < "1.5.1"){
 # Load packages
 library("RGraphSpace")
 library("igraph")
+library("tidygraph")
+library("ggraph")
 library("sf")
 library("maps")
 library("geometry")
-library("tidygraph")
-library("ggraph")
 library("flightsbr")
 library("airportr")
 ```
@@ -167,9 +167,9 @@ knitr::include_graphics("cards/interoperability.png")
 ```
 
 
-# Using *RGraphSpace* with *sf* 
+# Using *RGraphSpace* with *sf* under non-linear projections
 
-This vignette demonstrates how to use *RGraphSpace* to visualize graph data within an *sf* spatial coordinate system. The example uses Brazilian aviation data, in which airports are represented as nodes and flights as directed edges. Both the flight records and the airport registry are retrieved from the *flightsbr* package.
+This vignette demonstrates how to use *RGraphSpace* to visualize graph data within an *sf* spatial coordinate system under a non-linear projection. The example uses Brazilian aviation data, in which airports are represented as nodes and flights as directed edges, drawn over a basemap of Brazil. Both the flight records and the airport registry are retrieved from the *flightsbr* package. The projection's meridians converge toward the pole, so the graph needs to recognize the coordinate system in order to be drawn as part of the map rather than on top of it.
 
 ## Setting basic input data
 
