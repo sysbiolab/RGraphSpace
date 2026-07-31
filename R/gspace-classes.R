@@ -212,7 +212,8 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
     } else {
       rlang::inform(c(
         "!" = "Outdated 'GraphSpace' object updated to the latest version.",
-        "i" = paste0("Slot(s) added with default values: ", paste(missing_slots, collapse = ", "), "."),
+        "i" = paste0("Slot(s) added with default values: ", 
+          paste(missing_slots, collapse = ", "), "."),
         "i" = "Re-run normalizeGraphSpace() before plotting.",
         "*" = "To ensure full compatibility, rebuild the object from scratch."
       ))

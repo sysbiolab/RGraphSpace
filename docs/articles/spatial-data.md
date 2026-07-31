@@ -317,7 +317,7 @@ gs <- normalizeGraphSpace(gs)
     #> [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 
     #> [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    
     #> [5] Seurat_5.5.1              SeuratObject_5.4.0       
-    #> [7] sp_2.2-1                  RGraphSpace_1.5.01       
+    #> [7] sp_2.2-1                  RGraphSpace_1.5.1        
     #> [9] ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):
@@ -331,7 +331,7 @@ gs <- normalizeGraphSpace(gs)
     #>  [22] ica_1.0-3              fontawesome_0.5.3      plyr_1.8.9            
     #>  [25] plotly_4.12.0          zoo_1.8-15             cachem_1.1.0          
     #>  [28] igraph_2.3.3           mime_0.13              lifecycle_1.0.5       
-    #>  [31] pkgconfig_2.0.3        Matrix_1.7-5           R6_2.6.1              
+    #>  [31] pkgconfig_2.0.3        Matrix_1.7-6           R6_2.6.1              
     #>  [34] fastmap_1.2.0          fitdistrplus_1.2-6     future_1.70.0         
     #>  [37] shiny_1.14.0           digest_0.6.39          patchwork_1.3.2       
     #>  [40] tensor_1.5.1           RSpectra_0.16-2        irlba_2.3.7           

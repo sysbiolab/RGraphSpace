@@ -17,7 +17,38 @@ images*](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md);
 see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/)
 tutorials for use-case scenarios involving reference image backgrounds.
 
-**Why use *RGraphSpace* with *ggraph*?**
+## Required packages
+
+![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB2aWV3Ym94PSIwIDAgNTEyIDUxMiIgc3R5bGU9ImhlaWdodDoxZW07d2lkdGg6MWVtO3ZlcnRpY2FsLWFsaWduOi0wLjEyNWVtO21hcmdpbi1sZWZ0OmF1dG87bWFyZ2luLXJpZ2h0OmF1dG87Zm9udC1zaXplOmluaGVyaXQ7ZmlsbDpvcmFuZ2U7b3ZlcmZsb3c6dmlzaWJsZTtwb3NpdGlvbjpyZWxhdGl2ZTsiPjxwYXRoIGQ9Ik0yNTYgMzJjMTQuMiAwIDI3LjMgNy41IDM0LjUgMTkuOGwyMTYgMzY4YzcuMyAxMi40IDcuMyAyNy43IC4yIDQwLjFTNDg2LjMgNDgwIDQ3MiA0ODBINDBjLTE0LjMgMC0yNy42LTcuNy0zNC43LTIwLjFzLTctMjcuOCAuMi00MC4xbDIxNi0zNjhDMjI4LjcgMzkuNSAyNDEuOCAzMiAyNTYgMzJ6bTAgMTI4Yy0xMy4zIDAtMjQgMTAuNy0yNCAyNFYyOTZjMCAxMy4zIDEwLjcgMjQgMjQgMjRzMjQtMTAuNyAyNC0yNFYxODRjMC0xMy4zLTEwLjctMjQtMjQtMjR6bTMyIDIyNGEzMiAzMiAwIDEgMCAtNjQgMCAzMiAzMiAwIDEgMCA2NCAweiIgLz48L3N2Zz4=)
+Before proceeding, ensure that all packages described in the
+[*Installation
+Instructions*](https://sysbiolab.github.io/RGraphSpace/articles/install.md)
+are installed.
+
+``` r
+
+# Check required version
+if (packageVersion("RGraphSpace") < "1.5.1"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
+``` r
+
+# Load packages
+library("RGraphSpace")
+library("igraph")
+library("sf")
+library("maps")
+library("geometry")
+library("tidygraph")
+library("ggraph")
+library("flightsbr")
+library("airportr")
+```
+
+## Why use *RGraphSpace* with *ggraph*?
 
 While *ggraph* is a wonderful framework for relational data, precise
 edge-node alignment requires additional handling when node sizes vary
@@ -36,36 +67,7 @@ graph elements and reference frames while preserving interoperability
 with the extensive layout and styling flexibility of the *ggraph*
 grammar.
 
-## Required packages
-
-![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB2aWV3Ym94PSIwIDAgNTEyIDUxMiIgc3R5bGU9ImhlaWdodDoxZW07d2lkdGg6MWVtO3ZlcnRpY2FsLWFsaWduOi0wLjEyNWVtO21hcmdpbi1sZWZ0OmF1dG87bWFyZ2luLXJpZ2h0OmF1dG87Zm9udC1zaXplOmluaGVyaXQ7ZmlsbDpvcmFuZ2U7b3ZlcmZsb3c6dmlzaWJsZTtwb3NpdGlvbjpyZWxhdGl2ZTsiPjxwYXRoIGQ9Ik0yNTYgMzJjMTQuMiAwIDI3LjMgNy41IDM0LjUgMTkuOGwyMTYgMzY4YzcuMyAxMi40IDcuMyAyNy43IC4yIDQwLjFTNDg2LjMgNDgwIDQ3MiA0ODBINDBjLTE0LjMgMC0yNy42LTcuNy0zNC43LTIwLjFzLTctMjcuOCAuMi00MC4xbDIxNi0zNjhDMjI4LjcgMzkuNSAyNDEuOCAzMiAyNTYgMzJ6bTAgMTI4Yy0xMy4zIDAtMjQgMTAuNy0yNCAyNFYyOTZjMCAxMy4zIDEwLjcgMjQgMjQgMjRzMjQtMTAuNyAyNC0yNFYxODRjMC0xMy4zLTEwLjctMjQtMjQtMjR6bTMyIDIyNGEzMiAzMiAwIDEgMCAtNjQgMCAzMiAzMiAwIDEgMCA2NCAweiIgLz48L3N2Zz4=)
-Before proceeding, ensure that all packages described in the
-[*Installation
-Instructions*](https://sysbiolab.github.io/RGraphSpace/articles/install.md)
-are installed.
-
-``` r
-
-# Check required version
-if (packageVersion("RGraphSpace") < "1.5.0"){
-  message("Need to update 'RGraphSpace' for this vignette")
-  remotes::install_github("sysbiolab/RGraphSpace")
-}
-```
-
-``` r
-
-# Load packages
-library("RGraphSpace")
-library("igraph")
-library("sf")
-library("maps")
-library("geometry")
-library("tidygraph")
-library("ggraph")
-```
-
-## Setting basic input data
+### Setting basic input data
 
 The following example demonstrates the interoperability between
 *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects,
@@ -112,7 +114,7 @@ igraph::V(igraph_cities)$`Population (M)` <- cities$pop/1000000
 igraph::E(igraph_cities)$arrowType <- 3
 ```
 
-## Different input, same output
+### Different input, same output
 
 The following options all produce the same visual output, demonstrating
 how these packages integrate different types of input data.
@@ -180,6 +182,159 @@ output is identical.
 
 ![](cards/interoperability.png)
 
+## Using *RGraphSpace* with *sf*
+
+This vignette demonstrates how to use *RGraphSpace* to visualize graph
+data within an *sf* spatial coordinate system. The example uses
+Brazilian aviation data, in which airports are represented as nodes and
+flights as directed edges. Both the flight records and the airport
+registry are retrieved from the *flightsbr* package.
+
+### Setting basic input data
+
+Pre-processing sets up a reference map, retrieves the aviation data, and
+assembles it into node and edge tables. The basemap is a country outline
+from the *maps* package, converted to an `sf` object.
+
+``` r
+
+# Load a reference map
+map_sf <- st_as_sf(map("world", regions = "Brazil", fill = TRUE, plot = FALSE))
+```
+
+Flight records and airport registries are published separately and use
+different code systems, so airport identifiers must be harmonized before
+the two can be matched.
+
+``` r
+
+# Get flights (for edges) -- this data uses IATA codes
+flightsbr_2024 <- flightsbr::read_flights(date = 2024,
+  select = c("sg_iata_origem" , "sg_iata_destino")
+)
+
+# Get airports (for nodes) -- this data uses ICAO codes
+flightsbr_airports <- flightsbr::read_airports(type = "all") |>
+  dplyr::filter(codigo_oaci %in% airportr::airports$ICAO) 
+
+# Map valid ICAO to IATA codes
+flightsbr_airports <- flightsbr_airports |>
+  dplyr::left_join( dplyr::select(airportr::airports, ICAO, IATA),
+    by = c("codigo_oaci" = "ICAO")) |> dplyr::filter(IATA != "\\N") |>
+  dplyr::relocate(IATA)
+```
+
+Flights are aggregated into unique routes, and the two datasets are then
+reduced to the airports and routes common to both, so that every edge
+has endpoints in the node table.
+
+``` r
+
+# Aggregate flights by counts
+flight_counts <- flightsbr_2024 |> na.omit() |>
+  dplyr::filter(sg_iata_origem != sg_iata_destino) |>
+  dplyr::count(sg_iata_origem, sg_iata_destino, name = "counts") |>
+  dplyr::arrange(counts)
+
+# Keep only airports that actually appear in 'flight_counts'
+active_airports <- flightsbr_airports |>
+  dplyr::filter(IATA %in% c(flight_counts$sg_iata_origem, 
+    flight_counts$sg_iata_destino)) |>
+  dplyr::select(IATA, longitude, latitude, type) |> na.omit()
+
+# Keep flights that map to 'active_airports'
+flight_counts <- flight_counts |>
+  dplyr::filter(sg_iata_origem  %in% active_airports$IATA,
+    sg_iata_destino %in% active_airports$IATA)
+
+# Count departures
+active_airports$departures <- tapply(flight_counts$counts,
+  flight_counts$sg_iata_origem, sum)[active_airports$IATA]
+```
+
+### Building the graph
+
+With the flight and airport datasets loaded, we can generate an `igraph`
+object using the flights as edges and the airports as vertices. The
+graph is directed, preserving the direction of each departure-arrival
+pair, and edge counts represent the number of flights on each unique
+route.
+
+``` r
+
+# Make an igraph with flight records
+igraph_flights <- graph_from_data_frame(flight_counts,
+  directed = TRUE, vertices = active_airports)
+```
+
+Although `GraphSpace` coordinates are normally rescaled to a unit
+square, here we keep the original latitude and longitude values, which
+must match the coordinates of the `sf` object.
+
+``` r
+
+# Create a GraphSpace object
+gs_flight <- GraphSpace(igraph_flights)
+
+# Assign latitude and longitude to coordinates
+gs_flight$x <- gs_flight$longitude
+gs_flight$y <- gs_flight$latitude
+```
+
+### Rendering over the map
+
+The graph can now be rendered over the `sf` basemap, with `colour`
+representing the number of flights (log₁₀ scale) and `fill`
+distinguishing airport types.
+
+``` r
+
+ggplot(data = gs_flight) +
+  geom_sf(data = map_sf, color = "grey") +
+  coord_sf(crs = 5880, default_crs = 4326) +
+  geom_edgespace(aes(colour = log10(counts), 
+    alpha = counts/max(counts)), coord_warp = 1) + 
+  geom_nodespace(aes(fill = type, 
+    label = ifelse(departures > 10000, name, NA)), 
+    size = 1.5, colour = NA) +
+  scale_colour_continuous(palette = c("cyan", "blue")) +
+  scale_fill_discrete(palette = c("#F8766D", "#00BFC4")) + 
+  scale_alpha_continuous(range = c(0.2, 1), guide = "none") +
+  labs(title = "Domestic Flight Network in Brazil, 2024", 
+    colour = "Flights\n(log10 scale)",
+    fill = "Airport type", y = "Latitude", x = "Longitude") +
+  theme_gspace_legend(discrete_fill = TRUE) +
+  theme_minimal()
+```
+
+![](interoperability_files/figure-html/Interoperability%20sf%20-%206-1.png)
+
+In this example,
+[`coord_sf()`](https://ggplot2.tidyverse.org/reference/ggsf.html)
+projects the plot into SIRGAS 2000 / Brazil Polyconic (`crs = 5880`), a
+non-linear projection, with `default_crs = 4326` declaring that the node
+coordinates are longitude and latitude in WGS 84.
+
+The curved gridlines are the projection’s signature: meridians converge
+toward the pole, so lines of constant longitude are no longer vertical.
+Edges curve in the same direction, following the projection rather than
+cutting across it, which is what makes graph and map read as one object
+rather than two overlaid images. The bend is strongest for long routes
+and negligible for short ones, since it tracks how much the projection
+deforms the space each edge crosses. It reflects the geometry of the
+projection, not the route an aircraft flies.
+
+The strength of this effect is controlled by `coord_warp`, which
+defaults to 1, the exact deviation introduced by the projection. Larger
+values exaggerate the bend, useful where it is otherwise too subtle to
+read, though they may give erratic results under strongly warped
+coordinate systems. Setting `coord_warp = 0` disables the adjustment, so
+edges are drawn as straight chords between projected endpoints.
+
+A complementary version of this vignette is available in the
+[*PreprocessingAviationData*](https://github.com/flaviogckessler/PreprocessingAviationData)
+repository.
+
 ## Session information
 
     #> R version 4.6.1 (2026-06-24)
@@ -205,29 +360,34 @@ output is identical.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] ggraph_2.2.2       tidygraph_1.3.1    geometry_0.5.2     maps_3.4.3        
-    #> [5] sf_1.1-1           igraph_2.3.3       RGraphSpace_1.5.01 ggplot2_4.0.3     
+    #>  [1] airportr_0.1.3    flightsbr_1.1.1   ggraph_2.2.2      tidygraph_1.3.1  
+    #>  [5] geometry_0.5.2    maps_3.4.3        sf_1.1-1          igraph_2.3.3     
+    #>  [9] RGraphSpace_1.5.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] gtable_0.3.6       beeswarm_0.4.0     xfun_0.59          bslib_0.11.0      
-    #>  [5] htmlwidgets_1.6.4  ggrepel_0.9.8      lattice_0.22-9     vctrs_0.7.3       
-    #>  [9] tools_4.6.1        generics_0.1.4     tibble_3.3.1       proxy_0.4-29      
-    #> [13] pkgconfig_2.0.3    Matrix_1.7-5       KernSmooth_2.23-26 RColorBrewer_1.1-3
-    #> [17] S7_0.2.2           desc_1.4.3         lifecycle_1.0.5    compiler_4.6.1    
-    #> [21] farver_2.1.2       textshaping_1.0.5  ggforce_0.5.0      fontawesome_0.5.3 
-    #> [25] graphlayouts_1.2.4 vipor_0.4.7        htmltools_0.5.9    class_7.3-23      
-    #> [29] sass_0.4.10        yaml_2.3.12        pillar_1.11.1      pkgdown_2.2.0     
-    #> [33] jquerylib_0.1.4    tidyr_1.3.2        MASS_7.3-66        classInt_0.4-11   
-    #> [37] cachem_1.1.0       viridis_0.6.5      abind_1.4-8        tidyselect_1.2.1  
-    #> [41] digest_0.6.39      dplyr_1.2.1        purrr_1.2.2        magic_1.6-1       
-    #> [45] polyclip_1.10-7    fastmap_1.2.0      grid_4.6.1         cli_3.6.6         
-    #> [49] magrittr_2.0.5     e1071_1.7-17       withr_3.0.3        scales_1.4.0      
-    #> [53] ggbeeswarm_0.7.3   rmarkdown_2.31     otel_0.2.0         gridExtra_2.3.1   
-    #> [57] ragg_1.5.2         memoise_2.0.1      evaluate_1.0.5     knitr_1.51        
-    #> [61] ggrastr_1.0.2      viridisLite_0.4.3  rlang_1.2.0        Rcpp_1.1.1-1.1    
-    #> [65] glue_1.8.1         DBI_1.3.0          tweenr_2.0.3       rstudioapi_0.19.0 
-    #> [69] jsonlite_2.0.0     R6_2.6.1           systemfonts_1.3.2  fs_2.1.0          
-    #> [73] units_1.0-1
+    #>  [1] tidyselect_1.2.1   viridisLite_0.4.3  dplyr_1.2.1        vipor_0.4.7       
+    #>  [5] farver_2.1.2       viridis_0.6.5      S7_0.2.2           fastmap_1.2.0     
+    #>  [9] tweenr_2.0.3       janitor_2.2.1      digest_0.6.39      timechange_0.4.0  
+    #> [13] lifecycle_1.0.5    magrittr_2.0.5     compiler_4.6.1     rlang_1.2.0       
+    #> [17] sass_0.4.10        tools_4.6.1        yaml_2.3.12        data.table_1.18.4 
+    #> [21] knitr_1.51         labeling_0.4.3     graphlayouts_1.2.4 htmlwidgets_1.6.4 
+    #> [25] classInt_0.4-11    curl_7.1.0         xml2_1.6.0         RColorBrewer_1.1-3
+    #> [29] abind_1.4-8        KernSmooth_2.23-26 withr_3.0.3        purrr_1.2.2       
+    #> [33] desc_1.4.3         grid_4.6.1         polyclip_1.10-7    e1071_1.7-17      
+    #> [37] scales_1.4.0       MASS_7.3-66        cli_3.6.6          rmarkdown_2.31    
+    #> [41] ragg_1.5.2         generics_0.1.4     otel_0.2.0         rstudioapi_0.19.0 
+    #> [45] httr_1.4.8         magic_1.6-1        DBI_1.3.0          pbapply_1.7-4     
+    #> [49] ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0      proxy_0.4-29      
+    #> [53] stringr_1.6.0      rvest_1.0.5        parallel_4.6.1     selectr_0.6-0     
+    #> [57] ggrastr_1.0.2      vctrs_0.7.3        Matrix_1.7-6       jsonlite_2.0.0    
+    #> [61] ggrepel_0.9.8      archive_1.1.13     beeswarm_0.4.0     systemfonts_1.3.2 
+    #> [65] fontawesome_0.5.3  tidyr_1.3.2        jquerylib_0.1.4    units_1.0-1       
+    #> [69] glue_1.8.1         pkgdown_2.2.0      stringi_1.8.7      lubridate_1.9.5   
+    #> [73] gtable_0.3.6       tibble_3.3.1       parzer_0.4.4       pillar_1.11.1     
+    #> [77] htmltools_0.5.9    R6_2.6.1           textshaping_1.0.5  evaluate_1.0.5    
+    #> [81] lattice_0.22-9     snakecase_0.11.1   memoise_2.0.1      bslib_0.11.0      
+    #> [85] class_7.3-23       Rcpp_1.1.1-1.1     gridExtra_2.3.1    xfun_0.59         
+    #> [89] fs_2.1.0           pkgconfig_2.0.3
 
 ## References
 

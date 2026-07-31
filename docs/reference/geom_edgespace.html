@@ -36,7 +36,7 @@ that coexist without collision (see Two aesthetic interfaces section)."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.01</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,6 +101,7 @@ that coexist without collision (see <em>Two aesthetic interfaces</em> section).<
 <span>  arrow_size <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  arrow_offset <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  curve <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  coord_warp <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  parallel_spread <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  loop_direction <span class="op">=</span> <span class="st">"adaptive"</span>,</span>
 <span>  lineend <span class="op">=</span> <span class="st">"butt"</span>,</span>
@@ -178,9 +179,16 @@ controls which side it bows toward. Ignored for loops and parallel edges
 (see 'details').</p></dd>
 
 
+<dt id="arg-coord-warp">coord_warp<a class="anchor" aria-label="anchor" href="#arg-coord-warp"></a></dt>
+<dd><p>Numeric (&gt;=0). Bend applied to edges under non-linear
+coordinate systems, so that curvature follows the coordinate system's
+warping. Defaults to 1; has no effect under linear coordinates
+(see 'details').</p></dd>
+
+
 <dt id="arg-parallel-spread">parallel_spread<a class="anchor" aria-label="anchor" href="#arg-parallel-spread"></a></dt>
-<dd><p>Controls the lateral spread of parallel edges and
-self-loops. Ignored for simple non-loop edges (see 'details').</p></dd>
+<dd><p>Numeric (&gt;=0). Controls the lateral spread of parallel
+edges and self-loops. Ignored for simple non-loop edges (see 'details').</p></dd>
 
 
 <dt id="arg-loop-direction">loop_direction<a class="anchor" aria-label="anchor" href="#arg-loop-direction"></a></dt>
@@ -234,6 +242,16 @@ uniformly in graph space and is bounded by the edge length, in NPC units.</p>
 to the edge, by <code>curve</code> times the edge length. <code>curve = 0</code>
 (default) renders a straight edge. Typical visible values range from
 about 0.1 to 0.4; sign sets which side the edge bows toward.</p>
+<p><strong>coord_warp</strong> bends edges under non-linear coordinate systems, for
+example <a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">coord_sf</a> with a <code>default_crs</code>,
+<a href="https://ggplot2.tidyverse.org/reference/coord_radial.html" class="external-link">coord_polar</a>, or <a href="https://ggplot2.tidyverse.org/reference/coord_transform.html" class="external-link">coord_trans</a>, so that
+edge curvature follows the coordinate system's warping rather than
+cutting across it. <code>coord_warp = 1</code> (default) applies the exact
+deviation between the warped edge midpoint and the midpoint of the
+warped endpoints; <code>coord_warp = 0</code> disables it. Values above 1
+exaggerate the bend, but may give erratic results under strongly warped
+coordinate systems. The bend indicates the coordinate system's influence
+on the graph's extent; it does not depict a path through space.</p>
 <p><strong>parallel_spread</strong> controls the fan opening for parallel edges,
 reciprocal <code>A-&gt;B</code>/<code>B-&gt;A</code> pairs, and self-loops – anything
 where multiple edges share the same vertex pair. <code>curve</code> has no

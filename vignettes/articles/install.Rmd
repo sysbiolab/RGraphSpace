@@ -28,9 +28,14 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 
 ```r
 install.packages("ggraph")
+install.packages("dplyr")
+
 install.packages("sf")
 install.packages("maps")
 install.packages("geometry")
+install.packages("flightsbr")
+install.packages("airportr")
+
 install.packages("ggnewscale")
 install.packages("patchwork")
 

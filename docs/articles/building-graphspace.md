@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH 0dd05ff DN-- 5 4 -- 
+#> IGRAPH 5a5a2d9 DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -379,18 +379,18 @@ complete, preventing other `geoms` from mixing incompatible values
 The practical consequence is that `V(g)$fill <- "red"` and
 `V(g)$nodeColor <- "red"` are **not** equivalent. The former is a
 regular user variable, available for data-driven mapping via
-`aes(fill = fill)`. The latter is a pre-defined identity value applied
-directly to the rendered nodes.
+[`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). The latter
+is a pre-defined identity value applied directly to the rendered nodes.
 
 This design allows the two interfaces to coexist cleanly. When multiple
 sources define the same aesthetic, the following priority applies
 (highest to lowest):
 
-| Priority | Source | Description |
-|:--:|:--:|----|
-| 1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. |
-| 2 | Fixed parameter | Identity value applied uniformly to all nodes or edges. |
-| 3 | Graph attribute | Per-node or per-edge identity values from the `GraphSpace` object. |
+| Priority | Source | Description | Example |
+|:--:|:--:|----|----|
+| 1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. | `geom_nodespace(aes(fill = node_var))` |
+| 2 | Fixed parameter | Identity value applied uniformly. | `geom_nodespace(fill = "red")` |
+| 3 | Graph attribute | Identity values from the `GraphSpace` object. | [`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md) |
 
 ## Session information
 
@@ -417,10 +417,10 @@ sources define the same aesthetic, the following priority applies
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1    igraph_2.3.3       RGraphSpace_1.5.01 ggplot2_4.0.3     
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
+    #>  [1] Matrix_1.7-6       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
     #>  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
     #>  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 
     #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          

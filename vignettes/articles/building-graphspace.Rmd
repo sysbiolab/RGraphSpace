@@ -269,15 +269,33 @@ The node and edge attribute names above (`nodeColor`, `nodeSize`, etc.) are deli
 
 When a column in a data frame shares a name with a *ggplot2* aesthetic, *ggplot2* subjects it to scale training, which is designed for data-driven mappings. Graph attributes, however, carry **final, pre-defined values**  (hex color codes, fixed sizes, specific shapes) that must be applied as-is without modification. The *camelCase* names make these attributes invisible to the scale system. They are assigned to their corresponding *ggplot2* aesthetics only after this step is complete, preventing other `geoms` from mixing incompatible values (e.g. hex colors and numeric variables) into their scale training.
 
-The practical consequence is that `V(g)$fill <- "red"` and `V(g)$nodeColor <- "red"` are **not** equivalent. The former is a regular user variable, available for data-driven mapping via `aes(fill = fill)`. The latter is a pre-defined identity value applied directly to the rendered nodes.
+The practical consequence is that `V(g)$fill <- "red"` and `V(g)$nodeColor <- "red"` are **not** equivalent. The former is a regular user variable, available for data-driven mapping via `aes()`. The latter is a pre-defined identity value applied directly to the rendered nodes.
 
 This design allows the two interfaces to coexist cleanly. When multiple sources define the same aesthetic, the following priority applies (highest to lowest):
 
-Priority | Source | Description
-:-------: | :------: | -----------
-1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends.
-2 | Fixed parameter | Identity value applied uniformly to all nodes or edges.
-3 | Graph attribute | Per-node or per-edge identity values from the `GraphSpace` object.
+
+```{css, echo=FALSE}
+.table-sm { font-size: 0.85em; }
+.table-striped tr:nth-child(even) td {
+  background-color: var(--bs-tertiary-bg);
+}
+.table-striped th {
+  background-color: var(--bs-secondary-bg) !important;
+}
+.table-striped th {
+  background-color: var(--bs-secondary-bg) !important;
+  border-bottom: 2px solid var(--bs-border-color) !important;
+}
+```
+
+::: {.table .table-sm .table-striped}
+Priority | Source | Description | Example
+:-: | :-: | --------- | ------------
+1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. | `geom_nodespace(aes(fill = node_var))`
+2 | Fixed parameter | Identity value applied uniformly. |  `geom_nodespace(fill = "red")`
+3 | Graph attribute | Identity values from the `GraphSpace` object. | `geom_nodespace()`
+::: 
+
 
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}

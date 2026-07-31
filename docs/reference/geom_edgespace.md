@@ -27,6 +27,7 @@ geom_edgespace(
   arrow_size = 0.5,
   arrow_offset = 0.01,
   curve = 0,
+  coord_warp = 1,
   parallel_spread = 1,
   loop_direction = "adaptive",
   lineend = "butt",
@@ -103,10 +104,16 @@ edgespace_handler()
   controls which side it bows toward. Ignored for loops and parallel
   edges (see 'details').
 
+- coord_warp:
+
+  Numeric (\>=0). Bend applied to edges under non-linear coordinate
+  systems, so that curvature follows the coordinate system's warping.
+  Defaults to 1; has no effect under linear coordinates (see 'details').
+
 - parallel_spread:
 
-  Controls the lateral spread of parallel edges and self-loops. Ignored
-  for simple non-loop edges (see 'details').
+  Numeric (\>=0). Controls the lateral spread of parallel edges and
+  self-loops. Ignored for simple non-loop edges (see 'details').
 
 - loop_direction:
 
@@ -169,6 +176,20 @@ constructor.
 to the edge, by `curve` times the edge length. `curve = 0` (default)
 renders a straight edge. Typical visible values range from about 0.1 to
 0.4; sign sets which side the edge bows toward.
+
+**coord_warp** bends edges under non-linear coordinate systems, for
+example [coord_sf](https://ggplot2.tidyverse.org/reference/ggsf.html)
+with a `default_crs`,
+[coord_polar](https://ggplot2.tidyverse.org/reference/coord_radial.html),
+or
+[coord_trans](https://ggplot2.tidyverse.org/reference/coord_transform.html),
+so that edge curvature follows the coordinate system's warping rather
+than cutting across it. `coord_warp = 1` (default) applies the exact
+deviation between the warped edge midpoint and the midpoint of the
+warped endpoints; `coord_warp = 0` disables it. Values above 1
+exaggerate the bend, but may give erratic results under strongly warped
+coordinate systems. The bend indicates the coordinate system's influence
+on the graph's extent; it does not depict a path through space.
 
 **parallel_spread** controls the fan opening for parallel edges,
 reciprocal `A->B`/`B->A` pairs, and self-loops – anything where multiple

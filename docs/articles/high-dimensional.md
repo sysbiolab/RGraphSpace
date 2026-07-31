@@ -237,7 +237,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [3] ssHippo.SeuratData_3.1.4  pbmc3k.SeuratData_3.1.4  
     #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.1             
     #>  [7] SeuratObject_5.4.0        sp_2.2-1                 
-    #>  [9] RGraphSpace_1.5.01        ggplot2_4.0.3            
+    #>  [9] RGraphSpace_1.5.1         ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.19.0      jsonlite_2.0.0        
@@ -250,7 +250,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [22] ica_1.0-3              fontawesome_0.5.3      plyr_1.8.9            
     #>  [25] plotly_4.12.0          zoo_1.8-15             cachem_1.1.0          
     #>  [28] igraph_2.3.3           mime_0.13              lifecycle_1.0.5       
-    #>  [31] pkgconfig_2.0.3        Matrix_1.7-5           R6_2.6.1              
+    #>  [31] pkgconfig_2.0.3        Matrix_1.7-6           R6_2.6.1              
     #>  [34] fastmap_1.2.0          fitdistrplus_1.2-6     future_1.70.0         
     #>  [37] shiny_1.14.0           digest_0.6.39          tensor_1.5.1          
     #>  [40] RSpectra_0.16-2        irlba_2.3.7            textshaping_1.0.5     

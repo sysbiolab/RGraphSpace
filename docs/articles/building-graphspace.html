@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.01</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-07-28</h4>
+            <h4 data-toc-skip class="date">2026-07-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/building-graphspace.Rmd" class="external-link"><code>vignettes/articles/building-graphspace.Rmd</code></a></small>
       <div class="d-none name"><code>building-graphspace.Rmd</code></div>
@@ -203,7 +203,7 @@ internally.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 0dd05ff DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 5a5a2d9 DN-- 5 4 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
@@ -417,41 +417,60 @@ numeric variables) into their scale training.</p>
 <p>The practical consequence is that <code>V(g)$fill &lt;- "red"</code>
 and <code>V(g)$nodeColor &lt;- "red"</code> are <strong>not</strong>
 equivalent. The former is a regular user variable, available for
-data-driven mapping via <code>aes(fill = fill)</code>. The latter is a
-pre-defined identity value applied directly to the rendered nodes.</p>
+data-driven mapping via <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>. The latter is a pre-defined
+identity value applied directly to the rendered nodes.</p>
 <p>This design allows the two interfaces to coexist cleanly. When
 multiple sources define the same aesthetic, the following priority
 applies (highest to lowest):</p>
+<style type="text/css">
+.table-sm { font-size: 0.85em; }
+.table-striped tr:nth-child(even) td {
+  background-color: var(--bs-tertiary-bg);
+}
+.table-striped th {
+  background-color: var(--bs-secondary-bg) !important;
+}
+.table-striped th {
+  background-color: var(--bs-secondary-bg) !important;
+  border-bottom: 2px solid var(--bs-border-color) !important;
+}
+</style>
+<div class="table table-sm table-striped">
 <table class="table">
 <colgroup>
-<col width="32%">
-<col width="28%">
-<col width="39%">
+<col width="11%">
+<col width="11%">
+<col width="33%">
+<col width="44%">
 </colgroup>
 <thead><tr class="header">
 <th align="center">Priority</th>
 <th align="center">Source</th>
 <th>Description</th>
+<th>Example</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="center">1</td>
 <td align="center">Aesthetic mapping</td>
 <td>Data-driven, scale-trained, shown in legends.</td>
+<td><code>geom_nodespace(aes(fill = node_var))</code></td>
 </tr>
 <tr class="even">
 <td align="center">2</td>
 <td align="center">Fixed parameter</td>
-<td>Identity value applied uniformly to all nodes or edges.</td>
+<td>Identity value applied uniformly.</td>
+<td><code>geom_nodespace(fill = "red")</code></td>
 </tr>
 <tr class="odd">
 <td align="center">3</td>
 <td align="center">Graph attribute</td>
-<td>Per-node or per-edge identity values from the
-<code>GraphSpace</code> object.</td>
+<td>Identity values from the <code>GraphSpace</code> object.</td>
+<td><code><a href="../reference/geom_nodespace.html">geom_nodespace()</a></code></td>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
@@ -479,10 +498,10 @@ applies (highest to lowest):</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] tidygraph_1.3.1    igraph_2.3.3       RGraphSpace_1.5.01 ggplot2_4.0.3     </span></span>
+<span><span class="co">#&gt; [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.1 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.7-5       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       </span></span>
+<span><span class="co">#&gt;  [1] Matrix_1.7-6       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       </span></span>
 <span><span class="co">#&gt;  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       </span></span>
 <span><span class="co">#&gt;  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 </span></span>
 <span><span class="co">#&gt; [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          </span></span>

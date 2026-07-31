@@ -2,9 +2,10 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
-\section{CHANGES IN VERSION 1.5.01 (2026-07-28)}{
+\section{CHANGES IN VERSION 1.5.1 (2026-07-31)}{
   \itemize{
     \item Restored compatibility with objects from older package versions.
+    \item Improved compatibility with non-linear coordinate systems.
   }
 }
 

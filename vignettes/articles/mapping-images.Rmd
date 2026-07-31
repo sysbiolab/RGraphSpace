@@ -107,7 +107,7 @@ ggplot(gs_image_toy) +
 
 # Image registration
 
-Image registration is a broad field concerned with estimating a spatial transformation that aligns a query to a reference dataset [@Lewis2021; @Balluff2022]. *RGraphSpace* addresses a constrained case where the spatial correspondence between graph and image is known by construction, so the alignment task reduces to correcting axis-orientation mismatches, fixing node positions to their target pixels, and normalizing graph and image to a common coordinate space. In this section we exemplify this constrained workflow by extracting pixel coordinates from an image matrix and building a graph with nodes placed at those positions.
+Image registration is a broad field concerned with estimating a spatial transformation that aligns a query to a reference dataset [@Lewis2021; @Balluff2022]. *RGraphSpace* addresses a special case where the spatial correspondence between graph and image is known by construction, so the alignment task reduces to correcting axis-orientation mismatches, fixing node positions to their target pixels, and normalizing graph and image to a common coordinate space. In this section we exemplify this constrained workflow by extracting pixel coordinates from an image matrix and building a graph with nodes placed at those positions.
 
 ## Setting basic input data
 

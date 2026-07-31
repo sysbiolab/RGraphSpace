@@ -47,9 +47,14 @@
 #' length. Non-zero values bow the edge into a smooth curve, and the sign 
 #' controls which side it bows toward. Ignored for loops and parallel edges
 #' (see 'details').
-#'
-#' @param parallel_spread Controls the lateral spread of parallel edges and 
-#' self-loops. Ignored for simple non-loop edges (see 'details').
+#' 
+#' @param coord_warp Numeric (>=0). Bend applied to edges under non-linear 
+#' coordinate systems, so that curvature follows the coordinate system's 
+#' warping. Defaults to 1; has no effect under linear coordinates 
+#' (see 'details').
+#' 
+#' @param parallel_spread Numeric (>=0). Controls the lateral spread of parallel 
+#' edges and self-loops. Ignored for simple non-loop edges (see 'details').
 #' 
 #' @param loop_direction Controls how self-loops are oriented around their
 #' node. Options: \code{'adaptive'} (default), \code{'opposite'}, and an
@@ -154,6 +159,17 @@
 #' (default) renders a straight edge. Typical visible values range from
 #' about 0.1 to 0.4; sign sets which side the edge bows toward.
 #' 
+#' **coord_warp** bends edges under non-linear coordinate systems, for
+#' example \link[ggplot2]{coord_sf} with a \code{default_crs}, 
+#' \link[ggplot2]{coord_polar}, or \link[ggplot2]{coord_trans}, so that  
+#' edge curvature follows the coordinate system's warping rather than
+#' cutting across it. \code{coord_warp = 1} (default) applies the exact
+#' deviation between the warped edge midpoint and the midpoint of the
+#' warped endpoints; \code{coord_warp = 0} disables it. Values above 1
+#' exaggerate the bend, but may give erratic results under strongly warped
+#' coordinate systems. The bend indicates the coordinate system's influence
+#' on the graph's extent; it does not depict a path through space.
+#' 
 #' **parallel_spread** controls the fan opening for parallel edges,
 #' reciprocal \code{A->B}/\code{B->A} pairs, and self-loops -- anything
 #' where multiple edges share the same vertex pair. \code{curve} has no
@@ -204,7 +220,8 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
   stat = StatEdgeSpace, position = "identity", ..., 
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE,
   arrow_size = 0.5, arrow_offset = 0.01, curve = 0, 
-  parallel_spread = 1, loop_direction = "adaptive", 
+  coord_warp = 1, parallel_spread = 1, 
+  loop_direction = "adaptive", 
   lineend = "butt", linejoin = "mitre",
   raster = FALSE, dpi = NULL, dev = "cairo", scale = 1) {
   
@@ -213,6 +230,7 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
   .validate_gs_args("singleNumber", "arrow_size", arrow_size)
   .validate_gs_args("singleNumber", "arrow_offset", arrow_offset)
   .validate_gs_args("singleNumber", "curve", curve)
+  .validate_gs_args("singlePositiveNumber", "coord_warp", coord_warp)
   .validate_gs_args("singlePositiveNumber", "parallel_spread", parallel_spread)
   if(is.character(loop_direction)){
     loop_direction <- match.arg(loop_direction, 
@@ -244,6 +262,7 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
     arrow_size = arrow_size,
     arrow_offset = arrow_offset,
     curve = curve,
+    coord_warp = coord_warp,
     parallel_spread = parallel_spread,
     loop_direction = loop_direction,
     lineend = lineend,
@@ -480,7 +499,7 @@ GeomEdgeSpace <- ggproto(
   ),
   
   draw_panel = function(self, data, panel_params, coord,   
-    arrow_size = 0.5, arrow_offset = 0.01, curve = 0, 
+    arrow_size = 0.5, arrow_offset = 0.01, curve = 0, coord_warp = 1,
     parallel_spread = 1, loop_direction = "adaptive", lineend = "butt", 
     linejoin = "mitre", na.rm = FALSE, raster = FALSE, 
     dpi = NULL, dev = "cairo", scale = 1, .size_unit = "mm", 
@@ -510,9 +529,11 @@ GeomEdgeSpace <- ggproto(
     
     data <- .resolve_edge_curve(data, curve, parallel_spread)
     
-    coords <- coord$transform(data, panel_params)
+    coords <- .transform_edge_coords(data, coord, panel_params, coord_warp)
     
     coords <- .geom_set_arrows(coords, .size_unit, loop_direction)
+    
+    coords <- .apply_coord_deviation(coords)
     
     # Create edge grobs
     grobs <- .get_edge_grobs(coords, lineend = lineend, 
@@ -540,6 +561,100 @@ GeomEdgeSpace <- ggproto(
 )
 
 ################################################################################
+### Coord-aware edge geometry
+################################################################################
+# `CoordSf$transform()` projects only the `x`/`y` pair but rescales the whole
+# x/y family, so under `coord_sf(default_crs = ...)` end points arrive
+# rescaled but unprojected. Fixed by projecting each endpoint separately,
+# following `GeomSegment`. This correction is unconditional; `coord_warp`
+# governs only the curvature adjustment below.
+.transform_edge_coords <- function(data, coord, panel_params,
+  coord_warp = 1){
+  
+  coords <- coord$transform(data, panel_params)
+  coords$.dev_x <- 0
+  coords$.dev_y <- 0
+  
+  if (coord$is_linear()) return(coords)
+  
+  # Project end points as an x/y pair (see note above)
+  ends <- data
+  ends$x <- data$xend
+  ends$y <- data$yend
+  ends$xend <- NULL
+  ends$yend <- NULL
+  ends <- coord$transform(ends, panel_params)
+  coords$xend <- ends$x
+  coords$yend <- ends$y
+  
+  strength <- .coord_warp_strength(coord_warp)
+  if (strength == 0) return(coords)
+  
+  # Measured on untrimmed end points, so node-clipping offsets -- applied
+  # later in .adjust_arrow_position_chord() -- do not contaminate it.
+  mids <- data
+  mids$x <- (data$x + data$xend) / 2
+  mids$y <- (data$y + data$yend) / 2
+  mids$xend <- NULL
+  mids$yend <- NULL
+  mids <- coord$transform(mids, panel_params)
+  
+  coords$.dev_x <- strength * (mids$x - (coords$x + coords$xend) / 2)
+  coords$.dev_y <- strength * (mids$y - (coords$y + coords$yend) / 2)
+  
+  coords
+  
+}
+
+#-------------------------------------------------------------------------------
+# Resolves `coord_warp` to a numeric strength: 0 disables, 1 applies the exact
+# deviation. Invalid values fall back to 0.
+.coord_warp_strength <- function(coord_warp){
+  strength <- suppressWarnings(as.numeric(coord_warp)[1])
+  if (!is.finite(strength) || strength < 0) return(0)
+  strength
+}
+
+#-------------------------------------------------------------------------------
+# A chord between warped endpoints ignores how the space bends between them.
+# For a quadratic Bezier, B(0.5) = (P0 + 2C + P1)/4, so moving the midpoint
+# by D means moving C by 2D. Added to the existing control point, so `curve`
+# and warp-following superimpose.
+#
+# Applied here rather than in `.transform_edge_coords()` because `cx`/`cy` do
+# not exist until `.adjust_arrow_position_chord()` -- while the deviation
+# itself must be measured earlier, before node-clipping offsets move the
+# endpoints. 'tol' is the smallest bend worth drawing.
+.apply_coord_deviation <- function(coords, tol = 1e-4){
+  
+  if (is.null(coords$.dev_x) || is.null(coords$cx)) return(coords)
+  
+  ok <- is.finite(coords$cx) & is.finite(coords$cy) &
+    is.finite(coords$.dev_x) & is.finite(coords$.dev_y) &
+    sqrt(coords$.dev_x^2 + coords$.dev_y^2) > tol
+  
+  if (!any(ok)) return(coords)
+  
+  coords$cx[ok] <- coords$cx[ok] + 2 * coords$.dev_x[ok]
+  coords$cy[ok] <- coords$cy[ok] + 2 * coords$.dev_y[ok]
+  
+  # Arrowheads are oriented from px*/py*, derived from the control point --
+  # refresh them so they follow the warped curve rather than the original.
+  tan <- .curve_tangents(
+    coords$x[ok], coords$y[ok],
+    coords$xend[ok], coords$yend[ok],
+    coords$cx[ok], coords$cy[ok])
+  
+  coords$px0[ok] <- tan$px0
+  coords$py0[ok] <- tan$py0
+  coords$px1[ok] <- tan$px1
+  coords$py1[ok] <- tan$py1
+  
+  coords
+  
+}
+
+################################################################################
 ### GeomLabel
 ################################################################################
 .get_edge_label_grob <- function(coords, coord, panel_params){
@@ -549,7 +664,7 @@ GeomEdgeSpace <- ggproto(
     return( zeroGrob() )
   }
   
-  l_data <- .get_edge_label_xy(l_data, panel_params)
+  l_data <- .get_edge_label_xy(l_data)
   
   l_data$colour <- l_data$label_colour %||% l_data$colour %||% "black"
   l_data$alpha <- l_data$label_alpha %||% l_data$alpha %||% NA_real_
@@ -571,10 +686,10 @@ GeomEdgeSpace <- ggproto(
   
 }
 
-.get_edge_label_xy <- function(edges, panel_params){
+.get_edge_label_xy <- function(edges){
   
   is_loop <- edges$is_loop
-  is_curved <- !is.na(edges$curve) & edges$curve != 0 & !is_loop
+  is_curved <- .is_bezier_edge(edges)
   is_straight <- !is_loop & !is_curved
   
   lx <- numeric(nrow(edges))
@@ -606,22 +721,28 @@ GeomEdgeSpace <- ggproto(
     ly[is_loop] <- 0.125*e$y + 0.375*e$cy1 + 0.375*e$cy2 + 0.125*e$yend
   }
   
-  # Convert label positions from NPC space back to data space so that
-  # GeomLabel$draw_panel() can apply coord$transform() correctly.
-  r0x <- panel_params$x$rescale(panel_params$x$limits[1])
-  r1x <- panel_params$x$rescale(panel_params$x$limits[2])
-  r0y <- panel_params$y$rescale(panel_params$y$limits[1])
-  r1y <- panel_params$y$rescale(panel_params$y$limits[2])
-  lx<- (lx - r0x) / (r1x - r0x) *
-    diff(panel_params$x$limits) + panel_params$x$limits[1]
-  ly <- (ly - r0y) / (r1y - r0y) *
-    diff(panel_params$y$limits) + panel_params$y$limits[1]
-  
-  edges$x <- lx
-  edges$y <- ly
+  # Positions derive from cx/cy and are therefore already in panel space.
+  # AsIs makes GeomLabel$draw_panel()'s coord$transform() a no-op
+  # (ggplot2 >= 4.0.0, #6205), which is required for non-orthogonal coords
+  # where inverting the transform is not possible.
+  edges$x <- I(lx)
+  edges$y <- I(ly)
   
   return(edges)
   
+}
+
+#-------------------------------------------------------------------------------
+# Edges rendered as Beziers: non-zero 'curve', plus any carrying a non-zero
+# warp deviation. Shared by grob dispatch and label placement so both agree
+# on an edge's geometry. 'tol' is the smallest bend worth drawing.
+.is_bezier_edge <- function(edges, tol = 1e-4){
+  dev_edge <- rep(FALSE, nrow(edges))
+  if (!is.null(edges$.dev_x)) {
+    dev_edge <- is.finite(edges$.dev_x) & is.finite(edges$.dev_y) &
+      sqrt(edges$.dev_x^2 + edges$.dev_y^2) > tol
+  }
+  !is.na(edges$curve) & (edges$curve != 0 | dev_edge) & !edges$is_loop
 }
 
 ################################################################################
@@ -640,7 +761,7 @@ GeomEdgeSpace <- ggproto(
   
   grobs <- list()
   
-  is_curved <- !is.na(edges$curve) & edges$curve != 0 & !edges$is_loop
+  is_curved <- .is_bezier_edge(edges)
   
   if (any(!is_curved & !edges$is_loop)) {
     straight <- edges[!is_curved & !edges$is_loop, , drop = FALSE]
@@ -865,7 +986,7 @@ GeomEdgeSpace <- ggproto(
   loop_multi <- data$is_loop | data$is_multiple
   if(curve!=0){
     # Simple edges use 'curve' directly, scaled by 'curve_weight'
-    # and oriented by 'outward_sign' (away from origin)
+    # and oriented by 'outward_sign'
     outward_sign <- .resolve_outward_sign(data)
     data$curve[!loop_multi] <- curve * outward_sign[!loop_multi] *
       data$curve_weight[!loop_multi]
@@ -881,15 +1002,20 @@ GeomEdgeSpace <- ggproto(
   
 }
 
-# Derive origin-based away angle from midpoint coordinates
+# Outward-facing sign for each edge: the side facing away from the lower
+# corner of the plotted extent. In normalized space this corner sits close
+# to the origin; anchoring to the extent keeps it meaningful when coordinates 
+# are not normalized -- with raw lon/lat, (0, 0) lies far outside the data 
+# and the reference direction is near-constant.
 .resolve_outward_sign <- function(data){
-  mid_x <- (data$x + data$xend) / 2
-  mid_y <- (data$y + data$yend) / 2
-  away_rad <- atan2(mid_y, mid_x)
+  x0 <- min(c(data$x, data$xend), na.rm = TRUE)
+  y0 <- min(c(data$y, data$yend), na.rm = TRUE)
+  mid_x <- (data$x + data$xend) / 2 - x0
+  mid_y <- (data$y + data$yend) / 2 - y0
   dx <- data$xend - data$x
   dy <- data$yend - data$y
-  outward_sign <- sign(-dy * cos(away_rad) + dx * sin(away_rad))
-  outward_sign[is.na(outward_sign)] <- 1
+  outward_sign <- sign(dx * mid_y - dy * mid_x)
+  outward_sign[is.na(outward_sign) | outward_sign == 0] <- 1
   outward_sign
 }
 
@@ -1192,6 +1318,15 @@ GeomEdgeSpace <- ggproto(
   cx <- (x + xend)/2 + curve * L * perp_x
   cy <- (y + yend)/2 + curve * L * perp_y
   
+  c(list(cx = cx, cy = cy),
+    .curve_tangents(x, y, xend, yend, cx, cy)
+    )
+  
+}
+
+# Tangent unit vectors of a quadratic Bezier at its endpoints
+.curve_tangents <- function(x, y, xend, yend, cx, cy){
+  
   tx0 <- cx - x;  ty0 <- cy - y
   L0 <- sqrt(tx0^2 + ty0^2); L0 <- ifelse(L0 == 0, 1e-6, L0)
   
@@ -1199,7 +1334,6 @@ GeomEdgeSpace <- ggproto(
   L1 <- sqrt(tx1^2 + ty1^2); L1 <- ifelse(L1 == 0, 1e-6, L1)
   
   list(
-    cx = cx, cy = cy,
     px0 = tx0 / L0, py0 = ty0 / L0,
     px1 = tx1 / L1, py1 = ty1 / L1
   )

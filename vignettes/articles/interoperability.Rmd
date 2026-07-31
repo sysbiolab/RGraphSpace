@@ -28,17 +28,13 @@ knitr::opts_chunk$set(
 
 *RGraphSpace* is designed to be a seamless extension to existing network analysis workflows, not a replacement. Whether using *igraph* [@Nepusz2006] for heavy-duty computations or *tidygraph* [@Pedersen2025_1] for tidy data manipulation, *RGraphSpace* `geoms` automatically recognize these objects on the fly. The main motivation behind *RGraphSpace* was to address the challenge of scaling network elements without disrupting alignment with image features. For practical examples, see [*mapping graphs to images*](mapping-images.html); see also [*PathwaySpace*](https://sysbiolab.github.io/PathwaySpace/) tutorials for use-case scenarios involving reference image backgrounds.
 
-**Why use *RGraphSpace* with *ggraph*?**
-
-While *ggraph* is a wonderful framework for relational data, precise edge-node alignment requires additional handling when node sizes vary dynamically. This limitation arises from a fundamental trade-off in *ggplot2*: scaling `size` aesthetic is tied to a fixed physical legend representation, causing node dimensions to depend on device scaling rather than the normalized coordinate space. For most applications this is not an issue, but it becomes critical when graphs must be spatially aligned with reference images. *RGraphSpace* addresses this through specialized `geoms` that automatically compensate for alignment shifts introduced by node scaling. The trade-off for this higher level of automation is that the user has fewer customization options compared to the *ggraph* approach. This is exactly why using *RGraphSpace* alongside *ggraph* makes sense: it provides precise spatial alignment between graph elements and reference frames while preserving interoperability with the extensive layout and styling flexibility of the *ggraph* grammar.
-
 # Required packages
 
 `r fontawesome::fa("exclamation-triangle", fill = "orange")` Before proceeding, ensure that all packages described in the [*Installation Instructions*](install.html) are installed.
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.0"){
+if (packageVersion("RGraphSpace") < "1.5.1"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -53,9 +49,15 @@ library("maps")
 library("geometry")
 library("tidygraph")
 library("ggraph")
+library("flightsbr")
+library("airportr")
 ```
 
-# Setting basic input data
+# Why use *RGraphSpace* with *ggraph*?
+
+While *ggraph* is a wonderful framework for relational data, precise edge-node alignment requires additional handling when node sizes vary dynamically. This limitation arises from a fundamental trade-off in *ggplot2*: scaling `size` aesthetic is tied to a fixed physical legend representation, causing node dimensions to depend on device scaling rather than the normalized coordinate space. For most applications this is not an issue, but it becomes critical when graphs must be spatially aligned with reference images. *RGraphSpace* addresses this through specialized `geoms` that automatically compensate for alignment shifts introduced by node scaling. The trade-off for this higher level of automation is that the user has fewer customization options compared to the *ggraph* approach. This is exactly why using *RGraphSpace* alongside *ggraph* makes sense: it provides precise spatial alignment between graph elements and reference frames while preserving interoperability with the extensive layout and styling flexibility of the *ggraph* grammar.
+
+## Setting basic input data
 
 The following example demonstrates the interoperability between *RGraphSpace* and *ggraph* using both *igraph* and *tidygraph* objects, and managing spatial data with *sf*, the standard infrastructure for spatial data analysis in `R` [@Pebesma2023]. Integrating network structures with spatial data often creates a headache with mismatched coordinate systems and scales, which makes this example particularly interesting to showcase how these packages handle that complexity.
 
@@ -93,7 +95,7 @@ igraph::V(igraph_cities)$`Population (M)` <- cities$pop/1000000
 igraph::E(igraph_cities)$arrowType <- 3
 ```
 
-# Different input, same output
+## Different input, same output
 
 The following options all produce the same visual output, demonstrating how these packages integrate different types of input data.
 
@@ -163,6 +165,116 @@ Although all four approaches produce the same visualization, only *Option 1* pro
 ```{r toymap, echo=FALSE, out.width = '100%', purl=FALSE}
 knitr::include_graphics("cards/interoperability.png")
 ```
+
+
+# Using *RGraphSpace* with *sf* 
+
+This vignette demonstrates how to use *RGraphSpace* to visualize graph data within an *sf* spatial coordinate system. The example uses Brazilian aviation data, in which airports are represented as nodes and flights as directed edges. Both the flight records and the airport registry are retrieved from the *flightsbr* package.
+
+## Setting basic input data
+
+Pre-processing sets up a reference map, retrieves the aviation data, and assembles it into node and edge tables. The basemap is a country outline from the *maps* package, converted to an `sf` object.
+
+```{r Interoperability sf - 1, eval=TRUE, message=FALSE}
+# Load a reference map
+map_sf <- st_as_sf(map("world", regions = "Brazil", fill = TRUE, plot = FALSE))
+```
+
+Flight records and airport registries are published separately and use different code systems, so airport identifiers must be harmonized before the two can be matched.
+
+```{r Interoperability sf - 2, eval=TRUE, message=FALSE}
+# Get flights (for edges) -- this data uses IATA codes
+flightsbr_2024 <- flightsbr::read_flights(date = 2024,
+  select = c("sg_iata_origem" , "sg_iata_destino")
+)
+
+# Get airports (for nodes) -- this data uses ICAO codes
+flightsbr_airports <- flightsbr::read_airports(type = "all") |>
+  dplyr::filter(codigo_oaci %in% airportr::airports$ICAO) 
+
+# Map valid ICAO to IATA codes
+flightsbr_airports <- flightsbr_airports |>
+  dplyr::left_join( dplyr::select(airportr::airports, ICAO, IATA),
+    by = c("codigo_oaci" = "ICAO")) |> dplyr::filter(IATA != "\\N") |>
+  dplyr::relocate(IATA)
+```
+
+Flights are aggregated into unique routes, and the two datasets are then reduced to the airports and routes common to both, so that every edge has endpoints in the node table.
+
+```{r Interoperability sf - 3, eval=TRUE, message=FALSE}
+# Aggregate flights by counts
+flight_counts <- flightsbr_2024 |> na.omit() |>
+  dplyr::filter(sg_iata_origem != sg_iata_destino) |>
+  dplyr::count(sg_iata_origem, sg_iata_destino, name = "counts") |>
+  dplyr::arrange(counts)
+
+# Keep only airports that actually appear in 'flight_counts'
+active_airports <- flightsbr_airports |>
+  dplyr::filter(IATA %in% c(flight_counts$sg_iata_origem, 
+    flight_counts$sg_iata_destino)) |>
+  dplyr::select(IATA, longitude, latitude, type) |> na.omit()
+
+# Keep flights that map to 'active_airports'
+flight_counts <- flight_counts |>
+  dplyr::filter(sg_iata_origem  %in% active_airports$IATA,
+    sg_iata_destino %in% active_airports$IATA)
+
+# Count departures
+active_airports$departures <- tapply(flight_counts$counts,
+  flight_counts$sg_iata_origem, sum)[active_airports$IATA]
+```
+
+## Building the graph
+
+With the flight and airport datasets loaded, we can generate an `igraph` object using the flights as edges and the airports as vertices. The graph is directed, preserving the direction of each departure-arrival pair, and edge counts represent the number of flights on each unique route.
+
+```{r Interoperability sf - 4, eval=TRUE, message=FALSE}
+# Make an igraph with flight records
+igraph_flights <- graph_from_data_frame(flight_counts,
+  directed = TRUE, vertices = active_airports)
+```
+
+Although `GraphSpace` coordinates are normally rescaled to a unit square, here we keep the original latitude and longitude values, which must match the coordinates of the `sf` object.
+
+```{r Interoperability sf - 5, eval=TRUE, message=FALSE}
+# Create a GraphSpace object
+gs_flight <- GraphSpace(igraph_flights)
+
+# Assign latitude and longitude to coordinates
+gs_flight$x <- gs_flight$longitude
+gs_flight$y <- gs_flight$latitude
+```
+
+## Rendering over the map
+
+The graph can now be rendered over the `sf` basemap, with `colour` representing the number of flights (log<sub>10</sub> scale) and `fill` distinguishing airport types.
+
+```{r Interoperability sf - 6, eval=TRUE, message=FALSE}
+ggplot(data = gs_flight) +
+  geom_sf(data = map_sf, color = "grey") +
+  coord_sf(crs = 5880, default_crs = 4326) +
+  geom_edgespace(aes(colour = log10(counts), 
+    alpha = counts/max(counts)), coord_warp = 1) + 
+  geom_nodespace(aes(fill = type, 
+    label = ifelse(departures > 10000, name, NA)), 
+    size = 1.5, colour = NA) +
+  scale_colour_continuous(palette = c("cyan", "blue")) +
+  scale_fill_discrete(palette = c("#F8766D", "#00BFC4")) + 
+  scale_alpha_continuous(range = c(0.2, 1), guide = "none") +
+  labs(title = "Domestic Flight Network in Brazil, 2024", 
+    colour = "Flights\n(log10 scale)",
+    fill = "Airport type", y = "Latitude", x = "Longitude") +
+  theme_gspace_legend(discrete_fill = TRUE) +
+  theme_minimal()
+```
+
+In this example, `coord_sf()` projects the plot into SIRGAS 2000 / Brazil Polyconic (`crs = 5880`), a non-linear projection, with `default_crs = 4326` declaring that the node coordinates are longitude and latitude in WGS 84.
+
+The curved gridlines are the projection's signature: meridians converge toward the pole, so lines of constant longitude are no longer vertical. Edges curve in the same direction, following the projection rather than cutting across it, which is what makes graph and map read as one object rather than two overlaid images. The bend is strongest for long routes and negligible for short ones, since it tracks how much the projection deforms the space each edge crosses. It reflects the geometry of the projection, not the route an aircraft flies.
+
+The strength of this effect is controlled by `coord_warp`, which defaults to 1, the exact deviation introduced by the projection. Larger values exaggerate the bend, useful where it is otherwise too subtle to read, though they may give erratic results under strongly warped coordinate systems. Setting `coord_warp = 0` disables the adjustment, so edges are drawn as straight chords between projected endpoints.
+
+A complementary version of this vignette is available in the [*PreprocessingAviationData*](https://github.com/flaviogckessler/PreprocessingAviationData) repository.
 
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}
