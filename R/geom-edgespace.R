@@ -757,8 +757,6 @@ GeomEdgeSpace <- ggproto(
   
   edges$colour <- scales::alpha(edges$colour, edges$alpha)
   
-  arrows <- .get_arrows(edges, size_unit)
-  
   grobs <- list()
   
   is_curved <- .is_bezier_edge(edges)
@@ -794,37 +792,22 @@ GeomEdgeSpace <- ggproto(
     grobs[[length(grobs) + 1]] <- gr
   }
   
-  if (!is.null(arrows$ends)) {
-    gr <- grid::segmentsGrob(
-      x0 = arrows$ends$exy$x,
-      y0 = arrows$ends$exy$y,
-      x1 = arrows$ends$exy$xend,
-      y1 = arrows$ends$exy$yend,
-      arrow = arrows$ends$arrow,
-      gp = ggplot2::gg_par(
-        col = arrows$ends$colour,
-        lwd = arrows$ends$linewidth, lty = "solid",
-        lineend = lineend, linejoin = linejoin
-      )
-    )
-    gr$name <- grobName(gr, "arrowends")
-    grobs[[length(grobs) + 1]] <- gr
-  }
+  arrows <- .get_arrows(edges, size_unit)
   
-  if (!is.null(arrows$starts)) {
+  if (!is.null(arrows)) {
     gr <- grid::segmentsGrob(
-      x0 = arrows$starts$exy$x,
-      y0 = arrows$starts$exy$y,
-      x1 = arrows$starts$exy$xend,
-      y1 = arrows$starts$exy$yend,
-      arrow = arrows$starts$arrow,
+      x0 = arrows$a_data$x,
+      y0 = arrows$a_data$y,
+      x1 = arrows$a_data$xend,
+      y1 = arrows$a_data$yend,
+      arrow = arrows$a_pars,
       gp = ggplot2::gg_par(
-        col = arrows$starts$colour,
-        lwd = arrows$starts$linewidth, lty = "solid",
+        col = arrows$a_data$colour,
+        lwd = arrows$a_data$linewidth, lty = "solid",
         lineend = lineend, linejoin = linejoin
       )
     )
-    gr$name <- grobName(gr, "arrowstarts")
+    gr$name <- grobName(gr, "arrows")
     grobs[[length(grobs) + 1]] <- gr
   }
   
@@ -1344,47 +1327,67 @@ GeomEdgeSpace <- ggproto(
 ### Arrow constructor
 ################################################################################
 .get_arrows <- function(edges, size_unit = "mm"){
+  
+  edges$pos <- seq_len(nrow(edges))
   emode <- .get_emode(edges$arrowType)
-  #--- add arrow starts
-  idx <- emode==2 | emode==3
-  if(any(idx)){
-    starts <- .arrow_starts(edges[idx,], size_unit)
+  
+  idx_start <- emode==2 | emode==3
+  idx_end <- emode==1 | emode==3
+  
+  if (!any(idx_start) && !any(idx_end)) {
+    return(NULL)
+  }
+  
+  #--- get arrow starts
+  if(any(idx_start)){
+    starts <- .arrow_starts(edges[idx_start,], size_unit)
   } else {
     starts <- NULL
   }
-  #--- add arrow ends
-  idx <- emode==1 | emode==3
-  if(any(idx)){
-    ends <- .arrow_ends(edges[idx,], size_unit)
+  
+  #--- get arrow ends
+  if(any(idx_end)){
+    ends <- .arrow_ends(edges[idx_end,], size_unit)
   } else {
     ends <- NULL
   }
-  arrows <- list(ends = ends, starts = starts)
-  return(arrows)
+  
+  #--- merge arrow data
+  a_data <- rbind(starts, ends)
+  a_data <- a_data[order(a_data$pos), ]
+  
+  #--- construct grid's arrow
+  a_pars <- grid::arrow(angle = a_data$arrowAngle,
+    type = "open", ends = a_data$ends,
+    length = grid::unit(a_data$arrowSize, size_unit))
+  
+  list(a_data = a_data, a_pars = a_pars)
 }
+
 .arrow_starts <- function(edges, size_unit){
-  exy <- edges[,c("x", "y", "xend", "yend")]
+  a_data <- edges
+  a_data$ends <- "first"
+  a_data$arrowSize <- a_data$arrowSize1
+  a_data$arrowAngle <- a_data$arrowAngleStart
   # a tiny segment (0.01 npc) is used to anchor the arrowhead
-  exy$xend <- exy$x + (edges$px0 * 0.01)
-  exy$yend <- exy$y + (edges$py0 * 0.01)
-  # grid::arrow(length = ...) is vectorized; it has been tested and validate
-  arrow <- grid::arrow(angle = edges$arrowAngleStart,
-    type = "open", ends = "first",
-    length = grid::unit(edges$arrowSize1, size_unit))
-  return(list(exy=exy, arrow = arrow, colour = edges$colour, 
-    linewidth = edges$linewidth))
+  a_data$xend <- a_data$x + (a_data$px0 * 0.01)
+  a_data$yend <- a_data$y + (a_data$py0 * 0.01)
+  a_data <- a_data[,c("x", "y", "xend", "yend", "arrowSize", 
+    "arrowAngle", "colour", "linewidth", "pos", "ends")]
+  return(a_data)
 }
+
 .arrow_ends <- function(edges, size_unit){
-  exy <- edges[,c("x", "y", "xend", "yend")]
+  a_data <- edges
+  a_data$ends <- "last"
+  a_data$arrowSize <- a_data$arrowSize2
+  a_data$arrowAngle <- a_data$arrowAngleEnd
   # a tiny segment (0.01 npc) is used to anchor the arrowhead
-  exy$x <- exy$xend - (edges$px1 * 0.01)
-  exy$y <- exy$yend - (edges$py1 * 0.01)
-  # grid::arrow(length = ...) is vectorized; it has been tested and validated
-  arrow <- grid::arrow(angle = edges$arrowAngleEnd,
-    type = "open", ends = "last",
-    length = grid::unit(edges$arrowSize2, size_unit))
-  return(list(exy=exy, arrow = arrow, colour = edges$colour, 
-    linewidth = edges$linewidth))
+  a_data$x <- a_data$xend - (edges$px1 * 0.01)
+  a_data$y <- a_data$yend - (edges$py1 * 0.01)
+  a_data <- a_data[,c("x", "y", "xend", "yend", "arrowSize", 
+    "arrowAngle", "colour", "linewidth", "pos", "ends")]
+  return(a_data)
 }
 
 

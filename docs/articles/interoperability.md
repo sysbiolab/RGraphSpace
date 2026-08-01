@@ -254,7 +254,8 @@ flight_counts <- flight_counts |>
 
 # Count departures
 active_airports$departures <- tapply(flight_counts$counts,
-  flight_counts$sg_iata_origem, sum)[active_airports$IATA]
+  flight_counts$sg_iata_origem, sum)[active_airports$IATA] |>
+  dplyr::coalesce(0L)
 ```
 
 ### Building the graph
@@ -339,11 +340,11 @@ edges are drawn as straight chords between projected endpoints.
 
 ### A more extreme projection
 
-The polyconic projection used above bends the space gently, so the
-effect on edges is subtle. It becomes unmistakable under a stronger
+The projection used above bends the space only gently, so its effect on
+edges is subtle. It becomes much more apparent under an extreme
 projection. Here the same network is viewed from the south pole, where
-meridians radiate outward rather than merely converging, and a subset of
-long-haul routes is used so that individual edges stay legible.
+meridians radiate outward rather than merely converging, and we use a
+subset of long-haul routes so that individual edges stay legible.
 
 ``` r
 
@@ -351,8 +352,9 @@ long-haul routes is used so that individual edges stay legible.
 world_sf <- st_as_sf(map("world", fill = TRUE, plot = FALSE))
 
 # A few widely separated airports, chosen to span longitude
-hubs <- c("GRU", "MAO", "BEL", "REC", "POA", "CGB", "PVH", "MCP")
+hubs <- c("GRU", "MAO", "BEL", "REC", "POA", "CGB", "PVH", "RBR")
 
+# Subset the 'gs_flight' object
 gs_hubs <- gs_flight[gs_flight$name %in% hubs, ]
 ```
 
@@ -360,18 +362,16 @@ gs_hubs <- gs_flight[gs_flight$name %in% hubs, ]
 
 ggplot(data = gs_hubs) +
   geom_sf(data = world_sf, fill = "grey95", color = "grey70") +
-  geom_edgespace(aes(colour = counts), 
-    arrow_offset = 0.03, arrow_size = 1) +
-  geom_nodespace(aes(label = name), size = 2, 
-    fill = "#F8766D", colour = NA) +
+  geom_edgespace(aes(colour = counts), arrow_size = 1) +
+  geom_nodespace(aes(label = name), fill = NA, colour = NA) +
   scale_colour_continuous(palette = c("cyan", "blue")) +
-  labs(subtitle = "Same network under a polar projection",
+  labs(subtitle = "Same network under a south polar projection",
     colour = "Flights\n(raw counts)", 
     y = "Latitude", x = "Longitude") +
   theme_gspace_legend() + theme_minimal() +
   coord_sf(crs = "+proj=laea +lat_0=-90 +lon_0=-50", 
-    default_crs = 4326,
-    xlim = c(-75, -30), ylim = c(-35, 6))
+    xlim = c(-75, -30), ylim = c(-35, 6),
+    default_crs = 4326)
 ```
 
 ![](interoperability_files/figure-html/Interoperability%20sf%20-%208-1.png)

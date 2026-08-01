@@ -79,7 +79,6 @@
             rlang::abort("unexpected indexing during edge attribute combination.")
         }
         edges <- cbind(edges, atts[,-c(1,2), drop = FALSE])
-        edges <- edges[order(edges$vertex1,edges$vertex2), ]
         idx <- colnames(edges) %in% names(.get_empty_edgedf())
         edges <- edges[, c(which(idx), which(!idx))]
         rownames(edges) <- NULL
@@ -113,6 +112,7 @@
 ################################################################################
 .get_simplified_edgelist <- function(g) {
     if (ecount(g) > 0) {
+        E(g)$.tag_orig_order <- seq_len(igraph::ecount(g))
         atts <- .extract_directed_att(g)
         vertex <- igraph::V(g)$name
         E(g)$emode <- 1
@@ -148,6 +148,14 @@
         idx <- colnames(edges) %in% names(.get_empty_edgedf())
         edges <- edges[, c(which(idx), which(!idx))]
         rownames(edges) <- NULL
+        # NOTE: for a mutual edge pair, .set_arrowtype_dir() keeps only one of  
+        # the two directed edges ('ut' convention) and discards the other, so
+        # '.tag_orig_order' will NOT necessarily represent the earlier-created 
+        # direction of the pair. This is intentional: simplification is a lossy 
+        # merge by design, and a single representative order value per merged 
+        # edge is sufficient here.
+        edges <- edges[order(edges$.tag_orig_order), , drop=FALSE]
+        edges$.tag_orig_order <- NULL
     } else {
         edges <- .get_empty_edgedf()
     }
