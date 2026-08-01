@@ -268,11 +268,43 @@ ggplot(data = gs_flight) +
   theme_minimal()
 ```
 
-In this example, `coord_sf()` projects the plot into SIRGAS 2000 / Brazil Polyconic (`crs = 5880`), a non-linear projection, with `default_crs = 4326` declaring that the node coordinates are longitude and latitude in WGS 84.
+In this example, `coord_sf()` projects the plot into *EPSG:5880* (`crs = 5880`), a non-linear system pairing the *SIRGAS 2000* datum with the Brazil Polyconic projection, while `default_crs = 4326` declares that the node coordinates are longitude and latitude in *WGS 84* (World Geodetic System 1984).
 
 The curved gridlines are the projection's signature: meridians converge toward the pole, so lines of constant longitude are no longer vertical. Edges curve in the same direction, following the projection rather than cutting across it, which is what makes graph and map read as one object rather than two overlaid images. The bend is strongest for long routes and negligible for short ones, since it tracks how much the projection deforms the space each edge crosses. It reflects the geometry of the projection, not the route an aircraft flies.
 
 The strength of this effect is controlled by `coord_warp`, which defaults to 1, the exact deviation introduced by the projection. Larger values exaggerate the bend, useful where it is otherwise too subtle to read, though they may give erratic results under strongly warped coordinate systems. Setting `coord_warp = 0` disables the adjustment, so edges are drawn as straight chords between projected endpoints.
+
+## A more extreme projection
+
+The projection used above bends the space gently, so the effect on edges is subtle. It becomes unmistakable under a stronger projection. Here the same network is viewed from the south pole, where meridians radiate outward rather than merely converging, and a subset of long-haul routes is used so that individual edges stay legible.
+
+```{r Interoperability sf - 7, eval=TRUE, message=FALSE}
+# Reference map: all countries, for a hemisphere-wide view
+world_sf <- st_as_sf(map("world", fill = TRUE, plot = FALSE))
+
+# A few widely separated airports, chosen to span longitude
+hubs <- c("GRU", "MAO", "BEL", "REC", "POA", "CGB", "PVH", "MCP")
+
+# Subset the 'gs_flight' object
+gs_hubs <- gs_flight[gs_flight$name %in% hubs, ]
+```
+
+```{r Interoperability sf - 8, eval=TRUE, message=FALSE}
+ggplot(data = gs_hubs) +
+  geom_sf(data = world_sf, fill = "grey95", color = "grey70") +
+  geom_edgespace(aes(colour = counts), 
+    arrow_offset = 0.03, arrow_size = 1) +
+  geom_nodespace(aes(label = name), size = 2, 
+    fill = "#F8766D", colour = NA) +
+  scale_colour_continuous(palette = c("cyan", "blue")) +
+  labs(subtitle = "Same network under a polar projection",
+    colour = "Flights\n(raw counts)", 
+    y = "Latitude", x = "Longitude") +
+  theme_gspace_legend() + theme_minimal() +
+  coord_sf(crs = "+proj=laea +lat_0=-90 +lon_0=-50", 
+    default_crs = 4326,
+    xlim = c(-75, -30), ylim = c(-35, 6))
+```
 
 A complementary version of this vignette is available in the [*PreprocessingAviationData*](https://github.com/flaviogckessler/PreprocessingAviationData) repository.
 

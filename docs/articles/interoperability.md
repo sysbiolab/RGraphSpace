@@ -125,7 +125,7 @@ how these packages integrate different types of input data.
 gs <- GraphSpace(igraph_cities)
 ggplot(gs) +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", curve = 0.1) +
+  geom_edgespace(color = "grey40", curve = -0.1) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
   theme_gray() +
@@ -135,7 +135,7 @@ ggplot(gs) +
 # inject_nodespace() required — no GraphSpace object passed to ggplot()
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", curve = 0.1, data = igraph_cities) +
+  geom_edgespace(color = "grey40", curve = -0.1, data = igraph_cities) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`), 
     data = igraph_cities) +
   scale_size(range = c(3, 9)) +
@@ -148,7 +148,7 @@ ggplot() +
 gr <- as_tbl_graph(igraph_cities)
 ggplot() +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", curve = 0.1, data = gr) +
+  geom_edgespace(color = "grey40", curve = -0.1, data = gr) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`), data = gr) +
   scale_size(range = c(3, 9)) +
   inject_nodespace() + 
@@ -160,7 +160,7 @@ ggplot() +
 gr <- as_tbl_graph(igraph_cities)
 ggraph(graph = gr, x= gr$x, y = gr$y) +
   geom_sf(data = map_sf, fill = "grey95", color = "grey60") +
-  geom_edgespace(color = "grey40", curve = 0.1) +
+  geom_edgespace(color = "grey40", curve = -0.1) +
   geom_nodespace(aes(fill = Cities, size = `Population (M)`)) +
   scale_size(range = c(3, 9)) +
   inject_nodespace() +
@@ -188,16 +188,18 @@ This vignette demonstrates how to use *RGraphSpace* to visualize graph
 data within an *sf* spatial coordinate system under a non-linear
 projection. The example uses Brazilian aviation data, in which airports
 are represented as nodes and flights as directed edges, drawn over a
-basemap of Brazil. Both the flight records and the airport registry are
-retrieved from the *flightsbr* package. The projection’s meridians
-converge toward the pole, so the graph needs to recognize the coordinate
-system in order to be drawn as part of the map rather than on top of it.
+basemap of Brazil. We retrieve flight records from *flightsbr* (Pereira
+2022) and airport registries from *airportr* (Shkolnik 2019). The
+projection’s meridians converge toward the pole, so the graph needs to
+recognize the coordinate system in order to be drawn as part of the map
+rather than on top of it.
 
 ### Setting basic input data
 
 Pre-processing sets up a reference map, retrieves the aviation data, and
 assembles it into node and edge tables. The basemap is a country outline
-from the *maps* package, converted to an `sf` object.
+from the *maps* package (Becker et al. 2025), converted to an `sf`
+object.
 
 ``` r
 
@@ -257,7 +259,7 @@ active_airports$departures <- tapply(flight_counts$counts,
 
 ### Building the graph
 
-With the flight and airport datasets loaded, we can generate an `igraph`
+With the flight and airport tables prepared, we can generate an `igraph`
 object using the flights as edges and the airports as vertices. The
 graph is directed, preserving the direction of each departure-arrival
 pair, and edge counts represent the number of flights on each unique
@@ -314,9 +316,10 @@ ggplot(data = gs_flight) +
 
 In this example,
 [`coord_sf()`](https://ggplot2.tidyverse.org/reference/ggsf.html)
-projects the plot into SIRGAS 2000 / Brazil Polyconic (`crs = 5880`), a
-non-linear projection, with `default_crs = 4326` declaring that the node
-coordinates are longitude and latitude in WGS 84.
+projects the plot into *EPSG:5880* (`crs = 5880`), a non-linear system
+pairing the *SIRGAS 2000* datum with the Brazil Polyconic projection,
+while `default_crs = 4326` declares that the node coordinates are
+longitude and latitude in *WGS 84* (World Geodetic System 1984).
 
 The curved gridlines are the projection’s signature: meridians converge
 toward the pole, so lines of constant longitude are no longer vertical.
@@ -333,6 +336,45 @@ values exaggerate the bend, useful where it is otherwise too subtle to
 read, though they may give erratic results under strongly warped
 coordinate systems. Setting `coord_warp = 0` disables the adjustment, so
 edges are drawn as straight chords between projected endpoints.
+
+### A more extreme projection
+
+The polyconic projection used above bends the space gently, so the
+effect on edges is subtle. It becomes unmistakable under a stronger
+projection. Here the same network is viewed from the south pole, where
+meridians radiate outward rather than merely converging, and a subset of
+long-haul routes is used so that individual edges stay legible.
+
+``` r
+
+# Reference map: all countries, for a hemisphere-wide view
+world_sf <- st_as_sf(map("world", fill = TRUE, plot = FALSE))
+
+# A few widely separated airports, chosen to span longitude
+hubs <- c("GRU", "MAO", "BEL", "REC", "POA", "CGB", "PVH", "MCP")
+
+gs_hubs <- gs_flight[gs_flight$name %in% hubs, ]
+```
+
+``` r
+
+ggplot(data = gs_hubs) +
+  geom_sf(data = world_sf, fill = "grey95", color = "grey70") +
+  geom_edgespace(aes(colour = counts), 
+    arrow_offset = 0.03, arrow_size = 1) +
+  geom_nodespace(aes(label = name), size = 2, 
+    fill = "#F8766D", colour = NA) +
+  scale_colour_continuous(palette = c("cyan", "blue")) +
+  labs(subtitle = "Same network under a polar projection",
+    colour = "Flights\n(raw counts)", 
+    y = "Latitude", x = "Longitude") +
+  theme_gspace_legend() + theme_minimal() +
+  coord_sf(crs = "+proj=laea +lat_0=-90 +lon_0=-50", 
+    default_crs = 4326,
+    xlim = c(-75, -30), ylim = c(-35, 6))
+```
+
+![](interoperability_files/figure-html/Interoperability%20sf%20-%208-1.png)
 
 A complementary version of this vignette is available in the
 [*PreprocessingAviationData*](https://github.com/flaviogckessler/PreprocessingAviationData)
@@ -394,6 +436,10 @@ repository.
 
 ## References
 
+Becker, Richard A., Allan R. Wilks, Ray Brownrigg, Thomas P. Minka, and
+Alex Deckmyn. 2025. *Maps: Draw Geographical Maps*.
+<https://doi.org/10.32614/CRAN.package.maps>.
+
 Csardi, Gabor, and Tamas Nepusz. 2006. “The Igraph Software Package for
 Complex Network Research.” *InterJournal* Complex Systems: 1695.
 <https://igraph.org/>.
@@ -404,3 +450,10 @@ Applications in R*. Chapman; Hall/CRC.
 
 Pedersen, Thomas Lin. 2025. *Tidygraph: A Tidy API for Graph
 Manipulation*. <https://tidygraph.data-imaginist.com>.
+
+Pereira, Rafael H. M. 2022. “Flightsbr: Download Flight and Airport Data
+from Brazil.” *OSF Preprints*, ahead of print.
+<https://doi.org/10.31219/osf.io/jdv7u>.
+
+Shkolnik, Dmitry. 2019. *Airportr: Convenience Tools for Working with
+Airport Data*. <https://doi.org/10.32614/CRAN.package.airportr>.
