@@ -307,9 +307,10 @@ setMethod("summary", "GraphSpace",
     .inform_boundaries( .node_boundaries(.get_nodes(object@graph)),
       if (.is_normalized(object)) list(x = c(0,1), y = c(0,1)) else NULL )
     
-    if (.has_image(object) && .has_canvas(object)) {
+    if (.has_image(object)) {
       .inform_image_coord_status(object)
-      img <- if (.is_image_space(object)) object@canvas else object@image
+      img <- if (.has_canvas(object) && .is_image_space(object)) 
+        object@canvas else object@image
       .inform_boundaries( .image_boundaries(object@image),
         if (.is_image_space(object)) .image_boundaries(img) else NULL )
     }
