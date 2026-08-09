@@ -276,12 +276,12 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #> [100] evaluate_1.0.5         codetools_0.2-20       tibble_3.3.1          
     #> [103] cli_3.6.6              uwot_0.2.4             xtable_1.8-8          
     #> [106] reticulate_1.46.0      systemfonts_1.3.2      jquerylib_0.1.4       
-    #> [109] Rcpp_1.1.1-1.1         globals_0.19.1         spatstat.random_3.5-0 
-    #> [112] png_0.1-9              ggrastr_1.0.2          spatstat.univar_3.2-0 
-    #> [115] parallel_4.6.1         pkgdown_2.2.0          dotCall64_1.2         
-    #> [118] listenv_1.0.0          viridisLite_0.4.3      scales_1.4.0          
-    #> [121] ggridges_0.5.7         crayon_1.5.3           purrr_1.2.2           
-    #> [124] rlang_1.2.0            cowplot_1.2.0
+    #> [109] dichromat_2.0-1        Rcpp_1.1.1-1.1         globals_0.19.1        
+    #> [112] spatstat.random_3.5-0  png_0.1-9              ggrastr_1.0.2         
+    #> [115] spatstat.univar_3.2-0  parallel_4.6.1         pkgdown_2.2.0         
+    #> [118] dotCall64_1.2          listenv_1.0.0          viridisLite_0.4.3     
+    #> [121] scales_1.4.0           ggridges_0.5.7         crayon_1.5.3          
+    #> [124] purrr_1.2.2            rlang_1.2.0            cowplot_1.2.0
 
 ## References
 

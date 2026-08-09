@@ -69,7 +69,7 @@ A related task arises in the context of multi-component containers, when graphs 
 
 # Research impact statement
 
-*RGraphSpace* provides the spatial foundation for the *PathwaySpace* package [@PathwaySpace], which projects network-derived signals onto the normalized coordinate space, transforming discrete vertex signals into continuous surfaces over the graph topology. This integration has supported published analyses in systems biology [@Tercan2025; @Ellrott2025], demonstrating *RGraphSpace*'s utility for downstream spatial analysis tools.
+*RGraphSpace* provides the spatial foundation for the *PathwaySpace* package [@PathwaySpace], which projects network-derived signals onto a normalized coordinate space, transforming discrete vertex signals into continuous surfaces over the graph topology. This integration has supported published analyses in systems biology [@Tercan2025; @Ellrott2025], demonstrating *RGraphSpace*'s utility for downstream spatial analysis tools.
 
 # Software design
 

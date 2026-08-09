@@ -15,7 +15,7 @@ object.
 # S4 method for class 'GraphSpace,ANY,ANY,ANY'
 x[i, j, ..., drop = TRUE]
 
-# S4 method for class 'GraphSpace'
+# S4 method for class 'GraphSpace,ANY,ANY'
 x[[i, j, ...]]
 ```
 
@@ -101,7 +101,7 @@ etc.) to modify slot contents.
 [`gs_subset_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md),
 [`gs_subset_edges`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md),
 [`getGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/getGraphSpace-methods.md),
-[`cropGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+[`cropGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.md)
 
 ## Examples
 
@@ -126,7 +126,7 @@ gs <- normalizeGraphSpace(gs)
 # Node-induced subgraph: keep named nodes, prune dangling edges
 gs[c("n1", "n2", "n3"), ]
 #> A GraphSpace-class object for:
-#> IGRAPH 42a5136 DNW- 3 2 -- 
+#> IGRAPH 9b9ab44 DNW- 3 2 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -136,7 +136,7 @@ gs[c("n1", "n2", "n3"), ]
 # Node-induced subgraph by integer position
 gs[1:4, ]
 #> A GraphSpace-class object for:
-#> IGRAPH 75be032 DNW- 4 3 -- 
+#> IGRAPH 4bdca63 DNW- 4 3 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -146,7 +146,7 @@ gs[1:4, ]
 # Node-induced subgraph by pre-evaluated logical mask
 gs[gs$nodeSize > 5, ]
 #> A GraphSpace-class object for:
-#> IGRAPH 9fe9dff DNW- 6 0 -- 
+#> IGRAPH 3aef473 DNW- 6 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -156,7 +156,7 @@ gs[gs$nodeSize > 5, ]
 # Edge selection only: keep all nodes
 gs[, 1:3]
 #> A GraphSpace-class object for:
-#> IGRAPH 0ed5bee DNW- 10 3 -- 
+#> IGRAPH a1331ce DNW- 10 3 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -164,7 +164,7 @@ gs[, 1:3]
 #> | y: [-4, 4] -> [0, 1] (rows)
 gs[, gs_edges(gs)$weight > 0.5]
 #> A GraphSpace-class object for:
-#> IGRAPH 34e062b DNW- 10 3 -- 
+#> IGRAPH 321a8c5 DNW- 10 3 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -176,7 +176,7 @@ gs[, gs_edges(gs)$weight > 0.5]
 # Use gs_subset_edges() for unquoted predicate expressions instead.
 gs[, gs_edges(gs)$name1 == "n1"]
 #> A GraphSpace-class object for:
-#> IGRAPH a48a633 DNW- 10 9 -- 
+#> IGRAPH c4b6736 DNW- 10 9 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -184,7 +184,7 @@ gs[, gs_edges(gs)$name1 == "n1"]
 #> | y: [-4, 4] -> [0, 1] (rows)
 gs[, gs_edges(gs)$name1 == "n1" & gs_edges(gs)$name2 == "n2"]
 #> A GraphSpace-class object for:
-#> IGRAPH f39a2ab DNW- 10 1 -- 
+#> IGRAPH acb6ab9 DNW- 10 1 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -192,7 +192,7 @@ gs[, gs_edges(gs)$name1 == "n1" & gs_edges(gs)$name2 == "n2"]
 #> | y: [-4, 4] -> [0, 1] (rows)
 gs[, quote(name1 == "n1" & name2 == "n2")]
 #> A GraphSpace-class object for:
-#> IGRAPH 3f47260 DNW- 10 1 -- 
+#> IGRAPH 6851aad DNW- 10 1 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -204,7 +204,7 @@ gs[c("n1", "n2", "n3"), gs_edges(gs)$weight > 0.5]
 #> Warning: No edges matched the filter expression.
 #> ℹ The returned object contains no edges.
 #> A GraphSpace-class object for:
-#> IGRAPH f1e87bd DNW- 3 0 -- 
+#> IGRAPH 758bd2d DNW- 3 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -212,7 +212,7 @@ gs[c("n1", "n2", "n3"), gs_edges(gs)$weight > 0.5]
 #> | y: [-1, 4] -> [0, 1] (rows)
 gs[c("n1", "n2", "n3"), gs_edges(gs)$name1 == "n1"]
 #> A GraphSpace-class object for:
-#> IGRAPH 9dcb008 DNW- 3 2 -- 
+#> IGRAPH f289a35 DNW- 3 2 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -255,12 +255,12 @@ gs[["edges"]]   # same as getGraphSpace(gs, "edges")
 #> 8   FALSE
 #> 9   FALSE
 gs[["graph"]]   # same as getGraphSpace(gs, "graph")
-#> IGRAPH a48a633 DNW- 10 9 -- 
+#> IGRAPH c4b6736 DNW- 10 9 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n), weight (e/n)
-#> + edges from a48a633 (vertex names):
+#> + edges from c4b6736 (vertex names):
 #> [1] n1->n2  n1->n3  n1->n4  n1->n5  n1->n6  n1->n7  n1->n8  n1->n9  n1->n10
 gs[["fdata"]]   # same as getGraphSpace(gs, "fdata")
-#> 0 x 0 diagonal matrix of class "ldiMatrix"
+#> 0 x 0 Matrix of class "dgeMatrix"
 #> <0 x 0 matrix>
 ```

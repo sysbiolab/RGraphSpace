@@ -419,20 +419,20 @@ repository.
     #> [25] classInt_0.4-11    curl_7.1.0         xml2_1.6.0         RColorBrewer_1.1-3
     #> [29] abind_1.4-8        KernSmooth_2.23-26 withr_3.0.3        purrr_1.2.2       
     #> [33] desc_1.4.3         grid_4.6.1         polyclip_1.10-7    e1071_1.7-17      
-    #> [37] scales_1.4.0       MASS_7.3-66        cli_3.6.6          rmarkdown_2.31    
-    #> [41] ragg_1.5.2         generics_0.1.4     otel_0.2.0         rstudioapi_0.19.0 
-    #> [45] httr_1.4.8         magic_1.6-1        DBI_1.3.0          pbapply_1.7-4     
-    #> [49] ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0      proxy_0.4-29      
-    #> [53] stringr_1.6.0      rvest_1.0.5        parallel_4.6.1     selectr_0.6-0     
-    #> [57] ggrastr_1.0.2      vctrs_0.7.3        Matrix_1.7-6       jsonlite_2.0.0    
-    #> [61] ggrepel_0.9.8      archive_1.1.13     beeswarm_0.4.0     systemfonts_1.3.2 
-    #> [65] fontawesome_0.5.3  tidyr_1.3.2        jquerylib_0.1.4    units_1.0-1       
-    #> [69] glue_1.8.1         pkgdown_2.2.0      stringi_1.8.7      lubridate_1.9.5   
-    #> [73] gtable_0.3.6       tibble_3.3.1       parzer_0.4.4       pillar_1.11.1     
-    #> [77] htmltools_0.5.9    R6_2.6.1           textshaping_1.0.5  evaluate_1.0.5    
-    #> [81] lattice_0.22-9     snakecase_0.11.1   memoise_2.0.1      bslib_0.11.0      
-    #> [85] class_7.3-23       Rcpp_1.1.1-1.1     gridExtra_2.3.1    xfun_0.59         
-    #> [89] fs_2.1.0           pkgconfig_2.0.3
+    #> [37] scales_1.4.0       MASS_7.3-66        dichromat_2.0-1    cli_3.6.6         
+    #> [41] rmarkdown_2.31     ragg_1.5.2         generics_0.1.4     otel_0.2.0        
+    #> [45] rstudioapi_0.19.0  httr_1.4.8         magic_1.6-1        pbapply_1.7-4     
+    #> [49] DBI_1.3.0          ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0     
+    #> [53] proxy_0.4-29       stringr_1.6.0      parallel_4.6.1     rvest_1.0.5       
+    #> [57] selectr_0.6-0      ggrastr_1.0.2      vctrs_0.7.3        Matrix_1.7-6      
+    #> [61] jsonlite_2.0.0     ggrepel_0.9.8      archive_1.1.13     beeswarm_0.4.0    
+    #> [65] systemfonts_1.3.2  fontawesome_0.5.3  tidyr_1.3.2        jquerylib_0.1.4   
+    #> [69] units_1.0-1        glue_1.8.1         pkgdown_2.2.0      stringi_1.8.7     
+    #> [73] lubridate_1.9.5    gtable_0.3.6       tibble_3.3.1       parzer_0.4.4      
+    #> [77] pillar_1.11.1      htmltools_0.5.9    R6_2.6.1           textshaping_1.0.5 
+    #> [81] evaluate_1.0.5     lattice_0.22-9     snakecase_0.11.1   memoise_2.0.1     
+    #> [85] bslib_0.11.0       class_7.3-24       Rcpp_1.1.1-1.1     gridExtra_2.3.1   
+    #> [89] xfun_0.59          fs_2.1.0           pkgconfig_2.0.3
 
 ## References
 

@@ -1,8 +1,9 @@
 # Normalize node coordinates to graph and image spaces
 
-Accessory functions to normalize node coordinates in GraphSpace, either
-by centering them within the graph boundaries or by mapping them to
-pixel coordinates of a background image.
+Accessory function to normalize node coordinates of a
+[GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
+object, either by centering nodes within the plot boundaries or by
+mapping nodes to pixel coordinates of a background image.
 
 ## Usage
 
@@ -17,13 +18,9 @@ normalizeGraphSpace(
   flip.v = FALSE,
   flip.h = FALSE,
   swap.xy = FALSE,
-  verbose = TRUE,
-  rotate.xy = deprecated(),
-  use_image = deprecated()
+  equal.mar = FALSE,
+  verbose = TRUE
 )
-
-# S4 method for class 'GraphSpace'
-cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
 ```
 
 ## Arguments
@@ -76,24 +73,19 @@ cropGraphSpace(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
   graph coordinate system is transposed relative to the image or
   reference map.
 
+- equal.mar:
+
+  Logical; when an image is available, whether to fit the image with
+  equal margins around the graph, resulting in a tighter crop of the
+  image. If FALSE (default), the image is fitted to the full square
+  figure area, resulting in unequal margins when the graph aspect ratio
+  differs from 1. Both methods preserve the aspect ratios of the image
+  and graph.
+
 - verbose:
 
   A single logical value specifying to display detailed messages (when
   `verbose=TRUE`) or not (when `verbose=FALSE`).
-
-- rotate.xy:
-
-  Deprecated from RGraphSpace 1.4.3; use `swap.xy` instead.
-
-- use_image:
-
-  Deprecated from RGraphSpace 1.4.0; use `image.space` instead.
-
-- crop.coord:
-
-  An optional numeric vector of length four specifying a cropping region
-  (xmin, xmax, ymin, ymax), with values in normalized coordinates
-  `[0,1]`.
 
 ## Value
 
@@ -101,27 +93,16 @@ A `GraphSpace` object with updated `nodes` and `image` slots.
 
 ## Details
 
-These functions provide different strategies for coordinate
-transformation:
-
-- **normalizeGraphSpace**: Re-scales node coordinates to a `[0, 1]` unit
-  square based on the graph's bounding box (when `image.space = FALSE`)
-  or maps them to pixel coordinates (when `image.space = TRUE` and an
-  image is provided; see
-  [gs_image](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)).
-  It handles image-to-graph alignment via `flip.\*` and `swap.\*`
-  arguments, used to adjust the graph origin with the image matrix
-  layout. Users should be aware of the potential discrepancy between
-  image matrix orientation (top-down) and graph coordinates (bottom-up).
-  The function attempts to automatically adjust the y-axis to align the
-  graph's bottom-up coordinates with the image's top-down layout, but
-  further manual adjustments might be required.
-
-- **cropGraphSpace**: Subsets the normalized graph space into a specific
-  region defined by `crop.coord`. It recalculates node positions and
-  background image boundaries to maintain spatial consistency after
-  cropping. This function requires a previously normalized `GraphSpace`
-  object.
+This function re-scales node coordinates to a `[0, 1]` unit square based
+on the graph's bounding box when `image.space = FALSE` or, when an image
+is provided and `image.space = TRUE`, it maps nodes to pixel
+coordinates. It handles image-to-graph alignment via `flip.\*` and
+`swap.\*` arguments, used to adjust the graph origin with the image
+matrix layout. Users should be aware of the potential discrepancy
+between image matrix orientation (top-down) and graph coordinates
+(bottom-up). The function attempts to automatically adjust the y-axis to
+align the graph's bottom-up coordinates with the image's top-down
+layout, but further manual adjustments might be required.
 
 ## Note
 
@@ -130,6 +111,7 @@ of `GraphSpace` objects before rendering.
 
 ## See also
 
+[`cropGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.md),
 [`gs_image`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
 
 ## Examples
@@ -152,11 +134,6 @@ gs <- GraphSpace(gtoy1)
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to graph space...
 
-gs_crop <- cropGraphSpace(gs, crop.coord = c(0, 1, 0, 0.5))
-
 plotGraphSpace(gs, add.labels = TRUE)
-
-
-plotGraphSpace(gs_crop, add.labels = TRUE)
 
 ```

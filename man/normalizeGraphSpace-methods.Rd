@@ -3,8 +3,6 @@
 \name{normalizeGraphSpace,GraphSpace-method}
 \alias{normalizeGraphSpace,GraphSpace-method}
 \alias{normalizeGraphSpace}
-\alias{cropGraphSpace,GraphSpace-method}
-\alias{cropGraphSpace}
 \title{Normalize node coordinates to graph and image spaces}
 \usage{
 \S4method{normalizeGraphSpace}{GraphSpace}(
@@ -16,12 +14,9 @@
   flip.v = FALSE,
   flip.h = FALSE,
   swap.xy = FALSE,
-  verbose = TRUE,
-  rotate.xy = deprecated(),
-  use_image = deprecated()
+  equal.mar = FALSE,
+  verbose = TRUE
 )
-
-\S4method{cropGraphSpace}{GraphSpace}(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE)
 }
 \arguments{
 \item{gs}{A \code{GraphSpace} object to be normalized.}
@@ -55,48 +50,35 @@ matrix (left-to-right) to align with the graph coordinate system.}
 Useful when the graph coordinate system is transposed relative to the
 image or reference map.}
 
+\item{equal.mar}{Logical; when an image is available, whether to fit the image
+with equal margins around the graph, resulting in a tighter crop of the image.
+If FALSE (default), the image is fitted to the full square figure area,
+resulting in unequal margins when the graph aspect ratio differs from 1. Both
+methods preserve the aspect ratios of the image and graph.}
+
 \item{verbose}{A single logical value specifying to display detailed
 messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).}
-
-\item{rotate.xy}{Deprecated from RGraphSpace 1.4.3; use
-\code{swap.xy} instead.}
-
-\item{use_image}{Deprecated from RGraphSpace 1.4.0; use
-\code{image.space} instead.}
-
-\item{crop.coord}{An optional numeric vector of length four specifying a
-cropping region (xmin, xmax, ymin, ymax), with values in normalized
-coordinates \code{[0,1]}.}
 }
 \value{
 A \code{GraphSpace} object with updated \code{nodes}
 and \code{image} slots.
 }
 \description{
-Accessory functions to normalize node coordinates in GraphSpace,
-either by centering them within the graph boundaries
-or by mapping them to pixel coordinates of a background image.
+Accessory function to normalize node coordinates of a \link{GraphSpace}
+object, either by centering nodes within the plot boundaries or by mapping
+nodes to pixel coordinates of a background image.
 }
 \details{
-These functions provide different strategies for coordinate transformation:
-\itemize{
-\item \bold{normalizeGraphSpace}: Re-scales node coordinates to a
-\code{[0, 1]} unit square based on the graph's bounding box (when
-\code{image.space = FALSE}) or maps them to pixel coordinates (when
-\code{image.space = TRUE} and an image is provided; see \link{gs_image}).
-It handles image-to-graph alignment via \code{flip.\*} and
-\code{swap.\*} arguments, used to adjust the graph origin with the
-image matrix layout. Users should be aware of the potential discrepancy
-between image matrix orientation (top-down) and graph coordinates
-(bottom-up). The function attempts to automatically adjust the y-axis to
-align the graph's bottom-up coordinates with the image's top-down layout,
-but further manual adjustments might be required.
-\item \bold{cropGraphSpace}: Subsets the normalized graph space into a
-specific region defined by \code{crop.coord}.
-It recalculates node positions and background image boundaries to maintain
-spatial consistency after cropping. This function requires a previously
-normalized \code{GraphSpace} object.
-}
+This function re-scales node coordinates to a \code{[0, 1]} unit square
+based on the graph's bounding box when \code{image.space = FALSE} or, when
+an image is provided and \code{image.space = TRUE}, it maps nodes to pixel
+coordinates. It handles image-to-graph alignment via \code{flip.\*} and
+\code{swap.\*} arguments, used to adjust the graph origin with the image
+matrix layout. Users should be aware of the potential discrepancy between
+image matrix orientation (top-down) and graph coordinates (bottom-up). The
+function attempts to automatically adjust the y-axis to align the graph's
+bottom-up coordinates with the image's top-down layout, but further manual
+adjustments might be required.
 }
 \note{
 This is an accessory function typically called during
@@ -114,13 +96,9 @@ gs <- GraphSpace(gtoy1)
 
 gs <- normalizeGraphSpace(gs)
 
-gs_crop <- cropGraphSpace(gs, crop.coord = c(0, 1, 0, 0.5))
-
 plotGraphSpace(gs, add.labels = TRUE)
-
-plotGraphSpace(gs_crop, add.labels = TRUE)
 
 }
 \seealso{
-\code{\link{gs_image}}
+\code{\link{cropGraphSpace}}, \code{\link{gs_image}}
 }

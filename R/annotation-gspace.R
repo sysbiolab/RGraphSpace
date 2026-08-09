@@ -25,7 +25,7 @@
 #'   vertically (top-to-bottom). Defaults to \code{FALSE}.
 #' @param flip.h A logical value; if \code{TRUE}, the image is flipped
 #'   horizontally (left-to-right). Defaults to \code{FALSE}.
-#' @param raster Deprecated as of RGraphSpace 1.4.1; use \code{x} instead.
+#' @param na.color The colour to map to NA values. Defaults to \code{NA}.
 #' @param ... Additional arguments (currently unused).
 #' 
 #' @return A ggplot2 layer object that can be added to a \code{ggplot()}
@@ -78,22 +78,19 @@
 #' @rdname annotation_gspace_image
 #' @export
 annotation_gspace_image <- function(x, interpolate = FALSE, 
-  opacity = 1, flip.v = FALSE, flip.h = FALSE, 
-  raster = deprecated()) {
+  opacity = 1, flip.v = FALSE, flip.h = FALSE, na.color = NA) {
 
   if (missing(x)) {
     rlang::abort("Argument 'x' is missing, with no default.")
-  }
-  
-  if (lifecycle::is_present(raster)) {
-    deprecate_soft("1.4.1", "annotation_gspace_image(raster)", 
-      "annotation_gspace_image(x)")
   }
   
   .validate_gs_args("singleLogical", "interpolate", interpolate)
   .validate_gs_args("singleLogical", "flip.v", flip.v)
   .validate_gs_args("singleLogical", "flip.h", flip.h)
   .validate_gs_args("singleNumber", "opacity", opacity)
+  if(!is.na(na.color)){
+    .validate_gs_colors("singleColor", "na.color", na.color)
+  }
   
   if (inherits(x, "GraphSpace")) {
     if (!.has_image(x)) {
@@ -137,7 +134,8 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
 
   if (flip.v) x <- x[rev(seq_len(nrow(x))), , drop = FALSE]
   if (flip.h) x <- x[, rev(seq_len(ncol(x))), drop = FALSE]
-
+  if (!is.na(na.color)) x[is.na(x)] <- na.color
+  
   ggplot2::annotation_raster(raster = x,
     xmin = 0, xmax = 1, ymin = 0, ymax = 1,
     interpolate = interpolate)

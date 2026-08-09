@@ -43,6 +43,7 @@ Collate:
     'gspace-addition.R'
     'gspace-subscript.R'
     'gspace-normalize.R'
+    'gspace-crop.R'
     'gspace-themes.R'
     'gspace-validation.R'
     'gspace-ggplot-constructor.R'

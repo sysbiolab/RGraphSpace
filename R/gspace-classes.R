@@ -36,9 +36,8 @@ setOldClass("gs_graph")
 #' @section Constructor:
 #' see \code{\link{GraphSpace}} constructor.
 #' @import igraph
+#' @importClassesFrom Matrix Matrix dgeMatrix
 #' @exportClass GraphSpace
-#'
-## Class GraphSpace
 setClass("GraphSpace",
   slots = c(
     nodes = "data.frame",
@@ -57,7 +56,7 @@ setClass("GraphSpace",
     graph = igraph::make_empty_graph(),
     image = as.raster(matrix()),
     canvas = as.raster(matrix()),
-    fdata = Matrix::Matrix(nrow = 0, ncol = 0),
+    fdata = methods::new("dgeMatrix"),
     pars = list(),
     misc = list(),
     uuid = character()

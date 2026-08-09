@@ -12,7 +12,7 @@ annotation_gspace_image(
   opacity = 1,
   flip.v = FALSE,
   flip.h = FALSE,
-  raster = deprecated()
+  na.color = NA
 )
 
 annotation_gspace(...)
@@ -56,9 +56,9 @@ annotation_gspace(...)
   A logical value; if `TRUE`, the image is flipped horizontally
   (left-to-right). Defaults to `FALSE`.
 
-- raster:
+- na.color:
 
-  Deprecated as of RGraphSpace 1.4.1; use `x` instead.
+  The colour to map to NA values. Defaults to `NA`.
 
 - ...:
 

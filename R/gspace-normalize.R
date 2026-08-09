@@ -2,9 +2,9 @@
 #-------------------------------------------------------------------------------
 #' Normalize node coordinates to graph and image spaces
 #' 
-#' Accessory functions to normalize node coordinates in GraphSpace, 
-#' either by centering them within the graph boundaries 
-#' or by mapping them to pixel coordinates of a background image.
+#' Accessory function to normalize node coordinates of a \link{GraphSpace} 
+#' object, either by centering nodes within the plot boundaries or by mapping 
+#' nodes to pixel coordinates of a background image.
 #' 
 #' @param gs A \code{GraphSpace} object to be normalized.
 #' @param mar A single numeric value in \code{[0, 0.5]} setting the margins
@@ -29,36 +29,25 @@
 #' @param swap.xy Logical; whether to swap x and y node coordinates. 
 #' Useful when the graph coordinate system is transposed relative to the
 #' image or reference map.
-#' @param crop.coord An optional numeric vector of length four specifying a  
-#' cropping region (xmin, xmax, ymin, ymax), with values in normalized 
-#' coordinates \code{[0,1]}.
+#' @param equal.mar Logical; when an image is available, whether to fit the image
+#' with equal margins around the graph, resulting in a tighter crop of the image.
+#' If FALSE (default), the image is fitted to the full square figure area,
+#' resulting in unequal margins when the graph aspect ratio differs from 1. Both
+#' methods preserve the aspect ratios of the image and graph.
 #' @param verbose A single logical value specifying to display detailed 
 #' messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).
-#' @param rotate.xy Deprecated from RGraphSpace 1.4.3; use 
-#' \code{swap.xy} instead.
-#' @param use_image Deprecated from RGraphSpace 1.4.0; use 
-#' \code{image.space} instead.
 #' 
 #' @details 
-#' These functions provide different strategies for coordinate transformation:
-#' \itemize{
-#'   \item \bold{normalizeGraphSpace}: Re-scales node coordinates to a 
-#'   \code{[0, 1]} unit square based on the graph's bounding box (when 
-#'   \code{image.space = FALSE}) or maps them to pixel coordinates (when 
-#'   \code{image.space = TRUE} and an image is provided; see \link{gs_image}). 
-#'   It handles image-to-graph alignment via \code{flip.\*} and 
-#'   \code{swap.\*} arguments, used to adjust the graph origin with the 
-#'   image matrix layout. Users should be aware of the potential discrepancy 
-#'   between image matrix orientation (top-down) and graph coordinates 
-#'   (bottom-up). The function attempts to automatically adjust the y-axis to 
-#'   align the graph's bottom-up coordinates with the image's top-down layout, 
-#'   but further manual adjustments might be required. 
-#'   \item \bold{cropGraphSpace}: Subsets the normalized graph space into a 
-#'   specific region defined by \code{crop.coord}. 
-#'   It recalculates node positions and background image boundaries to maintain 
-#'   spatial consistency after cropping. This function requires a previously 
-#'   normalized \code{GraphSpace} object.
-#' }
+#' This function re-scales node coordinates to a \code{[0, 1]} unit square 
+#' based on the graph's bounding box when \code{image.space = FALSE} or, when
+#' an image is provided and \code{image.space = TRUE}, it maps nodes to pixel 
+#' coordinates. It handles image-to-graph alignment via \code{flip.\*} and 
+#' \code{swap.\*} arguments, used to adjust the graph origin with the image 
+#' matrix layout. Users should be aware of the potential discrepancy between 
+#' image matrix orientation (top-down) and graph coordinates (bottom-up). The 
+#' function attempts to automatically adjust the y-axis to align the graph's 
+#' bottom-up coordinates with the image's top-down layout, but further manual 
+#' adjustments might be required.
 #' 
 #' @return A \code{GraphSpace} object with updated \code{nodes} 
 #' and \code{image} slots.
@@ -66,7 +55,7 @@
 #' @note This is an accessory function typically called during 
 #' the preprocessing of \code{GraphSpace} objects before rendering.
 #' 
-#' @seealso \code{\link{gs_image}}
+#' @seealso \code{\link{cropGraphSpace}}, \code{\link{gs_image}}
 #' 
 #' @examples
 #' library(RGraphSpace)
@@ -80,11 +69,7 @@
 #' 
 #' gs <- normalizeGraphSpace(gs)
 #' 
-#' gs_crop <- cropGraphSpace(gs, crop.coord = c(0, 1, 0, 0.5))
-#' 
 #' plotGraphSpace(gs, add.labels = TRUE)
-#' 
-#' plotGraphSpace(gs_crop, add.labels = TRUE)
 #' 
 #' @aliases normalizeGraphSpace
 #' @rdname normalizeGraphSpace-methods
@@ -93,22 +78,10 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   function(gs, mar = 0.1, image.space = .has_image(gs), 
     flip.x = FALSE, flip.y = image.space,  
     flip.v = FALSE, flip.h = FALSE, 
-    swap.xy = FALSE, verbose = TRUE, 
-    rotate.xy = deprecated(), use_image = deprecated()){
+    swap.xy = FALSE, equal.mar = FALSE, 
+    verbose = TRUE){
     
     gs <- updateGraphSpace(gs)
-    
-    if (lifecycle::is_present(rotate.xy)) {
-      deprecate_soft("1.4.2", "normalizeGraphSpace(rotate.xy)",
-        with = "normalizeGraphSpace(swap.xy)")
-      swap.xy <- rotate.xy
-    }
-    
-    if (lifecycle::is_present(use_image)) {
-      deprecate_soft("1.4.0", "normalizeGraphSpace(use_image)",
-        with = "normalizeGraphSpace(image.space)")
-      image.space <- .has_image(gs)
-    }
     
     .validate_gs_args("singleLogical", "image.space", image.space)
     .validate_gs_args("singleLogical", "flip.v", flip.v)
@@ -116,6 +89,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     .validate_gs_args("singleLogical", "flip.x", flip.x)
     .validate_gs_args("singleLogical", "flip.y", flip.y)
     .validate_gs_args("singleLogical", "swap.xy", swap.xy)
+    .validate_gs_args("singleLogical", "equal.mar", equal.mar)
     .validate_gs_args("singleLogical", "verbose", verbose)
     .validate_gs_args("singleNumber", "mar", mar)
     
@@ -138,7 +112,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     if(gs_vcount(gs)>0){
       if(image.space){
         gs <- .normalizeGraphSpace.image(gs, mar, flip.x, flip.y, 
-          swap.xy, flip.v, flip.h, verbose)
+          swap.xy, flip.v, flip.h, equal.mar, verbose)
       } else {
         gs <- .normalizeGraphSpace.graph(gs, mar, flip.x, flip.y, 
           swap.xy, verbose)
@@ -169,7 +143,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 }
 
 .normalizeGraphSpace.image <- function(gs, mar, flip.x, flip.y, 
-  swap.xy, flip.v, flip.h, verbose){
+  swap.xy, flip.v, flip.h, equal.mar, verbose){
   
   if(verbose) rlang::inform("Normalizing node coordinates to image space...")
   
@@ -188,7 +162,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   nodes <- .setCoordToImage(nodes, image, flip.x, flip.y, swap.xy, verbose)
   
-  l_temp <- .fitImageNodes(nodes, image, mar)
+  l_temp <- .fitImageNodes(nodes, image, mar, equal.mar)
   
   gs@nodes <- l_temp$nodes
   gs@canvas <- l_temp$image
@@ -202,44 +176,6 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   return(gs)
 }
-
-#-------------------------------------------------------------------------------
-#' @aliases cropGraphSpace
-#' @rdname normalizeGraphSpace-methods
-#' @export
-setMethod("cropGraphSpace", "GraphSpace", 
-  function(gs, crop.coord = c(0, 1, 0, 1), verbose = TRUE){
-    
-    gs <- updateGraphSpace(gs)
-    
-    .validate_gs_args("numeric_vec", "crop.coord", crop.coord)
-    
-    if(length(crop.coord)!=4){
-      rlang::abort("'crop.coord' should be a numeric vector of length = 4.")
-    }
-    
-    if(any(crop.coord < 0) || any(crop.coord > 1)){
-      rlang::abort("'crop.coord' should be in [0,1].")
-    }
-    
-    if(crop.coord[1] >= crop.coord[2] || crop.coord[3] >= crop.coord[4]){
-      rlang::abort("'crop.coord' must satisfy xmin < xmax and ymin < ymax.")
-    }
-    
-    if(!gs@pars$is.normalized){
-      rlang::abort(
-        message = c(
-          "The 'GraphSpace' object must be normalized before cropping.",
-          "i" = "Please run 'normalizeGraphSpace(gs)' first."
-        )
-      )
-    }
-    
-    gs <- .crop_gspace(gs, crop.coord)
-    
-    return(gs)
-    
-  })
 
 ################################################################################
 ### Graph adjusts
@@ -404,7 +340,7 @@ setMethod("cropGraphSpace", "GraphSpace",
 ################################################################################
 
 #-------------------------------------------------------------------------------
-.fitImageNodes <- function(nodes, image, mar = 0.1){
+.fitImageNodes <- function(nodes, image, mar, equal.mar){
   
   # gs_image() (the getter) tags its return value with class "gs_image" for
   # downstream handler-recognition purposes (see .is_handler()); the @image
@@ -422,7 +358,7 @@ setMethod("cropGraphSpace", "GraphSpace",
     return(list(nodes = nodes, image = image, side_length = NA))
   }
   
-  l_temp <- .fit_image_nodes(nodes, image, mar)
+  l_temp <- .fit_image_nodes(nodes, image, mar, equal.mar)
   l_temp <- .adjust_aspect_ratio(l_temp)
   l_temp <- .normalize_image_nodes(l_temp)
   
@@ -431,7 +367,7 @@ setMethod("cropGraphSpace", "GraphSpace",
 
 #-------------------------------------------------------------------------------
 # Fit image to nodes with focus on adjusting graph margins
-.fit_image_nodes <- function(nodes, image, mar = 0.1) {
+.fit_image_nodes <- function(nodes, image, mar = 0.1, equal.mar = FALSE) {
   
   nds <- nodes
   img <- image
@@ -444,39 +380,43 @@ setMethod("cropGraphSpace", "GraphSpace",
   center_x <- mean(xl_nds)
   center_y <- mean(yl_nds)
   
-  # target dimension centered on nodes;
-  # side_length is calculated so that max_d is 
-  # exactly (1 - 2*mar) of the total width
-  max_d <- max(diff(xl_nds), diff(yl_nds))
-  side_length <- max_d / (1 - 2 * mar)
-  half_side <- side_length / 2
-  
-  # initial crop coordinates
-  x_start <- center_x - half_side
-  x_end   <- x_start + side_length
-  y_start <- center_y - half_side
-  y_end   <- y_start + side_length
-  
-  # shift crop coordinates to the image boundaries
-  if (x_start < 1) { 
-    shift <- 1 - x_start
-    x_start <- 1
-    x_end <- min(d[2], x_end + shift)
-  }
-  if (x_end > d[2]) { 
-    shift <- x_end - d[2]
-    x_end <- d[2]
-    x_start <- max(1, x_start - shift)
-  }
-  if (y_start < 1) { 
-    shift <- 1 - y_start
-    y_start <- 1
-    y_end <- min(d[1], y_end + shift)
-  }
-  if (y_end > d[1]) { 
-    shift <- y_end - d[1]
-    y_end <- d[1]
-    y_start <- max(1, y_start - shift)
+  # set initial crop coordinates
+  if(equal.mar){
+    side_length_x <- diff(xl_nds) / (1 - 2 * mar)
+    side_length_y <- diff(yl_nds) / (1 - 2 * mar)
+    x_start <- center_x - side_length_x/2
+    x_end   <- x_start + side_length_x
+    y_start <- center_y - side_length_y/2
+    y_end   <- y_start + side_length_y
+  } else {
+    max_d <- max(diff(xl_nds), diff(yl_nds))
+    side_length <- max_d / (1 - 2 * mar)
+    half_side <- side_length / 2
+    x_start <- center_x - half_side
+    x_end   <- x_start + side_length
+    y_start <- center_y - half_side
+    y_end   <- y_start + side_length
+    # shift crop coordinates to the image boundaries
+    if (x_start < 1) { 
+      shift <- 1 - x_start
+      x_start <- 1
+      x_end <- min(d[2], x_end + shift)
+    }
+    if (x_end > d[2]) { 
+      shift <- x_end - d[2]
+      x_end <- d[2]
+      x_start <- max(1, x_start - shift)
+    }
+    if (y_start < 1) { 
+      shift <- 1 - y_start
+      y_start <- 1
+      y_end <- min(d[1], y_end + shift)
+    }
+    if (y_end > d[1]) { 
+      shift <- y_end - d[1]
+      y_end <- d[1]
+      y_start <- max(1, y_start - shift)
+    }
   }
   
   # force the limits to include the node bounding box
@@ -506,15 +446,7 @@ setMethod("cropGraphSpace", "GraphSpace",
   nds$x <- nds$x - x_s_idx + 1
   nds$y <- nds$y - y_s_idx + 1
   
-  # calculate final side_length
-  x_side_length <- x_end - x_start
-  y_side_length <- y_end - y_start
-  x_side_length <- x_side_length + (x_start - x_s_idx)
-  y_side_length <- y_side_length + (y_start - y_s_idx)
-  side_length <- max(x_side_length, y_side_length)
-  
-  return(list(nodes = nds, image = img_res, 
-    side_length = side_length))
+  return(list(nodes = nds, image = img_res))
 }
 
 #-------------------------------------------------------------------------------
@@ -524,13 +456,13 @@ setMethod("cropGraphSpace", "GraphSpace",
     n <- ceiling( (d[1] - d[2])/2 )
     img_d <- matrix(NA, nrow = d[1], ncol = d[1])
     img_d[ , seq(n + 1, n + d[2])] <- as.matrix(l_temp$image)
-    l_temp$nodes$x <- l_temp$nodes$x + n
+    l_temp$nodes$x <- l_temp$nodes$x + (n-1)
     l_temp$image  <- as.raster(img_d)
   } else if(d[1] < d[2]){
     n <- ceiling( (d[2] - d[1])/2 )
     img_d <- matrix(NA, nrow = d[2], ncol = d[2])
     img_d[seq(n + 1, n + d[1]), ] <- as.matrix(l_temp$image)
-    l_temp$nodes$y <- l_temp$nodes$y + n
+    l_temp$nodes$y <- l_temp$nodes$y + (n-1)
     l_temp$image  <- as.raster(img_d)
   }
   return(l_temp)
@@ -543,84 +475,10 @@ setMethod("cropGraphSpace", "GraphSpace",
   l_temp$nodes$y <- .rescale_direct(l_temp$nodes$y, d[1], 0.5 / d[1])
   return(l_temp)
 }
+
+#-------------------------------------------------------------------------------
 .rescale_direct <- function(x, n, half_pixel) {
   ((x - 1) / (n - 1)) * (1 - 2 * half_pixel) + half_pixel
-}
-
-################################################################################
-### Crop graph and image
-################################################################################
-
-#-------------------------------------------------------------------------------
-.crop_gspace <- function(gs, crop.coord) {
-  if (.has_image(gs)) {
-    gs <- .crop_gspace_image(gs, crop.coord)
-  } else {
-    gs <- .crop_gspace_graph(gs, crop.coord)
-  }
-  return(gs)
-}
-
-#-------------------------------------------------------------------------------
-.crop_gspace_graph <- function(gs, crop.coord) {
-  
-  xmin <- crop.coord[1]; xmax <- crop.coord[2]
-  ymin <- crop.coord[3]; ymax <- crop.coord[4]
-  
-  # Crop nodes
-  nodes <- gs@nodes
-  cx <- nodes$x >= xmin & nodes$x <= xmax
-  cy <- nodes$y >= ymin & nodes$y <= ymax
-  nodes <- nodes[which(cx & cy), ]
-  gs@nodes <- nodes
-  
-  gs <- .trim_graph_space(gs, nodes)
-  
-  return(gs)
-  
-}
-
-#-------------------------------------------------------------------------------
-.crop_gspace_image <- function(gs, crop.coord) {
-  
-  xmin <- crop.coord[1]; xmax <- crop.coord[2]
-  ymin <- crop.coord[3]; ymax <- crop.coord[4]
-  
-  # Filter nodes within the crop window
-  # Node: crop required normalized image
-  nodes <- gs@nodes
-  canvas <- gs@canvas
-  
-  # Compute image crop indices
-  nrow_mat <- nrow(canvas)
-  ncol_mat <- ncol(canvas)
-  col_s <- max(1L, ceiling(xmin * ncol_mat))
-  col_e <- min(ncol_mat, floor(xmax * ncol_mat))
-  row_s <- max(1L, ceiling((1 - ymax) * nrow_mat))
-  row_e <- min(nrow_mat, floor((1 - ymin) * nrow_mat))
-  d <- c(row_e - row_s + 1L, col_e - col_s + 1L)
-  
-  # Reverse pixel-center encoding to recover 1-based pixel indices
-  # x: shift to crop-window origin (left edge)
-  nodes$x <- .rescale_direct_inv(nodes$x, ncol_mat, 0.5 / ncol_mat) - (col_s - 1)
-  # y: shift to crop-window origin (top edge, image convention)
-  nodes$y <- .rescale_direct_inv(nodes$y, nrow_mat, 0.5 / nrow_mat) - (nrow_mat - row_e)
-  
-  # Re-encode to pixel centers in the cropped image
-  nodes$x <- .rescale_direct(nodes$x, d[2], 0.5 / d[2])
-  nodes$y <- .rescale_direct(nodes$y, d[1], 0.5 / d[1])
-  
-  # Crop nodes
-  cx <- nodes$x >= 0 & nodes$x <= 1
-  cy <- nodes$y >= 0 & nodes$y <= 1
-  nodes <- nodes[which(cx & cy), ]
-  
-  # Crop image
-  gs@canvas <- canvas[row_s:row_e, col_s:col_e, drop = FALSE]
-  gs <- .trim_graph_space(gs, nodes)
-  
-  return(gs)
-  
 }
 
 #-------------------------------------------------------------------------------

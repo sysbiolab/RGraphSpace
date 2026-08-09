@@ -64,7 +64,7 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH a38cb7c DN-- 20 19 -- 
+#> IGRAPH e4dfd4d DN-- 20 19 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), num_var (v/n), edgeColor (e/c), arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -182,17 +182,17 @@ network elements.
     #> [1] igraph_2.3.3      RGraphSpace_1.5.1 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] Matrix_1.7-6       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
-    #>  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   tidyr_1.3.2       
-    #>  [9] jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0       textshaping_1.0.5 
-    #> [13] yaml_2.3.12        fastmap_1.2.0      lattice_0.22-9     R6_2.6.1          
-    #> [17] labeling_0.4.3     generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4 
-    #> [21] tibble_3.3.1       desc_1.4.3         bslib_0.11.0       pillar_1.11.1     
-    #> [25] RColorBrewer_1.1-3 rlang_1.2.0        cachem_1.1.0       xfun_0.59         
-    #> [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
-    #> [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5    
-    #> [37] digest_0.6.39      grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0    
-    #> [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       
-    #> [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        
-    #> [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.31     tools_4.6.1       
-    #> [53] pkgconfig_2.0.3    htmltools_0.5.9
+    #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    
+    #>  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.1        
+    #>  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-6      
+    #> [13] ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
+    #> [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        tidygraph_1.3.1   
+    #> [21] withr_3.0.3        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        
+    #> [25] ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1        vctrs_0.7.3       
+    #> [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 
+    #> [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    
+    #> [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      
+    #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
+    #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
+    #> [49] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31    
+    #> [53] labeling_0.4.3     compiler_4.6.1     S7_0.2.2

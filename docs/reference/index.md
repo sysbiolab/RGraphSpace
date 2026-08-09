@@ -14,8 +14,9 @@
 - [`updateGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/updateGraphSpace.md)
   : Update a GraphSpace object
 - [`normalizeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
-  [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   : Normalize node coordinates to graph and image spaces
+- [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.md)
+  : Crop node coordinates to graph and image spaces
 - [`summary(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/summary-GraphSpace-method.md)
   : Summarise a GraphSpace object
 
@@ -55,7 +56,7 @@
   [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   : Add edges to a GraphSpace object
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
-  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
 
 ## Features

@@ -61,7 +61,7 @@ gs_fetch_features <- function(x, vars = NULL, as_df = FALSE) {
   }
   
   if (isTRUE(as_df)) {
-    fdata <- as.data.frame(fdata, drop = FALSE)
+    fdata <- as.data.frame(as.matrix(fdata), drop = FALSE)
   }
   
   return(fdata)

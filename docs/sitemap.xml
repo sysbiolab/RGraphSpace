@@ -1,5 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/404.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/LICENSE-text.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.html</loc></url>
@@ -28,6 +29,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace_image.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/dot-generate_gs_uuid.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.html</loc></url>

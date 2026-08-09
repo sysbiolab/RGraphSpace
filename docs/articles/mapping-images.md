@@ -53,6 +53,9 @@ gs_image_toy
 #> + node spatial boundaries: raw graph
 #> | x: [194, 493] (cols)
 #> | y: [237, 412] (rows)
+#> + image spatial boundaries: raw image
+#> | x: [1, 680] (cols)
+#> | y: [1, 640] (rows)
 ```
 
 Node coordinates fall within the image’s spatial boundaries: nodes range
@@ -214,7 +217,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 600bffe DN-- 39 0 -- 
+#> IGRAPH b28e4d1 DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space
@@ -348,8 +351,8 @@ tutorial for examples using a reference image.
     #> [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      
     #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
     #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
-    #> [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31     labeling_0.4.3    
-    #> [53] compiler_4.6.1     S7_0.2.2
+    #> [49] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    labeling_0.4.3    
+    #> [53] rmarkdown_2.31     compiler_4.6.1     S7_0.2.2
 
 ## References
 
