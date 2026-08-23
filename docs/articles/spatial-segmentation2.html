@@ -343,16 +343,15 @@ themselves carry the spatial detail.</p>
 <div class="section level2">
 <h2 id="sp-coercion">Coercing <em>SpatialExperiment</em> objects<a class="anchor" aria-label="anchor" href="#sp-coercion"></a>
 </h2>
-<p>Rather than relying on the dedicated
-<code>as.GraphSpace(spe, ...)</code> coercion method used earlier, a
-<code>GraphSpace</code> can also be built manually from a
-<code>SpatialExperiment</code>’s individual components. This mirrors
-what the dedicated coercion method does internally, and offers more
-direct control over what gets included and how. Note in particular that
-the expression matrix is attached to the dedicated <code>@fdata</code>
-slot via <code><a href="../reference/GraphSpace-accessors.html">gs_fdata()</a></code>, rather than merged into the node
-table, keeping the high-dimensional features available for aesthetic
-mapping without being treated as node attributes.</p>
+<p>Rather than relying on the <code>as.GraphSpace(spe, ...)</code>
+coercion method used earlier, a <code>GraphSpace</code> can also be
+built manually from a <code>SpatialExperiment</code>’s individual
+components. This mirrors what the coercion method does internally, and
+offers more direct control over what gets included and how. Note in
+particular that the expression matrix is attached to a dedicated
+<code>@fdata</code> slot via <code><a href="../reference/GraphSpace-accessors.html">gs_fdata()</a></code>, rather than merged
+into the node table, keeping the high-dimensional features available for
+aesthetic mapping without being treated as node attributes.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract tissue coordinates</span></span>
 <span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">spe</span><span class="op">)</span></span>
