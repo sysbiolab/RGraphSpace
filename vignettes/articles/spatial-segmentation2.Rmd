@@ -274,7 +274,7 @@ knitr::include_graphics("figs_dev/spe_seg4.png")
 
 # Coercing *SpatialExperiment* objects {#sp-coercion}
 
-Rather than relying on the dedicated `as.GraphSpace(spe, ...)` coercion method used earlier, a `GraphSpace` can also be built manually from a `SpatialExperiment`'s individual components. This mirrors what the dedicated coercion method does internally, and offers more direct control over what gets included and how. Note in particular that the expression matrix is attached to the dedicated `@fdata` slot via `gs_fdata()`, rather than merged into the node table, keeping it available for aesthetic mapping without being treated as a node attribute, as introduced in the Overview.
+Rather than relying on the dedicated `as.GraphSpace(spe, ...)` coercion method used earlier, a `GraphSpace` can also be built manually from a `SpatialExperiment`'s individual components. This mirrors what the dedicated coercion method does internally, and offers more direct control over what gets included and how. Note in particular that the expression matrix is attached to the dedicated `@fdata` slot via `gs_fdata()`, rather than merged into the node table, keeping the high-dimensional features available for aesthetic mapping without being treated as node attributes.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Extract tissue coordinates

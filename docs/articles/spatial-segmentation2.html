@@ -351,8 +351,8 @@ what the dedicated coercion method does internally, and offers more
 direct control over what gets included and how. Note in particular that
 the expression matrix is attached to the dedicated <code>@fdata</code>
 slot via <code><a href="../reference/GraphSpace-accessors.html">gs_fdata()</a></code>, rather than merged into the node
-table, keeping it available for aesthetic mapping without being treated
-as a node attribute, as introduced in the Overview.</p>
+table, keeping the high-dimensional features available for aesthetic
+mapping without being treated as node attributes.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract tissue coordinates</span></span>
 <span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">spe</span><span class="op">)</span></span>
@@ -362,7 +362,7 @@ as a node attribute, as introduced in the Overview.</p>
 <span><span class="va">cdata</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Merge coordinates and cdata using common cell identifiers</span></span>
-<span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">coords</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cdata</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">coords</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cdata</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">coords</span><span class="op">[</span><span class="va">ids</span>, <span class="op">]</span>, <span class="va">cdata</span><span class="op">[</span><span class="va">ids</span>, <span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Construct a GraphSpace object</span></span>
