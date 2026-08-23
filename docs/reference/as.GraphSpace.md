@@ -19,8 +19,17 @@ as.GraphSpace(x, ...)
 # S3 method for class 'data.frame'
 as.GraphSpace(x, ...)
 
+# S3 method for class 'DFrame'
+as.GraphSpace(x, ...)
+
+# S3 method for class 'matrix'
+as.GraphSpace(x, ...)
+
+# S3 method for class 'SpatialExperiment'
+as.GraphSpace(x, assay = "counts", ...)
+
 # S3 method for class 'Seurat'
-as.GraphSpace(x, space = c("embedding", "spatial"), layer = NULL, ...)
+as.GraphSpace(x, layer = NULL, space = c("embedding", "spatial"), ...)
 ```
 
 ## Arguments
@@ -31,18 +40,26 @@ as.GraphSpace(x, space = c("embedding", "spatial"), layer = NULL, ...)
 
 - ...:
 
-  Additional arguments passed to methods associated with the selected
-  `space`.
+  Additional arguments passed to coercion methods.
+
+- assay:
+
+  Name of the assay in the
+  [`SpatialExperiment`](https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment.html)
+  object from which data should be retrieved (see
+  [`assay`](https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html)).
+
+- layer:
+
+  Name of the layer in the
+  [`Seurat`](https://satijalab.org/seurat/reference/Seurat-package.html)
+  object from which node data should be retrieved (see
+  [`LayerData`](https://satijalab.github.io/seurat-object/reference/Layers.html)).
 
 - space:
 
   Character specifying the coordinate space used for node geometry.
   Either `"embedding"` or `"spatial"`. See details.
-
-- layer:
-
-  Name of the layer from which node data should be retrieved (see
-  [`LayerData`](https://satijalab.github.io/seurat-object/reference/Layers.html)).
 
 ## Value
 

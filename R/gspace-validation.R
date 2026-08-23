@@ -5,8 +5,6 @@
 .validate_igraph <- function(g, layout = NULL, simplify = TRUE, 
     verbose = FALSE) {
     
-    if (verbose) rlang::inform("Validating the 'igraph' object...")
-    
     if (!inherits(g, "igraph")) {
         rlang::abort("'g' should be an 'igraph' object.")
     }
@@ -20,7 +18,7 @@
             igraph::V(g)$x <- layout[, 1]
             igraph::V(g)$y <- layout[, 2]
         }
-    } else if (is.null(igraph::V(g)$x) || is.null(igraph::V(g)$y)) {
+    } else if (!all(c("x", "y") %in% igraph::vertex_attr_names(g))) {
         layout <- igraph::layout_nicely(g)
         igraph::V(g)$x <- layout[, 1]
         igraph::V(g)$y <- layout[, 2]
@@ -29,25 +27,27 @@
         if (verbose) rlang::inform(msg)
     }
     
-    if (is.null(igraph::V(g)$name)) {
+    if (!("name" %in% igraph::vertex_attr_names(g))) {
         msg <- "Vertex attribute 'name' missing; assigning names... "
         if (verbose) rlang::inform(msg)
         igraph::V(g)$name <- paste0("n", seq_len(igraph::vcount(g)))
     } else {
-        if(is.vector(igraph::V(g)$name) && !is.list(igraph::V(g)$name)){
-            if(any(is.na(igraph::V(g)$name))){
+        vnames <- igraph::V(g)$name
+        if(is.vector(vnames) && !is.list(vnames)){
+            if(any(is.na(vnames))){
                 msg <- "NA values found in vertex attribute 'name'."
                 rlang::abort(msg, call. = FALSE)
             }
-            if(!.all_characterValues(igraph::V(g)$name)){
+            if(!.all_characterValues(vnames)){
                 rlang::warn("vertex attribute 'name' converted to character.")
-                igraph::V(g)$name <- as.character(igraph::V(g)$name)
+                vnames <- as.character(vnames)
+                igraph::V(g)$name <- vnames
             }
         } else {
             msg <- "vertex attribute 'name' should be a character vector."
             rlang::abort(msg) 
         }
-        if (anyDuplicated(igraph::V(g)$name) > 0){
+        if (anyDuplicated(vnames) > 0){
             rlang::abort("vertex names must be unique.")
         }
     }
@@ -66,15 +66,15 @@
             edge.attr.comb = list(weight = "max", "first"))
     }
     
-    if (is.null(igraph::V(g)$nodeLabel)){
-        igraph::V(g)$nodeLabel <- as.character(igraph::V(g)$name)
+    if( !("nodeLabel" %in% igraph::vertex_attr_names(g)) ){
+        igraph::V(g)$nodeLabel <- igraph::V(g)$name
     }
     
-    if (is.null(igraph::V(g)$nodeSize)){
+    if( !("nodeSize" %in% igraph::vertex_attr_names(g)) ){
         igraph::V(g)$nodeSize <- .get_default_vatt()[["nodeSize"]]
     }
     
-    if (is.null(igraph::E(g)$arrowType)){
+    if( !("arrowType" %in% igraph::edge_attr_names(g)) ){
         if (is_directed(g)) {
             igraph::E(g)$arrowType <- 1
         } else {
@@ -83,15 +83,16 @@
     }
 
     # Deprecation: edgeLineColor -> edgeColor
-    if (!is.null(igraph::E(g)$edgeLineColor)) {
+    if( "edgeLineColor" %in% igraph::edge_attr_names(g) ){
         rlang::warn(paste0(
             "Edge attribute 'edgeLineColor' is deprecated as of ",
             "RGraphSpace 1.4.3; use 'edgeColor' instead."),
             .frequency = "once",
             .frequency_id = "edgeLineColor_deprecated"
             )
-        if (is.null(igraph::E(g)$edgeColor))
+        if( !("edgeColor" %in% igraph::edge_attr_names(g)) ){
             igraph::E(g)$edgeColor <- igraph::E(g)$edgeLineColor
+        }
         g <- igraph::delete_edge_attr(g, "edgeLineColor")
     }
     
@@ -190,12 +191,16 @@
 ################################################################################
 ### Default RGraphSpace attributes
 ################################################################################
-.gs_protected_node_cols <- function() {
-    c("vertex", "name")
+.gs_protected_node_cols <- function(ext = FALSE) {
+    cols <- c("vertex", "name")
+    if(ext) cols <- c(cols, "x", "y", "nodeLabel", "nodeSize")
+    cols
 }
-.gs_protected_edge_cols <- function() {
-    c("vertex1", "vertex2", "name1", "name2",
+.gs_protected_edge_cols <- function(ext = FALSE) {
+    cols <- c("vertex1", "vertex2", "name1", "name2",
         "curve_weight", "is_multiple", "is_loop")
+    if(ext) cols <- c(cols, "arrowType")
+    cols
 }
 #-------------------------------------------------------------------------------
 .get_required_vatt <- function() {
@@ -205,8 +210,9 @@
 .get_default_vatt <- function() {
     atts <- list(
         "nodeLabel" = NA, "nodeLabelSize" = 3, "nodeLabelColor" = "grey40",
-        "nodeShape" = 21, "nodeSize" = 5, "nodeColor" = "grey80",
-        "nodeLineWidth" = 0.5, "nodeLineColor" = "grey20")
+        "nodeShape" = 21, "nodeSize" = 5, "nodeColor" = "grey80", 
+        "nodeFillColor" = "grey80", "nodeLineWidth" = 0.5, 
+        "nodeLineColor" = "grey20")
     return(atts)
 }
 .get_default_eatt <- function(is.directed = FALSE) {
@@ -269,6 +275,9 @@
     }
     if (!is.null(atts$nodeColor)) {
         .validate_gs_colors("allColors", "nodeColor", atts$nodeColor)
+    }
+    if (!is.null(atts$nodeFillColor)) {
+        .validate_gs_colors("allColors", "nodeFillColor", atts$nodeFillColor)
     }
     if (!is.null(atts$nodeLineWidth)) {
         .validate_gs_args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)

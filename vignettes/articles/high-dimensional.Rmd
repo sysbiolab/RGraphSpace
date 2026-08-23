@@ -46,11 +46,11 @@ This vignette assumes prior experience with [*Seurat*](https://satijalab.org/seu
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
-if (packageVersion("Seurat") < "5.5.0"){
+if (packageVersion("Seurat") < "5.5.1"){
   message("Need to update 'Seurat' for this vignette")
   remotes::install_github("satijalab/Seurat")
 }
@@ -67,7 +67,7 @@ library("SeuratData")
 library("patchwork")
 ```
 
-## Loading the dataset
+# Loading the dataset
 
 We will use the `pbmc3k` dataset from the *SeuratData* package, consisting of single-cell transcriptomics data from peripheral blood mononuclear cells. This dataset is commonly used to showcase *Seurat* workflows [@Hao2024].
 
@@ -97,6 +97,8 @@ seurat_obj <- LoadData("pbmc3k", type = "pbmc3k.final")
 # seurat_obj <- RunPCA(seurat_obj)
 # seurat_obj <- RunUMAP(seurat_obj, dims = 1:30)
 ```
+
+# Cluster and feature visualization
 
 We now apply `as.GraphSpace()` to coerce the `Seurat` object into a `GraphSpace`, bringing its components into *RGraphSpace*'s rendering model, with feature data available for aesthetic mapping (for additional details, see the [*coercing high-dimensional data*](high-dimensional.html#hd-coercion) section).
 
@@ -175,7 +177,7 @@ p2
 knitr::include_graphics("figs_dev/ggplot_seurat_1_2.png")
 ```
 
-# Coercing high-dimensional data {#hd-coercion}
+# Coercing *Seurat* objects {#hd-coercion}
 
 The `as.GraphSpace()` function provides a convenient way to coerce high-dimensional data into a `GraphSpace` object. However, no coercion method can anticipate every possible data structure. Below, we show how to access the relevant components of a `Seurat` object and use them to construct a `GraphSpace` manually. For another coercion example, see the [*spatial data*](spatial-data.html#sp-coercion) tutorial.
 

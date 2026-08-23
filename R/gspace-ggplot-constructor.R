@@ -485,7 +485,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
     # Expect node_size already in [0,100] viewport percent
     node_size <- scales::squish(node_size, range = c(0, 100))
   } else {
-    node_size <- scales::rescale(node_size, range = c(0, 1))
+    node_size <- scales::rescale(node_size, to = c(0, 1))
     node_size <- scales::rescale(sqrt(node_size), to = range)
   }
   return(node_size)

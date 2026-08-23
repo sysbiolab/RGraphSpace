@@ -8,6 +8,8 @@
   Self-Loops](https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.md):
 - [Customizing
   Aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md):
+- [Using 'sf' geometries with
+  RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md):
 - [Getting Started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/get-started.md):
 - [Using RGraphSpace with High-Dimensional
@@ -26,3 +28,7 @@
   Offsets](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md):
 - [Using RGraphSpace with Spatial Feature
   Data](https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.md):
+- [Spatial-segmented data with Seurat and
+  RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation1.md):
+- [Spatial-segmented data with SpatialExperiment and
+  RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md):

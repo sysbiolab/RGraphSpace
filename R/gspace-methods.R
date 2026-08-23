@@ -3,8 +3,7 @@
 #' @title Create a GraphSpace object
 #' 
 #' @description \code{GraphSpace} is the main constructor for 
-#' \linkS4class{GraphSpace} objects, designed to store graph data and 
-#' metadata for optimized rendering in RGraphSpace.
+#' \linkS4class{GraphSpace} objects.
 #'
 #' @param g A graph object inheriting from the \link[igraph]{igraph} class 
 #' (such as \code{igraph} and \code{tbl_graph}) or a \code{data.frame} used 
@@ -209,12 +208,18 @@ setMethod("GraphSpace", signature(g = "ANY"),
 setMethod("GraphSpace", signature(g = "data.frame"),
   function(g, verbose = TRUE, ...){
     
+    if(verbose){
+      rlang::inform("Converting input data to an 'igraph' object...")
+    }
     if(!all(c("x", "y") %in% colnames(g))){
-      ms_i <- c("i" = "GraphSpace requires x/y columns for 'data.frame' initialization.")
-      rlang::abort(
-        message = c("x" = "Input 'g' is missing 'x' and 'y' coordinates."),
-        body = ms_i
-      )
+      if(verbose){
+        rlang::inform(c(
+          "GraphSpace requires 'x'/'y' columns for 'data.frame' initialization.",
+          "*" = "Scanning for coordinate names..."
+        )) 
+      }
+      g <- .match_column_name(g, "x", verbose)
+      g <- .match_column_name(g, "y", verbose)
     }
     
     g <- .graphFromCoordinates(g)
@@ -228,29 +233,87 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 )
 
 #-------------------------------------------------------------------------------
-.graphFromCoordinates <- function(coord){
+.match_column_name <- function(df_mat, target = "x", verbose = TRUE) {
+  
+  cnames <- colnames(df_mat)
+  
+  if (is.null(cnames)) {
+    rlang::abort(sprintf(
+      "Unable to identify a '%s' column: input has no column names.",
+      target
+    ))
+  }
+  if (target %in% cnames) return(df_mat)
+  
+  low_cnames <- tolower(cnames)
+  low_target <- tolower(target)
+  
+  # 1. Exact match, case-insensitive -- if found, use it immediately
+  idx <- which(low_cnames == low_target)
+  if (length(idx) == 1) {
+    if(verbose){
+      rlang::inform(sprintf("Using column '%s' as '%s'.", 
+        cnames[idx], target)) 
+    }
+    colnames(df_mat)[idx] <- target
+    return(df_mat)
+  }
+  if (length(idx) > 1) {
+    rlang::abort(c(
+      sprintf("Ambiguous '%s' column name: candidates are %s.", target, 
+        paste(cnames[idx], collapse = ", ")),
+      "i" = sprintf("Rename the intended column to '%s' explicitly.", target)
+    ))
+  }
+  
+  # 2. No exact match -- fall back to a whole-word match within the name
+  pattern <- sprintf("(^|[^a-z])\\Q%s\\E([^a-z]|$)", low_target)
+  idx <- grep(pattern, low_cnames, perl = TRUE)
+  
+  if (length(idx) == 0) {
+    rlang::abort(sprintf(
+      "Unable to identify a '%s' column name among: %s.",
+      target, paste(cnames, collapse = ", ")
+    ))
+  }
+  if (length(idx) > 1) {
+    rlang::abort(c(
+      sprintf("Ambiguous '%s' column name: candidates are %s.", target, 
+        paste(cnames[idx], collapse = ", ")),
+      "i" = sprintf("Rename the intended column to '%s' explicitly.", target)
+    ))
+  }
+  if(verbose){
+    rlang::inform(sprintf("Using column '%s' as '%s'.", cnames[idx], target)) 
+  }
+  colnames(df_mat)[idx] <- target
+  df_mat
+}
+
+#-------------------------------------------------------------------------------
+.graphFromCoordinates <- function(coord_df){
   
   # Check attributes
-  attr <- unique(colnames(coord))
+  attr <- unique(colnames(coord_df))
   attr <- attr[!is.na(attr)]
   attr <- attr[!attr%in%c("x","y")]
   
-  # Initialize a graph using 'coord' as vertices, with no edges
-  g <- make_empty_graph(n = nrow(coord), directed = FALSE)
+  # Initialize a graph using 'coord_df' as vertices, with no edges
+  g <- igraph::make_empty_graph(n = nrow(coord_df), directed = FALSE)
   
-  # If 'coord' has no row names (a common case for a plain data.frame), 
+  # If 'coord_df' has no row names (a common case for a plain data.frame), 
   # sequential names will be later assigned in the validation functions
-  if(!is.null(rownames(coord))){
-    V(g)$name <- rownames(coord)
+  if(!is.null(rownames(coord_df))){
+    V(g)$name <- rownames(coord_df)
   }
   
   # Add coordinates
-  V(g)$x <- coord$x
-  V(g)$y <- coord$y
+  V(g)$x <- coord_df[["x"]]
+  V(g)$y <- coord_df[["y"]]
   
   if(length(attr)>0){
     for(name in attr){
-      igraph::vertex_attr(g, name) <- coord[[name]]
+      igraph::vertex_attr(g, name) <- coord_df[[name]]
     }
   }
   
@@ -460,7 +523,7 @@ plot.GraphSpace <- function(x, ...) {
 #' @param what A single character value specifying which slot to 
 #' retrieve from a 'GraphSpace' object.
 #' Options: "graph", "nodes", "edges", "pars", "misc", "image", 
-#' "canvas", and "fdata".
+#' "canvas", "fdata", "coords", and "uuid".
 #' @return Content from slots in the \linkS4class{GraphSpace} object.
 #' @examples
 #' library(RGraphSpace)
@@ -482,7 +545,8 @@ plot.GraphSpace <- function(x, ...) {
 #' @export
 setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
   .validate_gs_args("singleString", "what", what)
-  opts <- c("graph", "nodes", "edges", "pars", "misc", "image", "canvas","fdata")
+  opts <- c("graph", "nodes", "edges", "pars", "misc", "image", 
+    "canvas", "fdata", "coords", "uuid")
   if (!what %in% opts) {
     opts <- paste0(opts, collapse = ", ")
     stop("'what' must be one of:\n", opts, call. = FALSE)
@@ -506,438 +570,16 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
   } else if (what == "fdata") {
     .check_outdated_gs(gs, "fdata", type = "abort")
     obj <- gs@fdata
+  } else if (what == "coords") {
+    .check_outdated_gs(gs, "coords", type = "abort")
+    obj <- gs@coords
+  } else if (what == "uuid") {
+    .check_outdated_gs(gs, "uuid", type = "abort")
+    obj <- gs@uuid
   } else {
     obj <- gs@graph
   }
   return(obj)
 })
 
-#-------------------------------------------------------------------------------
-#' @title Accessors and attribute utilities for GraphSpace objects
-#' 
-#' @description Access and modify individual components of a
-#' \linkS4class{GraphSpace} object. Selected \pkg{igraph} methods are
-#' applied to the internal graph representation and propagated to
-#' downstream node and edge components.
-#' 
-#' @param x A \linkS4class{GraphSpace} class object
-#' @param name Name of the attribute.
-#' @param value Replacement value for the selected slot or attribute.
-#' @param ... Additional arguments passed to extraction methods. 
-#' @details
-#' For \code{gs_nodes()}, the optional \code{vars} argument specifies
-#' node-associated features retrieved from the \code{fdata}
-#' container. See also \code{\link{gs_fetch_features}}.
-#' @return Updated \linkS4class{GraphSpace} object.
-#' @seealso \code{\link[igraph]{vertex_attr}}, \code{\link[igraph]{edge_attr}}, 
-#' \code{\link{gs_fetch_features}}
-#' @examples
-#' library(RGraphSpace)
-#' library(igraph)
-#' 
-#' # Load a demo igraph
-#' data('gtoy1', package = 'RGraphSpace')
-#' 
-#' # Create a new GraphSpace object
-#' gs <- GraphSpace(gtoy1)
-#' 
-#' #--- Usage of GraphSpace attribute accessors:
-#' 
-#' # Vertex names
-#' names(gs)
-#' 
-#' # Vertex attribute names
-#' gs_names(gs)
-#' 
-#' # Get a data frame with nodes
-#' gs_nodes(gs)
-#' 
-#' # Get a data frame with edges
-#' gs_edges(gs)
-#' 
-#' # Get vertex count
-#' gs_vcount(gs)
-#' 
-#' # Get edge count
-#' gs_ecount(gs)
-#' 
-#' # Access all vertex attributes
-#' gs_vertex_attr(gs)
-#' 
-#' # Access a specific vertex attribute
-#' gs_vertex_attr(gs, "nodeLabel")
-#' 
-#' # Modify a single value within a vertex attribute
-#' gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
-#' 
-#' # Replace an entire vertex attribute
-#' gs_vertex_attr(gs, "nodeSize") <- 10
-#' 
-#' # Access a specific edge attribute
-#' gs_edge_attr(gs, "edgeColor")
-#' 
-#' # Replace an entire edge attribute
-#' gs_edge_attr(gs, "edgeLineWidth") <- 1
-#' 
-#' # Add an image and rescale graph coordinates to image space
-#' # Images may be provided as a raster or numeric matrix
-#' gs_image(gs) <- as_colorraster(volcano)
-#' gs <- normalizeGraphSpace(gs, image.space = FALSE)
-#' 
-#' @name GraphSpace-accessors
-#' @aliases names
-#' @aliases gs_names
-#' @aliases gs_nodes
-#' @aliases gs_edges
-#' @aliases gs_graph
-#' @aliases gs_image
-#' @aliases gs_image<-
-#' @aliases gs_fdata
-#' @aliases gs_fdata<-
-#' @aliases gs_features
-#' @aliases gs_nfeatures
-#' @aliases gs_vcount
-#' @aliases gs_ecount
-#' @aliases gs_vertex_attr
-#' @aliases gs_vertex_attr<-
-#' @aliases gs_edge_attr
-#' @aliases gs_edge_attr<-
-NULL
 
-#' @rdname GraphSpace-accessors
-#' @aliases names,GraphSpace-method
-#' @export
-setMethod("names", "GraphSpace", function(x) {
-  x@nodes$name
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_names", "GraphSpace", function(x) {
-  colnames(x@nodes)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_nodes", "GraphSpace", function(x, ...) {
-  
-  args <- list(...)
-  
-  vars <- args$vars %||% FALSE
-  
-  render <- args$render %||% FALSE
-  
-  nodes <- if (isTRUE(render)) .gs_nodes(x) else x@nodes
-  
-  if (.all_characterValues(vars)) {
-    
-    signal_df <- gs_fetch_features(x, vars = vars, as_df = TRUE)
-    
-    if (!is.null(signal_df)) {
-      
-      signal_vars <- setdiff(colnames(signal_df), colnames(nodes) )
-      
-      if (length(signal_vars) > 0) {
-        signal_df <- signal_df[ rownames(nodes), signal_vars, drop = FALSE]
-        nodes[, signal_vars] <- signal_df
-      }
-      
-    }
-    
-  }
-  
-  if (render) {
-    attr(nodes, "gs_handler_type") <- "node"
-    attr(nodes, "gs_id") <- x@uuid
-    class(nodes) <- c("gs_nodes", class(nodes))
-  }
-  
-  return(nodes)
-  
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_edges", "GraphSpace", function(x, ...) {
-  
-  args <- list(...)
-  
-  render <- args$render %||% FALSE
-  
-  if(isFALSE(render)) return(x@edges)
-  
-  edges <- .gs_edges(x)
-  attr(edges, "gs_id") <- x@uuid
-  attr(edges, "gs_handler_type") <- "edge"
-  class(edges) <- c("gs_edges", class(edges))
-  return(edges)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_image", "GraphSpace", function(x) {
-  
-  .check_outdated_gs(x, c("image", "canvas"), type = "abort")
-  
-  x <- .get_canvas(x)
-  attr(x, "gs_handler_type") <- "image"
-  class(x) <- c("gs_image", class(x))
-  return(x)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
-
-  .check_outdated_gs(x, c("image", "canvas"), type = "abort")
-  
-  if(!is.raster(value)){
-    .validate_gs_args("numeric_mtx", "value", value)
-    rlang::inform(
-      c("i" = "Rasterizing numeric matrix.",
-        "*" = "Values outside [0,1] are rescaled before conversion.")
-    )
-    rng <- range(value, na.rm = TRUE)
-    if (diff(rng) == 0) {
-      if (rng[1] < 0 || rng[1] > 1) {
-        value[] <- 0
-      }
-    } else if (rng[1] < 0 || rng[2] > 1) {
-      value <- (value - rng[1]) / diff(rng)
-    }
-    value <- as.raster(value)
-  }
-  
-  .inform_image_boundaries(value)
-  
-  x@image <- value
-  return(x)
-})
-
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_graph", "GraphSpace", function(x) {
-  g <- x@graph
-  attr(g, "gs_handler_type") <- "graph"
-  class(g) <- c("gs_graph", class(g))
-  return(g)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_fdata", "GraphSpace", function(x) {
-  
-  .check_outdated_gs(x, "fdata", type = "abort")
-  
-  x@fdata
-  
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setReplaceMethod("gs_fdata", "GraphSpace", function(x, value) {
-  
-  .check_outdated_gs(x, "fdata", type = "abort")
-  
-  x <- gs_add_features(x, value)
-  
-  return(x)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_nfeatures", "GraphSpace", function(x) {
-  
-  .check_outdated_gs(x, "fdata", type = "abort")
-  
-  ncol(x@fdata)
-  
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_features", "GraphSpace", function(x) {
-  
-  .check_outdated_gs(x, "fdata", type = "abort")
-  
-  colnames(x@fdata)
-  
-})
-
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_vcount", "GraphSpace", function(x) {
-  igraph::vcount(x@graph)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_ecount", "GraphSpace", function(x) {
-    igraph::ecount(x@graph)
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ..., value) {
-  if(missing(value)){
-    g <- x@graph
-    if(missing(name)){
-      att <- igraph::vertex_attr(graph = g, ...=...)
-    } else {
-      if(name %in% igraph::vertex_attr_names(g)){
-        att <- igraph::vertex_attr(graph = g, name = name, ...=...)
-        if(name!="name") names(att) <- V(g)$name
-      } else {
-        att <- NULL
-      }
-    }
-    return(att)    
-  } else {
-    gs_vertex_attr(x, name, ...) <- value
-    return(x)
-  }
-
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
-  
-  # Check protected attributes
-  if (name %in% .gs_protected_node_cols()) {
-    rlang::abort(c(
-      x = sprintf("'%s' is a read-only edge attribute.", name),
-      i = "It is maintained internally and cannot be set directly.",
-      "*" = "To change the graph structure, modify the underlying igraph object directly."
-    ))
-  }
-  
-  g <- x@graph
-  if(length(value)==1){
-    value <- if(.is_replicable(value)) value else list(value)
-  }
-  igraph::vertex_attr(graph = g, name = name, ...=...) <- value
-  x <- .updateNodeSpace(x, g)
-  
-  return(x)
-  
-})
-
-# Used to handle possible function replication
-.is_replicable <- function(x) {
-  tryCatch({
-    rep(x, 2)
-    TRUE
-  }, error = function(e) FALSE)
-}
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_edge_attr", "GraphSpace", function(x, name, ..., value) {
-  if (missing(value)) {
-    g <- x@graph
-    if(missing(name)){
-      att <- igraph::edge_attr(graph = g, ...=...)
-    } else {
-      att <- igraph::edge_attr(graph = g, name = name, ...=...)
-    }
-    return(att)
-  } else {
-    gs_edge_attr(x, name, ...) <- value
-    return(x)
-  }
-})
-
-#' @rdname GraphSpace-accessors
-#' @export
-setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
-  
-  # Check protected attributes
-  if (name %in% .gs_protected_edge_cols()) {
-    rlang::abort(c(
-      x = sprintf("'%s' is a read-only edge attribute.", name),
-      i = "It is maintained internally and cannot be set directly.",
-      "*" = "To change the graph structure, modify the underlying igraph object directly."
-    ))
-  }
-  
-  g <- x@graph
-  if(length(value)==1){
-    value <- if(.is_replicable(value)) value else list(value)
-  }
-  igraph::edge_attr(graph = g, name = name, ...=...) <- value
-  x <- .updateEdgeSpace(x, g)
-  
-  return(x)
-  
-})
-
-.updateEdgeSpace <- function(x, g){
-  x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
-  x@edges <- .get_edges(x@graph, simplify = .is_simplified(x))
-  return(x)
-}
-
-.updateNodeSpace <- function(x, g) {
-  x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
-  nodes <- .get_nodes(x@graph)
-  if (.is_normalized(x)) {
-    nodes[x@nodes$name, c("x","y")] <- x@nodes[, c("x","y")]
-  }
-  x@nodes <- nodes
-  return(x)
-}
-
-#' @rdname GraphSpace-accessors
-#' @aliases $,GraphSpace-method
-#' @export
-setMethod("$", "GraphSpace", function(x, name) {
-  
-  nodes <- x@nodes
-  
-  if (!(name %in% names(nodes))) {
-    return(NULL)
-  }
-  
-  nodes[[name]]
-})
-
-#' @rdname GraphSpace-accessors
-#' @aliases $<-,GraphSpace-method [[<-,GraphSpace-method
-#' @export
-setReplaceMethod("$", "GraphSpace", function(x, name, value) {
-  gs_vertex_attr(x, name) <- value
-  x
-})
-
-#' @rdname GraphSpace-accessors
-#' @method as.igraph GraphSpace
-#' @export
-as.igraph.GraphSpace <- function(x, ...) {
-  return(x@graph)
-}
-
-################################################################################
-### Internal for GraphSpace objects
-################################################################################
-#' Internal methods for GraphSpace
-#' 
-#' @description 
-#' Exported solely to enable RStudio auto-completion 
-#' and should not be called directly by the user.
-#' 
-#' @param x,pattern Internal arguments.
-#' @keywords internal
-#' @name GraphSpace-internal
-NULL
-
-#' @rdname GraphSpace-internal
-#' @importFrom utils .DollarNames
-#' @method .DollarNames GraphSpace
-#' @keywords internal
-#' @export
-.DollarNames.GraphSpace <- function(x, pattern = "") {
-  grep(pattern, names(x@nodes), value = TRUE)
-}

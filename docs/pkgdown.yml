@@ -5,6 +5,7 @@ articles:
   articles/building-graphspace: building-graphspace.html
   articles/curved-edges: curved-edges.html
   articles/customizing-aesthetics: customizing-aesthetics.html
+  articles/geometries: geometries.html
   articles/get-started: get-started.html
   articles/high-dimensional: high-dimensional.html
   articles/install: install.html
@@ -14,7 +15,9 @@ articles:
   RGraphSpace: RGraphSpace.html
   articles/scales-and-offsets: scales-and-offsets.html
   articles/spatial-data: spatial-data.html
-last_built: 2026-08-09T20:34Z
+  articles/spatial-segmentation1: spatial-segmentation1.html
+  articles/spatial-segmentation2: spatial-segmentation2.html
+last_built: 2026-08-23T16:25Z
 urls:
   reference: https://sysbiolab.github.io/RGraphSpace/reference
   article: https://sysbiolab.github.io/RGraphSpace/articles

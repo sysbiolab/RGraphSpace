@@ -59,7 +59,7 @@
 #' library(RGraphSpace)
 #' library(igraph)
 #'
-#' g <- make_star(5, mode = "out")
+#' g <- make_star(6, mode = "out")
 #' gs <- GraphSpace(g)
 #' gs <- normalizeGraphSpace(gs)
 #'
@@ -67,18 +67,16 @@
 #' gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
 #'
 #' # Assignment form: modifies gs in place
-#' gs_add_edges(gs) <- data.frame(from = "n2", to = "n3")
+#' gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
 #'
 #' # Add multiple edges with an analytical attribute
 #' gs <- gs_add_edges(gs, data.frame(
-#'   from   = c("n2", "n3"),
-#'   to     = c("n4", "n5"),
+#'   from   = c("n4", "n5"),
+#'   to     = c("n5", "n6"),
 #'   weight = c(0.8, 0.4)
 #' ))
 #'
-#' # name1/name2 convention also accepted (e.g. from gs_edges() output)
-#' gs <- gs_add_edges(gs, data.frame(name1 = "n2", name2 = "n3"))
-#'
+#' @importFrom igraph get_edge_ids
 #' @name gs_add_edges
 #' @aliases gs_add_edges<-
 NULL
@@ -112,7 +110,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
   }
   # Drop name1/name2 to avoid passing them as edge attributes
   value <- value[, setdiff(colnames(value), c("name1", "name2")), drop = FALSE]
-
+  
   # Strip protected and derived edge columns that originate from @edges but
   # are not user-editable attributes: passing them to igraph::add_edges()
   # would store stale values and corrupt the reconstructed @edges.
@@ -133,7 +131,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
   # Coerce from/to to character: factor inputs are common from read.csv() or
   # merge() and would cause spurious mismatches in the endpoint check.
   value$from <- as.character(value$from)
-  value$to   <- as.character(value$to)
+  value$to <- as.character(value$to)
 
   # Empty value: return x silently — a legitimate outcome in pipelines
   if (nrow(value) == 0L) return(x)
@@ -150,7 +148,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
     ))
   }
 
-  node_names  <- igraph::V(x@graph)$name
+  node_names <- igraph::V(x@graph)$name
   missing_ids <- setdiff(union(value$from, value$to), node_names)
 
   if (length(missing_ids) > 0L) {
@@ -172,7 +170,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
   if (nrow(value) == 0L) return(x)
 
   #--- add edges to the igraph object
-  g  <- x@graph
+  g <- x@graph
   vp <- as.vector(rbind(value$from, value$to))
 
   #--- synchronise standard edge attributes across old and new edges
@@ -184,7 +182,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
   #-- new edges have it, old edges don't -> backfill default onto existing edges
   #-- present on both / absent from both -> no action needed
   existing_eatt <- igraph::edge_attr_names(g)
-  defaults      <- .get_default_eatt(igraph::is_directed(g))
+  defaults <- .get_default_eatt(igraph::is_directed(g))
   for (att in names(defaults)) {
     in_graph <- att %in% existing_eatt
     in_value <- att %in% colnames(value)
@@ -226,7 +224,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
 
   if (!.is_simplified(x)) return(value)
 
-  g      <- x@graph
+  g <- x@graph
   is_dir <- igraph::is_directed(g)
 
   #--- loops
@@ -251,8 +249,14 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
   if (nrow(value) == 0L) return(value)
 
   #--- duplicates within value
-  pair_keys  <- paste(value$from, value$to, sep = "\x01")
-  is_dup     <- duplicated(pair_keys)
+  if (is_dir) {
+    pair_keys <- paste(value$from, value$to, sep = "\x01")
+  } else {
+    lo <- pmin(value$from, value$to)
+    hi <- pmax(value$from, value$to)
+    pair_keys <- paste(lo, hi, sep = "\x01")
+  }
+  is_dup <- duplicated(pair_keys)
   if (any(is_dup)) {
     rlang::warn(c(
       "!" = sprintf(
@@ -277,9 +281,9 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
     n1 <- value$from[i]
     n2 <- value$to[i]
     if (is_dir) {
-      igraph::get.edge.ids(g, vp = c(n1, n2), error = FALSE) > 0L
+      igraph::get_edge_ids(g, vp = c(n1, n2), error = FALSE) > 0L
     } else {
-      igraph::get.edge.ids(
+      igraph::get_edge_ids(
         g, vp = c(n1, n2), directed = FALSE, error = FALSE) > 0L
     }
   }, logical(1L))

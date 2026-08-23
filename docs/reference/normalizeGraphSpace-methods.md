@@ -111,7 +111,7 @@ of `GraphSpace` objects before rendering.
 
 ## See also
 
-[`cropGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.md),
+[`cropGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md),
 [`gs_image`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
 
 ## Examples

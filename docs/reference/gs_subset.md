@@ -70,7 +70,7 @@ simultaneously, which is usually the intended behavior.
 
 ## See also
 
-[`cropGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.md),
+[`cropGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md),
 [`gs_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md),
 [`gs_edges`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md),
 [`normalizeGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)

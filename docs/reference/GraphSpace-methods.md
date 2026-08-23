@@ -2,8 +2,7 @@
 
 `GraphSpace` is the main constructor for
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-class.md)
-objects, designed to store graph data and metadata for optimized
-rendering in RGraphSpace.
+objects.
 
 ## Usage
 

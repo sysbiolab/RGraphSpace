@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -135,9 +135,9 @@ igraph::V(gtoy3)$x <- coords[,2]
 # Highlight the bottom-row vertex (max 'y' index) to demonstrate alignment; 
 # since matrix indexing is top-down, this accounts for the default flip 
 # between matrix and plot coordinate systems.
-igraph::V(gtoy3)$nodeColor <- NA
+igraph::V(gtoy3)$nodeFillColor <- NA
 bottom_row <- which.max(igraph::V(gtoy3)$y)
-igraph::V(gtoy3)$nodeColor[bottom_row] <- adjustcolor("red", 0.4)
+igraph::V(gtoy3)$nodeFillColor[bottom_row] <- adjustcolor("red", 0.4)
 ```
 
 ## Initialize, normalize, and plot

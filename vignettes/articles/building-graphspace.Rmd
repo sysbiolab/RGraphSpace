@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -111,8 +111,14 @@ Next, we list all vertex and edge attributes that can be passed to *RGraphSpace*
 ## Vertex attributes
 
 ```{r Node attributes, eval=TRUE, message=FALSE}
-# Node color (Hexadecimal or color name)
-V(gtoy1)$nodeColor <- c("red", "#00ad39", "grey80", "lightblue", "cyan")
+# Node fill color (Hexadecimal or color name)
+V(gtoy1)$nodeFillColor <- c("red", "#00ad39", "grey80", "lightblue", "cyan")
+
+# Node line color (Hexadecimal or color name)
+V(gtoy1)$nodeLineColor <- "grey20"
+
+# Node color; shorthand for both fill and line, overridden by either
+# V(gtoy1)$nodeColor <- "grey80"
 
 # Node transparency (in [0,1])
 V(gtoy1)$nodeAlpha <- 1
@@ -125,9 +131,6 @@ V(gtoy1)$nodeShape <- c(21, 22, 23, 24, 25)
 
 # Node line width (as in 'lwd' standard graphics; see 'help(gpar)')
 V(gtoy1)$nodeLineWidth <- 1
-
-# Node line color (Hexadecimal or color name)
-V(gtoy1)$nodeLineColor <- "grey20"
 
 # Node labels ('NA' will omit the label)
 V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
@@ -265,11 +268,11 @@ ggplot(gs) +
 
 # Why *camelCase* attribute names?
 
-The node and edge attribute names above (`nodeColor`, `nodeSize`, etc.) are deliberately distinct from their *ggplot2* counterparts (`fill`, `size`, etc.). This is not a stylistic choice, it is a functional boundary between two different aesthetic interfaces.
+The node and edge attribute names above (`nodeFillColor`, `nodeSize`, etc.) are deliberately distinct from their *ggplot2* counterparts (`fill`, `size`, etc.). This is not a stylistic choice, it is a functional boundary between two different aesthetic interfaces.
 
 When a column in a data frame shares a name with a *ggplot2* aesthetic, *ggplot2* subjects it to scale training, which is designed for data-driven mappings. Graph attributes, however, carry **final, pre-defined values**  (hex color codes, fixed sizes, specific shapes) that must be applied as-is without modification. The *camelCase* names make these attributes invisible to the scale system. They are assigned to their corresponding *ggplot2* aesthetics only after this step is complete, preventing other `geoms` from mixing incompatible values (e.g. hex colors and numeric variables) into their scale training.
 
-The practical consequence is that `V(g)$fill <- "red"` and `V(g)$nodeColor <- "red"` are **not** equivalent. The former is a regular user variable, available for data-driven mapping via `aes()`. The latter is a pre-defined identity value applied directly to the rendered nodes.
+The practical consequence is that `V(g)$fill <- "red"` and `V(g)$nodeFillColor <- "red"` are **not** equivalent. The former is a regular user variable, available for data-driven mapping via `aes()`. The latter is a pre-defined identity value applied directly to the rendered nodes.
 
 This design allows the two interfaces to coexist cleanly. When multiple sources define the same aesthetic, the following priority applies (highest to lowest):
 

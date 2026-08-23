@@ -15,8 +15,11 @@
   : Update a GraphSpace object
 - [`normalizeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   : Normalize node coordinates to graph and image spaces
-- [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.md)
-  : Crop node coordinates to graph and image spaces
+- [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
+  [`rotateGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
+  [`flipGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
+  [`transposeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
+  : Crop, rotate, flip, and transpose a GraphSpace
 - [`summary(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/summary-GraphSpace-method.md)
   : Summarise a GraphSpace object
 
@@ -33,15 +36,21 @@
   [`` `gs_fdata<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_nfeatures(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_features(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`as.igraph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_vcount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_ecount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_vertex_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_vertex_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_delete_v_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_delete_e_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_edge_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_edge_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_scale_factor(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`` `gs_scale_factor<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_geometry(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`` `gs_geometry<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `$`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `$<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`as.igraph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   : Accessors and attribute utilities for GraphSpace objects
 
 ## Graph manipulation
@@ -56,7 +65,7 @@
   [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   : Add edges to a GraphSpace object
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
-  [`` `[[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
 
 ## Features
@@ -64,6 +73,12 @@
 - [`gs_fetch_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
   [`gs_add_features()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
   : Manipulate node features in a GraphSpace object
+
+## Geometry manipulation
+
+- [`normalizeGeometry(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/geometry-methods.md)
+  [`fitGeometry(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/geometry-methods.md)
+  : Normalize or fit node geometry
 
 ## ggplot2 integration
 
@@ -113,6 +128,12 @@
 
 - [`as_colorraster()`](https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.md)
   : Map numeric values to a color raster
+- [`sfshape_star()`](https://sysbiolab.github.io/RGraphSpace/reference/sfshape_stars.md)
+  [`sfshape_stars()`](https://sysbiolab.github.io/RGraphSpace/reference/sfshape_stars.md)
+  : Build star polygons
+- [`sfshape_ngon()`](https://sysbiolab.github.io/RGraphSpace/reference/sfshape_ngons.md)
+  [`sfshape_ngons()`](https://sysbiolab.github.io/RGraphSpace/reference/sfshape_ngons.md)
+  : Build regular polygons
 
 ## Data
 

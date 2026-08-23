@@ -103,9 +103,6 @@ gs <- normalizeGraphSpace(gs)
 
 # Add a raster image
 gs_image(gs) <- as_colorraster(volcano)
-#> Image spatial boundaries:
-#> ℹ x: [1, 61] (cols)
-#> ℹ y: [1, 87] (rows)
 
 if (FALSE) { # \dontrun{
 # Pass a GraphSpace object directly

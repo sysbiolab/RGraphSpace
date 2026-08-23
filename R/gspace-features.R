@@ -126,6 +126,14 @@ gs_add_features <- function(x, data) {
     rlang::abort("'data' contains duplicated identifiers.")
   }
   
+  extra_ids <- setdiff(rownames(data), node_ids)
+  if (length(extra_ids) > 0) {
+    rlang::warn(sprintf(
+      "%d row(s) in 'data' do not match any node identifier and will be dropped.",
+      length(extra_ids)
+    ))
+  }
+  
   # subset and reorder to match node order
   matched_idx <- match(node_ids, rownames(data))
   missing_count <- sum(is.na(matched_idx))
@@ -161,7 +169,6 @@ gs_add_features <- function(x, data) {
   
   # Load fdata slot
   x@fdata <- data
-  x@pars$signal.layer <- TRUE
   
   validObject(x)
   

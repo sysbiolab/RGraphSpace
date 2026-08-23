@@ -5,6 +5,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/geometries.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/get-started.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/index.html</loc></url>
@@ -14,6 +15,8 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation1.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/authors.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/index.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.html</loc></url>
@@ -23,17 +26,18 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-internal.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/StatEdgeSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/StatNodeSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace_image.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.html</loc></url>
-<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/cropGraphSpace-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/dot-generate_gs_uuid.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geometry-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/getGraphSpace-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/ggplot-GraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.html</loc></url>
@@ -47,6 +51,8 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/plot.GraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/sfshape_ngons.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/sfshape_stars.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/summary-GraphSpace-method.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/theme_gspace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/updateGraphSpace.html</loc></url>

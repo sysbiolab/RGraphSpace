@@ -128,8 +128,11 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
     x <- as.raster(matrix(
       grDevices::rgb(img[1,], img[2,], img[3,], img[4,], maxColorValue = 255),
       nrow = nrow(x), ncol = ncol(x),
-      byrow = TRUE
-    ))
+      byrow = TRUE))
+    # Note: byrow = TRUE is INTENTIONAL, not a bug: as.character() on a "raster"
+    # object does NOT flatten like a plain matrix (verified: identical(
+    # as.character(as.raster(m)), as.character(m)) is FALSE for identical m).
+    # byrow = TRUE correctly reverses that reordering. Confirmed visually.
   }
 
   if (flip.v) x <- x[rev(seq_len(nrow(x))), , drop = FALSE]

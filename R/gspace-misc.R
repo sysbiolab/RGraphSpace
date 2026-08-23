@@ -109,6 +109,9 @@ as_colorraster <- function(x, palette = hcl.colors(30), na.color = "white") {
   .validate_gs_colors("allColors", "palette", palette)
   .validate_gs_colors("singleColor", "na.color", na.color)
   
+  # NOTE: rescale() does NOT divide by zero on constant input; it
+  # has an explicit zero_range(from) guard returning mean(to) directly,
+  # before any division happens.
   z <- scales::rescale(x, to = c(1, length(palette)))
   z <- pmin(pmax(round(z), 1), length(palette))
   
@@ -123,4 +126,142 @@ as_colorraster <- function(x, palette = hcl.colors(30), na.color = "white") {
 
 }
 
+#-------------------------------------------------------------------------------
+#' Build regular polygons
+#'
+#' Construct one or more regular polygons (equal sides and angles) as
+#' \code{sfg}/\code{sfc} \code{POLYGON} geometry. \code{sfshape_ngon()}
+#' builds a single polygon at a given center; \code{sfshape_ngons()} builds
+#' \code{n} polygons, automatically arranged in a compact, non-overlapping
+#' grid. Useful for building varied, non-hand-typed node geometries; see
+#' the geometry vignette for examples, and \code{\link{sfshape_stars}} for
+#' the star-shaped equivalent.
+#'
+#' @param cx,cy Numeric. Coordinates of the polygon's center.
+#'   (\code{sfshape_ngon()} only.)
+#' @param sides Integer. Number of sides; must be 3 or more. For
+#'   \code{sfshape_ngons()}, may be a vector, recycled across the \code{n}
+#'   polygons to vary shape per polygon.
+#' @param radius Numeric. Circumradius -- distance from the center to each
+#'   vertex. For \code{sfshape_ngons()}, may be a vector, recycled across
+#'   the \code{n} polygons.
+#' @param n Integer. Number of polygons to build. (\code{sfshape_ngons()}
+#'   only.)
+#' @param spacing Numeric. Distance between polygon centers in the
+#'   auto-generated grid. Defaults to \code{max(radius) * 2.5}, which
+#'   guarantees no overlap. (\code{sfshape_ngons()} only.)
+#'
+#' @return \code{sfshape_ngon()} returns a single \code{sfg} object of type
+#'   \code{POLYGON}. \code{sfshape_ngons()} returns an \code{sfc} of
+#'   \code{n} such polygons.
+#'
+#' @examples
+#' pentagon <- sfshape_ngon(0, 0, sides = 5, radius = 1)
+#' hexagon  <- sfshape_ngon(2, 0, sides = 6, radius = 1)
+#' plot(sf::st_sfc(pentagon, hexagon))
+#'
+#' many <- sfshape_ngons(7, sides = c(3, 5, 8), radius = 0.4)
+#' plot(many)
+#'
+#' @seealso \code{\link{sfshape_stars}}
+#' @rdname sfshape_ngons
+#' @export
+sfshape_ngon <- function(cx = 0, cy = 0, sides = 5, radius = 1) {
+  if (sides < 3) stop("A polygon needs at least 3 sides.")
+  theta <- seq(0, 2*pi, length.out = sides + 1)[1:sides]
+  x <- cx + radius * sin(theta)
+  y <- cy + radius * cos(theta)
+  x <- c(x, x[1]); y <- c(y, y[1])
+  sf::st_polygon(list(cbind(x, y)))
+}
 
+#-------------------------------------------------------------------------------
+# Shared grid-positioning helper for the *_polygons() wrappers: a compact,
+# roughly-square layout (ncol = ceiling(sqrt(n))), spaced far enough apart
+# to avoid overlap given the caller-supplied spacing.
+.grid_positions <- function(n, spacing) {
+  ncol <- ceiling(sqrt(n))
+  col  <- (seq_len(n) - 1) %% ncol
+  row  <- (seq_len(n) - 1) %/% ncol
+  list(cx = col * spacing, cy = -row * spacing)
+}
+
+#' @rdname sfshape_ngons
+#' @export
+sfshape_ngons <- function(n, sides = c(3, 5, 7), radius = 0.3, spacing = NULL) {
+  sides  <- rep_len(sides, n)
+  radius <- rep_len(radius, n)
+  if (is.null(spacing)) spacing <- max(radius) * 2.5
+  pos <- .grid_positions(n, spacing)
+  geoms <- Map(sfshape_ngon, pos$cx, pos$cy, sides, radius)
+  sf::st_sfc(geoms)
+}
+
+#-------------------------------------------------------------------------------
+#' Build star polygons
+#'
+#' Construct one or more star-shaped polygons, alternating between an
+#' outer and an inner radius at each vertex, as \code{sfg}/\code{sfc}
+#' \code{POLYGON} geometry. \code{sfshape_star()} builds a single star at
+#' a given center; \code{sfshape_stars()} builds \code{n} stars,
+#' automatically arranged in a compact, non-overlapping grid. Useful for
+#' building varied, non-hand-typed node geometries; see the geometry
+#' vignette for examples, and \code{\link{sfshape_ngons}} for the
+#' regular-polygon equivalent.
+#'
+#' @param cx,cy Numeric. Coordinates of the star's center.
+#'   (\code{sfshape_star()} only.)
+#' @param points Integer. Number of star points; must be 2 or more. For
+#'   \code{sfshape_stars()}, may be a vector, recycled across the \code{n}
+#'   stars to vary shape per star.
+#' @param r_outer Numeric. Radius to each outer (point) vertex. For
+#'   \code{sfshape_stars()}, may be a vector, recycled across the \code{n}
+#'   stars.
+#' @param r_inner Numeric. Radius to each inner (valley) vertex. Smaller
+#'   values relative to \code{r_outer} produce sharper points; values
+#'   closer to \code{r_outer} produce a rounder, less pronounced star. For
+#'   \code{sfshape_stars()}, may be a vector, recycled across the \code{n}
+#'   stars.
+#' @param n Integer. Number of stars to build. (\code{sfshape_stars()}
+#'   only.)
+#' @param spacing Numeric. Distance between star centers in the
+#'   auto-generated grid. Defaults to \code{max(r_outer) * 2.5}, which
+#'   guarantees no overlap. (\code{sfshape_stars()} only.)
+#'
+#' @return \code{sfshape_star()} returns a single \code{sfg} object of type
+#'   \code{POLYGON}. \code{sfshape_stars()} returns an \code{sfc} of
+#'   \code{n} such stars.
+#'
+#' @examples
+#' star5 <- sfshape_star(0, 0, points = 5, r_outer = 1, r_inner = 0.4)
+#' star8 <- sfshape_star(3, 0, points = 8, r_outer = 1, r_inner = 0.7)
+#' plot(sf::st_sfc(star5, star8))
+#'
+#' many <- sfshape_stars(6, points = 5, r_outer = 0.4, r_inner = 0.16)
+#' plot(many)
+#'
+#' @seealso \code{\link{sfshape_ngons}}
+#' @rdname sfshape_stars
+#' @export
+sfshape_star <- function(cx = 0, cy = 0, points = 5, r_outer = 0.3, r_inner = 0.1) {
+  if (points < 2) stop("A star needs at least 2 points.")
+  n <- points * 2
+  theta <- seq(0, 2*pi, length.out = n + 1)[1:n]
+  r <- rep(c(r_outer, r_inner), length.out = n)
+  x <- cx + r * sin(theta)
+  y <- cy + r * cos(theta)
+  x <- c(x, x[1]); y <- c(y, y[1])
+  sf::st_polygon(list(cbind(x, y)))
+}
+
+#' @rdname sfshape_stars
+#' @export
+sfshape_stars <- function(n, points = c(3, 4, 5), r_outer = 0.3, r_inner = 0.1, spacing = NULL) {
+  points  <- rep_len(points, n)
+  r_outer <- rep_len(r_outer, n)
+  r_inner <- rep_len(r_inner, n)
+  if (is.null(spacing)) spacing <- max(r_outer) * 2.5
+  pos <- .grid_positions(n, spacing)
+  geoms <- Map(sfshape_star, pos$cx, pos$cy, points, r_outer, r_inner)
+  sf::st_sfc(geoms)
+}

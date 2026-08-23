@@ -84,6 +84,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     gs <- updateGraphSpace(gs)
     
     .validate_gs_args("singleLogical", "image.space", image.space)
+    .validate_gs_args("singleNumber", "mar", mar)
     .validate_gs_args("singleLogical", "flip.v", flip.v)
     .validate_gs_args("singleLogical", "flip.h", flip.h)
     .validate_gs_args("singleLogical", "flip.x", flip.x)
@@ -91,7 +92,6 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     .validate_gs_args("singleLogical", "swap.xy", swap.xy)
     .validate_gs_args("singleLogical", "equal.mar", equal.mar)
     .validate_gs_args("singleLogical", "verbose", verbose)
-    .validate_gs_args("singleNumber", "mar", mar)
     
     if (mar < 0 || mar > 0.5) {
       rlang::warn("'mar' should be in [0, 0.5]")
@@ -124,11 +124,15 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   }
 )
 
+#-------------------------------------------------------------------------------
+#' @importFrom sf st_coordinates st_centroid st_set_crs
+#' @importFrom stats lm residuals coef
+#' @keywords internal
 .normalizeGraphSpace.graph <- function(gs, mar, flip.x, flip.y, 
   swap.xy, verbose){
   
   if(verbose) rlang::inform("Normalizing node coordinates to graph space...")
-  nodes <- .get_nodes(gs@graph)
+  nodes <- .set_raw_coords(gs@nodes, gs@coords)
   nodes <- .setCoordToGraph(nodes, flip.x, flip.y, swap.xy, verbose)
   gs@nodes <- .fit_graph_space(nodes, mar)
   gs@pars$image.space <- FALSE
@@ -142,12 +146,13 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
 }
 
+#-------------------------------------------------------------------------------
 .normalizeGraphSpace.image <- function(gs, mar, flip.x, flip.y, 
   swap.xy, flip.v, flip.h, equal.mar, verbose){
   
   if(verbose) rlang::inform("Normalizing node coordinates to image space...")
   
-  nodes <- .get_nodes(gs@graph)
+  nodes <- .set_raw_coords(gs@nodes, gs@coords)
   image <- .get_image(gs)
   
   if(flip.v){
@@ -181,35 +186,35 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 ### Graph adjusts
 ################################################################################
 .setCoordToGraph <- function(nodes, flip.x = FALSE, flip.y = FALSE, 
-  swap.xy= FALSE, verbose = TRUE){
+  swap.xy = FALSE, verbose = TRUE){
   
   # swap coordinates
-  coord <- nodes[,c("x","y")]
+  coord_xy <- nodes[,c("x","y")]
   if(swap.xy){
     if(verbose) rlang::inform("Swapping xy-coordinates...")
-    coord$x2 <- coord$y
-    coord$y2 <- coord$x
+    coord_xy$x2 <- coord_xy$y
+    coord_xy$y2 <- coord_xy$x
   } else {
-    coord$x2 <- coord$x
-    coord$y2 <- coord$y
+    coord_xy$x2 <- coord_xy$x
+    coord_xy$y2 <- coord_xy$y
   }
   
   # Flip y-coordinates
   if(flip.y){
     if(verbose) rlang::inform("Flipping y-coordinates over graph center...")
-    y <- coord$y2
-    coord$y2 <- max(y) + min(y) - y
+    y <- coord_xy$y2
+    coord_xy$y2 <- max(y) + min(y) - y
   }
   
   # Flip x-coordinates
   if(flip.x){
     if(verbose) rlang::inform("Flipping x-coordinates over graph center...")
-    x <- coord$x2
-    coord$x2 <- max(x) + min(x) - x
+    x <- coord_xy$x2
+    coord_xy$x2 <- max(x) + min(x) - x
   }
   # Update coordinates
-  nodes$x <- coord$x2
-  nodes$y <- coord$y2
+  nodes$x <- coord_xy$x2
+  nodes$y <- coord_xy$y2
   
   return(nodes)
 }
@@ -253,46 +258,46 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   verbose = TRUE){
   
   # swap coordinates
-  coords <- nodes[,c("x","y")]
+  coord_xy <- nodes[,c("x","y")]
   if(swap.xy){
     if(verbose) rlang::inform("Swapping xy-coordinates...")
-    coords$x2 <- coords$y
-    coords$y2 <- coords$x
+    coord_xy$x2 <- coord_xy$y
+    coord_xy$y2 <- coord_xy$x
   } else {
-    coords$x2 <- coords$x
-    coords$y2 <- coords$y
+    coord_xy$x2 <- coord_xy$x
+    coord_xy$y2 <- coord_xy$y
   }
   
   if(flip.y){
     if(verbose) rlang::inform("Flipping y-coordinates over image center...")
-    y <- coords$y2
+    y <- coord_xy$y2
     y <- -(y - max(y)) + nrow(image) - max(y) + 1
-    coords$y2 <- y
+    coord_xy$y2 <- y
   }
   
   if(flip.x){
     if(verbose) rlang::inform("Flipping x-coordinates over image center...")
-    x <- coords$x2
+    x <- coord_xy$x2
     x <- -(x - max(x)) + ncol(image) - max(x) + 1
-    coords$x2 <- x
+    coord_xy$x2 <- x
   }
   
   # Update coordinates
-  .check_final_coords(coords, image)
+  .check_final_coords(coord_xy, image)
   
-  nodes$x <- coords$x2
-  nodes$y <- coords$y2
+  nodes$x <- coord_xy$x2
+  nodes$y <- coord_xy$y2
   
   return(nodes)
   
 }
 
 #-------------------------------------------------------------------------------
-.check_final_coords <- function(coords, image){
+.check_final_coords <- function(coord_xy, image){
   
   d <- dim(image)
-  xr <- range(coords$x2, na.rm = TRUE)
-  yr <- range(coords$y2, na.rm = TRUE)
+  xr <- range(coord_xy$x2, na.rm = TRUE)
+  yr <- range(coord_xy$y2, na.rm = TRUE)
   
   xr_int <- c(floor(xr[1]), ceiling(xr[2]))
   yr_int <- c(floor(yr[1]), ceiling(yr[2]))
@@ -302,8 +307,8 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   if( out_x || out_y ){
     
-    xr_orig <- range(coords$x, na.rm = TRUE)
-    yr_orig <- range(coords$y, na.rm = TRUE)
+    xr_orig <- range(coord_xy$x, na.rm = TRUE)
+    yr_orig <- range(coord_xy$y, na.rm = TRUE)
     xr_orig <- c(floor(xr_orig[1]), ceiling(xr_orig[2]))
     yr_orig <- c(floor(yr_orig[1]), ceiling(yr_orig[2]))
     
@@ -487,14 +492,21 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 }
 
 #-------------------------------------------------------------------------------
-.denormalize_graph_space <- function(x) {
+.denormalize_graph_space <- function(x, verbose = TRUE) {
+  if (verbose) rlang::inform("Denormalizing graph coordinates...")
   x@pars$is.normalized <- FALSE
   x@pars$image.space   <- FALSE
   x@canvas <- as.raster(matrix())
-  x@nodes <- .get_nodes(x@graph)
+  x@nodes <- .set_raw_coords(x@nodes, x@coords)
+  for (col in .gs_geometry_cols(x@coords)) {
+    x@nodes[[col]] <- x@coords[[col]]
+  }
   return(x)
 }
 
-
-
+#-------------------------------------------------------------------------------
+.set_raw_coords <- function(nodes, coords) {
+  nodes[rownames(coords), c("x","y")] <- coords[, c("x","y")]
+  nodes
+}
 

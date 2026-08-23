@@ -37,8 +37,7 @@ A \linkS4class{GraphSpace} class object.
 }
 \description{
 \code{GraphSpace} is the main constructor for
-\linkS4class{GraphSpace} objects, designed to store graph data and
-metadata for optimized rendering in RGraphSpace.
+\linkS4class{GraphSpace} objects.
 }
 \details{
 \code{GraphSpace} objects are designed to bridge the gap between network

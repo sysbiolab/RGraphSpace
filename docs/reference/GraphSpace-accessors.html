@@ -36,7 +36,7 @@ downstream node and edge components."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,6 +53,7 @@ downstream node and edge components."><style>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
+    <li><a class="dropdown-item" href="../articles/geometries.html">Geometries</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -62,6 +63,8 @@ downstream node and edge components."><style>
     <li><h6 class="dropdown-header" data-toc-skip>Advanced workflows</h6></li>
     <li><a class="dropdown-item" href="../articles/high-dimensional.html">High-dimensional data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -76,7 +79,7 @@ downstream node and edge components."><style>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Accessors and attribute utilities for GraphSpace objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/R/gspace-methods.R" class="external-link"><code>R/gspace-methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/R/gspace-accessors.R" class="external-link"><code>R/gspace-accessors.R</code></a></small>
       <div class="d-none name"><code>GraphSpace-accessors.Rd</code></div>
     </div>
 
@@ -122,6 +125,9 @@ downstream node and edge components.</p>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
 <span><span class="fu">gs_features</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for class 'GraphSpace'</span></span>
+<span><span class="fu">as.igraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
 <span><span class="fu">gs_vcount</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
@@ -135,19 +141,34 @@ downstream node and edge components.</p>
 <span><span class="fu">gs_vertex_attr</span><span class="op">(</span><span class="va">x</span>, <span class="va">name</span>, <span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
+<span><span class="fu">gs_delete_v_attr</span><span class="op">(</span><span class="va">x</span>, <span class="va">name</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'GraphSpace'</span></span>
+<span><span class="fu">gs_delete_e_attr</span><span class="op">(</span><span class="va">x</span>, <span class="va">name</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'GraphSpace'</span></span>
 <span><span class="fu">gs_edge_attr</span><span class="op">(</span><span class="va">x</span>, <span class="va">name</span>, <span class="va">...</span>, <span class="va">value</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
 <span><span class="fu">gs_edge_attr</span><span class="op">(</span><span class="va">x</span>, <span class="va">name</span>, <span class="va">...</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
+<span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'GraphSpace'</span></span>
+<span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'GraphSpace'</span></span>
+<span><span class="fu">gs_geometry</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"geometry"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'GraphSpace'</span></span>
+<span><span class="fu">gs_geometry</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for class 'GraphSpace'</span></span>
 <span><span class="va">x</span><span class="op">$</span><span class="va">name</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
-<span><span class="va">x</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S3 method for class 'GraphSpace'</span></span>
-<span><span class="fu">as.igraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">x</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="va">value</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -218,7 +239,7 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-in"><span><span class="fu">gs_names</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "vertex"         "x"              "y"              "name"          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "nodeLabel"      "nodeLabelSize"  "nodeLabelColor" "nodeShape"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "nodeSize"       "nodeColor"      "nodeLineWidth"  "nodeLineColor" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "nodeSize"       "nodeFillColor"  "nodeLineWidth"  "nodeLineColor" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13] "nodeAlpha"     </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get a data frame with nodes</span></span></span>
@@ -229,12 +250,12 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n3      3 -2  2   n3        V3             3          black        23        5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n4      4 -4 -4   n4        V4             3          black        24       10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> n5      5 -8  0   n5        V5             3          black        25        5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    nodeColor nodeLineWidth nodeLineColor nodeAlpha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n1       red             1        grey20         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n2   #00ad39             1        grey20         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n3    grey80             1        grey20         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n4 lightblue             1        grey20         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> n5      cyan             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    nodeFillColor nodeLineWidth nodeLineColor nodeAlpha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n1           red             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n2       #00ad39             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n3        grey80             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n4     lightblue             1        grey20         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> n5          cyan             1        grey20         1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get a data frame with edges</span></span></span>
 <span class="r-in"><span><span class="fu">gs_edges</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
@@ -283,7 +304,7 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $nodeSize</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  8  5  5 10  5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $nodeColor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $nodeFillColor</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "red"       "#00ad39"   "grey80"    "lightblue" "cyan"     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $nodeLineWidth</span>
@@ -317,11 +338,18 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-in"><span><span class="co"># Add an image and rescale graph coordinates to image space</span></span></span>
 <span class="r-in"><span><span class="co"># Images may be provided as a raster or numeric matrix</span></span></span>
 <span class="r-in"><span><span class="fu">gs_image</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="as_colorraster.html">as_colorraster</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Image spatial boundaries:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> x: [1, 61] (cols)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> y: [1, 87] (rows)</span>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, image.space <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Normalizing node coordinates to graph space...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># apply a scaling factor to node coordinates</span></span></span>
+<span class="r-in"><span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Denormalizing graph coordinates...</span>
+<span class="r-in"><span><span class="co"># undo scaling </span></span></span>
+<span class="r-in"><span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># add an 'sfc' geometry column</span></span></span>
+<span class="r-in"><span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fu">gs_vcount</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span>, <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">st_point</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">gs_geometry</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="va">pts</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

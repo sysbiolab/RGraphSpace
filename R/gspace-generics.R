@@ -24,6 +24,41 @@ setGeneric("cropGraphSpace", function(gs, ...)
   package = "RGraphSpace"
 )
 
+setGeneric("rotateGraphSpace", function(gs, ...)
+  standardGeneric("rotateGraphSpace"),
+  package = "RGraphSpace"
+)
+
+setGeneric("flipGraphSpace", function(gs, ...)
+  standardGeneric("flipGraphSpace"),
+  package = "RGraphSpace"
+)
+
+setGeneric("transposeGraphSpace", function(gs, ...)
+  standardGeneric("transposeGraphSpace"),
+  package = "RGraphSpace"
+)
+
+setGeneric("normalizeGeometry", function(gs, ...)
+  standardGeneric("normalizeGeometry"),
+  package = "RGraphSpace"
+)
+
+setGeneric("fitGeometry", function(gs, ...)
+  standardGeneric("fitGeometry"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_delete_v_attr", function(x, name)
+  standardGeneric("gs_delete_v_attr"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_delete_e_attr", function(x, name)
+  standardGeneric("gs_delete_e_attr"),
+  package = "RGraphSpace"
+)
+
 setGeneric("gs_graph", function(x) 
   standardGeneric("gs_graph"),
   package = "RGraphSpace"
@@ -31,6 +66,16 @@ setGeneric("gs_graph", function(x)
 
 setGeneric("gs_names", function(x) 
   standardGeneric("gs_names"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_scale_factor", function(x) 
+  standardGeneric("gs_scale_factor"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_scale_factor<-", function(x, value) 
+  standardGeneric("gs_scale_factor<-"),
   package = "RGraphSpace"
 )
 
@@ -121,5 +166,15 @@ setGeneric("gs_edge_attr", function(x, ...)
 
 setGeneric("gs_edge_attr<-", function(x, ..., value) 
   standardGeneric("gs_edge_attr<-"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_geometry", function(x, ...) 
+  standardGeneric("gs_geometry"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_geometry<-", function(x, ..., value) 
+  standardGeneric("gs_geometry<-"),
   package = "RGraphSpace"
 )

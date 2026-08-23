@@ -181,8 +181,7 @@ setMethod("[", "GraphSpace", function(x, i, j, ..., drop = TRUE) {
 #' @export
 setMethod("[[", "GraphSpace", function(x, i, j, ...) {
 
-  valid_slots <- c("nodes", "edges", "graph", "image", "canvas", "fdata",
-    "pars", "misc")
+  valid_slots <- slotNames(new("GraphSpace"))
 
   if (!is.character(i) || length(i) != 1L || is.na(i)) {
     rlang::abort(c(
@@ -243,8 +242,9 @@ setMethod("[[", "GraphSpace", function(x, i, j, ...) {
     }
 
     id_col <- data[["name"]]
-    idx    <- which(id_col %in% val)
-
+    val_unique <- unique(val)
+    idx <- match(val_unique, id_col)
+    
     missing_ids <- setdiff(val, id_col)
     if (length(missing_ids) > 0L) {
       rlang::warn(c(
@@ -255,7 +255,8 @@ setMethod("[[", "GraphSpace", function(x, i, j, ...) {
         "i" = .gs_preview(missing_ids)
       ))
     }
-
+    idx <- idx[!is.na(idx)]
+    
   } else if (is.logical(val)) {
 
     if (length(val) != n) {

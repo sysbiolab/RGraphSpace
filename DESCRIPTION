@@ -1,6 +1,6 @@
 Package: RGraphSpace
 Type: Package
-Version: 1.5.1
+Version: 1.5.2
 Title: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics
 Description: An interface for rendering 'igraph' objects as 'ggplot2' graphics 
     within a normalized coordinate space. 'RGraphSpace' implements new 
@@ -22,8 +22,8 @@ Authors@R:
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
 Depends: R(>= 4.5), methods, ggplot2 (>= 4.0)
-Imports: grDevices, grid, igraph, tidygraph, scales, rlang, ggrastr, Matrix, lifecycle
-Suggests: knitr, rmarkdown, testthat, ggraph, ggnewscale, patchwork, Seurat, SeuratObject
+Imports: grDevices, grid, igraph, tidygraph, scales, rlang, ggrastr, Matrix, sf, stats, lifecycle
+Suggests: knitr, rmarkdown, testthat, ggraph, ggnewscale, patchwork, Seurat, SeuratObject, SummarizedExperiment, SpatialExperiment
 Enhances: RedeR
 License: Artistic-2.0
 VignetteBuilder: knitr
@@ -38,12 +38,14 @@ Collate:
     'gspace-constructor.R'
     'gspace-generics.R'
     'gspace-methods.R'
+    'gspace-accessors.R'
     'gspace-misc.R'
     'gspace-subset.R'
     'gspace-addition.R'
     'gspace-subscript.R'
     'gspace-normalize.R'
-    'gspace-crop.R'
+    'gspace-transform.R'
+    'gspace-geometry.R'
     'gspace-themes.R'
     'gspace-validation.R'
     'gspace-ggplot-constructor.R'

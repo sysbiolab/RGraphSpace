@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,7 @@
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
+    <li><a class="dropdown-item" href="../articles/geometries.html">Geometries</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -72,6 +73,8 @@
     <li><h6 class="dropdown-header" data-toc-skip>Advanced workflows</h6></li>
     <li><a class="dropdown-item" href="../articles/high-dimensional.html">High-dimensional data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
@@ -98,7 +101,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-08-09</h4>
+            <h4 data-toc-skip class="date">2026-08-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/interactive.Rmd" class="external-link"><code>vignettes/articles/interactive.Rmd</code></a></small>
       <div class="d-none name"><code>interactive.Rmd</code></div>
@@ -106,10 +109,10 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.5.1</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.5.2</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.1"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.2"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -181,6 +184,9 @@ retrieval process:</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/startRedeR.html" class="external-link">startRedeR</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/resetRedeR.html" class="external-link">resetRedeR</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Set 'nodeColor' attribute for backward compatibility</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeColor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">nodeFillColor</span></span>
+<span></span>
 <span><span class="co"># Send 'gtoy1' to the Java interface</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/addGraphToRedeR.html" class="external-link">addGraphToRedeR</a></span><span class="op">(</span><span class="va">gtoy1</span>, unit<span class="op">=</span><span class="st">"npc"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/RedeR/man/relaxRedeR.html" class="external-link">relaxRedeR</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -191,7 +197,7 @@ retrieval process:</p>
 <span><span class="co"># Check the round trip...</span></span>
 <span><span class="fu"><a href="../reference/plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gtoy1_2</span>, node.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Note: fonts, shapes, and line types are only partially</span></span>
+<span><span class="co">## Note: fonts, shapes, colors, and line types are only partially</span></span>
 <span><span class="co">## compatible between the two interfaces.</span></span>
 <span></span>
 <span><span class="co"># ...alternatively, just update the graph layout</span></span>
@@ -297,23 +303,25 @@ adjustments.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] igraph_2.3.3      RedeR_3.8.1       RGraphSpace_1.5.1 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] igraph_2.3.3      RedeR_3.8.1       RGraphSpace_1.5.2 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.22-9    </span></span>
-<span><span class="co">#&gt;  [5] digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5     grid_4.6.1        </span></span>
-<span><span class="co">#&gt;  [9] RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0     Matrix_1.7-6      </span></span>
-<span><span class="co">#&gt; [13] ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 </span></span>
-<span><span class="co">#&gt; [17] jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0        tidygraph_1.3.1   </span></span>
-<span><span class="co">#&gt; [21] withr_3.0.3        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        </span></span>
-<span><span class="co">#&gt; [25] ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1        vctrs_0.7.3       </span></span>
-<span><span class="co">#&gt; [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 </span></span>
-<span><span class="co">#&gt; [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    </span></span>
-<span><span class="co">#&gt; [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      </span></span>
-<span><span class="co">#&gt; [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         </span></span>
-<span><span class="co">#&gt; [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        </span></span>
-<span><span class="co">#&gt; [49] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    labeling_0.4.3    </span></span>
-<span><span class="co">#&gt; [53] rmarkdown_2.31     compiler_4.6.1     S7_0.2.2</span></span></code></pre>
+<span><span class="co">#&gt;  [1] tidyr_1.3.2        sass_0.4.10        generics_0.1.4     class_7.3-24      </span></span>
+<span><span class="co">#&gt;  [5] KernSmooth_2.23-27 lattice_0.23-1     digest_0.6.39      magrittr_2.0.5    </span></span>
+<span><span class="co">#&gt;  [9] evaluate_1.0.5     grid_4.6.1         RColorBrewer_1.1-3 fastmap_1.2.0     </span></span>
+<span><span class="co">#&gt; [13] Matrix_1.7-6       jsonlite_2.0.0     e1071_1.7-17       ggrastr_1.0.2     </span></span>
+<span><span class="co">#&gt; [17] DBI_1.3.0          purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 </span></span>
+<span><span class="co">#&gt; [21] jquerylib_0.1.4    cli_3.6.6          rlang_1.3.0        units_1.0-1       </span></span>
+<span><span class="co">#&gt; [25] tidygraph_1.3.1    withr_3.0.3        cachem_1.1.0       yaml_2.3.12       </span></span>
+<span><span class="co">#&gt; [29] otel_0.2.0         ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1       </span></span>
+<span><span class="co">#&gt; [33] vctrs_0.7.3        R6_2.6.1           proxy_0.4-29       lifecycle_1.0.5   </span></span>
+<span><span class="co">#&gt; [37] classInt_0.4-11    fs_2.1.0           htmlwidgets_1.6.4  vipor_0.4.7       </span></span>
+<span><span class="co">#&gt; [41] ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0     desc_1.4.3        </span></span>
+<span><span class="co">#&gt; [45] pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0       gtable_0.3.6      </span></span>
+<span><span class="co">#&gt; [49] Rcpp_1.1.2         glue_1.8.1         sf_1.1-1           systemfonts_1.3.2 </span></span>
+<span><span class="co">#&gt; [53] xfun_0.59          tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0 </span></span>
+<span><span class="co">#&gt; [57] knitr_1.51         dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9   </span></span>
+<span><span class="co">#&gt; [61] labeling_0.4.3     rmarkdown_2.31     compiler_4.6.1     S7_0.2.2</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

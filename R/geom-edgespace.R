@@ -272,7 +272,7 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
     dev = dev, 
     scale = scale,
     .user_aes = user_aes,
-    .size_unit = "mm",
+    .size_unit = "npc",
     .nodes = NULL, 
     ...)
   
@@ -502,7 +502,7 @@ GeomEdgeSpace <- ggproto(
     arrow_size = 0.5, arrow_offset = 0.01, curve = 0, coord_warp = 1,
     parallel_spread = 1, loop_direction = "adaptive", lineend = "butt", 
     linejoin = "mitre", na.rm = FALSE, raster = FALSE, 
-    dpi = NULL, dev = "cairo", scale = 1, .size_unit = "mm", 
+    dpi = NULL, dev = "cairo", scale = 1, .size_unit = "npc", 
     .nodes = NULL) {
     
     required_att <- c("x", "y", "vertex", "size", "stroke")

@@ -14,7 +14,7 @@
 \item{what}{A single character value specifying which slot to
 retrieve from a 'GraphSpace' object.
 Options: "graph", "nodes", "edges", "pars", "misc", "image",
-"canvas", and "fdata".}
+"canvas", "fdata", "coords", and "uuid".}
 }
 \value{
 Content from slots in the \linkS4class{GraphSpace} object.

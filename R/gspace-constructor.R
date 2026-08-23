@@ -4,26 +4,45 @@
 ################################################################################
 .buildGraphSpace <- function(g, layout = NULL, simplify = TRUE, verbose = TRUE) {
     
+    if (verbose) rlang::inform("Validating the 'igraph' object...")
+    
+    # Warn and drop list-valued EDGE attributes (not supported)
+    g <- .drop_list_edge_attrs(g)
+    
+    # Capture + remove list-valued VERTEX attributes ...
+    vlists <- .extract_list_vertex_attrs(g)
+    g <- .drop_list_vertex_attrs(g)
+    
     gg <- .validate_igraph(g, layout, simplify, verbose)
     edges <- .get_edges(gg, simplify)
     nodes <- .get_nodes(gg)
     
+    # Reattach captured list columns to @nodes
+    # It will exist only on table for optimization
+    nodes <- .attach_list_cols(nodes, vlists, key = igraph::V(gg)$name)
+    
+    # Capture geometries
+    coords <- nodes[, c("x", "y")]
+    geom_cols <- .gs_geometry_cols(nodes)
+    for (col in geom_cols) {
+        coords[[col]] <- nodes[[col]]
+    }
+    
     if(verbose) rlang::inform("Creating a 'GraphSpace' object...")
     instance_id <- .generate_gs_uuid()
     pars <- list(
+        scale.factor = 1,
         is.directed = igraph::is_directed(gg), 
         is.simplified = simplify,
         is.normalized = FALSE, 
-        image.space = FALSE,
-        # Retained for backward compatibility
-        image.layer = FALSE #not used
-        # To remove in the next release
+        image.space = FALSE
         )
     gs <- new(Class = "GraphSpace", 
-        nodes = nodes, edges = edges, graph = gg, 
-        image = grDevices::as.raster(matrix()), 
-        pars = pars, 
-        misc = list(),
+        nodes = nodes, 
+        edges = edges, 
+        graph = gg,
+        coords = coords,
+        pars = pars,
         uuid = instance_id
         )
     
@@ -31,11 +50,88 @@
     
 }
 
+#-------------------------------------------------------------------------------
+.gs_geometry_cols <- function(df) {
+    if (ncol(df) == 0) return(character(0))
+    names(df)[vapply(df, inherits, logical(1), what = "sfc")]
+}
+
+#-------------------------------------------------------------------------------
+# Warn and drop list-valued edge attributes; edge list attributes are not
+# supported. Returns the graph with those attributes removed.
+.drop_list_edge_attrs <- function(g) {
+    all <- igraph::edge_attr(g)
+    lst <- names(all)[vapply(all, is.list, logical(1))]
+    if (length(lst) > 0) {
+        rlang::warn(c(
+            "!" = sprintf("List-valued edge attribute(s) dropped: %s.",
+                .gs_preview(lst)),
+            "i" = "Only atomic edge attributes are retained during construction.",
+            "*" = "To work with list attributes, set it after construction via 'gs_edge_attr()'."
+        ))
+        for (a in lst) g <- igraph::delete_edge_attr(g, a)
+    }
+    g
+}
+
+#-------------------------------------------------------------------------------
+# Capture list-valued vertex attributes as a named list of columns.
+# Records the pre-validation name/order for realignment.
+.extract_list_vertex_attrs <- function(g) {
+    all <- igraph::vertex_attr(g)
+    is_lst <- vapply(all, is.list, logical(1))
+    if (!any(is_lst)) return(NULL)
+    cols <- all[is_lst]
+    attr(cols, "key") <- if ("name" %in% names(all)) all[["name"]] else NULL
+    cols
+}
+
+#-------------------------------------------------------------------------------
+# Remove list-valued vertex attributes from the graph.
+.drop_list_vertex_attrs <- function(g) {
+    all <- igraph::vertex_attr(g)
+    lst <- names(all)[vapply(all, is.list, logical(1))]
+    for (a in lst) g <- igraph::delete_vertex_attr(g, a)
+    g
+}
+
+#-------------------------------------------------------------------------------
+# Reattach captured list columns to the nodes data.frame, aligned by index
+.attach_list_cols <- function(nodes, vlists, key) {
+    
+    if (is.null(vlists)) return(nodes)
+    
+    pre_key <- attr(vlists, "key")
+    lens <- lengths(vlists)
+    bad  <- lens != nrow(nodes)
+    if (any(bad)) {
+        rlang::warn(c(
+            "!" = "Could not attach list-valued vertex attribute(s); dropping them.",
+            "*" = sprintf("Affected attribute(s): %s.", .gs_preview(names(vlists)[bad])),
+            "i" = sprintf("Length differs from node count (%d): %s.",
+                nrow(nodes),
+                paste(sprintf("%s=%d", names(vlists)[bad], lens[bad]), collapse = ", "))
+        ))
+        vlists <- vlists[!bad]
+        if (length(vlists) == 0) return(nodes)
+    }
+    
+    idx <- if (!is.null(pre_key)) match(key, pre_key) else NULL
+    if (!is.null(idx) && !anyNA(idx)) {
+        # name-aligned
+        for (nm in names(vlists)) nodes[[nm]] <- vlists[[nm]][idx]
+    } else {
+        # positional fallback: validation preserves vertex order
+        for (nm in names(vlists)) nodes[[nm]] <- vlists[[nm]]
+    }
+    nodes
+}
+
 ################################################################################
 ### Get nodes and edges in a df object
 ################################################################################
 .get_nodes <- function(gg){
-    lt <- vertex_attr(gg)
+    lt <- igraph::vertex_attr(gg)
     n <- igraph::vcount(gg)
     nodes <- data.frame(row.names = seq_len(n) )
     for(nm in names(lt)){
@@ -46,7 +142,6 @@
     return(nodes)
 }
 .get_edges <- function(gg, simplify = TRUE){
-    
     if (simplify && is_simple(gg) && igraph::is_directed(gg)) {
         edges <- .get_simplified_edgelist(gg)
     } else {
@@ -310,7 +405,9 @@
     away_y <- nodes$y - cy
     away_len <- sqrt(away_x^2 + away_y^2)
     angle <- atan2(away_y, away_x) * 180 / pi
-    angle[away_len < layout_scale * 0.01] <- 90
+    is_center <- away_len < layout_scale * 0.01
+    is_center[is.na(is_center)] <- FALSE
+    angle[is_center] <- 90
     angle
 }
 
@@ -330,7 +427,9 @@
     away_y <- mid_y - cy
     away_len <- sqrt(away_x^2 + away_y^2)
     edge_angle <- atan2(away_y, away_x) * 180 / pi
-    edge_angle[away_len < layout_scale * 0.01] <- 90
+    is_center <- away_len < layout_scale * 0.01
+    is_center[is.na(is_center)] <- FALSE
+    edge_angle[is_center] <- 90
     edge_angle
 }
 

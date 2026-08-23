@@ -41,6 +41,9 @@ gs_nfeatures(x)
 # S4 method for class 'GraphSpace'
 gs_features(x)
 
+# S3 method for class 'GraphSpace'
+as.igraph(x, ...)
+
 # S4 method for class 'GraphSpace'
 gs_vcount(x)
 
@@ -54,19 +57,34 @@ gs_vertex_attr(x, name, ..., value)
 gs_vertex_attr(x, name, ...) <- value
 
 # S4 method for class 'GraphSpace'
+gs_delete_v_attr(x, name)
+
+# S4 method for class 'GraphSpace'
+gs_delete_e_attr(x, name)
+
+# S4 method for class 'GraphSpace'
 gs_edge_attr(x, name, ..., value)
 
 # S4 method for class 'GraphSpace'
 gs_edge_attr(x, name, ...) <- value
 
 # S4 method for class 'GraphSpace'
+gs_scale_factor(x)
+
+# S4 method for class 'GraphSpace'
+gs_scale_factor(x) <- value
+
+# S4 method for class 'GraphSpace'
+gs_geometry(x, name = "geometry")
+
+# S4 method for class 'GraphSpace'
+gs_geometry(x, name = "geometry") <- value
+
+# S4 method for class 'GraphSpace'
 x$name
 
 # S4 method for class 'GraphSpace'
 x$name <- value
-
-# S3 method for class 'GraphSpace'
-as.igraph(x, ...)
 ```
 
 ## Arguments
@@ -140,7 +158,7 @@ names(gs)
 gs_names(gs)
 #>  [1] "vertex"         "x"              "y"              "name"          
 #>  [5] "nodeLabel"      "nodeLabelSize"  "nodeLabelColor" "nodeShape"     
-#>  [9] "nodeSize"       "nodeColor"      "nodeLineWidth"  "nodeLineColor" 
+#>  [9] "nodeSize"       "nodeFillColor"  "nodeLineWidth"  "nodeLineColor" 
 #> [13] "nodeAlpha"     
 
 # Get a data frame with nodes
@@ -151,12 +169,12 @@ gs_nodes(gs)
 #> n3      3 -2  2   n3        V3             3          black        23        5
 #> n4      4 -4 -4   n4        V4             3          black        24       10
 #> n5      5 -8  0   n5        V5             3          black        25        5
-#>    nodeColor nodeLineWidth nodeLineColor nodeAlpha
-#> n1       red             1        grey20         1
-#> n2   #00ad39             1        grey20         1
-#> n3    grey80             1        grey20         1
-#> n4 lightblue             1        grey20         1
-#> n5      cyan             1        grey20         1
+#>    nodeFillColor nodeLineWidth nodeLineColor nodeAlpha
+#> n1           red             1        grey20         1
+#> n2       #00ad39             1        grey20         1
+#> n3        grey80             1        grey20         1
+#> n4     lightblue             1        grey20         1
+#> n5          cyan             1        grey20         1
 
 # Get a data frame with edges
 gs_edges(gs)
@@ -205,7 +223,7 @@ gs_vertex_attr(gs)
 #> $nodeSize
 #> [1]  8  5  5 10  5
 #> 
-#> $nodeColor
+#> $nodeFillColor
 #> [1] "red"       "#00ad39"   "grey80"    "lightblue" "cyan"     
 #> 
 #> $nodeLineWidth
@@ -239,9 +257,16 @@ gs_edge_attr(gs, "edgeLineWidth") <- 1
 # Add an image and rescale graph coordinates to image space
 # Images may be provided as a raster or numeric matrix
 gs_image(gs) <- as_colorraster(volcano)
-#> Image spatial boundaries:
-#> ℹ x: [1, 61] (cols)
-#> ℹ y: [1, 87] (rows)
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
 #> Normalizing node coordinates to graph space...
+
+# apply a scaling factor to node coordinates
+gs_scale_factor(gs) <- 0.1
+#> Denormalizing graph coordinates...
+# undo scaling 
+gs_scale_factor(gs) <- 1
+
+# add an 'sfc' geometry column
+pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
+gs_geometry(gs) <- sf::st_sfc(pts)
 ```

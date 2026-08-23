@@ -257,7 +257,7 @@ geom_nodespace <- function(mapping = NULL, data = NULL,
 StatNodeSpace <- ggproto(
   "StatNodeSpace", ggplot2::Stat,
   optional_aes = c("nodeSize", "nodeShape", "nodeLineWidth",  
-    "nodeColor", "nodeLineColor", "nodeAlpha", 
+    "nodeColor", "nodeFillColor", "nodeLineColor", "nodeAlpha", 
     "nodeLabel", "nodeLabelSize", "nodeLabelColor"),
   extra_params = c("na.rm",".user_aes"),
   finish_layer = function(data, params) {
@@ -273,7 +273,7 @@ StatNodeSpace <- ggproto(
 #' @rdname geom_nodespace
 #' @export
 nodespace_handler <- function(mapping = NULL) {
-  
+  force(mapping)
   fn <- function(data) {
     if (is_waiver(data)) return(NULL)
     vars <- .detect_mapping_vars(mapping)
@@ -322,13 +322,14 @@ nodespace_handler <- function(mapping = NULL) {
   default_mapping <- ggplot2::aes(x = x, y = y)
   
   nodeSize <- nodeShape <- nodeLineWidth <- NULL
-  nodeColor <- nodeLineColor <- nodeAlpha <- NULL
+  nodeColor <- nodeFillColor <- nodeLineColor <- nodeAlpha <- NULL
   nodeLabel <- nodeLabelSize <- nodeLabelColor <- NULL
   optional_mapping <- ggplot2::aes(
     nodeSize = nodeSize,
     nodeShape = nodeShape,
     nodeLineWidth = nodeLineWidth,
     nodeColor = nodeColor,
+    nodeFillColor = nodeFillColor,
     nodeLineColor = nodeLineColor,
     nodeAlpha = nodeAlpha,
     nodeLabel = nodeLabel,
@@ -378,7 +379,9 @@ nodespace_handler <- function(mapping = NULL) {
   }
   
   if(is.null(params[["fill"]]) && !"fill" %in% user_aes ){
-    if("nodeColor" %in% names(nodes) ){
+    if("nodeFillColor" %in% names(nodes) ){
+      nodes[["fill"]] <- nodes[["nodeFillColor"]]
+    } else if("nodeColor" %in% names(nodes) ){
       nodes[["fill"]] <- nodes[["nodeColor"]]
     }
   }
@@ -386,6 +389,8 @@ nodespace_handler <- function(mapping = NULL) {
   if(is.null(params[["colour"]]) && !"colour" %in% user_aes ){
     if("nodeLineColor" %in% names(nodes) ){
       nodes[["colour"]] <- nodes[["nodeLineColor"]]
+    } else if("nodeColor" %in% names(nodes) ){
+      nodes[["colour"]] <- nodes[["nodeColor"]]
     }
   }
   
@@ -471,7 +476,7 @@ GeomNodeSpace <- ggproto(
   ),
   
   draw_panel = function(self, data, panel_params, coord, 
-    na.rm = FALSE, .size_unit = "mm", raster = FALSE, 
+    na.rm = FALSE, .size_unit = "npc", raster = FALSE, 
     dpi = NULL, dev = "cairo", scale = 1) {
     
     data$shape <- translate_shape_string(data$shape)

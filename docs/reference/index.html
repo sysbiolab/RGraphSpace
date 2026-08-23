@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,7 @@
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
     <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
+    <li><a class="dropdown-item" href="../articles/geometries.html">Geometries</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -56,6 +57,8 @@
     <li><h6 class="dropdown-header" data-toc-skip>Advanced workflows</h6></li>
     <li><a class="dropdown-item" href="../articles/high-dimensional.html">High-dimensional data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -126,10 +129,10 @@
 
         <dt>
 
-          <code><a href="cropGraphSpace-methods.html">cropGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code>
+          <code><a href="GraphSpace-transform.html">cropGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">rotateGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">flipGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">transposeGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code>
 
         </dt>
-        <dd>Crop node coordinates to graph and image spaces</dd>
+        <dd>Crop, rotate, flip, and transpose a GraphSpace</dd>
 
         <dt>
 
@@ -149,7 +152,7 @@
 
       <dl><dt>
 
-          <code><a href="GraphSpace-accessors.html">names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nodes(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edges(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_image(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_image&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_graph(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_fdata(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_fdata&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nfeatures(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_features(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vcount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_ecount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vertex_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_vertex_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edge_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_edge_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">as.igraph(<i>&lt;GraphSpace&gt;</i>)</a></code>
+          <code><a href="GraphSpace-accessors.html">names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nodes(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edges(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_image(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_image&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_graph(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_fdata(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_fdata&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nfeatures(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_features(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">as.igraph(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vcount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_ecount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vertex_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_vertex_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_delete_v_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_delete_e_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edge_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_edge_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_scale_factor(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_scale_factor&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_geometry(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_geometry&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code>
 
         </dt>
         <dd>Accessors and attribute utilities for GraphSpace objects</dd>
@@ -186,7 +189,7 @@
 
         <dt>
 
-          <code><a href="GraphSpace-subscript.html">`[`(<i>&lt;GraphSpace&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="GraphSpace-subscript.html">`[[`(<i>&lt;GraphSpace&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code>
+          <code><a href="GraphSpace-subscript.html">`[`(<i>&lt;GraphSpace&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="GraphSpace-subscript.html">`[[`(<i>&lt;GraphSpace&gt;</i>)</a></code>
 
         </dt>
         <dd>Subscript operators for GraphSpace objects</dd>
@@ -206,6 +209,22 @@
 
         </dt>
         <dd>Manipulate node features in a GraphSpace object</dd>
+      </dl></div><div class="section level2">
+      <h2 id="geometry-manipulation">Geometry manipulation<a class="anchor" aria-label="anchor" href="#geometry-manipulation"></a></h2>
+
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="geometry-methods.html">normalizeGeometry(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="geometry-methods.html">fitGeometry(<i>&lt;GraphSpace&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Normalize or fit node geometry</dd>
       </dl></div><div class="section level2">
       <h2 id="ggplot-integration">ggplot2 integration<a class="anchor" aria-label="anchor" href="#ggplot-integration"></a></h2>
 
@@ -330,6 +349,20 @@
 
         </dt>
         <dd>Map numeric values to a color raster</dd>
+
+        <dt>
+
+          <code><a href="sfshape_stars.html">sfshape_star()</a></code> <code><a href="sfshape_stars.html">sfshape_stars()</a></code>
+
+        </dt>
+        <dd>Build star polygons</dd>
+
+        <dt>
+
+          <code><a href="sfshape_ngons.html">sfshape_ngon()</a></code> <code><a href="sfshape_ngons.html">sfshape_ngons()</a></code>
+
+        </dt>
+        <dd>Build regular polygons</dd>
       </dl></div><div class="section level2">
       <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a></h2>
 

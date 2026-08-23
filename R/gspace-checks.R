@@ -109,6 +109,7 @@
 }
 .all_integerValues <- function(para, notNA = TRUE) {
   if (length(para) == 0L) return(FALSE)
+  if (is.character(para) || is.list(para)) return(FALSE)
   lg <- is.integer(para) || is.numeric(para) || all(is.na(para))
   if (lg) {
     para <- abs(para)

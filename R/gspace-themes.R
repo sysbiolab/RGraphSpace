@@ -63,7 +63,7 @@ theme_gspace_th0 <- function(txt_size = 1, leg_size = 1,
   
   l_th <- list()
   l_th[[1]] <- .gspace_theme_base(txt_size, leg_size, bg_colour) +
-    do.call(ggplot2::theme, .clean_args(...))
+    ggplot2::theme(...)
   
   l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
   
@@ -91,8 +91,7 @@ theme_gspace_th1 <- function(txt_size = 1, leg_size = 1,
       axis.ticks = element_line(linewidth = 0.7),
       axis.line = element_blank(),
       plot.margin = ggplot2::margin(1, 1, 1, 1), 
-      complete = TRUE) +
-    do.call(ggplot2::theme, .clean_args(...))
+      complete = TRUE) + ggplot2::theme(...)
   
   l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
   
@@ -119,8 +118,7 @@ theme_gspace_th2 <- function(txt_size = 1, leg_size = 1,
       axis.ticks = element_line(linewidth = 0.7),
       axis.line = element_blank(), panel.border = element_blank(),
       plot.margin = ggplot2::margin(5, 10, 0, 10), 
-      complete = TRUE) +
-    do.call(ggplot2::theme, .clean_args(...))
+      complete = TRUE) + ggplot2::theme(...)
   
   l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
   
@@ -151,8 +149,7 @@ theme_gspace_th3 <- function(txt_size = 1, leg_size = 1,
       axis.ticks = element_line(linewidth = 0.5),
       axis.line = element_blank(), panel.border = element_blank(),
       plot.margin = ggplot2::margin(5, 5, 5, 5),
-      complete = TRUE) +
-    do.call(ggplot2::theme, .clean_args(...))
+      complete = TRUE) + ggplot2::theme(...)
   
   l_args <- .guide_args(leg_size, discrete_fill, discrete_colour)
   
@@ -178,22 +175,29 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
   xlab = "Graph coordinates 1", ylab = "Graph coordinates 2", 
   expand = NULL, ...) {
   
+  # For backward compatibility with a minor issue
+  # To remove in the next release
+  args <- list(...)
+  names(args)[names(args) == "bg_color"] <- "bg_colour"
+  
   theme <- match.arg(theme, choices = c("th0", "th1", "th2", "th3"))
   bks <- .set_theme_bks(theme)
   bks$expand <- expand %||% bks$expand
   th <- list()
   if(is_norm){
     th[[length(th)+1]] <- scale_x_continuous(breaks = bks$axis.ticks,
-      labels = format(bks$axis.ticks), position = bks$x.position,
-      limits = bks$xylim, expand = ggplot2::expansion(mult = bks$expand))
+      labels = format(bks$axis.ticks), limits = bks$xylim, 
+      expand = ggplot2::expansion(mult = bks$expand),
+      guide = ggplot2::guide_axis(position = bks$x.position))
     th[[length(th)+1]] <- scale_y_continuous(breaks = bks$axis.ticks,
       labels = format(bks$axis.ticks), limits = bks$xylim,
       expand = ggplot2::expansion(mult = bks$expand))
   } else {
-    th[[length(th)+1]] <- scale_x_continuous(position = bks$x.position)
+    th[[length(th)+1]] <- scale_x_continuous(
+      guide = ggplot2::guide_axis(position = bks$x.position))
   }
   ftheme <- .get_gspace_theme(theme)
-  th[[length(th)+1]] <- ftheme(...)
+  th[[length(th)+1]] <- do.call(ftheme, args)
   th[[length(th)+1]] <- labs(x = xlab, y = ylab)
   attr(th, "gspace_pars") <- bks
   return(th)
@@ -327,8 +331,3 @@ theme_gspace_legend <- function(leg_size = 1,
   l_args
 }
 
-.clean_args <- function(...) {
-  args <- list(...)
-  args[c("key_fill", "key_colour", "bg_color")] <- NULL
-  args
-}

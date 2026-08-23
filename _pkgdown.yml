@@ -46,6 +46,8 @@ navbar:
         href: articles/scales-and-offsets.html
       - text: "Curved edges and loops"
         href: articles/curved-edges.html
+      - text: "Geometries"
+        href: articles/geometries.html
       - text: -------
       - text: "General applications"
         header: true
@@ -62,6 +64,10 @@ navbar:
         href: articles/high-dimensional.html
       - text: "Spatial feature data"
         href: articles/spatial-data.html
+      - text: "Spatial segmentation with Seurat"
+        href: articles/spatial-segmentation1.html
+      - text: "Spatial segmentation with SpatialExperiment"
+        href: articles/spatial-segmentation2.html
     - text: Index
       href: reference/index.html
 
@@ -93,6 +99,11 @@ reference:
   contents:
     - gs_features-utils
     
+- title: Geometry manipulation
+  contents:
+    - normalizeGeometry
+    - fitGeometry
+  
 - title: ggplot2 integration
   contents:
     - ggplot-GraphSpace
@@ -120,6 +131,8 @@ reference:
 - title: Utilities
   contents:
     - as_colorraster
+    - sfshape_stars
+    - sfshape_ngons
 
 - title: Data
   contents:

@@ -26,15 +26,15 @@ For a self-contained introduction that works offline, run **vignette("RGraphSpac
 
 # Introductory vignettes
 
-These tutorials introduce *RGraphSpace* using simple toy examples: [*building a graph space*](building-graphspace.html) walks through basic graph conventions; [*customizing aesthetics*](customizing-aesthetics.html) demonstrates how to set up `geoms` to handle graph data types; and [*fine-tuning scales*](scales-and-offsets.html) describes the trade-offs involved in synchronizing node and edge layers.
+These tutorials introduce *RGraphSpace* using simple toy examples: [*building a graph space*](building-graphspace.html) walks through basic graph conventions; [*customizing aesthetics*](customizing-aesthetics.html) demonstrates how to set up `geoms` to handle graph data types; [*fine-tuning scales*](scales-and-offsets.html) describes the trade-offs involved in synchronizing node and edge layers; and [*geometries*](geometries.html) demonstrates how to attach `sf` geometries to nodes as custom markers.
 
 ```{r, include=FALSE}
 title <- c("Building GraphSpace", "Customizing Aesthetics", 
-  "Fine-tuning Scales", "Curved Edges and Loops")
+  "Fine-tuning Scales", "Curved Edges and Loops", "Geometries and Nodes")
 image <- c("cards/building_gspace.png", "cards/using_geoms.png", 
-  "cards/scales_and_offsets.png", "cards/curved_edges.png")
+  "cards/scales_and_offsets.png", "cards/curved_edges.png", "cards/geometry.png")
 link <- c("building-graphspace.html","customizing-aesthetics.html",
-  "scales-and-offsets.html", "curved-edges.html")
+  "scales-and-offsets.html", "curved-edges.html", "geometries.html")
 ps_cards1 <- data.frame(title = title, image = image, link = link)
 ```
 
@@ -57,7 +57,7 @@ ps_cards1 %>%
 
 # General applications
 
-These tutorials showcase *RGraphSpace* applied to real-world scenarios: [*mapping graphs to images*](mapping-images.html) illustrates the use of images as spatial references; [*interoperability with ggraph & sf*](interoperability.html) details integration strategies; and [*interactive visualization*](interactive.html) demonstrates manual graph layout refinement.
+These tutorials showcase *RGraphSpace* for general applications: [*mapping graphs to images*](mapping-images.html) illustrates the use of images as spatial references; [*interoperability with ggraph & sf*](interoperability.html) demonstrates some integration strategies, building a graph from real-world geographic data and comparing it against `ggraph`'s own layout approach; and [*interactive visualization*](interactive.html) demonstrates manual graph layout refinement.
 
 ```{r, include=FALSE}
 title <- c("Graphs to Images", "Interoperability", "Interactive Visualization")
@@ -83,11 +83,12 @@ ps_cards2 %>%
 
 # Advanced workflows
 
+These tutorials showcase *RGraphSpace* applied to real-world scenarios: [*high-dimensional data*](high-dimensional.html) demonstrates how to integrate high-dimensional feature data; [*spatial feature data*](spatial-data.html) shows how to attach those features to spatially-organized data; [*spatial segmentation1*](spatial-segmentation1.html) walks through attaching real cell-segmentation boundaries to a `GraphSpace` from a `Seurat` object; and [*spatial segmentation2*](spatial-segmentation2.html) demonstrates building a `GraphSpace` from a `SpatialExperiment` object, including tissue image integration.
 
 ```{r, include=FALSE}
-title <- c("High-Dimensional Data", "Spatial Feature Data")
-image <- c("cards/high_dim.png", "cards/spatial_data.png")
-link <- c("high-dimensional.html","spatial-data.html")
+title <- c("High-Dimensional Data", "Spatial Feature Data", "Spatial Segmentation1", "Spatial Segmentation2")
+image <- c("cards/high_dim.png", "cards/spatial_data.png", "cards/segmentation1.png", "cards/segmentation2.png")
+link <- c("high-dimensional.html", "spatial-data.html", "spatial-segmentation1.html", "spatial-segmentation2.html")
 ps_cards3 <- data.frame(title = title, image = image, link = link)
 ```
 

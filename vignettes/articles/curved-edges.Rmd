@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }

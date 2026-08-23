@@ -87,7 +87,7 @@ each assignment.
 library(RGraphSpace)
 library(igraph)
 
-g <- make_star(5, mode = "out")
+g <- make_star(6, mode = "out")
 gs <- GraphSpace(g)
 #> Validating the 'igraph' object...
 #> Vertex attributes 'x' and 'y' missing; computing layout...
@@ -101,21 +101,12 @@ gs <- normalizeGraphSpace(gs)
 gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
 
 # Assignment form: modifies gs in place
-gs_add_edges(gs) <- data.frame(from = "n2", to = "n3")
-#> Warning: ! 1 parallel edge(s) ignored: simplified GraphSpace do not allow parallel edges.
-#> ℹ n2 -> n3
-#> • Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges.
+gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
 
 # Add multiple edges with an analytical attribute
 gs <- gs_add_edges(gs, data.frame(
-  from   = c("n2", "n3"),
-  to     = c("n4", "n5"),
+  from   = c("n4", "n5"),
+  to     = c("n5", "n6"),
   weight = c(0.8, 0.4)
 ))
-
-# name1/name2 convention also accepted (e.g. from gs_edges() output)
-gs <- gs_add_edges(gs, data.frame(name1 = "n2", name2 = "n3"))
-#> Warning: ! 1 parallel edge(s) ignored: simplified GraphSpace do not allow parallel edges.
-#> ℹ n2 -> n3
-#> • Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges.
 ```

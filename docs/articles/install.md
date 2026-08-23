@@ -28,24 +28,27 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 
 ``` r
 
-install.packages("ggraph")
-install.packages("dplyr")
-
-install.packages("sf")
-install.packages("maps")
-install.packages("geometry")
-install.packages("flightsbr")
-install.packages("airportr")
-
+# Used in the introductory vignettes
 install.packages("ggnewscale")
 install.packages("patchwork")
 
-install.packages("Seurat")
-remotes::install_github("satijalab/seurat-data")
-
+# Used in the general-purpose vignettes
+install.packages("ggraph")
+install.packages("dplyr")
+install.packages("geometry")
+install.packages("maps")
+install.packages("flightsbr")
+install.packages("airportr")
 install.packages("BiocManager")
 BiocManager::install("RedeR")
+
+# Used in the advanced vignettes
+install.packages("Seurat")
+remotes::install_github("satijalab/seurat-data")
 BiocManager::install("glmGamPoi")
+BiocManager::install("SpatialExperiment")
+BiocManager::install("OSTA.data")
+BiocManager::install("VisiumIO")
 ```
 
 ## Citation

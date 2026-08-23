@@ -99,9 +99,11 @@ gs <- GraphSpace(g)
 
 # Functional form (pipe-friendly): returns a modified copy
 gs <- gs_add_nodes(gs, data.frame(name = "n6", x = 0.5, y = 0.5))
+#> Denormalizing graph coordinates...
 
 # Assignment form: modifies gs in place
 gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
+#> Denormalizing graph coordinates...
 
 # Add multiple nodes with visual attributes
 gs <- gs_add_nodes(gs, data.frame(
@@ -111,4 +113,5 @@ gs <- gs_add_nodes(gs, data.frame(
   nodeSize  = c(8, 5),
   nodeColor = c("steelblue", "tomato")
 ))
+#> Denormalizing graph coordinates...
 ```

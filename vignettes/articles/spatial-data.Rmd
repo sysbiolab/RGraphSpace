@@ -46,11 +46,11 @@ This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/)
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
-if (packageVersion("Seurat") < "5.5.0"){
+if (packageVersion("Seurat") < "5.5.1"){
   message("Need to update 'Seurat' for this vignette")
   remotes::install_github("satijalab/Seurat")
 }
@@ -242,7 +242,7 @@ knitr::include_graphics("figs_dev/ggplot_seurat_4.png")
 
 <br/>
 
-# Coercing spatial data {#sp-coercion}
+# Coercing *Seurat* spatial objects {#sp-coercion}
 
 Below, we show how to access the relevant components of a `Seurat` object and use them to construct a `GraphSpace` manually, without relying on `as.GraphSpace()`. For another coercion example, see the [*high-dimensional data*](high-dimensional.html#hd-coercion) tutorial.
 

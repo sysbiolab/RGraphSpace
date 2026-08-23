@@ -6,6 +6,9 @@
 \alias{as.GraphSpace.igraph}
 \alias{as.GraphSpace.tbl_graph}
 \alias{as.GraphSpace.data.frame}
+\alias{as.GraphSpace.DFrame}
+\alias{as.GraphSpace.matrix}
+\alias{as.GraphSpace.SpatialExperiment}
 \alias{as.GraphSpace.Seurat}
 \title{Convert objects to GraphSpace}
 \usage{
@@ -19,19 +22,29 @@ as.GraphSpace(x, ...)
 
 \method{as.GraphSpace}{data.frame}(x, ...)
 
-\method{as.GraphSpace}{Seurat}(x, space = c("embedding", "spatial"), layer = NULL, ...)
+\method{as.GraphSpace}{DFrame}(x, ...)
+
+\method{as.GraphSpace}{matrix}(x, ...)
+
+\method{as.GraphSpace}{SpatialExperiment}(x, assay = "counts", ...)
+
+\method{as.GraphSpace}{Seurat}(x, layer = NULL, space = c("embedding", "spatial"), ...)
 }
 \arguments{
 \item{x}{An object to be converted.}
 
-\item{...}{Additional arguments passed to methods associated with the
-selected \code{space}.}
+\item{...}{Additional arguments passed to coercion methods.}
+
+\item{assay}{Name of the assay in the
+\code{\link[SpatialExperiment]{SpatialExperiment}} object from which
+data should be retrieved (see \code{\link[SummarizedExperiment]{assay}}).}
+
+\item{layer}{Name of the layer in the \code{\link[Seurat]{Seurat}} object
+from which node data should be retrieved
+(see \code{\link[SeuratObject]{LayerData}}).}
 
 \item{space}{Character specifying the coordinate space used for node
 geometry. Either \code{"embedding"} or \code{"spatial"}. See details.}
-
-\item{layer}{Name of the layer from which node data should be retrieved
-(see \code{\link[SeuratObject]{LayerData}}).}
 }
 \value{
 A \code{GraphSpace} object.

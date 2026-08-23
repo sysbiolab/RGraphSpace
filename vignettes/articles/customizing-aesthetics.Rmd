@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -73,7 +73,7 @@ gtoy2 <- sample_islands(
 V(gtoy2)$module <- rep(1:3, each = 30)
 
 # Assign colors to nodes
-V(gtoy2)$nodeColor <- rainbow(3)[V(gtoy2)$module]
+V(gtoy2)$nodeFillColor <- rainbow(3)[V(gtoy2)$module]
 
 # Assign a categorical variable to nodes
 V(gtoy2)$node_group <- c("A", "B", "C")[V(gtoy2)$module]
@@ -93,7 +93,7 @@ gs
 In this example, `nodeColor` already contains the final colour values stored in the `GraphSpace` object. The colours will be displayed as-is by the `geom_graphspace()` function. This approach is useful when nodes have been pre-processed with specific attributes and you want the visual output without further mapping.
 
 ```{r, eval=TRUE, message=FALSE, include = FALSE}
-edge_var <- node_var <- nodeColor <- node_group <- NULL
+edge_var <- node_var <- nodeFillColor <- node_group <- NULL
 ```
 
 ```{r Plot identity values, eval=TRUE, message=FALSE}

@@ -1,12 +1,12 @@
 # Building a GraphSpace
 
   
-**Package**: RGraphSpace 1.5.1
+**Package**: RGraphSpace 1.5.2
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH a9e525e DN-- 5 4 -- 
+#> IGRAPH 717d40a DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -151,8 +151,14 @@ Next, we list all vertex and edge attributes that can be passed to
 
 ``` r
 
-# Node color (Hexadecimal or color name)
-V(gtoy1)$nodeColor <- c("red", "#00ad39", "grey80", "lightblue", "cyan")
+# Node fill color (Hexadecimal or color name)
+V(gtoy1)$nodeFillColor <- c("red", "#00ad39", "grey80", "lightblue", "cyan")
+
+# Node line color (Hexadecimal or color name)
+V(gtoy1)$nodeLineColor <- "grey20"
+
+# Node color; shorthand for both fill and line, overridden by either
+# V(gtoy1)$nodeColor <- "grey80"
 
 # Node transparency (in [0,1])
 V(gtoy1)$nodeAlpha <- 1
@@ -165,9 +171,6 @@ V(gtoy1)$nodeShape <- c(21, 22, 23, 24, 25)
 
 # Node line width (as in 'lwd' standard graphics; see 'help(gpar)')
 V(gtoy1)$nodeLineWidth <- 1
-
-# Node line color (Hexadecimal or color name)
-V(gtoy1)$nodeLineColor <- "grey20"
 
 # Node labels ('NA' will omit the label)
 V(gtoy1)$nodeLabel <- c("V1", "V2", "V3", "V4", NA)
@@ -274,9 +277,9 @@ gs
 #> IGRAPH 5fb8aab DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
 #> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c), nodeAlpha
-#> | (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth (e/n),
-#> | arrowType (e/n), edgeAlpha (e/n)
+#> | nodeFillColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c),
+#> | nodeAlpha (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth
+#> | (e/n), arrowType (e/n), edgeAlpha (e/n)
 #> + node spatial boundaries: normalized to graph space
 #> | x: [-8, 2] -> [0, 1] (cols)
 #> | y: [-4, 2] -> [0, 1] (rows)
@@ -361,10 +364,10 @@ ggplot(gs) +
 
 ## Why *camelCase* attribute names?
 
-The node and edge attribute names above (`nodeColor`, `nodeSize`, etc.)
-are deliberately distinct from their *ggplot2* counterparts (`fill`,
-`size`, etc.). This is not a stylistic choice, it is a functional
-boundary between two different aesthetic interfaces.
+The node and edge attribute names above (`nodeFillColor`, `nodeSize`,
+etc.) are deliberately distinct from their *ggplot2* counterparts
+(`fill`, `size`, etc.). This is not a stylistic choice, it is a
+functional boundary between two different aesthetic interfaces.
 
 When a column in a data frame shares a name with a *ggplot2* aesthetic,
 *ggplot2* subjects it to scale training, which is designed for
@@ -377,7 +380,7 @@ complete, preventing other `geoms` from mixing incompatible values
 (e.g. hex colors and numeric variables) into their scale training.
 
 The practical consequence is that `V(g)$fill <- "red"` and
-`V(g)$nodeColor <- "red"` are **not** equivalent. The former is a
+`V(g)$nodeFillColor <- "red"` are **not** equivalent. The former is a
 regular user variable, available for data-driven mapping via
 [`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). The latter
 is a pre-defined identity value applied directly to the rendered nodes.
@@ -417,20 +420,22 @@ sources define the same aesthetic, the following priority applies
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.1 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.2 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     tidyr_1.3.2       
-    #>  [5] lattice_0.22-9     digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5    
-    #>  [9] grid_4.6.1         RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0    
-    #> [13] Matrix_1.7-6       ggrastr_1.0.2      purrr_1.2.2        scales_1.4.0      
-    #> [17] textshaping_1.0.5  jquerylib_0.1.4    cli_3.6.6          rlang_1.2.0       
-    #> [21] withr_3.0.3        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        
-    #> [25] ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1        vctrs_0.7.3       
-    #> [29] R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4 
-    #> [33] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    
-    #> [37] desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0      
-    #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
-    #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
-    #> [49] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31    
-    #> [53] compiler_4.6.1     S7_0.2.2
+    #>  [1] utf8_1.2.6         tidyr_1.3.2        sass_0.4.10        generics_0.1.4    
+    #>  [5] class_7.3-24       KernSmooth_2.23-27 lattice_0.23-1     digest_0.6.39     
+    #>  [9] magrittr_2.0.5     evaluate_1.0.5     grid_4.6.1         RColorBrewer_1.1-3
+    #> [13] fastmap_1.2.0      Matrix_1.7-6       jsonlite_2.0.0     e1071_1.7-17      
+    #> [17] ggrastr_1.0.2      DBI_1.3.0          purrr_1.2.2        scales_1.4.0      
+    #> [21] textshaping_1.0.5  jquerylib_0.1.4    cli_3.6.6          rlang_1.3.0       
+    #> [25] units_1.0-1        withr_3.0.3        cachem_1.1.0       yaml_2.3.12       
+    #> [29] otel_0.2.0         ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1       
+    #> [33] vctrs_0.7.3        R6_2.6.1           proxy_0.4-29       lifecycle_1.0.5   
+    #> [37] classInt_0.4-11    fs_2.1.0           htmlwidgets_1.6.4  vipor_0.4.7       
+    #> [41] ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0     desc_1.4.3        
+    #> [45] pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0       gtable_0.3.6      
+    #> [49] Rcpp_1.1.2         glue_1.8.1         sf_1.1-1           systemfonts_1.3.2 
+    #> [53] xfun_0.59          tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0 
+    #> [57] knitr_1.51         dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9   
+    #> [61] rmarkdown_2.31     compiler_4.6.1     S7_0.2.2

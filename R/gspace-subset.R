@@ -273,8 +273,9 @@ gs_subset_edges <- function(x, i) {
     }
 
     id_col <- data[["name"]]
-    idx    <- which(id_col %in% val)
-
+    val_unique <- unique(val)
+    idx <- match(val_unique, id_col)
+    
     missing_ids <- setdiff(val, id_col)
     if (length(missing_ids) > 0L) {
       rlang::warn(c(
@@ -285,7 +286,7 @@ gs_subset_edges <- function(x, i) {
         "i" = .gs_preview(missing_ids)
       ))
     }
-
+    idx <- idx[!is.na(idx)]
   #--- logical: must be the same length as the table
   } else if (is.logical(val)) {
 
@@ -396,6 +397,12 @@ gs_subset_edges <- function(x, i) {
   # Update graph vertices
   idx <- V(gs@graph)$name %in% nodes$name
   gs@graph <- igraph::delete_vertices(gs@graph, which(!idx))
+  
+  # Update coords
+  if (nrow(gs@coords) > 0) {
+    keep <- nodes$name[nodes$name %in% rownames(gs@coords)]
+    gs@coords <- gs@coords[keep, , drop = FALSE]
+  }
   
   # Update fdata
   if (nrow(gs@fdata) > 0) {

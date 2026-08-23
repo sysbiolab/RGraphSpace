@@ -25,6 +25,9 @@ setOldClass("gs_graph")
 #' automatically; see \link{gs_image}.
 #' @slot fdata A \code{\link[Matrix]{Matrix}} object storing high-dimensional 
 #' feature data associated with graph nodes.
+#' @slot coords A data frame with raw coordinates. It also stores a raw  
+#' \code{\link[sf]{sfc}} list column when a \code{geometry} is included 
+#' by the \link{gs_geometry} function.
 #' @slot pars A list with parameters.
 #' @slot misc A list with intermediate objects for downstream methods.
 #' @slot uuid A Universally Unique Identifier (UUID) for the object instance.
@@ -46,6 +49,7 @@ setClass("GraphSpace",
     image = "raster",
     canvas = "raster",
     fdata = "Matrix",
+    coords = "data.frame",
     pars = "list",
     misc = "list",
     uuid = "character"
@@ -57,6 +61,7 @@ setClass("GraphSpace",
     image = as.raster(matrix()),
     canvas = as.raster(matrix()),
     fdata = methods::new("dgeMatrix"),
+    coords = data.frame(),
     pars = list(),
     misc = list(),
     uuid = character()
@@ -91,10 +96,29 @@ setValidity("GraphSpace", function(object) {
     errors <- c(errors, "'@fdata' slot must have column names.")
   }
   
+  if (!is.data.frame(object@coords)) {
+    errors <- c(errors, "'@coords' slot must be a data.frame.")
+  }
+  
+  if (nrow(object@coords) > 0 && is.null(rownames(object@coords))) {
+    errors <- c(errors, "'@coords' slot must have row names.")
+  }
+  
+  if (ncol(object@coords) > 0 && is.null(colnames(object@coords))) {
+    errors <- c(errors, "'@coords' slot must have column names.")
+  }
+  
   # fdata <-> nodes consistency
   if (nrow(object@nodes) > 0 && nrow(object@fdata) > 0) {
     if (!identical(rownames(object@nodes), rownames(object@fdata))) {
       errors <- c(errors, "Row names in '@fdata' slot must match row names in '@nodes' slot.")
+    }
+  }
+  
+  # coords <-> nodes consistency
+  if (nrow(object@nodes) > 0 && nrow(object@coords) > 0) {
+    if (!identical(rownames(object@nodes), rownames(object@coords))) {
+      errors <- c(errors, "Row names in '@coords' slot must match row names in '@nodes' slot.")
     }
   }
   
@@ -192,45 +216,81 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
 #' @keywords internal
 .update_gs <- function(gs, verbose = TRUE) {
 
-  new_slots <- c("image", "fdata", "uuid", "canvas")
+  new_slots <- c("image", "fdata", "uuid", "canvas", "coords")
   missing_slots <- new_slots[!sapply(new_slots, function(s) .hasSlot(gs, s))]
   
   if (length(missing_slots) == 0){
     return(gs)
   }
   
-  if(verbose){
-    if(.has_image(gs) || .has_fdata(gs)){
-      rlang::warn(c(
-        "!" = "Outdated 'GraphSpace' object detected.",
-        "x" = paste0("Missing slot(s): ", paste(missing_slots, collapse = ", "), "."),
-        "x" = "Image, canvas, and feature data cannot be safely reused and were reset to empty.",
-        "i" = "Preserved unchanged: nodes, edges, graph, parameters, misc.",
-        "*" = "Rebuild the object from scratch to restore the original image and features."
-      ))
-    } else {
-      rlang::inform(c(
-        "!" = "Outdated 'GraphSpace' object updated to the latest version.",
-        "i" = paste0("Slot(s) added with default values: ", 
-          paste(missing_slots, collapse = ", "), "."),
-        "i" = "Re-run normalizeGraphSpace() before plotting.",
-        "*" = "To ensure full compatibility, rebuild the object from scratch."
-      ))
-    }
+  reset_image_fdata <- .has_image(gs) || .has_fdata(gs)
+  if(length(missing_slots)==1 && missing_slots=="coords"){
+    reset_image_fdata <- FALSE
   }
-  
-  # Reset normalization
-  gs@pars$image.space <- FALSE
-  gs@pars$is.normalized <- FALSE
-  
+
+  if(verbose){
+    
+    if(reset_image_fdata){
+      msg <- c(
+        "!" = "Outdated 'GraphSpace' object detected.",
+        "x" = paste0("Missing slot(s): ", paste(shQuote(missing_slots), collapse = ", "), "."),
+        "x" = "Image, canvas, and feature data cannot be safely reused and were reset to empty.",
+        "*" = "To ensure full compatibility, rebuild the object from scratch."
+      )
+    } else {
+      msg <- c("'GraphSpace' object updated to the latest version.",
+        "i" = paste0("Slot(s) added with default values: 'misc', 'pars', ", 
+          paste(shQuote(missing_slots), collapse = ", "), "."),
+        "*" = "If normalized, re-run 'normalizeGraphSpace(...)' before plotting.")
+    }
+    
+    cname <- class(gs)
+    if(cname!="GraphSpace"){
+      msg <- c(msg, 
+        "!" = sprintf(
+          "The '%s' extension will need to be rebuilt afterward.", 
+          cname))
+    }
+    
+    if(reset_image_fdata){
+      rlang::warn(msg)
+    } else {
+      rlang::inform(msg)
+    }
+    
+  }
+
+  # Build new GraphSpace
+  pars <- list(
+    scale.factor = 1,
+    is.directed = igraph::is_directed(gs@graph), 
+    is.simplified = gs@pars$is.simplified %||% FALSE,
+    is.normalized = FALSE, 
+    image.space = FALSE
+  )
   x <- new("GraphSpace",
+    graph = gs@graph,
     nodes = gs@nodes,
     edges = gs@edges,
-    graph = gs@graph,
-    pars = gs@pars,
-    misc = gs@misc,
-    uuid = if (.hasSlot(gs, "uuid")) gs@uuid else .generate_gs_uuid()
+    pars = pars
   )
+  if (.hasSlot(gs, "uuid")){
+    x@uuid <- gs@uuid
+  } else {
+    x@uuid <- .generate_gs_uuid()
+  }
+  if (.hasSlot(gs, "coords")){
+    x@coords <- gs@coords
+  } else {
+    x@coords <- gs@nodes[, c("x", "y")]
+  }
+  if(!reset_image_fdata){
+    if (.hasSlot(gs, "image")) x@image <- gs@image
+    if (.hasSlot(gs, "fdata")) x@fdata <- gs@fdata
+  }
+  
+  # Reset and denormalize, from @graph to @coords
+  gs_scale_factor(x) <- 1
   
   validObject(x)
   
@@ -240,19 +300,28 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
 
 #-------------------------------------------------------------------------------
 #' @keywords internal
-.check_outdated_gs <- function(gs, slots = c("image", "canvas", "fdata", "uuid"),
-  type = c("warn", "abort")) {
+.check_outdated_gs <- function(gs, slots = NULL, type = c("warn", "abort")) {
+  
+  if(is.null(slots))  slots <- slotNames(new("GraphSpace"))
   
   type <- match.arg(type)
   
   check <- vapply(slots, function(s) .hasSlot(gs, s), logical(1))
   
   if (!all(check)) {
-    msg <- c(
-      "x" = paste0("Outdated 'GraphSpace' object, missing slot(s): ",
-            paste(slots[!check], collapse = ", "), "."),
-      "i" = "Run 'updateGraphSpace(x)' to migrate the object."
-    )
+    cname <- class(gs)
+    if(cname == "GraphSpace"){
+      msg <- c("x" = paste0("Outdated 'GraphSpace' object, missing slot(s): ",
+        paste(slots[!check], collapse = ", "), "."),
+        "i" = "Run 'updateGraphSpace(x)' to migrate the object.")
+    } else {
+      msg <- c(
+        "x" = sprintf("Outdated '%s' object, missing slot(s): %s.",
+          cname, paste(slots[!check], collapse = ", ")),
+        "i" = "Run 'updateGraphSpace(x)' to migrate the base 'GraphSpace' slots.",
+        "!" = sprintf("The '%s' extension will need to be rebuilt afterward.", cname)
+      )
+    }
     if (type == "abort") rlang::abort(msg) else rlang::warn(msg)
   }
   
@@ -290,44 +359,20 @@ setMethod("summary", "GraphSpace",
     
     igraph::print.igraph(object@graph, full = FALSE)
     
-    if (.hasSlot(object, "fdata")) {
-      nfeat <- ncol(object@fdata)
-      if (nfeat > 0) {
-        feat <- .gs_preview(colnames(object@fdata))
-        cat("+ features: ", nfeat, " (", feat, ")\n", sep = "")
-        nsamp <- nrow(object@fdata)
-        samp <- .gs_preview(rownames(object@fdata), 2)
-        cat("+ samples: ", nsamp, " (", samp, ")\n", sep = "")
-      }
-    }
+    .payload_summary(object)
     
-    .inform_node_coord_status(object)
+    .fdata_summary(object)
     
-    .inform_boundaries( .node_boundaries(.get_nodes(object@graph)),
-      if (.is_normalized(object)) list(x = c(0,1), y = c(0,1)) else NULL )
+    .node_coord_summary(object)
     
-    if (.has_image(object)) {
-      .inform_image_coord_status(object)
-      img <- if (.has_canvas(object) && .is_image_space(object)) 
-        object@canvas else object@image
-      .inform_boundaries( .image_boundaries(object@image),
-        if (.is_image_space(object)) .image_boundaries(img) else NULL )
-    }
+    .image_coord_summary(object)
     
     .check_outdated_gs(object)
     
     invisible(object)
+    
   }
 )
-
-#' @keywords internal
-#' @importFrom utils head
-.gs_preview <- function(x, n = 4) {
-  if (length(x) == 0) return("<empty>")
-  out <- head(x, n)
-  if (length(x) > n) out <- c(out, "...")
-  paste(out, collapse = ", ")
-}
 
 #-------------------------------------------------------------------------------
 # show: header only; delegates content to summary()
@@ -340,6 +385,77 @@ setMethod("show", "GraphSpace",
 )
 
 #-------------------------------------------------------------------------------
+#' @keywords internal
+.payload_summary <- function(object){
+  # attributes that live only in @nodes (not on the graph, e.g. list payloads)
+  node_only <- setdiff(colnames(object@nodes),
+    c(igraph::vertex_attr_names(object@graph), "vertex"))
+  if (length(node_only) > 0) {
+    cat("+ node payload: ", length(node_only),
+      " (", .gs_preview(node_only), ")\n", sep = "")
+  }
+}
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.fdata_summary <- function(object){
+  if (.hasSlot(object, "fdata")) {
+    nfeat <- ncol(object@fdata)
+    if (nfeat > 0) {
+      feat <- .gs_preview(colnames(object@fdata))
+      cat("+ features: ", nfeat, " (", feat, ")\n", sep = "")
+      nsamp <- nrow(object@fdata)
+      samp <- .gs_preview(rownames(object@fdata), 2)
+      cat("+ samples: ", nsamp, " (", samp, ")\n", sep = "")
+    }
+  }
+}
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.node_coord_summary <- function(object) {
+  if (.is_normalized(object)) {
+    if (.is_image_space(object)) {
+      cat("+ node spatial boundaries: normalized to image space\n")
+    } else {
+      cat("+ node spatial boundaries: normalized to graph space\n")
+    }
+  } else {
+    cat("+ node spatial boundaries: raw graph\n")
+  }
+  if (.hasSlot(object, "coords")) {
+    .inform_boundaries( .node_boundaries(object@coords),
+      if (.is_normalized(object)) list(x = c(0,1), y = c(0,1)) else NULL )
+  }
+}
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.image_coord_summary <- function(object) {
+  if (.has_image(object)) {
+    if (.is_image_space(object)){
+      cat("+ image spatial boundaries: cropped to graph space\n")
+    } else {
+      cat("+ image spatial boundaries: raw image\n")
+    }
+    img <- if (.has_canvas(object) && .is_image_space(object)) 
+      object@canvas else object@image
+    .inform_boundaries( .image_boundaries(object@image),
+      if (.is_image_space(object)) .image_boundaries(img) else NULL )
+  }
+}
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+#' @importFrom utils head
+.gs_preview <- function(x, n = 4) {
+  if (length(x) == 0) return("<empty>")
+  out <- head(x, n)
+  if (length(x) > n) out <- c(out, "...")
+  paste(out, collapse = ", ")
+}
+
+#-------------------------------------------------------------------------------
 # display helpers -- write directly to stdout, for show()/summary() only
 #' @keywords internal
 .inform_boundaries <- function(bounds, target = NULL) {
@@ -349,6 +465,7 @@ setMethod("show", "GraphSpace",
   cat("| y: [", bounds$y[1], ", ", bounds$y[2], "]", suffix_y, " (rows)\n", sep = "")
 }
 
+#-------------------------------------------------------------------------------
 #' @keywords internal
 .node_boundaries <- function(nodes) {
   if(nrow(nodes)>0){
@@ -362,55 +479,11 @@ setMethod("show", "GraphSpace",
   l
 }
 
+#-------------------------------------------------------------------------------
 #' @keywords internal
 .image_boundaries <- function(image) {
   d <- dim(image)
   list(x = c(1L, d[2L]), y = c(1L, d[1L]))
-}
-
-#' @keywords internal
-.inform_node_coord_status <- function(object) {
-  if (.is_normalized(object)) {
-    if (.is_image_space(object)) {
-      cat("+ node spatial boundaries: normalized to image space\n")
-    } else {
-      cat("+ node spatial boundaries: normalized to graph space\n")
-    }
-  } else {
-    cat("+ node spatial boundaries: raw graph\n")
-  }
-}
-
-#' @keywords internal
-.inform_image_coord_status <- function(object) {
-  if (.is_image_space(object)){
-    cat("+ image spatial boundaries: cropped to graph space\n")
-  } else {
-    cat("+ image spatial boundaries: raw image\n")
-  }
-}
-
-#-------------------------------------------------------------------------------
-# condition helper -- emit suppressible messages during operations
-#' @keywords internal
-.inform_node_boundaries <- function(nodes) {
-  bounds <- .node_boundaries(nodes)
-  rlang::inform(c(
-    "Node spatial boundaries:",
-    "i" = sprintf("x: [%s, %s] (cols)", bounds$x[1], bounds$x[2]),
-    "i" = sprintf("y: [%s, %s] (rows)", bounds$y[1], bounds$y[2])
-  ))
-}
-
-# condition helper -- emit suppressible messages during operations
-#' @keywords internal
-.inform_image_boundaries <- function(image) {
-  bounds <- .image_boundaries(image)
-  rlang::inform(c(
-    "Image spatial boundaries:",
-    "i" = sprintf("x: [%s, %s] (cols)", bounds$x[1], bounds$x[2]),
-    "i" = sprintf("y: [%s, %s] (rows)", bounds$y[1], bounds$y[2])
-  ))
 }
 
 #-------------------------------------------------------------------------------
@@ -452,4 +525,9 @@ setMethod("show", "GraphSpace",
 #' @keywords internal
 .is_image_space <- function(gs){
   gs@pars$image.space %||% FALSE
+}
+
+#' @keywords internal
+.is_directed <- function(gs){
+  gs@pars$is.directed %||% FALSE
 }

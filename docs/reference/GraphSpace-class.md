@@ -44,6 +44,14 @@ An S4 class object.
   A [`Matrix`](https://rdrr.io/pkg/Matrix/man/Matrix.html) object
   storing high-dimensional feature data associated with graph nodes.
 
+- `coords`:
+
+  A data frame with raw coordinates. It also stores a raw
+  [`sfc`](https://r-spatial.github.io/sf/reference/sfc.html) list column
+  when a `geometry` is included by the
+  [gs_geometry](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  function.
+
 - `pars`:
 
   A list with parameters.

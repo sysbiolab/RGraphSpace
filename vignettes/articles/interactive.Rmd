@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.1"){
+if (packageVersion("RGraphSpace") < "1.5.2"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -89,6 +89,9 @@ The following steps demonstrate the launch, manipulation, and retrieval process:
 startRedeR()
 resetRedeR()
 
+# Set 'nodeColor' attribute for backward compatibility
+V(gtoy1)$nodeColor <- V(gtoy1)$nodeFillColor
+
 # Send 'gtoy1' to the Java interface
 addGraphToRedeR(gtoy1, unit="npc")
 relaxRedeR()
@@ -99,7 +102,7 @@ gtoy1_2 <- getGraphFromRedeR(unit="npc")
 # Check the round trip...
 plotGraphSpace(gtoy1_2, node.labels = TRUE)
 
-## Note: fonts, shapes, and line types are only partially
+## Note: fonts, shapes, colors, and line types are only partially
 ## compatible between the two interfaces.
 
 # ...alternatively, just update the graph layout

@@ -34,6 +34,10 @@ automatically; see \link{gs_image}.}
 \item{\code{fdata}}{A \code{\link[Matrix]{Matrix}} object storing high-dimensional
 feature data associated with graph nodes.}
 
+\item{\code{coords}}{A data frame with raw coordinates. It also stores a raw
+\code{\link[sf]{sfc}} list column when a \code{geometry} is included
+by the \link{gs_geometry} function.}
+
 \item{\code{pars}}{A list with parameters.}
 
 \item{\code{misc}}{A list with intermediate objects for downstream methods.}
