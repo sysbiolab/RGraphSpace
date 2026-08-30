@@ -27,6 +27,12 @@ gs_image(x)
 gs_image(x) <- value
 
 # S4 method for class 'GraphSpace'
+gs_image_maxpixels(x)
+
+# S4 method for class 'GraphSpace'
+gs_image_maxpixels(x) <- value
+
+# S4 method for class 'GraphSpace'
 gs_graph(x)
 
 # S4 method for class 'GraphSpace'

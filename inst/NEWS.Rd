@@ -2,6 +2,14 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
+\section{CHANGES IN VERSION 1.5.2 (2026-08-23)}{
+  \itemize{
+    \item Implement support for sf geometry.
+    \item Implement rotate, flip, and transpose helpers.
+    \item Improve subset, crop, and coordinate normalization.
+  }
+}
+
 \section{CHANGES IN VERSION 1.5.1 (2026-07-31)}{
   \itemize{
     \item Restored compatibility with objects from older package versions.

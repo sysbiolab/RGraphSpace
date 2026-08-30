@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,6 +75,7 @@
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation3.html">Nested geometries and high-resolution images</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
@@ -101,7 +102,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-08-23</h4>
+            <h4 data-toc-skip class="date">2026-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/get-started.Rmd" class="external-link"><code>vignettes/articles/get-started.Rmd</code></a></small>
       <div class="d-none name"><code>get-started.Rmd</code></div>
@@ -114,7 +115,7 @@ Team</h4>
   text-align: center !important;
 }
 </style>
-<p><br><strong>Package</strong>: RGraphSpace 1.5.2</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.5.3</p>
 <p>For a self-contained introduction that works offline, run
 <strong>vignette(“RGraphSpace”)</strong> after installing the
 package.</p>
@@ -237,8 +238,9 @@ data</em></a> demonstrates how to integrate high-dimensional feature
 data; <a href="spatial-data.html"><em>spatial feature data</em></a>
 shows how to attach those features to spatially-organized data; <a href="spatial-segmentation1.html"><em>spatial segmentation1</em></a>
 walks through attaching real cell-segmentation boundaries to a
-<code>GraphSpace</code> from a <code>Seurat</code> object; and <a href="spatial-segmentation2.html"><em>spatial segmentation2</em></a>
-demonstrates building a <code>GraphSpace</code> from a
+<code>GraphSpace</code> from a <code>Seurat</code> object; <a href="spatial-segmentation2.html"><em>spatial segmentation2</em></a> and
+<a href="spatial-segmentation3.html"><em>spatial segmentation2</em></a>
+demonstrate building a <code>GraphSpace</code> from a
 <code>SpatialExperiment</code> object, including tissue image
 integration.</p>
 <div>
@@ -276,6 +278,15 @@ integration.</p>
 <div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
 <a href="spatial-segmentation2.html">
 <h6 class="card-title my-auto px-3 pt-3 pb-3">Spatial Segmentation2</h6>
+</a>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 1rem 1rem 1rem 1rem ;">
+<a href="spatial-segmentation3.html" style="color: inherit;">
+<img src="cards/segmentation3.png" class="card-img-top" style="border-style:solid; border-color:inherits; border-width:1px 1px 0 1px; border-radius: 1rem 1rem 0 0 ;"></a>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
+<a href="spatial-segmentation3.html">
+<h6 class="card-title my-auto px-3 pt-3 pb-3">Spatial Segmentation3</h6>
 </a>
 </div>
 </div>

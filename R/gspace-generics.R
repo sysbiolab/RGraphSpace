@@ -99,6 +99,16 @@ setGeneric("gs_image<-", function(x, value)
   package = "RGraphSpace"
 )
 
+setGeneric("gs_image_maxpixels", function(x) 
+  standardGeneric("gs_image_maxpixels"),
+  package = "RGraphSpace"
+)
+
+setGeneric("gs_image_maxpixels<-", function(x, value) 
+  standardGeneric("gs_image_maxpixels<-"),
+  package = "RGraphSpace"
+)
+
 setGeneric("gs_add_edges",  function(x, value, ...) 
   standardGeneric("gs_add_edges"),  
   package = "RGraphSpace"

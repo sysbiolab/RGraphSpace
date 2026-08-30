@@ -38,7 +38,7 @@ transposeGraphSpace() swaps the x and y axes."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,6 +67,7 @@ transposeGraphSpace() swaps the x and y axes."><style>
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation3.html">Nested geometries and high-resolution images</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -99,13 +100,13 @@ quarter turn; <code>flipGraphSpace()</code> mirrors horizontally or vertically;
 <span><span class="fu">cropGraphSpace</span><span class="op">(</span><span class="va">gs</span>, xmin <span class="op">=</span> <span class="fl">0</span>, xmax <span class="op">=</span> <span class="fl">1</span>, ymin <span class="op">=</span> <span class="fl">0</span>, ymax <span class="op">=</span> <span class="fl">1</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
-<span><span class="fu">rotateGraphSpace</span><span class="op">(</span><span class="va">gs</span>, clockwise <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">flipGraphSpace</span><span class="op">(</span><span class="va">gs</span>, vertical <span class="op">=</span> <span class="cn">FALSE</span>, persist <span class="op">=</span> <span class="fu">.is_raw</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
-<span><span class="fu">flipGraphSpace</span><span class="op">(</span><span class="va">gs</span>, vertical <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu">rotateGraphSpace</span><span class="op">(</span><span class="va">gs</span>, clockwise <span class="op">=</span> <span class="cn">FALSE</span>, persist <span class="op">=</span> <span class="fu">.is_raw</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
-<span><span class="fu">transposeGraphSpace</span><span class="op">(</span><span class="va">gs</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">transposeGraphSpace</span><span class="op">(</span><span class="va">gs</span>, persist <span class="op">=</span> <span class="fu">.is_raw</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -141,17 +142,22 @@ of the plotting area.</p></dd>
 messages (when <code>verbose=TRUE</code>) or not (when <code>verbose=FALSE</code>).</p></dd>
 
 
+<dt id="arg-vertical">vertical<a class="anchor" aria-label="anchor" href="#arg-vertical"></a></dt>
+<dd><p>Logical; if <code>FALSE</code> (default), the flip is horizontal
+(mirror left-right); if <code>TRUE</code>, vertical (mirror top-bottom).
+(<code>flipGraphSpace</code> only).</p></dd>
+
+
+<dt id="arg-persist">persist<a class="anchor" aria-label="anchor" href="#arg-persist"></a></dt>
+<dd><p>Logical; whether the transformation persists through
+re-normalization. Defaults to <code>TRUE</code> before normalization,
+<code>FALSE</code> after.</p></dd>
+
+
 <dt id="arg-clockwise">clockwise<a class="anchor" aria-label="anchor" href="#arg-clockwise"></a></dt>
-<dd><p>A single logical value. If <code>FALSE</code> (default), the
+<dd><p>Logical; if <code>FALSE</code> (default), the
 90-degree turn is counter-clockwise; if <code>TRUE</code>, clockwise
 (<code>rotateGraphSpace</code> only).</p></dd>
-
-
-<dt id="arg-vertical">vertical<a class="anchor" aria-label="anchor" href="#arg-vertical"></a></dt>
-<dd><p>A single logical value. If <code>FALSE</code> (default), the
-flip is horizontal (mirror left-right); if <code>TRUE</code>, vertical
-(mirror top-bottom).
-(<code>flipGraphSpace</code> only).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -206,11 +212,11 @@ the preprocessing of <code>GraphSpace</code> objects before rendering.</p>
 <span class="r-in"><span><span class="va">gs_crop</span> <span class="op">&lt;-</span> <span class="fu">cropGraphSpace</span><span class="op">(</span><span class="va">gs</span>, ymax <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Cropping graph space to x in [0, 1], y in [0, 0.5]...</span>
 <span class="r-in"><span><span class="va">gs_rot90</span> <span class="op">&lt;-</span> <span class="fu">rotateGraphSpace</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Rotating graph space 90 degrees counter-clockwise...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Rotating normalized coordinates 90 degrees counter-clockwise...</span>
 <span class="r-in"><span><span class="va">gs_flip</span> <span class="op">&lt;-</span> <span class="fu">flipGraphSpace</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Flipping graph space horizontally...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Flipping normalized coordinates horizontally...</span>
 <span class="r-in"><span><span class="va">gs_t</span> <span class="op">&lt;-</span> <span class="fu">transposeGraphSpace</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Transposing graph space...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Transposing normalized coordinates...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plotGraphSpace-methods.html">plotGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, add.labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="GraphSpace-transform-1.png" alt="" width="700" height="433"></span>

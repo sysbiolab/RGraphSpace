@@ -32,3 +32,5 @@
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation1.md):
 - [Spatial-segmented data with SpatialExperiment and
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md):
+- [Working with nested geometries and high-resolution
+  images](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md):

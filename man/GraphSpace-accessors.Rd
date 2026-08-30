@@ -25,12 +25,16 @@
 \alias{gs_scale_factor<-}
 \alias{gs_geometry}
 \alias{gs_geometry<-}
+\alias{gs_image_maxpixels}
+\alias{gs_image_maxpixels<-}
 \alias{names,GraphSpace-method}
 \alias{gs_names,GraphSpace-method}
 \alias{gs_nodes,GraphSpace-method}
 \alias{gs_edges,GraphSpace-method}
 \alias{gs_image,GraphSpace-method}
 \alias{gs_image<-,GraphSpace-method}
+\alias{gs_image_maxpixels,GraphSpace-method}
+\alias{gs_image_maxpixels<-,GraphSpace-method}
 \alias{gs_graph,GraphSpace-method}
 \alias{gs_fdata,GraphSpace-method}
 \alias{gs_fdata<-,GraphSpace-method}
@@ -65,6 +69,10 @@
 \S4method{gs_image}{GraphSpace}(x)
 
 \S4method{gs_image}{GraphSpace}(x) <- value
+
+\S4method{gs_image_maxpixels}{GraphSpace}(x)
+
+\S4method{gs_image_maxpixels}{GraphSpace}(x) <- value
 
 \S4method{gs_graph}{GraphSpace}(x)
 

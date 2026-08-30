@@ -77,10 +77,10 @@ unzip(OSTA.data_load(id), exdir = td)
 
 # Read into 'SpatialExperiment'
 spe <- TENxVisiumHD(
-    segmented_outputs = file.path(td, "segmented_outputs"),
-    format = "h5", 
-    images = "hires") |>
-    import()
+  segmented_outputs = file.path(td, "segmented_outputs"),
+  format = "h5", 
+  images = "hires") |>
+  import()
 
 # Assign unique symbols to rownames
 rownames(spe) <-  make.unique(rowData(spe)$Symbol)
@@ -160,31 +160,36 @@ Plot the full tissue, nodes colored by *PIGR* expression over the tissue image, 
 # Plot node-level PIGR expression over the tissue image; 
 # a box marks the region of interest
 p <- ggplot(gs) + 
-    annotation_gspace_image(gs, opacity = 0.5) +
-    geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
-        alpha = as.numeric(PIGR > 0)  ), size = 0.3, pch = 19) +
-    scale_colour_continuous(palette = cpal, limits = data_range) +
-    scale_alpha_identity() + my_theme +
-    annotate("rect", xmin = 0.5, xmax = 0.8, ymin = 0.3, ymax = 0.65, 
-        fill = NA, colour = "white", lty = "21", lwd = 1)
+  annotation_gspace_image(gs, opacity = 0.5) +
+  geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
+      alpha = as.numeric(PIGR > 0)  ), size = 0.3, pch = 19) +
+  scale_colour_continuous(palette = cpal, limits = data_range) +
+  scale_alpha_identity() + my_theme +
+  annotate("rect", 
+    xmin = 0.5, xmax = 0.8, 
+    ymin = 0.3, ymax = 0.65, 
+    fill = NA, colour = "white",
+    lty = "21", lwd = 1)
 
 p
 ```
 
-```{r spe_seg1.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# ggsave(filename = "./vignettes/articles/figs_dev/spe_seg1.png",
+```{r spe1_seg1.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# ggsave(filename = "./vignettes/articles/figs_dev/spe1_seg1.png",
 #   height=5, width=6, units="in", device="png", dpi=150, plot=p)
 ```
 
-```{r spe_seg1, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/spe_seg1.png")
+```{r spe1_seg1, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/spe1_seg1.png")
 ```
 
 Crop to the marked region and re-normalize node coordinates to the new space.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Crop to the marked region and re-normalize coordinates
-gs_crop1 <- cropGraphSpace(gs, xmin = 0.5, xmax = 0.8, ymin = 0.3, ymax = 0.65)
+gs_crop1 <- cropGraphSpace(gs, 
+  xmin = 0.5, xmax = 0.8, 
+  ymin = 0.3, ymax = 0.65)
 gs_crop1 <- normalizeGraphSpace(gs_crop1, mar = 0)
 ```
 
@@ -193,31 +198,36 @@ Zooming further, a second box marks a smaller region for a closer crop.
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Plot the cropped region; a second box marks a smaller region for a closer crop
 p <- ggplot(gs_crop1) + 
-    annotation_gspace_image(gs_crop1, opacity = 0.5) +
-    geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
-        alpha = as.numeric(PIGR > 0)), size = 0.7, pch = 19) +
-    scale_colour_continuous(palette = cpal, limits = data_range) +
-    scale_alpha_identity() + my_theme +
-    annotate("rect", xmin = 0.2, xmax = 0.5, ymin = 0.5, ymax = 0.8, 
-        fill = NA, colour = "white", lty = "21", lwd = 1)
+  annotation_gspace_image(gs_crop1, opacity = 0.5) +
+  geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
+      alpha = as.numeric(PIGR > 0)), size = 0.7, pch = 19) +
+  scale_colour_continuous(palette = cpal, limits = data_range) +
+  scale_alpha_identity() + my_theme +
+  annotate("rect", 
+    xmin = 0.2, xmax = 0.5, 
+    ymin = 0.5, ymax = 0.8, 
+    fill = NA, colour = "white", 
+    lty = "21", lwd = 1)
 
 p
 ```
 
-```{r spe_seg2.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# ggsave(filename = "./vignettes/articles/figs_dev/spe_seg2.png",
+```{r spe1_seg2.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# ggsave(filename = "./vignettes/articles/figs_dev/spe1_seg2.png",
 #   height=5, width=6, units="in", device="png", dpi=150, plot=p)
 ```
 
-```{r spe_seg2, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/spe_seg2.png")
+```{r spe1_seg2, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/spe1_seg2.png")
 ```
 
 Crop to this smaller region. This time, the geometry is also explicitly re-normalized, since it will be plotted directly in the next steps rather than just the node markers.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Crop to the smaller region and re-normalize coordinates, including the geometry
-gs_crop2 <- cropGraphSpace(gs_crop1, xmin = 0.2, xmax = 0.5, ymin = 0.5, ymax = 0.8)
+gs_crop2 <- cropGraphSpace(gs_crop1, 
+  xmin = 0.2, xmax = 0.5, 
+  ymin = 0.5, ymax = 0.8)
 gs_crop2 <- normalizeGraphSpace(gs_crop2, mar = 0)
 gs_crop2 <- normalizeGeometry(gs_crop2, name = "cellseg")
 ```
@@ -236,13 +246,13 @@ p <- ggplot(gs_crop2) +
 p
 ```
 
-```{r spe_seg3.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# ggsave(filename = "./vignettes/articles/figs_dev/spe_seg3.png",
+```{r spe1_seg3.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+# ggsave(filename = "./vignettes/articles/figs_dev/spe1_seg3.png",
 #   height=5, width=6, units="in", device="png", dpi=120, plot=p)
 ```
 
-```{r spe_seg3, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/spe_seg3.png")
+```{r spe1_seg3, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/spe1_seg3.png")
 ```
 
 Finally, fill each cell's own segmented shape by its *PIGR* expression directly, with the tissue image dropped now that the shapes themselves carry the spatial detail.
@@ -258,17 +268,17 @@ p <- ggplot(gs_crop2) +
 p
 ```
 
-```{r spe_seg4.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+```{r spe1_seg4.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
 # ggsave(filename = "./vignettes/articles/cards/segmentation2.png",
 #   height=3.5, width=3.5, units="in", device="png", dpi=200, plot=p)
 # 
 # ##---
-# ggsave(filename = "./vignettes/articles/figs_dev/spe_seg4.png",
+# ggsave(filename = "./vignettes/articles/figs_dev/spe1_seg4.png",
 #   height=5, width=6, units="in", device="png", dpi=150, plot=p)
 ```
 
-```{r spe_seg4, echo=FALSE, out.width = '100%', purl=FALSE}
-knitr::include_graphics("figs_dev/spe_seg4.png")
+```{r spe1_seg4, echo=FALSE, out.width = '100%', purl=FALSE}
+knitr::include_graphics("figs_dev/spe1_seg4.png")
 ```
 
 

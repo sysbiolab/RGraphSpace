@@ -16,8 +16,8 @@
 - [`normalizeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
   : Normalize node coordinates to graph and image spaces
 - [`cropGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
-  [`rotateGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
   [`flipGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
+  [`rotateGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
   [`transposeGraphSpace(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
   : Crop, rotate, flip, and transpose a GraphSpace
 - [`summary(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/summary-GraphSpace-method.md)
@@ -31,6 +31,8 @@
   [`gs_edges(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_image(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_image<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`gs_image_maxpixels(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
+  [`` `gs_image_maxpixels<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_graph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_fdata(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_fdata<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
@@ -65,7 +67,7 @@
   [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   : Add edges to a GraphSpace object
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
-  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
 
 ## Features
@@ -101,7 +103,6 @@
 ## Annotation
 
 - [`annotation_gspace_image()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace_image.md)
-  [`annotation_gspace()`](https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace_image.md)
   : Annotate a GraphSpace Plot with an Image
 
 ## Plotting

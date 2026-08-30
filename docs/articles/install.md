@@ -44,11 +44,12 @@ BiocManager::install("RedeR")
 
 # Used in the advanced vignettes
 install.packages("Seurat")
-remotes::install_github("satijalab/seurat-data")
 BiocManager::install("glmGamPoi")
 BiocManager::install("SpatialExperiment")
-BiocManager::install("OSTA.data")
+BiocManager::install("SpatialFeatureExperiment")
 BiocManager::install("VisiumIO")
+BiocManager::install("OSTA.data")
+remotes::install_github("satijalab/seurat-data")
 ```
 
 ## Citation

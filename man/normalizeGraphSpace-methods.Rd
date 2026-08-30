@@ -15,6 +15,7 @@
   flip.h = FALSE,
   swap.xy = FALSE,
   equal.mar = FALSE,
+  norm.geometry = FALSE,
   verbose = TRUE
 )
 }
@@ -55,6 +56,10 @@ with equal margins around the graph, resulting in a tighter crop of the image.
 If FALSE (default), the image is fitted to the full square figure area,
 resulting in unequal margins when the graph aspect ratio differs from 1. Both
 methods preserve the aspect ratios of the image and graph.}
+
+\item{norm.geometry}{Logical; when geometries are available, whether to
+normalize them. If \code{TRUE}, \link{normalizeGeometry} is called at the end
+of the normalization process.}
 
 \item{verbose}{A single logical value specifying to display detailed
 messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).}

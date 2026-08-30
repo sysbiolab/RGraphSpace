@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,6 +59,7 @@
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation3.html">Nested geometries and high-resolution images</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -129,7 +130,7 @@
 
         <dt>
 
-          <code><a href="GraphSpace-transform.html">cropGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">rotateGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">flipGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">transposeGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code>
+          <code><a href="GraphSpace-transform.html">cropGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">flipGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">rotateGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-transform.html">transposeGraphSpace(<i>&lt;GraphSpace&gt;</i>)</a></code>
 
         </dt>
         <dd>Crop, rotate, flip, and transpose a GraphSpace</dd>
@@ -152,7 +153,7 @@
 
       <dl><dt>
 
-          <code><a href="GraphSpace-accessors.html">names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nodes(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edges(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_image(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_image&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_graph(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_fdata(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_fdata&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nfeatures(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_features(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">as.igraph(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vcount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_ecount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vertex_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_vertex_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_delete_v_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_delete_e_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edge_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_edge_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_scale_factor(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_scale_factor&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_geometry(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_geometry&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code>
+          <code><a href="GraphSpace-accessors.html">names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_names(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nodes(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edges(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_image(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_image&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_image_maxpixels(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_image_maxpixels&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_graph(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_fdata(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_fdata&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_nfeatures(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_features(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">as.igraph(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vcount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_ecount(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_vertex_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_vertex_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_delete_v_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_delete_e_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_edge_attr(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_edge_attr&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_scale_factor(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_scale_factor&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">gs_geometry(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`gs_geometry&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$`(<i>&lt;GraphSpace&gt;</i>)</a></code> <code><a href="GraphSpace-accessors.html">`$&lt;-`(<i>&lt;GraphSpace&gt;</i>)</a></code>
 
         </dt>
         <dd>Accessors and attribute utilities for GraphSpace objects</dd>
@@ -189,7 +190,7 @@
 
         <dt>
 
-          <code><a href="GraphSpace-subscript.html">`[`(<i>&lt;GraphSpace&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="GraphSpace-subscript.html">`[[`(<i>&lt;GraphSpace&gt;</i>)</a></code>
+          <code><a href="GraphSpace-subscript.html">`[`(<i>&lt;GraphSpace&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code> <code><a href="GraphSpace-subscript.html">`[[`(<i>&lt;GraphSpace&gt;</i>,<i>&lt;ANY&gt;</i>,<i>&lt;ANY&gt;</i>)</a></code>
 
         </dt>
         <dd>Subscript operators for GraphSpace objects</dd>
@@ -290,7 +291,7 @@
 
       <dl><dt>
 
-          <code><a href="annotation_gspace_image.html">annotation_gspace_image()</a></code> <code><a href="annotation_gspace_image.html">annotation_gspace()</a></code>
+          <code><a href="annotation_gspace_image.html">annotation_gspace_image()</a></code>
 
         </dt>
         <dd>Annotate a GraphSpace Plot with an Image</dd>

@@ -132,7 +132,9 @@ setMethod("fitGeometry", "GraphSpace",
       sprintf("'%s' did not scale linearly with node coordinates.", name),
       "i" = sprintf("R-squared: x = %.5f, y = %.5f (threshold = %.5f).",
         r2_x, r2_y, r2_threshold),
-      "i" = sprintf("Alignment between '%s' and the normalized nodes may be inaccurate.", name)
+      "i" = sprintf(
+        "Alignment between '%s' and the normalized nodes may be inaccurate.", 
+        name)
     )
     )
   }
@@ -162,8 +164,13 @@ setMethod("fitGeometry", "GraphSpace",
     if (verbose){
       rlang::inform(sprintf("Fitting '%s' geometry to node size...", name))
     }
+    bounds <- list(
+      x = range(x@nodes$x, na.rm = TRUE),
+      y = range(x@nodes$y, na.rm = TRUE)
+    )
+    space <- mean(diff(bounds$x), diff(bounds$y))
     npc_per_unit <- .gs_nsz_to_npc() # same constant geom_nodespace() itself uses
-    target_diam <- x$nodeSize * npc_per_unit
+    target_diam <- x$nodeSize * npc_per_unit * space
     current_diam <- .geometry_diameter(geom)
     
     zero_extent <- current_diam < 1e-9

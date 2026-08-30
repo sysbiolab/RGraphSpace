@@ -14,8 +14,6 @@ annotation_gspace_image(
   flip.h = FALSE,
   na.color = NA
 )
-
-annotation_gspace(...)
 ```
 
 ## Arguments
@@ -60,21 +58,12 @@ annotation_gspace(...)
 
   The colour to map to NA values. Defaults to `NA`.
 
-- ...:
-
-  Additional arguments (currently unused).
-
 ## Value
 
 A ggplot2 layer object that can be added to a
 [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html) call
 with `+`, or `invisible(NULL)` with a warning if the image could not be
 resolved.
-
-## Note
-
-`annotation_gspace()` is deprecated as of v1.4.0; use
-`annotation_gspace_image()` instead.
 
 ## See also
 

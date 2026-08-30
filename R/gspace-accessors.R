@@ -104,6 +104,8 @@
 #' @aliases gs_scale_factor<-
 #' @aliases gs_geometry
 #' @aliases gs_geometry<-
+#' @aliases gs_image_maxpixels
+#' @aliases gs_image_maxpixels<-
 NULL
 
 ################################################################################
@@ -185,10 +187,11 @@ setMethod("gs_image", "GraphSpace", function(x) {
   
   .check_outdated_gs(x, c("image", "canvas"), type = "abort")
   
-  x <- .get_canvas(x)
-  attr(x, "gs_handler_type") <- "image"
-  class(x) <- c("gs_image", class(x))
-  return(x)
+  # NOTE: returns the display CANVAS (materialized window via .get_canvas),
+  # not @image. The `gs_image<-` setter writes @image -- getter/setter are
+  # intentionally asymmetric: the "image" a caller sees is the rendered canvas
+  .get_canvas(x)
+  
 })
 
 #' @rdname GraphSpace-accessors
@@ -197,7 +200,12 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
 
   .check_outdated_gs(x, c("image", "canvas"), type = "abort")
   
-  if(!is.raster(value)){
+  # Lazy image: a terra SpatRaster is stored as-is;
+  # The display canvas is built from it during normalizeGraphSpace().
+  if (is.raster(value) || inherits(value, "SpatRaster")) {
+    x@image <- value
+  } else if(is.matrix(value)){
+    .validate_gs_args("numeric_mtx", "value", value)
     .validate_gs_args("numeric_mtx", "value", value)
     rlang::inform(
       c("i" = "Rasterizing numeric matrix.",
@@ -211,11 +219,27 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
     } else if (rng[1] < 0 || rng[2] > 1) {
       value <- (value - rng[1]) / diff(rng)
     }
-    value <- as.raster(value)
+    x@image <- as.raster(value)
+  } else {
+    rlang::abort(
+      "`value` must be a 'SpatRaster', 'raster', or numeric matrix."
+    )
   }
   
-  x@image <- value
-  
+  return(x)
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setMethod("gs_image_maxpixels", "GraphSpace", function(x) {
+  x@pars$image.maxpixels %||% 4e6
+})
+
+#' @rdname GraphSpace-accessors
+#' @export
+setReplaceMethod("gs_image_maxpixels", "GraphSpace", function(x, value) {
+  .validate_gs_args("singleNumber", "value", value)
+  x@pars$image.maxpixels <- value
   return(x)
 })
 

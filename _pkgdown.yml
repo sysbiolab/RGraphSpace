@@ -68,6 +68,8 @@ navbar:
         href: articles/spatial-segmentation1.html
       - text: "Spatial segmentation with SpatialExperiment"
         href: articles/spatial-segmentation2.html
+      - text: "Nested geometries and high-resolution images"
+        href: articles/spatial-segmentation3.html
     - text: Index
       href: reference/index.html
 

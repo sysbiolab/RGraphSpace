@@ -27,7 +27,7 @@ authors:
 - name: Victor Henrique Apolonio dos Santos
   orcid: "0000-0002-6394-5840"
   affiliation: 1
-- name: Mauro Antonio Alves Castro
+- name: Mauro Antônio Alves Castro
   orcid: "0000-0003-4942-8131"
   corresponding: true
   affiliation: 1

@@ -34,6 +34,9 @@
 #' If FALSE (default), the image is fitted to the full square figure area,
 #' resulting in unequal margins when the graph aspect ratio differs from 1. Both
 #' methods preserve the aspect ratios of the image and graph.
+#' @param norm.geometry Logical; when geometries are available, whether to
+#' normalize them. If `TRUE`, \link{normalizeGeometry} is called at the end
+#' of the normalization process.
 #' @param verbose A single logical value specifying to display detailed 
 #' messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).
 #' 
@@ -79,7 +82,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     flip.x = FALSE, flip.y = image.space,  
     flip.v = FALSE, flip.h = FALSE, 
     swap.xy = FALSE, equal.mar = FALSE, 
-    verbose = TRUE){
+    norm.geometry = FALSE, verbose = TRUE){
     
     gs <- updateGraphSpace(gs)
     
@@ -91,6 +94,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     .validate_gs_args("singleLogical", "flip.y", flip.y)
     .validate_gs_args("singleLogical", "swap.xy", swap.xy)
     .validate_gs_args("singleLogical", "equal.mar", equal.mar)
+    .validate_gs_args("singleLogical", "norm.geometry", norm.geometry)
     .validate_gs_args("singleLogical", "verbose", verbose)
     
     if (mar < 0 || mar > 0.5) {
@@ -116,6 +120,15 @@ setMethod("normalizeGraphSpace", "GraphSpace",
       } else {
         gs <- .normalizeGraphSpace.graph(gs, mar, flip.x, flip.y, 
           swap.xy, verbose)
+      }
+    }
+    
+    if(norm.geometry){
+      valid_names <- .gs_geometry_cols(getGraphSpace(gs, "coords"))
+      if(length(valid_names)>0){
+        for(name in valid_names){
+          gs <- normalizeGeometry(gs, name = name, verbose = verbose)
+        }
       }
     }
     
@@ -154,21 +167,20 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   nodes <- .set_raw_coords(gs@nodes, gs@coords)
   image <- .get_image(gs)
+  maxpixels <- gs_image_maxpixels(gs)
   
   if(flip.v){
     if(verbose) rlang::inform("Flipping image top-to-bottom...")  
-    image <- image[rev(seq_len(nrow(image))), , drop = FALSE]
+    image <- .flip_image(image, vertical = TRUE)
   } 
   
   if(flip.h){
     if(verbose) rlang::inform("Flipping image left-to-right...")  
-    image <- image[, rev(seq_len(ncol(image))), drop = FALSE]
+    image <- .flip_image(image, vertical = FALSE)
   } 
   
   nodes <- .setCoordToImage(nodes, image, flip.x, flip.y, swap.xy, verbose)
-  
-  l_temp <- .fitImageNodes(nodes, image, mar, equal.mar)
-  
+  l_temp <- .fitImageNodes(nodes, image, mar, maxpixels, equal.mar)
   gs@nodes <- l_temp$nodes
   gs@canvas <- l_temp$image
   gs@pars$is.normalized <- TRUE
@@ -345,25 +357,28 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 ################################################################################
 
 #-------------------------------------------------------------------------------
-.fitImageNodes <- function(nodes, image, mar, equal.mar){
+.fitImageNodes <- function(nodes, image, mar, maxpixels, equal.mar){
   
   # gs_image() (the getter) tags its return value with class "gs_image" for
   # downstream handler-recognition purposes (see .is_handler()); the @image
   # slot itself only ever stores plain "raster" (its setter enforces this).
-  class(image) <- "raster"
+  # only enforce raster class for genuine rasters; leave SpatRaster untouched
+  if (!inherits(image, "SpatRaster")) {
+    class(image) <- "raster"
+  }
   
   # Degenerate case: all nodes share the same (x, y) -- mirrors the explicit
   # guard in .fit_graph_space() for the non-image path. Without this, the
   # crop window collapses to a 1-pixel image and .normalize_image_nodes()
   # divides by (n - 1) = 0. Handled here, at the point where "center the
   # point, use the image as-is".
-  if (diff(range(nodes$x)) == 0 && diff(range(nodes$y)) == 0) {
+  if ( diff(range(nodes$x)) == 0 && diff(range(nodes$y)) == 0 ) {
     nodes$x <- 0.5
     nodes$y <- 0.5
     return(list(nodes = nodes, image = image, side_length = NA))
   }
   
-  l_temp <- .fit_image_nodes(nodes, image, mar, equal.mar)
+  l_temp <- .fit_image_nodes(nodes, image, mar, maxpixels, equal.mar)
   l_temp <- .adjust_aspect_ratio(l_temp)
   l_temp <- .normalize_image_nodes(l_temp)
   
@@ -372,16 +387,14 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 
 #-------------------------------------------------------------------------------
 # Fit image to nodes with focus on adjusting graph margins
-.fit_image_nodes <- function(nodes, image, mar = 0.1, equal.mar = FALSE) {
+.fit_image_nodes <- function(nodes, image, mar, maxpixels, equal.mar = FALSE) {
   
-  nds <- nodes
-  img <- image
-  d <- dim(img)
+  d <- dim(image)
   mar <- max(0, min(mar, 0.49))
   
   # bounding box around nodes
-  xl_nds <- range(nds$x)
-  yl_nds <- range(nds$y)
+  xl_nds <- range(nodes$x)
+  yl_nds <- range(nodes$y)
   center_x <- mean(xl_nds)
   center_y <- mean(yl_nds)
   
@@ -426,56 +439,136 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   
   # force the limits to include the node bounding box
   x_start <- max(1, min(x_start, xl_nds[1]))
-  x_end   <- min(d[2], max(x_end, xl_nds[2]))
+  x_end <- min(d[2], max(x_end, xl_nds[2]))
   y_start <- max(1, min(y_start, yl_nds[1]))
-  y_end   <- min(d[1], max(y_end, yl_nds[2]))
+  y_end <- min(d[1], max(y_end, yl_nds[2]))
   
   # convert to indices
   x_s_idx <- floor(x_start)
-  x_e_idx   <- ceiling(x_end)
+  x_e_idx <- ceiling(x_end)
   y_s_idx <- floor(y_start)
-  y_e_idx   <- ceiling(y_end)
+  y_e_idx <- ceiling(y_end)
   
   # final validity check
-  x_s_idx <- max(1L, x_s_idx)
-  x_e_idx   <- min(d[2], x_e_idx)
-  y_s_idx <- max(1L, y_s_idx)
-  y_e_idx   <- min(d[1], y_e_idx)
+  x_s <- max(1L, x_s_idx)
+  x_e <- min(d[2], x_e_idx)
+  y_s <- max(1L, y_s_idx)
+  y_e <- min(d[1], y_e_idx)
   
-  # execute crop on flipped image
-  img_res <- img[seq.int(d[1], 1), ]
-  img_res <- img_res[seq.int(y_s_idx, y_e_idx), seq.int(x_s_idx, x_e_idx)]
-  img_res <- img_res[seq.int(nrow(img_res), 1), ]
+  # execute crop on the node window 
+  # raster: matrix subset; SpatRaster: lazy read
+  img_res <- .crop_image_window(image, y_s, y_e, x_s, x_e,
+    maxpixels = maxpixels)
   
   # update node coordinates
-  nds$x <- nds$x - x_s_idx + 1
-  nds$y <- nds$y - y_s_idx + 1
+  nodes$x <- nodes$x - x_s + 1
+  nodes$y <- nodes$y - y_s + 1
   
-  return(list(nodes = nds, image = img_res))
+  return(list(nodes = nodes, image = img_res))
 }
 
 #-------------------------------------------------------------------------------
-.adjust_aspect_ratio <- function(l_temp){
-  d <- dim(l_temp$image)
-  if(d[1] > d[2]){
-    n <- ceiling( (d[1] - d[2])/2 )
-    img_d <- matrix(NA, nrow = d[1], ncol = d[1])
-    img_d[ , seq(n + 1, n + d[2])] <- as.matrix(l_temp$image)
-    l_temp$nodes$x <- l_temp$nodes$x + (n-1)
-    l_temp$image  <- as.raster(img_d)
-  } else if(d[1] < d[2]){
-    n <- ceiling( (d[2] - d[1])/2 )
-    img_d <- matrix(NA, nrow = d[2], ncol = d[2])
-    img_d[seq(n + 1, n + d[1]), ] <- as.matrix(l_temp$image)
-    l_temp$nodes$y <- l_temp$nodes$y + (n-1)
-    l_temp$image  <- as.raster(img_d)
+# Crop the node-bounding window from the image.
+#   raster:     flip, matrix-subset the window, flip back (original behavior)
+#   SpatRaster: read only that window via terra (lazy), downsampled so the
+#               result is about `maxpixels` pixels -- full detail on small
+#               windows, coarse on large ones, without materializing the source.
+.crop_image_window <- function(img, y_s, y_e, x_s, x_e, maxpixels = 4e6) {
+  
+  if (inherits(img, "SpatRaster")) {
+    
+    # work in pixel-index space: make the raster's extent match its pixel dims
+    nr <- nrow(img); nc <- ncol(img)
+    terra::ext(img) <- c(0, nc, 0, nr)
+    
+    # crop on flipped image
+    img <- terra::flip(img, direction = "vertical")   # flip
+    ext <- terra::ext(x_s - 1, x_e, nr - y_e, nr - (y_s - 1))
+    win <- terra::crop(img, ext)
+    win <- terra::flip(win, direction = "vertical")   # flip back
+    terra::ext(win) <-  c(0, nrow(win), 0, ncol(win))
+    orig_dim <- dim(win)
+    
+    # downsample the window to about maxpixels (aggregate by an integer factor)
+    npix <- terra::ncell(win)
+    if (npix > maxpixels) {
+      scale  <- sqrt(maxpixels / npix)
+      new_nc <- max(1L, floor(ncol(win) * scale))
+      new_nr <- max(1L, floor(nrow(win) * scale))
+      target <- terra::rast(nrows = new_nr, ncols = new_nc,
+        extent = terra::ext(win), crs = terra::crs(win))
+      win <- terra::resample(win, target, method = "bilinear")
+    }
+    # img_res <- .spatraster_to_raster(win)
+    img_res <- win
+    attr(img_res, "orig_dim") <- orig_dim
+    return(img_res)
   }
+  
+  # raster path -- original behavior
+  # crop on flipped image
+  img_res <- img[seq.int(nrow(img), 1), ]
+  img_res <- img_res[seq.int(y_s, y_e), seq.int(x_s, x_e)]
+  img_res <- img_res[seq.int(nrow(img_res), 1), ]
+  attr(img_res, "orig_dim") <- dim(img_res)
+  return(img_res)
+  
+}
+
+#-------------------------------------------------------------------------------
+# adjust aspect ratio at pixel-space nodes
+.adjust_aspect_ratio <- function(l_temp){
+  od <- attr(l_temp$image, "orig_dim")
+  p  <- .pad_image_square(l_temp$image)
+  l_temp$image <- p$image
+  if (!is.na(p$axis)) {
+    if (p$axis == "x") {
+      l_temp$nodes$x <- l_temp$nodes$x + (p$n - 1) 
+      od <- c(od[1], round(od[2]*p$d[1]/p$d[2])) 
+    } else { 
+      l_temp$nodes$y <- l_temp$nodes$y + (p$n - 1)
+      od <- c(round(od[1]*p$d[2]/p$d[1]), od[2]) 
+    }
+  }
+  attr(l_temp$image, "orig_dim") <- od
   return(l_temp)
 }
 
 #-------------------------------------------------------------------------------
+# shared: pad an image (raster or SpatRaster) to square with NA fill.
+# returns list(image = padded, n = pad, axis = "x"|"y") so the caller
+# can apply its own node adjustment.
+.pad_image_square <- function(img){
+  d <- dim(img)
+  if(d[1] > d[2]){
+    n <- ceiling((d[1] - d[2])/2)
+    if (inherits(img, "SpatRaster")){
+      terra::ext(img) <- c(0, d[2], 0, d[1])
+      img <- terra::extend(img, terra::ext(-n, d[2] + (d[1]-d[2]-n), 0, d[1]))
+    } else {
+      img_d <- matrix(NA, nrow = d[1], ncol = d[1])
+      img_d[ , seq(n + 1, n + d[2])] <- as.matrix(img)
+      img <- as.raster(img_d)
+    }
+    return(list(image = img, n = n, axis = "x", d = d))
+  } else if(d[1] < d[2]){
+    n <- ceiling((d[2] - d[1])/2)
+    if (inherits(img, "SpatRaster")){
+      terra::ext(img) <- c(0, d[2], 0, d[1])
+      img <- terra::extend(img, terra::ext(0, d[2], -n, d[1] + (d[2]-d[1]-n)))
+    } else {
+      img_d <- matrix(NA, nrow = d[2], ncol = d[2])
+      img_d[seq(n + 1, n + d[1]), ] <- as.matrix(img)
+      img <- as.raster(img_d)
+    }
+    return(list(image = img, n = n, axis = "y", d = d))
+  }
+  list(image = img, n = 0, axis = NA, d = d)
+}
+
+#-------------------------------------------------------------------------------
 .normalize_image_nodes <- function(l_temp){
-  d <- dim(l_temp$image)
+  d <- attr(l_temp$image, "orig_dim")
   l_temp$nodes$x <- .rescale_direct(l_temp$nodes$x, d[2], 0.5 / d[2])
   l_temp$nodes$y <- .rescale_direct(l_temp$nodes$y, d[1], 0.5 / d[1])
   return(l_temp)

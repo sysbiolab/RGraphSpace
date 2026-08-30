@@ -19,6 +19,7 @@ normalizeGraphSpace(
   flip.h = FALSE,
   swap.xy = FALSE,
   equal.mar = FALSE,
+  norm.geometry = FALSE,
   verbose = TRUE
 )
 ```
@@ -81,6 +82,13 @@ normalizeGraphSpace(
   figure area, resulting in unequal margins when the graph aspect ratio
   differs from 1. Both methods preserve the aspect ratios of the image
   and graph.
+
+- norm.geometry:
+
+  Logical; when geometries are available, whether to normalize them. If
+  `TRUE`,
+  [normalizeGeometry](https://sysbiolab.github.io/RGraphSpace/reference/geometry-methods.md)
+  is called at the end of the normalization process.
 
 - verbose:
 

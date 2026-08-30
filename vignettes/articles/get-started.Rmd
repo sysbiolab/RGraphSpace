@@ -83,12 +83,12 @@ ps_cards2 %>%
 
 # Advanced workflows
 
-These tutorials showcase *RGraphSpace* applied to real-world scenarios: [*high-dimensional data*](high-dimensional.html) demonstrates how to integrate high-dimensional feature data; [*spatial feature data*](spatial-data.html) shows how to attach those features to spatially-organized data; [*spatial segmentation1*](spatial-segmentation1.html) walks through attaching real cell-segmentation boundaries to a `GraphSpace` from a `Seurat` object; and [*spatial segmentation2*](spatial-segmentation2.html) demonstrates building a `GraphSpace` from a `SpatialExperiment` object, including tissue image integration.
+These tutorials showcase *RGraphSpace* applied to real-world scenarios: [*high-dimensional data*](high-dimensional.html) demonstrates how to integrate high-dimensional feature data; [*spatial feature data*](spatial-data.html) shows how to attach those features to spatially-organized data; [*spatial segmentation1*](spatial-segmentation1.html) walks through attaching real cell-segmentation boundaries to a `GraphSpace` from a `Seurat` object; [*spatial segmentation2*](spatial-segmentation2.html) and [*spatial segmentation2*](spatial-segmentation3.html) demonstrate building a `GraphSpace` from a `SpatialExperiment` object, including tissue image integration.
 
 ```{r, include=FALSE}
-title <- c("High-Dimensional Data", "Spatial Feature Data", "Spatial Segmentation1", "Spatial Segmentation2")
-image <- c("cards/high_dim.png", "cards/spatial_data.png", "cards/segmentation1.png", "cards/segmentation2.png")
-link <- c("high-dimensional.html", "spatial-data.html", "spatial-segmentation1.html", "spatial-segmentation2.html")
+title <- c("High-Dimensional Data", "Spatial Feature Data", "Spatial Segmentation1", "Spatial Segmentation2", "Spatial Segmentation3")
+image <- c("cards/high_dim.png", "cards/spatial_data.png", "cards/segmentation1.png", "cards/segmentation2.png", "cards/segmentation3.png")
+link <- c("high-dimensional.html", "spatial-data.html", "spatial-segmentation1.html", "spatial-segmentation2.html", "spatial-segmentation3.html")
 ps_cards3 <- data.frame(title = title, image = image, link = link)
 ```
 

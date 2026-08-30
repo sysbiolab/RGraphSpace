@@ -1,0 +1,516 @@
+# Working with nested geometries and high-resolution images
+
+**Package**: RGraphSpace 1.5.3  
+
+## Overview
+
+This tutorial demonstrates how *RGraphSpace* works with nested
+geometries and high-resolution images. We will use data from the same
+study on human colorectal cancer (CRC) tissue featured in our
+[*spatial-segmentation2*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md)
+vignette, but from the Xenium In Situ dataset (Oliveira et al. 2025).
+Although this dataset targets a focused panel of ~420 genes (541 total
+features, including controls), it provides higher-resolution single-cell
+boundaries for mapping subcellular localization. To handle the large
+tissue image, *RGraphSpace* stores it as a lazy `SpatRaster` object and
+renders only the region under view, keeping memory manageable even for
+multi-gigapixel images.
+
+## Before you start
+
+This vignette assumes familiarity with
+[*SpatialExperiment*](https://www.bioconductor.org/packages/SpatialExperiment/)
+(Righelli et al. 2022), particularly for handling Xenium spatial
+transcriptomics data.
+
+![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB2aWV3Ym94PSIwIDAgNTEyIDUxMiIgc3R5bGU9ImhlaWdodDoxZW07d2lkdGg6MWVtO3ZlcnRpY2FsLWFsaWduOi0wLjEyNWVtO21hcmdpbi1sZWZ0OmF1dG87bWFyZ2luLXJpZ2h0OmF1dG87Zm9udC1zaXplOmluaGVyaXQ7ZmlsbDpvcmFuZ2U7b3ZlcmZsb3c6dmlzaWJsZTtwb3NpdGlvbjpyZWxhdGl2ZTsiPjxwYXRoIGQ9Ik0yNTYgMzJjMTQuMiAwIDI3LjMgNy41IDM0LjUgMTkuOGwyMTYgMzY4YzcuMyAxMi40IDcuMyAyNy43IC4yIDQwLjFTNDg2LjMgNDgwIDQ3MiA0ODBINDBjLTE0LjMgMC0yNy42LTcuNy0zNC43LTIwLjFzLTctMjcuOCAuMi00MC4xbDIxNi0zNjhDMjI4LjcgMzkuNSAyNDEuOCAzMiAyNTYgMzJ6bTAgMTI4Yy0xMy4zIDAtMjQgMTAuNy0yNCAyNFYyOTZjMCAxMy4zIDEwLjcgMjQgMjQgMjRzMjQtMTAuNyAyNC0yNFYxODRjMC0xMy4zLTEwLjctMjQtMjQtMjR6bTMyIDIyNGEzMiAzMiAwIDEgMCAtNjQgMCAzMiAzMiAwIDEgMCA2NCAweiIgLz48L3N2Zz4=)**Note:**
+If you are new to *SpatialExperiment*, we recommend reviewing the OSTA’s
+[Xenium
+Workflow](https://bioconductor.org/books/release/OSTA/pages/img-workflow-xenium.html)
+before proceeding.
+
+**Computational requirement:**
+
+- Hardware: Workstation with RAM ≥ 32 GB (≥ 64 GB for higher-resolution
+  image levels)
+
+- Software: R (≥4.5); RStudio recommended
+
+## Required packages
+
+![](data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0iaW1nIiB2aWV3Ym94PSIwIDAgNTEyIDUxMiIgc3R5bGU9ImhlaWdodDoxZW07d2lkdGg6MWVtO3ZlcnRpY2FsLWFsaWduOi0wLjEyNWVtO21hcmdpbi1sZWZ0OmF1dG87bWFyZ2luLXJpZ2h0OmF1dG87Zm9udC1zaXplOmluaGVyaXQ7ZmlsbDpvcmFuZ2U7b3ZlcmZsb3c6dmlzaWJsZTtwb3NpdGlvbjpyZWxhdGl2ZTsiPjxwYXRoIGQ9Ik0yNTYgMzJjMTQuMiAwIDI3LjMgNy41IDM0LjUgMTkuOGwyMTYgMzY4YzcuMyAxMi40IDcuMyAyNy43IC4yIDQwLjFTNDg2LjMgNDgwIDQ3MiA0ODBINDBjLTE0LjMgMC0yNy42LTcuNy0zNC43LTIwLjFzLTctMjcuOCAuMi00MC4xbDIxNi0zNjhDMjI4LjcgMzkuNSAyNDEuOCAzMiAyNTYgMzJ6bTAgMTI4Yy0xMy4zIDAtMjQgMTAuNy0yNCAyNFYyOTZjMCAxMy4zIDEwLjcgMjQgMjQgMjRzMjQtMTAuNyAyNC0yNFYxODRjMC0xMy4zLTEwLjctMjQtMjQtMjR6bTMyIDIyNGEzMiAzMiAwIDEgMCAtNjQgMCAzMiAzMiAwIDEgMCA2NCAweiIgLz48L3N2Zz4=)
+Before proceeding, ensure that all packages described in the
+[*Installation
+Instructions*](https://sysbiolab.github.io/RGraphSpace/articles/install.md)
+are installed.
+
+``` r
+
+# Check versions
+if (packageVersion("RGraphSpace") < "1.5.3"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
+## Setting input data
+
+``` r
+
+# Load packages
+library("RGraphSpace")
+library("SpatialExperiment")
+library("SpatialExperimentIO")
+library("SpatialFeatureExperiment")
+library("sf")
+library("terra")
+library("patchwork")
+```
+
+### Download the dataset
+
+The **Xenium In Situ, Sample P2 CRC** dataset (Oliveira et al. 2025) is
+available from the [10x
+Genomics](https://www.10xgenomics.com/platforms/visium/product-family/dataset-human-crc)
+repository. The repository provides a batch download option from the
+terminal, using `wget` or `curl`; the `wget` command is reproduced
+below, selecting the relevant files for this tutorial.
+
+``` bash
+# Download output files in a 'localdir' directory
+wget https://cf.10xgenomics.com/samples/xenium/2.0.0/Xenium_V1_Human_Colon_Cancer_P2_CRC_Add_on_FFPE/Xenium_V1_Human_Colon_Cancer_P2_CRC_Add_on_FFPE_outs.zip
+
+# Extract the outputs
+unzip Xenium_V1_Human_Colon_Cancer_P2_CRC_Add_on_FFPE_outs.zip
+```
+
+### Loading with *SpatialFeatureExperiment*
+
+We load the dataset with
+[`readXenium()`](https://pachterlab.github.io/SpatialFeatureExperiment/reference/readXenium.html),
+importing both the cell and nucleus segmentations, and assign unique
+gene symbols to the row names.
+
+``` r
+
+# Set path to data directory
+localdir <- "path/to/data/directory"
+
+# Load data from localdir
+sfe <- readXenium(localdir, segmentations = c("cell", "nucleus"), flip = "none")
+
+# Assign unique symbols to rownames
+rownames(sfe) <-  make.unique(rowData(sfe)$Symbol)
+```
+
+The Xenium image is a four-channel fluorescence stack, where each
+channel captures a different aspect of tissue morphology: DAPI (nuclei),
+membrane markers (cell boundaries), 18S rRNA (cytoplasm), and
+αSMA/Vimentin (stroma). To use it as a spatial background, we load the
+stack as a *SpatRaster* object to keep its memory footprint manageable,
+combine three channels into a false-color RGB image, and apply a linear
+contrast stretch to enhance the visibility of the low-intensity
+fluorescence signal.
+
+``` r
+
+# Xenium 'morphology_focus' is a 4-channel fluorescence image:
+#   [[1]] DAPI                         (nuclei)
+#   [[2]] ATP1A1 / E-Cadherin / CD45   (cell boundaries)
+#   [[3]] 18S rRNA                     (cytoplasm)
+#   [[4]] alphaSMA / Vimentin          (stroma)
+
+# We read it as a multi-channel image, then set cytoplasm in red,
+# cell boundaries in green, and nuclei in blue.
+
+# The morphology image is a 4-channel OME-TIFF pyramid
+# with multiple resolution levels (see metadata below);
+# smaller index = finer resolution (1L = full, 4L = coarse)
+bfi <- SpatialExperiment::getImg(sfe, image_id = "morphology_focus")
+RBioFormats::read.metadata(imgSource(bfi))
+
+# Extract one pyramid level, assembled from four companion files on disk
+# Note: we used 'resolution = 2L' for downstream plots
+sri <- toSpatRasterImage(bfi, resolution = 4L)
+
+# Read the extracted level as a terra SpatRaster
+r_spat <- terra::rast(imgSource(sri))
+
+# Compose an RGB background from three channels:
+# R = cytoplasm (ch3), G = boundaries (ch2), B = nuclei (ch1).
+# Fluorescence intensities are low, so a 2%-98% linear stretch
+# to [0, 255] gives a clear, well-contrasted background.
+r_spat <- c(r_spat[[3]], r_spat[[2]], r_spat[[1]]) 
+r_spat <- terra::stretch(r_spat, minv = 0, maxv = 255,
+  minq = 0.02, maxq = 0.98)
+
+# Quick visual check, rotated 90° clockwise. We downsample BEFORE
+# rotating: transforming the full-resolution raster can crash
+r_small <- terra::spatSample(r_spat, size = 4e5, 
+  method = "regular", as.raster = TRUE)
+terra::plotRGB(terra::trans(terra::flip(r_small, "vertical")),
+  r = 1, g = 2, b = 3)
+```
+
+![](figs_dev/spe2_main.png)
+
+## Creating a GraphSpace object
+
+Convert the `SpatialFeatureExperiment` object into a `GraphSpace`.
+
+``` r
+
+# Coerce 'SpatialFeatureExperiment' to 'GraphSpace'
+gs <- as.GraphSpace(sfe, assay = "counts")
+```
+
+### Attach tissue image and geometries
+
+We attach the tissue image and align it with the graph using a scale
+factor that converts between the node coordinates (in microns) and the
+image (in pixels). We derive this factor from the image’s extent and
+dimensions: the square root of the pixel-to-micron area ratio gives
+pixels per micron. Computing it from areas keeps it robust to the
+image’s orientation and resolution. We then attach the nested cell and
+nucleus segmentations as `sf` geometries.
+
+``` r
+
+# Add tissue image
+gs_image(gs) <- r_spat
+
+# Unlike datasets with pre-aligned image/coordinates, this Xenium data
+# needs a pixel-per-micron scale factor (nodes in microns, image in pixels)
+
+#-- image area in microns (spatial extent)
+e <- terra::ext(r_spat)
+area_microns <- (e$xmax - e$xmin) * (e$ymax - e$ymin)
+
+#-- image area in pixels
+d <- dim(r_spat)                  
+area_pixels <- (d[1] * d[2])
+
+#-- linear scale factor: sqrt(pixels / area) = pixels per micron
+gs_scale_factor(gs) <- sqrt( area_pixels / area_microns )
+
+# Add cell geometry 
+gs_geometry(gs, "cell_geometry") <- cellSeg(sfe) 
+
+# Add nucleus geometry 
+gs_geometry(gs, "nucleus_geometry") <- nucSeg(sfe) 
+```
+
+### Normalize node and geometry coordinates
+
+Next, we examine the spatial boundaries of the nodes relative to the
+image. The node coordinates fall within the image dimensions.
+
+``` r
+
+gs
+#> A GraphSpace-class object for:
+#> IGRAPH fec0602 UN-- 340837 0 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | transcript_counts (v/n), control_probe_counts (v/n), control_codeword_counts
+#> | (v/n), unassigned_codeword_counts (v/n), deprecated_codeword_counts (v/n),
+#> | total_counts (v/n), cell_area (v/n), nucleus_area (v/n), sample_id (v/c),
+#> | arrowType (e/n)
+#> + node payload: 2 (cell_geometry, nucleus_geometry)
+#> + features: 541 (ABCC8, ACP5, ACTA2, ADH1C, ...)
+#> + samples: 340837 (aaaadaba-1, aaaadgga-1, ...)
+#> + node spatial boundaries: raw graph
+#> | x: [12, 3915] (cols)
+#> | y: [11, 4277] (rows)
+#> + image spatial boundaries: raw image
+#> | x: [1, 3924] (cols)
+#> | y: [1, 4278] (rows)
+```
+
+We normalize the node coordinates to the image space, with
+`norm.geometry = TRUE` so the cell and nucleus polygons are normalized
+alongside the nodes. We then rotate the object to match the orientation
+of the tissue image shown above.
+
+``` r
+
+# Normalize node coordinates to the image space
+# -- this may take a few secs due to the large number of geometries!
+gs <- normalizeGraphSpace(gs, mar = 0, norm.geometry = TRUE)
+
+# Rotate to match the tissue image orientation
+gs <- rotateGraphSpace(gs, clockwise = TRUE) 
+```
+
+## Spatial feature visualization
+
+``` r
+
+# Inspect the data range
+# log2(range(gs[["fdata"]]) + 1)
+
+# Set color palette and data range for use across plots
+cpal <- hcl.colors(100, palette = "Spectral", rev = T)
+data_range <- c(0, 7)
+
+# Set a reusable theme
+my_theme <- theme_gspace_coords(theme = "th3", is_norm = TRUE, 
+  xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
+```
+
+Plot the full tissue, nodes colored by *PIGR* expression over the tissue
+image, with cells showing no expression made transparent. A box marks a
+region of interest to crop next.
+
+``` r
+
+# Plot node-level PIGR expression over the tissue image; 
+# a box marks the region of interest
+p <- ggplot(gs) + 
+  annotation_gspace_image(gs, opacity = 1) + 
+  geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
+    alpha = as.numeric(PIGR > 0)  ), size = 0.2, pch = 19) +
+  scale_colour_continuous(palette = cpal, limits = data_range) +
+  scale_alpha_identity() + my_theme +
+  annotate("rect", 
+    xmin = 0.5, xmax = 0.8, 
+    ymin = 0.3, ymax = 0.65, 
+    colour = "white", fill = NA, 
+    lty = "21", lwd = 1)
+
+p
+```
+
+![](figs_dev/spe2_seg1.png)
+
+As we crop into smaller regions, *RGraphSpace* re-renders the viewed
+window into a display canvas whose resolution is capped by `maxpixels`.
+Because this fixed pixel budget now covers a smaller area, zooming in
+yields progressively finer detail. The default works well in most cases.
+
+``` r
+
+# Current pixel budget for the display canvas (adjustable if needed)
+gs_image_maxpixels(gs)
+#> 4e+06
+
+# Crop to the marked region and re-normalize coordinates to the new space
+gs_crop1 <- cropGraphSpace(gs, 
+  xmin = 0.5, xmax = 0.8, 
+  ymin = 0.3, ymax = 0.65)
+gs_crop1 <- normalizeGraphSpace(gs_crop1, mar = 0, norm.geometry = TRUE)
+gs_crop1 <- rotateGraphSpace(gs_crop1, clockwise = TRUE)
+```
+
+Zooming further, a second box outlines a smaller region for a closer
+view.
+
+``` r
+
+# Plot the cropped region; a second box marks the next crop
+p <- ggplot(gs_crop1) + 
+  annotation_gspace_image(gs_crop1, opacity = 1) + 
+  geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
+    alpha = as.numeric(PIGR > 0)), size = 0.7, pch = 19) +
+  scale_colour_continuous(palette = cpal, limits = data_range) +
+  scale_alpha_identity() + my_theme +
+  annotate("rect", 
+    xmin = 0.2, xmax = 0.5, 
+    ymin = 0.6, ymax = 0.9, 
+    fill = NA, colour = "white", 
+    lty = "21", lwd = 1)
+
+p
+```
+
+![](figs_dev/spe2_seg2.png)
+
+Crop to this smaller region.
+
+``` r
+
+# Crop to the smaller region and re-normalize coordinates
+gs_crop2 <- cropGraphSpace(gs_crop1, 
+  xmin = 0.2, xmax = 0.5, 
+  ymin = 0.6, ymax = 0.9)
+gs_crop2 <- normalizeGraphSpace(gs_crop2, mar = 0, norm.geometry = TRUE)
+gs_crop2 <- rotateGraphSpace(gs_crop2, clockwise = TRUE)
+```
+
+At this resolution, the real cell segmentation boundaries can be drawn
+side-by-side with the corresponding tissue image, alongside the node
+centroids. In this plot, we can observe the high-definition tissue image
+on the left and its correct alignment with the segmentation on the
+right.
+
+``` r
+
+p1 <- ggplot(gs_crop2) + 
+  annotation_gspace_image(gs_crop2, opacity = 1) + 
+  my_theme
+
+p2 <- ggplot(gs_crop2) + 
+  geom_sf( aes(geometry = cell_geometry, fill = log2(PIGR + 1) ), 
+    colour = adjustcolor("white", 1)) +
+  geom_nodespace(colour = "black", size = 0.1, pch = 19) +
+  scale_fill_continuous(palette = cpal, limits = data_range) +
+  scale_colour_identity() + my_theme +
+    annotate("rect", 
+    xmin = 0.2, xmax = 0.5, 
+    ymin = 0.6, ymax = 0.9, 
+    fill = NA, colour = "red4", 
+    lty = "21", lwd = 1) 
+
+p1 + p2
+```
+
+![](figs_dev/spe2_seg3.png)
+
+``` r
+
+# Crop to the smaller region and re-normalize coordinates
+gs_crop3 <- cropGraphSpace(gs_crop2, 
+  xmin = 0.2, xmax = 0.5, 
+  ymin = 0.6, ymax = 0.9)
+gs_crop3 <- normalizeGraphSpace(gs_crop3, mar = 0, norm.geometry = TRUE)
+gs_crop3 <- rotateGraphSpace(gs_crop3, clockwise = TRUE)
+```
+
+Finally, we reach a zoom level that allows us to examine the subcellular
+segmentation in this high-resolution image (left) and overlay the cell
+and nucleus geometries (right). The cell boundaries are filled according
+to *PIGR* expression levels, while the nucleus outlines are shown in
+semi-transparent black.
+
+``` r
+
+p1 <- ggplot(gs_crop3) + 
+  annotation_gspace_image(gs_crop3, opacity = 1) + 
+  my_theme
+
+p2 <- ggplot(gs_crop3) + 
+  geom_sf( aes(geometry = cell_geometry, fill = log2(PIGR + 1) ), 
+    colour = adjustcolor("white", 1)) +
+  geom_sf( aes(geometry = nucleus_geometry), 
+    fill = adjustcolor("black", 0.5), colour = NA) +
+  scale_fill_continuous(palette = cpal, limits = data_range) +
+  scale_colour_identity() + my_theme
+
+p1 + p2
+```
+
+![](figs_dev/spe2_seg4.png)
+
+## Session information
+
+    #> R version 4.6.1 (2026-06-24)
+    #> Platform: x86_64-pc-linux-gnu
+    #> Running under: Ubuntu 24.04.4 LTS
+    #> 
+    #> Matrix products: default
+    #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+    #> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+    #> 
+    #> locale:
+    #>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+    #>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+    #>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+    #>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+    #>  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+    #> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+    #> 
+    #> time zone: America/Sao_Paulo
+    #> tzcode source: system (glibc)
+    #> 
+    #> attached base packages:
+    #> [1] stats4    stats     graphics  grDevices utils     datasets  methods  
+    #> [8] base     
+    #> 
+    #> other attached packages:
+    #>  [1] patchwork_1.3.2                 terra_1.9-34                   
+    #>  [3] sf_1.1-1                        SpatialFeatureExperiment_1.14.0
+    #>  [5] SpatialExperimentIO_1.4.0       SpatialExperiment_1.22.0       
+    #>  [7] SingleCellExperiment_1.34.0     SummarizedExperiment_1.42.0    
+    #>  [9] Biobase_2.72.0                  GenomicRanges_1.64.0           
+    #> [11] Seqinfo_1.2.0                   IRanges_2.46.0                 
+    #> [13] S4Vectors_0.50.1                BiocGenerics_0.58.1            
+    #> [15] generics_0.1.4                  MatrixGenerics_1.24.0          
+    #> [17] matrixStats_1.5.0               RGraphSpace_1.5.3              
+    #> [19] ggplot2_4.0.3                  
+    #> 
+    #> loaded via a namespace (and not attached):
+    #>   [1] RColorBrewer_1.1-3        rstudioapi_0.19.0        
+    #>   [3] jsonlite_2.0.0            wk_0.9.5                 
+    #>   [5] magrittr_2.0.5            TH.data_1.1-5            
+    #>   [7] ggbeeswarm_0.7.3          magick_2.9.1             
+    #>   [9] farver_2.1.2              rmarkdown_2.31           
+    #>  [11] fs_2.1.0                  ragg_1.5.2               
+    #>  [13] vctrs_0.7.3               spdep_1.4-2              
+    #>  [15] DelayedMatrixStats_1.34.0 RCurl_1.98-1.19          
+    #>  [17] htmltools_0.5.9           S4Arrays_1.12.0          
+    #>  [19] BiocNeighbors_2.6.0       Rhdf5lib_2.0.0           
+    #>  [21] s2_1.1.11                 LearnBayes_2.15.2        
+    #>  [23] SparseArray_1.12.2        rhdf5_2.56.0             
+    #>  [25] sass_0.4.10               spData_2.3.5             
+    #>  [27] KernSmooth_2.23-27        bslib_0.11.0             
+    #>  [29] htmlwidgets_1.6.4         desc_1.4.3               
+    #>  [31] fontawesome_0.5.3         sandwich_3.1-3           
+    #>  [33] zoo_1.8-15                cachem_1.1.0             
+    #>  [35] igraph_2.3.3              lifecycle_1.0.5          
+    #>  [37] pkgconfig_2.0.3           Matrix_1.7-6             
+    #>  [39] R6_2.6.1                  fastmap_1.2.0            
+    #>  [41] digest_0.6.39             dqrng_0.4.1              
+    #>  [43] textshaping_1.0.5         beachmat_2.28.0          
+    #>  [45] spatialreg_1.4-3          abind_1.4-8              
+    #>  [47] compiler_4.6.1            proxy_0.4-29             
+    #>  [49] bit64_4.8.2               withr_3.0.3              
+    #>  [51] backports_1.5.1           S7_0.2.2                 
+    #>  [53] tiff_0.1-12               BiocParallel_1.46.0      
+    #>  [55] DBI_1.3.0                 HDF5Array_1.40.0         
+    #>  [57] R.utils_2.13.0            MASS_7.3-66              
+    #>  [59] DelayedArray_0.38.2       rjson_0.2.23             
+    #>  [61] classInt_0.4-11           tools_4.6.1              
+    #>  [63] units_1.0-1               vipor_0.4.7              
+    #>  [65] otel_0.2.0                beeswarm_0.4.0           
+    #>  [67] R.oo_1.27.1               glue_1.8.1               
+    #>  [69] h5mread_1.4.0             nlme_3.1-170             
+    #>  [71] EBImage_4.54.0            rhdf5filters_1.24.0      
+    #>  [73] grid_4.6.1                gtable_0.3.6             
+    #>  [75] R.methodsS3_1.8.2         class_7.3-24             
+    #>  [77] tidyr_1.3.2               data.table_1.18.4        
+    #>  [79] tidygraph_1.3.1           sp_2.2-1                 
+    #>  [81] XVector_0.52.0            pillar_1.11.1            
+    #>  [83] limma_3.68.4              splines_4.6.1            
+    #>  [85] dplyr_1.2.1               lattice_0.23-1           
+    #>  [87] survival_3.8-9            bit_4.6.0                
+    #>  [89] deldir_2.0-4              tidyselect_1.2.1         
+    #>  [91] locfit_1.5-9.12           scuttle_1.22.0           
+    #>  [93] sfheaders_0.4.5           knitr_1.51               
+    #>  [95] edgeR_4.10.1              xfun_0.59                
+    #>  [97] statmod_1.5.2             DropletUtils_1.32.0      
+    #>  [99] fftwtools_0.9-11          yaml_2.3.12              
+    #> [101] boot_1.3-32               evaluate_1.0.5           
+    #> [103] codetools_0.2-20          tibble_3.3.1             
+    #> [105] cli_3.6.6                 arrow_24.0.0             
+    #> [107] systemfonts_1.3.2         jquerylib_0.1.4          
+    #> [109] dichromat_2.0-1           Rcpp_1.1.2               
+    #> [111] zeallot_0.2.0             coda_0.19-4.1            
+    #> [113] png_0.1-9                 ggrastr_1.0.2            
+    #> [115] parallel_4.6.1            pkgdown_2.2.0            
+    #> [117] assertthat_0.2.1          jpeg_0.1-11              
+    #> [119] marginaleffects_0.32.0    sparseMatrixStats_1.24.0 
+    #> [121] bitops_1.0-9              mvtnorm_1.4-1            
+    #> [123] scales_1.4.0              e1071_1.7-17             
+    #> [125] purrr_1.2.2               rlang_1.3.0              
+    #> [127] multcomp_1.4-31
+
+## References
+
+Oliveira, MF, JP Romero, M Chung, et al. 2025. “High-Definition Spatial
+Transcriptomic Profiling of Immune Cell Populations in Colorectal
+Cancer.” *Nature Genetics* 57 (6): 1512–23.
+<https://doi.org/10.1038/s41588-025-02193-3>.
+
+Righelli, Dario, Lukas M. Weber, Helena L. Crowell, et al. 2022.
+“SpatialExperiment: Infrastructure for Spatially-Resolved
+Transcriptomics Data in r Using Bioconductor.” *Bioinformatics* 38 (11):
+–3. https://doi.org/<https://doi.org/10.1093/bioinformatics/btac299>.

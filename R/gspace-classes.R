@@ -2,10 +2,11 @@
 #' @importFrom grDevices as.raster
 #' @importFrom igraph make_empty_graph
 #' @importFrom tidygraph tbl_graph
-setOldClass("raster")
-setOldClass("igraph")
-setOldClass("tbl_graph")
-setOldClass("gs_graph")
+methods::setOldClass("igraph")
+methods::setOldClass("tbl_graph")
+methods::setOldClass("gs_graph")
+methods::setOldClass("raster")
+methods::setClassUnion("gs_image_source", c("raster", "SpatRaster"))
 
 #-------------------------------------------------------------------------------
 #' @title GraphSpace: An S4 class for igraph objects
@@ -14,11 +15,10 @@ setOldClass("gs_graph")
 #' @slot edges  A data frame containing edge relationships and attributes.
 #' @slot graph An \code{\link[igraph]{igraph}} object representing the graph 
 #' structure.
-#' @slot image A \code{raster} object (see \code{\link[grDevices]{as.raster}})
-#' holding the original background image as supplied by the user. Never
-#' modified after construction; always serves as the stable source for
-#' \code{normalizeGraphSpace()}.
-#' @slot canvas A \code{raster} object holding the processed,
+#' @slot image A \code{\link[terra]{SpatRaster}} object holding the original 
+#' background image as supplied by the user. Never modified after
+#' construction; serves as the stable source for \code{normalizeGraphSpace()}.
+#' @slot canvas A \code{\link[terra]{SpatRaster}} object holding the processed,
 #' render-ready image produced by \code{normalizeGraphSpace()}. Receives all
 #' centering, flipping, and margin adjustments. When this slot contains only
 #' the empty sentinel, downstream accessors fall back to \code{@image}
@@ -40,14 +40,15 @@ setOldClass("gs_graph")
 #' see \code{\link{GraphSpace}} constructor.
 #' @import igraph
 #' @importClassesFrom Matrix Matrix dgeMatrix
+#' @importClassesFrom terra SpatRaster
 #' @exportClass GraphSpace
 setClass("GraphSpace",
   slots = c(
     nodes = "data.frame",
     edges = "data.frame",
     graph = "igraph",
-    image = "raster",
-    canvas = "raster",
+    image = "gs_image_source",
+    canvas = "gs_image_source",
     fdata = "Matrix",
     coords = "data.frame",
     pars = "list",
@@ -58,8 +59,8 @@ setClass("GraphSpace",
     nodes = data.frame(),
     edges = data.frame(),
     graph = igraph::make_empty_graph(),
-    image = as.raster(matrix()),
-    canvas = as.raster(matrix()),
+    image = as.raster(matrix()), 
+    canvas = as.raster(matrix()), 
     fdata = methods::new("dgeMatrix"),
     coords = data.frame(),
     pars = list(),
@@ -111,14 +112,16 @@ setValidity("GraphSpace", function(object) {
   # fdata <-> nodes consistency
   if (nrow(object@nodes) > 0 && nrow(object@fdata) > 0) {
     if (!identical(rownames(object@nodes), rownames(object@fdata))) {
-      errors <- c(errors, "Row names in '@fdata' slot must match row names in '@nodes' slot.")
+      errors <- c(errors, 
+        "Row names in '@fdata' slot must match row names in '@nodes' slot.")
     }
   }
   
   # coords <-> nodes consistency
   if (nrow(object@nodes) > 0 && nrow(object@coords) > 0) {
     if (!identical(rownames(object@nodes), rownames(object@coords))) {
-      errors <- c(errors, "Row names in '@coords' slot must match row names in '@nodes' slot.")
+      errors <- c(errors, 
+        "Row names in '@coords' slot must match row names in '@nodes' slot.")
     }
   }
   
@@ -145,8 +148,10 @@ setValidity("GraphSpace", function(object) {
   # image <-> canvas consistency
   # @canvas is always derived from @image; a populated canvas without a source
   # image indicates an invalid object state.
-  canvas_has_content <- .hasSlot(object, "canvas") && prod(dim(object@canvas)) > 1
-  image_has_content  <- .hasSlot(object, "image")  && prod(dim(object@image))  > 1
+  canvas_has_content <- .hasSlot(object, "canvas") && 
+    prod(dim(object@canvas)) > 1
+  image_has_content  <- .hasSlot(object, "image")  && 
+    prod(dim(object@image))  > 1
   
   if (canvas_has_content && !image_has_content) {
     errors <- c(errors,
@@ -266,7 +271,8 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
     is.directed = igraph::is_directed(gs@graph), 
     is.simplified = gs@pars$is.simplified %||% FALSE,
     is.normalized = FALSE, 
-    image.space = FALSE
+    image.space = FALSE,
+    image.maxpixels = gs@pars$image.maxpixels %||% 4e6
   )
   x <- new("GraphSpace",
     graph = gs@graph,
@@ -504,7 +510,8 @@ setMethod("show", "GraphSpace",
 
 #' @keywords internal
 .get_canvas <- function(gs) {
-  if (.has_canvas(gs)) gs@canvas else gs@image
+  if (.has_canvas(gs)) return(gs@canvas)
+  gs@image
 }
 
 #' @keywords internal
@@ -520,6 +527,11 @@ setMethod("show", "GraphSpace",
 #' @keywords internal
 .is_normalized <- function(gs){
   gs@pars$is.normalized %||% FALSE
+}
+
+#' @keywords internal
+.is_raw <- function(gs) {
+  !.is_normalized(gs)
 }
 
 #' @keywords internal

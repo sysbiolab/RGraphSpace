@@ -14,13 +14,13 @@ region; `rotateGraphSpace()` rotates by a quarter turn;
 cropGraphSpace(gs, xmin = 0, xmax = 1, ymin = 0, ymax = 1, verbose = TRUE)
 
 # S4 method for class 'GraphSpace'
-rotateGraphSpace(gs, clockwise = FALSE, verbose = TRUE)
+flipGraphSpace(gs, vertical = FALSE, persist = .is_raw(gs), verbose = TRUE)
 
 # S4 method for class 'GraphSpace'
-flipGraphSpace(gs, vertical = FALSE, verbose = TRUE)
+rotateGraphSpace(gs, clockwise = FALSE, persist = .is_raw(gs), verbose = TRUE)
 
 # S4 method for class 'GraphSpace'
-transposeGraphSpace(gs, verbose = TRUE)
+transposeGraphSpace(gs, persist = .is_raw(gs), verbose = TRUE)
 ```
 
 ## Arguments
@@ -54,16 +54,21 @@ transposeGraphSpace(gs, verbose = TRUE)
   A single logical value specifying to display detailed messages (when
   `verbose=TRUE`) or not (when `verbose=FALSE`).
 
-- clockwise:
-
-  A single logical value. If `FALSE` (default), the 90-degree turn is
-  counter-clockwise; if `TRUE`, clockwise (`rotateGraphSpace` only).
-
 - vertical:
 
-  A single logical value. If `FALSE` (default), the flip is horizontal
-  (mirror left-right); if `TRUE`, vertical (mirror top-bottom).
+  Logical; if `FALSE` (default), the flip is horizontal (mirror
+  left-right); if `TRUE`, vertical (mirror top-bottom).
   (`flipGraphSpace` only).
+
+- persist:
+
+  Logical; whether the transformation persists through re-normalization.
+  Defaults to `TRUE` before normalization, `FALSE` after.
+
+- clockwise:
+
+  Logical; if `FALSE` (default), the 90-degree turn is
+  counter-clockwise; if `TRUE`, clockwise (`rotateGraphSpace` only).
 
 ## Value
 
@@ -116,11 +121,11 @@ gs <- normalizeGraphSpace(gs)
 gs_crop <- cropGraphSpace(gs, ymax = 0.5)
 #> Cropping graph space to x in [0, 1], y in [0, 0.5]...
 gs_rot90 <- rotateGraphSpace(gs)
-#> Rotating graph space 90 degrees counter-clockwise...
+#> Rotating normalized coordinates 90 degrees counter-clockwise...
 gs_flip <- flipGraphSpace(gs)
-#> Flipping graph space horizontally...
+#> Flipping normalized coordinates horizontally...
 gs_t <- transposeGraphSpace(gs)
-#> Transposing graph space...
+#> Transposing normalized coordinates...
 
 plotGraphSpace(gs, add.labels = TRUE)
 

@@ -20,12 +20,11 @@ GraphSpace: An S4 class for igraph objects
 \item{\code{graph}}{An \code{\link[igraph]{igraph}} object representing the graph
 structure.}
 
-\item{\code{image}}{A \code{raster} object (see \code{\link[grDevices]{as.raster}})
-holding the original background image as supplied by the user. Never
-modified after construction; always serves as the stable source for
-\code{normalizeGraphSpace()}.}
+\item{\code{image}}{A \code{\link[terra]{SpatRaster}} object holding the original
+background image as supplied by the user. Never modified after
+construction; serves as the stable source for \code{normalizeGraphSpace()}.}
 
-\item{\code{canvas}}{A \code{raster} object holding the processed,
+\item{\code{canvas}}{A \code{\link[terra]{SpatRaster}} object holding the processed,
 render-ready image produced by \code{normalizeGraphSpace()}. Receives all
 centering, flipping, and margin adjustments. When this slot contains only
 the empty sentinel, downstream accessors fall back to \code{@image}

@@ -1,7 +1,7 @@
 # Getting Started with RGraphSpace
 
   
-**Package**: RGraphSpace 1.5.2
+**Package**: RGraphSpace 1.5.3
 
 For a self-contained introduction that works offline, run
 **vignette(“RGraphSpace”)** after installing the package.
@@ -97,9 +97,11 @@ shows how to attach those features to spatially-organized data;
 [*spatial
 segmentation1*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation1.md)
 walks through attaching real cell-segmentation boundaries to a
-`GraphSpace` from a `Seurat` object; and [*spatial
+`GraphSpace` from a `Seurat` object; [*spatial
 segmentation2*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md)
-demonstrates building a `GraphSpace` from a `SpatialExperiment` object,
+and [*spatial
+segmentation2*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
+demonstrate building a `GraphSpace` from a `SpatialExperiment` object,
 including tissue image integration.
 
 [![](cards/high_dim.png)](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md)
@@ -125,6 +127,12 @@ including tissue image integration.
 [](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md)
 
 ###### Spatial Segmentation2
+
+[![](cards/segmentation3.png)](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
+
+[](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
+
+###### Spatial Segmentation3
 
 ## *PathwaySpace* workflows
 

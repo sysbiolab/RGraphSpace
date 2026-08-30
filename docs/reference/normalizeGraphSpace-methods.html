@@ -34,7 +34,7 @@ nodes to pixel coordinates of a background image."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,7 @@ nodes to pixel coordinates of a background image."><style>
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
+    <li><a class="dropdown-item" href="../articles/spatial-segmentation3.html">Nested geometries and high-resolution images</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -100,6 +101,7 @@ nodes to pixel coordinates of a background image.</p>
 <span>  flip.h <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  swap.xy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  equal.mar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  norm.geometry <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -161,6 +163,12 @@ with equal margins around the graph, resulting in a tighter crop of the image.
 If FALSE (default), the image is fitted to the full square figure area,
 resulting in unequal margins when the graph aspect ratio differs from 1. Both
 methods preserve the aspect ratios of the image and graph.</p></dd>
+
+
+<dt id="arg-norm-geometry">norm.geometry<a class="anchor" aria-label="anchor" href="#arg-norm-geometry"></a></dt>
+<dd><p>Logical; when geometries are available, whether to
+normalize them. If <code>TRUE</code>, <a href="geometry-methods.html">normalizeGeometry</a> is called at the end
+of the normalization process.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
