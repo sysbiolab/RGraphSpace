@@ -486,7 +486,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     ext <- terra::ext(x_s - 1, x_e, nr - y_e, nr - (y_s - 1))
     win <- terra::crop(img, ext)
     win <- terra::flip(win, direction = "vertical")   # flip back
-    terra::ext(win) <-  c(0, nrow(win), 0, ncol(win))
+    terra::ext(win) <- c(0, ncol(win), 0, nrow(win))
     orig_dim <- dim(win)
     
     # downsample the window to about maxpixels (aggregate by an integer factor)
@@ -523,10 +523,12 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   l_temp$image <- p$image
   if (!is.na(p$axis)) {
     if (p$axis == "x") {
-      l_temp$nodes$x <- l_temp$nodes$x + (p$n - 1) 
+      s <- od[1] / p$d[1] # full-res / downsampled (rows)
+      l_temp$nodes$x <- l_temp$nodes$x + p$n * s
       od <- c(od[1], round(od[2]*p$d[1]/p$d[2])) 
-    } else { 
-      l_temp$nodes$y <- l_temp$nodes$y + (p$n - 1)
+    } else {
+      s <- od[2] / p$d[2] # full-res / downsampled (cols)
+      l_temp$nodes$y <- l_temp$nodes$y + (p$d[2] - p$d[1] - p$n) * s
       od <- c(round(od[1]*p$d[2]/p$d[1]), od[2]) 
     }
   }
@@ -555,7 +557,8 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     n <- ceiling((d[2] - d[1])/2)
     if (inherits(img, "SpatRaster")){
       terra::ext(img) <- c(0, d[2], 0, d[1])
-      img <- terra::extend(img, terra::ext(0, d[2], -n, d[1] + (d[2]-d[1]-n)))
+      # img <- terra::extend(img, terra::ext(0, d[2], -n, d[1] + (d[2]-d[1]-n)))
+      img <- terra::extend(img, terra::ext(0, d[2], -(d[2]-d[1]-n), d[1] + n))
     } else {
       img_d <- matrix(NA, nrow = d[2], ncol = d[2])
       img_d[seq(n + 1, n + d[1]), ] <- as.matrix(img)

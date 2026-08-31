@@ -99,10 +99,10 @@ segmentation1*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segment
 walks through attaching real cell-segmentation boundaries to a
 `GraphSpace` from a `Seurat` object; [*spatial
 segmentation2*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md)
-and [*spatial
-segmentation2*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
-demonstrate building a `GraphSpace` from a `SpatialExperiment` object,
-including tissue image integration.
+builds a `GraphSpace` from a `SpatialExperiment` object with tissue
+image integration; [*spatial
+segmentation3*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
+extends this to nested geometries and high-resolution images.
 
 [![](cards/high_dim.png)](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md)
 

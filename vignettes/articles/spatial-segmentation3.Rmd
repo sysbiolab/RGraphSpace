@@ -185,7 +185,12 @@ d <- dim(r_spat)
 area_pixels <- (d[1] * d[2])
 
 #-- linear scale factor: sqrt(pixels / area) = pixels per micron
-gs_scale_factor(gs) <- sqrt( area_pixels / area_microns )
+lsf <- sqrt( area_pixels / area_microns )
+lsf
+#> 0.5882353 
+
+# Update 'gs_scale_factor'
+gs_scale_factor(gs) <- lsf
 
 # Add cell geometry 
 gs_geometry(gs, "cell_geometry") <- cellSeg(sfe) 
@@ -226,7 +231,7 @@ We normalize the node coordinates to the image space, with `norm.geometry = TRUE
 gs <- normalizeGraphSpace(gs, mar = 0, norm.geometry = TRUE)
 
 # Rotate to match the tissue image orientation
-gs <- rotateGraphSpace(gs, clockwise = TRUE) 
+gs <- rotateGraphSpace(gs, clockwise = TRUE)
 ```
 
 # Spatial feature visualization
@@ -342,7 +347,7 @@ p2 <- ggplot(gs_crop2) +
   scale_colour_identity() + my_theme +
     annotate("rect", 
     xmin = 0.2, xmax = 0.5, 
-    ymin = 0.6, ymax = 0.9, 
+    ymin = 0.2, ymax = 0.5, 
     fill = NA, colour = "red4", 
     lty = "21", lwd = 1) 
 
@@ -362,7 +367,7 @@ knitr::include_graphics("figs_dev/spe2_seg3.png")
 # Crop to the smaller region and re-normalize coordinates
 gs_crop3 <- cropGraphSpace(gs_crop2, 
   xmin = 0.2, xmax = 0.5, 
-  ymin = 0.6, ymax = 0.9)
+  ymin = 0.2, ymax = 0.5)
 gs_crop3 <- normalizeGraphSpace(gs_crop3, mar = 0, norm.geometry = TRUE)
 gs_crop3 <- rotateGraphSpace(gs_crop3, clockwise = TRUE)
 ```

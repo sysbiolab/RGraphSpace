@@ -96,7 +96,7 @@ gene symbols to the row names.
 # Set path to data directory
 localdir <- "path/to/data/directory"
 
-# Load data from localdir
+# Load data from 'localdir'
 sfe <- readXenium(localdir, segmentations = c("cell", "nucleus"), flip = "none")
 
 # Assign unique symbols to rownames
@@ -107,10 +107,11 @@ The Xenium image is a four-channel fluorescence stack, where each
 channel captures a different aspect of tissue morphology: DAPI (nuclei),
 membrane markers (cell boundaries), 18S rRNA (cytoplasm), and
 αSMA/Vimentin (stroma). To use it as a spatial background, we load the
-stack as a *SpatRaster* object to keep its memory footprint manageable,
-combine three channels into a false-color RGB image, and apply a linear
-contrast stretch to enhance the visibility of the low-intensity
-fluorescence signal.
+stack as a *SpatRaster* object, combine three channels into a
+false-color RGB image, and apply a linear contrast stretch to enhance
+the visibility of the low-intensity fluorescence signal. The resulting
+RGB image will feature ‘cytoplasm’ in red, ‘cell boundaries’ in green,
+and ‘nuclei’ in blue.
 
 ``` r
 
@@ -120,20 +121,25 @@ fluorescence signal.
 #   [[3]] 18S rRNA                     (cytoplasm)
 #   [[4]] alphaSMA / Vimentin          (stroma)
 
-# We read it as a multi-channel image, then set cytoplasm in red,
-# cell boundaries in green, and nuclei in blue.
-
-# The morphology image is a 4-channel OME-TIFF pyramid
-# with multiple resolution levels (see metadata below);
-# smaller index = finer resolution (1L = full, 4L = coarse)
+# The downloaded image is an OME-TIFF pyramid consisting of four 
+# files, each containing multiple resolution levels
 bfi <- SpatialExperiment::getImg(sfe, image_id = "morphology_focus")
-RBioFormats::read.metadata(imgSource(bfi))
 
-# Extract one pyramid level, assembled from four companion files on disk
-# Note: we used 'resolution = 2L' for downstream plots
+# Check resolution levels: 
+# Smaller index = finer resolution (1L = full, 4L = coarse)
+RBioFormats::read.metadata(imgSource(bfi))
+#> series res sizeX sizeY sizeC sizeZ sizeT total
+#> 1      1   31395 34224 4     1     1     4    
+#> 1      2   15697 17112 4     1     1     4    
+#> 1      3   7848  8556  4     1     1     4    
+#> 1      4   3924  4278  4     1     1     4 
+ 
+# Extract one pyramid level on disk; note: we used a finer
+# level for the downstream plots shown in this tutorial
 sri <- toSpatRasterImage(bfi, resolution = 4L)
 
-# Read the extracted level as a terra SpatRaster
+# Read the extracted level as a SpatRaster, keeping the raster 
+# data on disk until accessed
 r_spat <- terra::rast(imgSource(sri))
 
 # Compose an RGB background from three channels:
@@ -144,8 +150,8 @@ r_spat <- c(r_spat[[3]], r_spat[[2]], r_spat[[1]])
 r_spat <- terra::stretch(r_spat, minv = 0, maxv = 255,
   minq = 0.02, maxq = 0.98)
 
-# Quick visual check, rotated 90° clockwise. We downsample BEFORE
-# rotating: transforming the full-resolution raster can crash
+# Quick visual check, rotated 90° clockwise. We down-sample BEFORE rotating:
+# Transforming the full-resolution raster can cause a crash or memory overflow.
 r_small <- terra::spatSample(r_spat, size = 4e5, 
   method = "regular", as.raster = TRUE)
 terra::plotRGB(terra::trans(terra::flip(r_small, "vertical")),
@@ -170,9 +176,8 @@ We attach the tissue image and align it with the graph using a scale
 factor that converts between the node coordinates (in microns) and the
 image (in pixels). We derive this factor from the image’s extent and
 dimensions: the square root of the pixel-to-micron area ratio gives
-pixels per micron. Computing it from areas keeps it robust to the
-image’s orientation and resolution. We then attach the nested cell and
-nucleus segmentations as `sf` geometries.
+pixels per micron. We then attach the nested cell and nucleus
+segmentations as `sf` geometries.
 
 ``` r
 
@@ -191,7 +196,12 @@ d <- dim(r_spat)
 area_pixels <- (d[1] * d[2])
 
 #-- linear scale factor: sqrt(pixels / area) = pixels per micron
-gs_scale_factor(gs) <- sqrt( area_pixels / area_microns )
+lsf <- sqrt( area_pixels / area_microns )
+lsf
+#> 0.5882353 
+
+# Update 'gs_scale_factor'
+gs_scale_factor(gs) <- lsf
 
 # Add cell geometry 
 gs_geometry(gs, "cell_geometry") <- cellSeg(sfe) 
@@ -238,7 +248,7 @@ of the tissue image shown above.
 gs <- normalizeGraphSpace(gs, mar = 0, norm.geometry = TRUE)
 
 # Rotate to match the tissue image orientation
-gs <- rotateGraphSpace(gs, clockwise = TRUE) 
+gs <- rotateGraphSpace(gs, clockwise = TRUE)
 ```
 
 ## Spatial feature visualization
@@ -356,7 +366,7 @@ p2 <- ggplot(gs_crop2) +
   scale_colour_identity() + my_theme +
     annotate("rect", 
     xmin = 0.2, xmax = 0.5, 
-    ymin = 0.6, ymax = 0.9, 
+    ymin = 0.2, ymax = 0.5, 
     fill = NA, colour = "red4", 
     lty = "21", lwd = 1) 
 
@@ -370,7 +380,7 @@ p1 + p2
 # Crop to the smaller region and re-normalize coordinates
 gs_crop3 <- cropGraphSpace(gs_crop2, 
   xmin = 0.2, xmax = 0.5, 
-  ymin = 0.6, ymax = 0.9)
+  ymin = 0.2, ymax = 0.5)
 gs_crop3 <- normalizeGraphSpace(gs_crop3, mar = 0, norm.geometry = TRUE)
 gs_crop3 <- rotateGraphSpace(gs_crop3, clockwise = TRUE)
 ```

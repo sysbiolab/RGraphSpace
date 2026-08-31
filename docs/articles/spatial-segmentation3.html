@@ -281,7 +281,12 @@ segmentations as <code>sf</code> geometries.</p>
 <span><span class="va">area_pixels</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">d</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">d</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#-- linear scale factor: sqrt(pixels / area) = pixels per micron</span></span>
-<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_scale_factor</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span> <span class="va">area_pixels</span> <span class="op">/</span> <span class="va">area_microns</span> <span class="op">)</span></span>
+<span><span class="va">lsf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span> <span class="va">area_pixels</span> <span class="op">/</span> <span class="va">area_microns</span> <span class="op">)</span></span>
+<span><span class="va">lsf</span></span>
+<span><span class="co">#&gt; 0.5882353 </span></span>
+<span></span>
+<span><span class="co"># Update 'gs_scale_factor'</span></span>
+<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_scale_factor</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">lsf</span></span>
 <span></span>
 <span><span class="co"># Add cell geometry </span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"cell_geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/colGeometries.html" class="external-link">cellSeg</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span> </span>
@@ -322,7 +327,7 @@ orientation of the tissue image shown above.</p>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, mar <span class="op">=</span> <span class="fl">0</span>, norm.geometry <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Rotate to match the tissue image orientation</span></span>
-<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">rotateGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, clockwise <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">rotateGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, clockwise <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -419,7 +424,7 @@ right.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_identity.html" class="external-link">scale_colour_identity</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="va">my_theme</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span><span class="st">"rect"</span>, </span>
 <span>    xmin <span class="op">=</span> <span class="fl">0.2</span>, xmax <span class="op">=</span> <span class="fl">0.5</span>, </span>
-<span>    ymin <span class="op">=</span> <span class="fl">0.6</span>, ymax <span class="op">=</span> <span class="fl">0.9</span>, </span>
+<span>    ymin <span class="op">=</span> <span class="fl">0.2</span>, ymax <span class="op">=</span> <span class="fl">0.5</span>, </span>
 <span>    fill <span class="op">=</span> <span class="cn">NA</span>, colour <span class="op">=</span> <span class="st">"red4"</span>, </span>
 <span>    lty <span class="op">=</span> <span class="st">"21"</span>, lwd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
 <span></span>
@@ -429,7 +434,7 @@ right.</p>
 <code class="sourceCode R"><span><span class="co"># Crop to the smaller region and re-normalize coordinates</span></span>
 <span><span class="va">gs_crop3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">cropGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop2</span>, </span>
 <span>  xmin <span class="op">=</span> <span class="fl">0.2</span>, xmax <span class="op">=</span> <span class="fl">0.5</span>, </span>
-<span>  ymin <span class="op">=</span> <span class="fl">0.6</span>, ymax <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
+<span>  ymin <span class="op">=</span> <span class="fl">0.2</span>, ymax <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="va">gs_crop3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop3</span>, mar <span class="op">=</span> <span class="fl">0</span>, norm.geometry <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">gs_crop3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">rotateGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop3</span>, clockwise <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Finally, we reach a zoom level that allows us to examine the
