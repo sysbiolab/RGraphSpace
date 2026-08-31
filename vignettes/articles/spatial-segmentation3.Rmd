@@ -94,7 +94,7 @@ sfe <- readXenium(localdir, segmentations = c("cell", "nucleus"), flip = "none")
 rownames(sfe) <-  make.unique(rowData(sfe)$Symbol)
 ```
 
-The Xenium image is a four-channel fluorescence stack, where each channel captures a different aspect of tissue morphology: DAPI (nuclei), membrane markers (cell boundaries), 18S rRNA (cytoplasm), and αSMA/Vimentin (stroma). To use it as a spatial background, we load the stack as a *SpatRaster* object, which lets us combine channels into a false-color RGB image. The RGB image below features 'cytoplasm' in red, 'cell boundaries' in green, and 'nuclei' in blue.
+The Xenium image is a four-channel fluorescence stack, where each channel captures a different aspect of tissue morphology: DAPI (nuclei), membrane markers (cell boundaries), 18S rRNA (cytoplasm), and αSMA/Vimentin (stroma). To use it as a spatial background, we load the stack as a *SpatRaster* object, which lets us combine channels into a false-color RGB image.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Xenium 'morphology_focus' is a 4-channel fluorescence image:
@@ -117,8 +117,8 @@ RBioFormats::read.metadata(imgSource(bfi))
 #> 1      4   3924  4278  4     1     1     4 
 #> ...
 
-# Extract one pyramid level on disk; note: we used a finer
-# level for the downstream plots shown in this tutorial
+# Extract one pyramid level and write it to disk, at 4L resolution
+# (we used a finer level for the plots shown in this tutorial)
 sri <- toSpatRasterImage(bfi, resolution = 4L)
 
 # Read the extracted level as a SpatRaster, keeping the raster 
@@ -133,6 +133,8 @@ r_small <- terra::spatSample(r_spat, size = 4e5,
 terra::plotRGB(terra::trans(terra::flip(r_small, "vertical")),
   r = 3, g = 2, b = 1, stretch = "lin")
 ```
+
+For this RGB image we set the fluorescence channels to show 'cytoplasm' in red, 'cell boundaries' in green, and 'nuclei' in blue.
 
 ```{r spe2_main.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
 # r_small <- terra::spatSample(r_spat, size = 4e6,
@@ -364,7 +366,7 @@ gs_crop3 <- normalizeGraphSpace(gs_crop3, mar = 0, norm.geometry = TRUE)
 gs_crop3 <- rotateGraphSpace(gs_crop3, clockwise = TRUE)
 ```
 
-Finally, we reach a zoom level that allows us to examine subcellular structures (left) along with the cell and nucleus segmentations overlaid as nested geometries (right). The cell geometries are filled according to *PIGR* expression levels, while the nucleus outlines are shown in semi-transparent black.
+Finally, we reach a zoom level that allows us to examine subcellular structures (left), with cell and nucleus segmentations overlaid as nested geometries (right). The cell geometries are filled according to *PIGR* expression levels, while the nucleus outlines are shown in semi-transparent black.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 p1 <- ggplot(gs_crop3) + 

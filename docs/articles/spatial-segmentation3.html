@@ -197,8 +197,7 @@ channel captures a different aspect of tissue morphology: DAPI (nuclei),
 membrane markers (cell boundaries), 18S rRNA (cytoplasm), and
 αSMA/Vimentin (stroma). To use it as a spatial background, we load the
 stack as a <em>SpatRaster</em> object, which lets us combine channels
-into a false-color RGB image. The RGB image below features ‘cytoplasm’
-in red, ‘cell boundaries’ in green, and ‘nuclei’ in blue.</p>
+into a false-color RGB image.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Xenium 'morphology_focus' is a 4-channel fluorescence image:</span></span>
 <span><span class="co"># [[1]] DAPI                         (nuclei)</span></span>
@@ -220,8 +219,8 @@ in red, ‘cell boundaries’ in green, and ‘nuclei’ in blue.</p>
 <span><span class="co">#&gt; 1      4   3924  4278  4     1     1     4 </span></span>
 <span><span class="co">#&gt; ...</span></span>
 <span></span>
-<span><span class="co"># Extract one pyramid level on disk; note: we used a finer</span></span>
-<span><span class="co"># level for the downstream plots shown in this tutorial</span></span>
+<span><span class="co"># Extract one pyramid level and write it to disk, at 4L resolution</span></span>
+<span><span class="co"># (we used a finer level for the plots shown in this tutorial)</span></span>
 <span><span class="va">sri</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/toSpatRasterImage.html" class="external-link">toSpatRasterImage</a></span><span class="op">(</span><span class="va">bfi</span>, resolution <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Read the extracted level as a SpatRaster, keeping the raster </span></span>
@@ -235,6 +234,9 @@ in red, ‘cell boundaries’ in green, and ‘nuclei’ in blue.</p>
 <span>  method <span class="op">=</span> <span class="st">"regular"</span>, as.raster <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/transpose.html" class="external-link">trans</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/flip.html" class="external-link">flip</a></span><span class="op">(</span><span class="va">r_small</span>, <span class="st">"vertical"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  r <span class="op">=</span> <span class="fl">3</span>, g <span class="op">=</span> <span class="fl">2</span>, b <span class="op">=</span> <span class="fl">1</span>, stretch <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span></span></code></pre></div>
+<p>For this RGB image we set the fluorescence channels to show
+‘cytoplasm’ in red, ‘cell boundaries’ in green, and ‘nuclei’ in
+blue.</p>
 <p><img src="figs_dev/spe2_main.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 </div>
@@ -431,10 +433,10 @@ in green, and ‘nuclei’ in blue.</p>
 <span><span class="va">gs_crop3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop3</span>, mar <span class="op">=</span> <span class="fl">0</span>, norm.geometry <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">gs_crop3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">rotateGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop3</span>, clockwise <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Finally, we reach a zoom level that allows us to examine subcellular
-structures (left) along with the cell and nucleus segmentations overlaid
-as nested geometries (right). The cell geometries are filled according
-to <em>PIGR</em> expression levels, while the nucleus outlines are shown
-in semi-transparent black.</p>
+structures (left), with cell and nucleus segmentations overlaid as
+nested geometries (right). The cell geometries are filled according to
+<em>PIGR</em> expression levels, while the nucleus outlines are shown in
+semi-transparent black.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_crop3</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_crop3</span>, rgb_channels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
