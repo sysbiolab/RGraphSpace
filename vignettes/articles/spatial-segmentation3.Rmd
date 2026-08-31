@@ -57,8 +57,6 @@ if (packageVersion("RGraphSpace") < "1.5.3"){
 ```{r Load packages, eval=TRUE, message=FALSE}
 # Load packages
 library("RGraphSpace")
-library("SpatialExperiment")
-library("SpatialExperimentIO")
 library("SpatialFeatureExperiment")
 library("sf")
 library("terra")
@@ -96,14 +94,14 @@ sfe <- readXenium(localdir, segmentations = c("cell", "nucleus"), flip = "none")
 rownames(sfe) <-  make.unique(rowData(sfe)$Symbol)
 ```
 
-The Xenium image is a four-channel fluorescence stack, where each channel captures a different aspect of tissue morphology: DAPI (nuclei), membrane markers (cell boundaries), 18S rRNA (cytoplasm), and αSMA/Vimentin (stroma). To use it as a spatial background, we load the stack as a *SpatRaster* object, combine three channels into a false-color RGB image, and apply a linear contrast stretch to enhance the visibility of the low-intensity fluorescence signal. The resulting RGB image will feature 'cytoplasm' in red, 'cell boundaries' in green, and 'nuclei' in blue.
+The Xenium image is a four-channel fluorescence stack, where each channel captures a different aspect of tissue morphology: DAPI (nuclei), membrane markers (cell boundaries), 18S rRNA (cytoplasm), and αSMA/Vimentin (stroma). To use it as a spatial background, we load the stack as a *SpatRaster* object, which lets us combine channels into a false-color RGB image. The RGB image below features 'cytoplasm' in red, 'cell boundaries' in green, and 'nuclei' in blue.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Xenium 'morphology_focus' is a 4-channel fluorescence image:
-#   [[1]] DAPI                         (nuclei)
-#   [[2]] ATP1A1 / E-Cadherin / CD45   (cell boundaries)
-#   [[3]] 18S rRNA                     (cytoplasm)
-#   [[4]] alphaSMA / Vimentin          (stroma)
+# [[1]] DAPI                         (nuclei)
+# [[2]] ATP1A1 / E-Cadherin / CD45   (cell boundaries)
+# [[3]] 18S rRNA                     (cytoplasm)
+# [[4]] alphaSMA / Vimentin          (stroma)
 
 # The downloaded image is an OME-TIFF pyramid consisting of four 
 # files, each containing multiple resolution levels
@@ -127,29 +125,22 @@ sri <- toSpatRasterImage(bfi, resolution = 4L)
 # data on disk until accessed
 r_spat <- terra::rast(imgSource(sri))
 
-# Compose an RGB background from three channels:
-# R = cytoplasm (ch3), G = boundaries (ch2), B = nuclei (ch1).
-# Fluorescence intensities are low, so a 2%-98% linear stretch
-# to [0, 255] gives a clear, well-contrasted background.
-r_spat <- c(r_spat[[3]], r_spat[[2]], r_spat[[1]]) 
-r_spat <- terra::stretch(r_spat, minv = 0, maxv = 255,
-  minq = 0.02, maxq = 0.98)
-
-# Quick visual check, rotated 90° clockwise. We down-sample BEFORE rotating:
-# Transforming the full-resolution raster can cause a crash or memory overflow.
+# Quick visual check, rotated 90° clockwise. 
+# We down-sample BEFORE rotating: Transforming the full-resolution 
+# raster can cause a crash or memory overflow.
 r_small <- terra::spatSample(r_spat, size = 4e5, 
   method = "regular", as.raster = TRUE)
 terra::plotRGB(terra::trans(terra::flip(r_small, "vertical")),
-  r = 1, g = 2, b = 3)
+  r = 3, g = 2, b = 1, stretch = "lin")
 ```
 
 ```{r spe2_main.png, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
-# r_small <- terra::spatSample(r_spat, size = 4e7, 
+# r_small <- terra::spatSample(r_spat, size = 4e6,
 #   method = "regular", as.raster = TRUE)
-# png("./vignettes/articles/figs_dev/spe2_main.png", 
+# png("./vignettes/articles/figs_dev/spe2_main.png",
 #   width = 750, height = 750)
 # terra::plotRGB(terra::trans(terra::flip(r_small, "vertical")),
-#   r = 1, g = 2, b = 3, maxcell = 4e7)
+#   r = 3, g = 2, b = 1, stretch = "lin")
 # dev.off()
 ```
 
@@ -250,15 +241,15 @@ my_theme <- theme_gspace_coords(theme = "th3", is_norm = TRUE,
   xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
 ```
 
-Plot the full tissue, nodes colored by *PIGR* expression over the tissue image, with cells showing no expression made transparent. A box marks a region of interest to crop next.
+We now plot the full coordinate space with nodes colored by *PIGR* expression over the tissue image, and cells showing no expression made transparent. A box marks a region of interest to crop next. For this wide view, we set the background image to one channel, with 'cytoplasm' in blue.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Plot node-level PIGR expression over the tissue image; 
 # a box marks the region of interest
 p <- ggplot(gs) + 
-  annotation_gspace_image(gs, opacity = 1) + 
+  annotation_gspace_image(gs, rgb_channels = c(NA, NA, 3)) + 
   geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
-    alpha = as.numeric(PIGR > 0)  ), size = 0.2, pch = 19) +
+    alpha = as.numeric(PIGR > 0)  ), size = 0.3, pch = 19) +
   scale_colour_continuous(palette = cpal, limits = data_range) +
   scale_alpha_identity() + my_theme +
   annotate("rect", 
@@ -299,7 +290,7 @@ Zooming further, a second box outlines a smaller region for a closer view.
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 # Plot the cropped region; a second box marks the next crop
 p <- ggplot(gs_crop1) + 
-  annotation_gspace_image(gs_crop1, opacity = 1) + 
+  annotation_gspace_image(gs_crop1, rgb_channels = c(NA, NA, 3)) + 
   geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
     alpha = as.numeric(PIGR > 0)), size = 0.7, pch = 19) +
   scale_colour_continuous(palette = cpal, limits = data_range) +
@@ -333,11 +324,11 @@ gs_crop2 <- normalizeGraphSpace(gs_crop2, mar = 0, norm.geometry = TRUE)
 gs_crop2 <- rotateGraphSpace(gs_crop2, clockwise = TRUE)
 ```
 
-At this resolution, the real cell segmentation boundaries can be drawn side-by-side with the corresponding tissue image, alongside the node centroids. In this plot, we can observe the high-definition tissue image on the left and its correct alignment with the segmentation on the right.
+At this resolution, the real cell segmentation boundaries can be drawn side-by-side with the corresponding tissue image, alongside the node centroids. In this plot, we can observe the high-definition tissue image on the left and its correct alignment with cell segmentation on the right. The RGB image features 'cytoplasm' in red, 'cell boundaries' in green, and 'nuclei' in blue.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 p1 <- ggplot(gs_crop2) + 
-  annotation_gspace_image(gs_crop2, opacity = 1) + 
+  annotation_gspace_image(gs_crop2, rgb_channels = c(3, 2, 1)) + 
   my_theme
 
 p2 <- ggplot(gs_crop2) + 
@@ -373,11 +364,11 @@ gs_crop3 <- normalizeGraphSpace(gs_crop3, mar = 0, norm.geometry = TRUE)
 gs_crop3 <- rotateGraphSpace(gs_crop3, clockwise = TRUE)
 ```
 
-Finally, we reach a zoom level that allows us to examine the subcellular segmentation in this high-resolution image (left) and overlay the cell and nucleus geometries (right). The cell boundaries are filled according to *PIGR* expression levels, while the nucleus outlines are shown in semi-transparent black.
+Finally, we reach a zoom level that allows us to examine subcellular structures (left) along with the cell and nucleus segmentations overlaid as nested geometries (right). The cell geometries are filled according to *PIGR* expression levels, while the nucleus outlines are shown in semi-transparent black.
 
 ```{r , eval=FALSE, message=FALSE, results='hide'}
 p1 <- ggplot(gs_crop3) + 
-  annotation_gspace_image(gs_crop3, opacity = 1) + 
+  annotation_gspace_image(gs_crop3, rgb_channels = c(3, 2, 1)) + 
   my_theme
 
 p2 <- ggplot(gs_crop3) + 

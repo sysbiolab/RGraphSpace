@@ -96,7 +96,8 @@ setMethod("fitGeometry", "GraphSpace",
     if(name %in% valid_names){
       gs <- .gs_fit_geometry(gs, name, use_node_size, verbose)
     } else {
-      rlang::warn(sprintf("Name '%s' not a valid geometry in the `gs` object", name))
+      rlang::warn(
+        sprintf("Name '%s' not a valid geometry in the `gs` object", name))
     }
     
     return(gs)
@@ -152,10 +153,12 @@ setMethod("fitGeometry", "GraphSpace",
 }
 
 #-------------------------------------------------------------------------------
-.gs_fit_geometry <- function(x, name, use_node_size = TRUE, verbose = TRUE) {
+.gs_fit_geometry <- function(x, name, use_node_size = TRUE,
+  verbose = TRUE) {
 
   if (use_node_size && anyNA(x$nodeSize)) {
-    rlang::abort("nodeSize contains NA; every node needs a size to fit geometry to.")
+    rlang::abort(
+      "nodeSize contains NA; every node needs a size to fit geometry to.")
   }
   
   geom <- x@nodes[[name]]
@@ -168,7 +171,7 @@ setMethod("fitGeometry", "GraphSpace",
       x = range(x@nodes$x, na.rm = TRUE),
       y = range(x@nodes$y, na.rm = TRUE)
     )
-    space <- mean(diff(bounds$x), diff(bounds$y))
+    space <- if(.is_normalized(x)) 1 else max(diff(bounds$x), diff(bounds$y))
     npc_per_unit <- .gs_nsz_to_npc() # same constant geom_nodespace() itself uses
     target_diam <- x$nodeSize * npc_per_unit * space
     current_diam <- .geometry_diameter(geom)
@@ -191,12 +194,14 @@ setMethod("fitGeometry", "GraphSpace",
   }
   
   if (verbose){
-    rlang::inform(sprintf("Fitting '%s' geometry to node coordinates...", name))
+    rlang::inform(
+      sprintf("Fitting '%s' geometry to node coordinates...", name))
   }
   centroids <- sf::st_centroid(scaled)
   
   # nodes
-  targets <- sf::st_cast(sf::st_sfc(sf::st_multipoint(as.matrix(x@nodes[, c("x","y")]))), "POINT")
+  targets <- sf::st_cast(sf::st_sfc(
+    sf::st_multipoint(as.matrix(x@nodes[, c("x","y")]))), "POINT")
   geom_fixed <- (sf::st_geometry(scaled) - centroids) + targets
   x <- .add_node_geometry(x, name, geom_fixed, slots = "nodes", verbose = FALSE)
 

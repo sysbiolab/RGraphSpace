@@ -1,6 +1,6 @@
 
 #-------------------------------------------------------------------------------
-.validate_gs_args <- function(check, name, para) {
+.validate_gs_args <- function(check, name, para, notNA = TRUE) {
   if (check == "numeric_vec") {
     msg <- paste0("'", name, "' should be a numeric vector.")
     if (!is.vector(para) || !.all_numericValues(para)) stop(msg, call. = FALSE)
@@ -10,7 +10,7 @@
       stop(msg, call. = FALSE)
   } else if (check == "integer_vec") {
     msg <- paste0("'", name, "' should be an integer vector.")
-    if (!is.vector(para) || !.all_integerValues(para)) 
+    if (!is.vector(para) || !.all_integerValues(para, notNA)) 
       stop(msg, call. = FALSE)
   } else if (check == "numeric_mtx") {
     msg <- paste0("'", name, "' should be a numeric matrix")

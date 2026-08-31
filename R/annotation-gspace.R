@@ -7,29 +7,35 @@
 #' \code{ggplot}-based \code{GraphSpace} plot.
 #'
 #' @param x An image to be displayed. Accepted types:
-#'   \itemize{
-#'     \item A \code{\link{GraphSpace}} object — the image is extracted via
-#'       \code{\link{gs_image}}.
-#'     \item A \code{raster} object
-#'       (see \code{\link[grDevices]{as.raster}}).
-#'     \item A \code{matrix} or 3D array (RGB/RGBA), coerced to
-#'       \code{raster} automatically.
-#'   }
+#' \itemize{
+#'   \item A \code{\link{GraphSpace}} object — the image is extracted via
+#'     \code{\link{gs_image}}.
+#'   \item A \code{\link[terra]{SpatRaster}}) object.
+#'   \item A \code{raster} object (see \code{\link[grDevices]{as.raster}}).
+#'   \item A \code{matrix} or 3D array (RGB/RGBA), coerced to
+#'     \code{raster} automatically.
+#' }
 #' @param interpolate A logical value indicating whether to apply linear
-#'   interpolation when the image is rendered at a different resolution than
-#'   its native size. Defaults to \code{FALSE}.
+#' interpolation when the image is rendered at a different resolution than
+#' its native size. Defaults to \code{FALSE}.
 #' @param opacity A numeric value in \code{[0, 1]} controlling the
-#'   transparency of the image. \code{1} is fully opaque (default);
-#'   \code{0} is fully transparent.
+#' transparency of the image. \code{1} is fully opaque (default);
+#' \code{0} is fully transparent.
 #' @param flip.v A logical value; if \code{TRUE}, the image is flipped
-#'   vertically (top-to-bottom). Defaults to \code{FALSE}.
+#' vertically (top-to-bottom). Defaults to \code{FALSE}.
 #' @param flip.h A logical value; if \code{TRUE}, the image is flipped
-#'   horizontally (left-to-right). Defaults to \code{FALSE}.
+#' horizontally (left-to-right). Defaults to \code{FALSE}.
 #' @param na.color The colour to map to NA values. Defaults to \code{NA}.
-#' 
+#' @param rgb_channels When a \code{\link[terra]{SpatRaster}} is provided,
+#' an integer vector of length 3 giving the layers to use as the red, green,
+#' and blue channels. Use \code{NA} for an empty channel (e.g.
+#' \code{c(3, 2, NA)}). Defaults to \code{c(1, 2, 3)}.
+#' @param stretch When a \code{\link[terra]{SpatRaster}} is provided, option to 
+#' stretch RGB values to increase contrast: "lin" (linear) or "hist" (histogram).
+#' To disable, set \code{stretch = NULL}. See \code{\link[terra]{plotRGB}}.
 #' @return A ggplot2 layer object that can be added to a \code{ggplot()}
-#'   call with \code{+}, or \code{invisible(NULL)} with a warning if the
-#'   image could not be resolved.
+#' call with \code{+}, or \code{invisible(NULL)} with a warning if the
+#' image could not be resolved.
 #'
 #' @seealso
 #' \code{\link[ggplot2]{annotation_raster}},
@@ -77,7 +83,8 @@
 #' @rdname annotation_gspace_image
 #' @export
 annotation_gspace_image <- function(x, interpolate = FALSE, 
-  opacity = 1, flip.v = FALSE, flip.h = FALSE, na.color = NA) {
+  opacity = 1, flip.v = FALSE, flip.h = FALSE, na.color = NA, 
+  rgb_channels = c(1, 2, 3), stretch = c("lin", "hist")) {
 
   if (missing(x)) {
     rlang::abort("Argument 'x' is missing, with no default.")
@@ -87,6 +94,12 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
   .validate_gs_args("singleLogical", "flip.v", flip.v)
   .validate_gs_args("singleLogical", "flip.h", flip.h)
   .validate_gs_args("singleNumber", "opacity", opacity)
+  .validate_gs_args("integer_vec", "rgb_channels",
+    rgb_channels, notNA = FALSE)
+  if(!is.null(stretch)){
+    stretch <- match.arg(stretch, c("lin", "hist"))
+  }
+  
   if(!is.na(na.color)){
     .validate_gs_colors("singleColor", "na.color", na.color)
   }
@@ -103,7 +116,8 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
   }
   
   if (inherits(x, "SpatRaster")) {
-    x <- .spatraster_to_raster(x, maxpixels = mp)
+    x <- .spatraster_to_raster(x, maxpixels = mp, 
+      rgb_channels = rgb_channels, stretch = stretch)
   } else if (!inherits(x, "raster")) {
     x <- tryCatch({
       grDevices::as.raster(x)
@@ -150,6 +164,63 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
 }
 
 #-------------------------------------------------------------------------------
+# Convert a (multi-band) SpatRaster window to a base R raster of colour strings.
+.spatraster_to_raster <- function(x, maxpixels = 4e6, 
+  rgb_channels = c(1, 2, 3), stretch = "lin") {
+  
+  nb_src <- terra::nlyr(x)
+  rgb_channels <- as.integer(rgb_channels)
+  if (length(rgb_channels) != 3L)
+    stop("'rgb_channels' must have length 3 (R, G, B); use NA for an empty channel")
+  valid <- rgb_channels[!is.na(rgb_channels)]
+  if (length(valid) == 0L)
+    stop("at least one of the R, G, B channels must be a layer index")
+  if (any(valid < 1L | valid > nb_src))
+    stop("'rgb_channels' index out of range (image has ", nb_src, " layers)")
+  
+  if (terra::ncell(x) > maxpixels) {
+    s <- sqrt(maxpixels / terra::ncell(x))
+    target <- terra::rast(nrows = max(1L, floor(nrow(x) * s)),
+      ncols = max(1L, floor(ncol(x) * s)),
+      extent = terra::ext(x), crs = terra::crs(x))
+    x <- terra::resample(x, target, method = "bilinear")
+  }
+  
+  if (!is.null(stretch)) {
+    if (stretch == "lin") {
+      x <- terra::stretch(x, minv = 0, maxv = 255, minq = 0.02, maxq = 0.98)
+    } else {
+      x <- terra::stretch(x, minv = 0, maxv = 255, histeq = TRUE)
+    }
+  }
+  
+  arr <- terra::as.array(x)
+  if (length(dim(arr)) == 2L) dim(arr) <- c(dim(arr), 1L)
+  nr <- dim(arr)[1]; nc <- dim(arr)[2]
+  
+  pick <- function(idx) if (is.na(idx)) matrix(0, nr, nc) else arr[, , idx]
+  R <- pick(rgb_channels[1]); G <- pick(rgb_channels[2]); B <- pick(rgb_channels[3])
+  
+  # normalize to [0,1]: values >1 are assumed to be on a 0-255 scale
+  if (!is.null(stretch)) {
+    # stretch guaranteed 0-255 -> divide by 255 deterministically
+    R <- R/255; G <- G/255; B <- B/255
+  } else {
+    # no stretch: normalize by observed max (handles any input scale)
+    m <- max(c(R, G, B), na.rm = TRUE)
+    if (is.finite(m) && m > 1) { R <- R/m; G <- G/m; B <- B/m }
+  }
+  
+  na_cell <- !is.finite(R) & !is.finite(G) & !is.finite(B)
+  clamp <- function(p) { p[!is.finite(p)] <- 0; pmin(pmax(p, 0), 1) }
+  R <- clamp(R); G <- clamp(G); B <- clamp(B)
+  
+  out <- grDevices::as.raster(array(c(R, G, B), dim = c(nr, nc, 3)))
+  out[na_cell] <- NA
+  out
+}
+
+#-------------------------------------------------------------------------------
 # Convert a base R raster to SpatRaster
 .raster_to_spatraster <- function(r) {
   m <- as.matrix(r)              # char matrix of "#RRGGBB"
@@ -165,45 +236,46 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
 
 #-------------------------------------------------------------------------------
 # Convert a (multi-band) SpatRaster window to a base R raster of colour strings.
-.spatraster_to_raster <- function(x, maxpixels = 4e6) {
-  
-  if (terra::ncell(x) > maxpixels) {
-    scale  <- sqrt(maxpixels / terra::ncell(x))
-    target <- terra::rast(nrows = max(1L, floor(nrow(x) * scale)),
-      ncols = max(1L, floor(ncol(x) * scale)),
-      extent = terra::ext(x), crs = terra::crs(x))
-    x <- terra::resample(x, target, method = "bilinear")
-  }
-  
-  a  <- terra::as.array(x)
-  if (length(dim(a)) == 2L) dim(a) <- c(dim(a), 1L)
-  nb <- dim(a)[3]
-  
-  # scale to [0, 1] by the GLOBAL max across all bands -- preserves channel
-  # balance for RGB display; per-band scaling would shift colour. Values
-  # already within [0, 1] are treated as display-ready and left as-is.
-  m <- max(a, na.rm = TRUE)
-  if (is.finite(m) && m > 1) a <- a / m
-  
-  # Cells non-finite (e.g. NA padding) must stay NA so they render transparent
-  nf <- !is.finite(a)
-  na_cell <- apply(nf, c(1, 2), all)
-  a[nf] <- 0
-  a[] <- pmin(pmax(a, 0), 1)
-  
-  r <- if (nb == 1) {
-    grDevices::as.raster(a[, , 1])
-  } else if (nb == 2) {
-    # as.raster needs 1, 3, or 4 planes; a 2-band array errors. Promote to RGB
-    # with an empty blue channel: band1 -> R, band2 -> G. (a is already clamped
-    # to [0,1] and NA-zeroed above, so these planes are display-ready)
-    rgb <- array(0, dim = c(dim(a)[1], dim(a)[2], 3))
-    rgb[, , 1:2] <- a[, , 1:2]
-    grDevices::as.raster(rgb)
-  } else {
-    grDevices::as.raster(a[, , seq_len(min(nb, 3)), drop = FALSE])
-  }
-  r[na_cell] <- NA
-  r
-}
+# .spatraster_to_raster <- function(x, maxpixels = 4e6) {
+#   
+#   if (terra::ncell(x) > maxpixels) {
+#     scale  <- sqrt(maxpixels / terra::ncell(x))
+#     target <- terra::rast(nrows = max(1L, floor(nrow(x) * scale)),
+#       ncols = max(1L, floor(ncol(x) * scale)),
+#       extent = terra::ext(x), crs = terra::crs(x))
+#     x <- terra::resample(x, target, method = "bilinear")
+#   }
+#   
+#   a  <- terra::as.array(x)
+#   if (length(dim(a)) == 2L) dim(a) <- c(dim(a), 1L)
+#   nb <- dim(a)[3]
+#   
+#   # scale to [0, 1] by the GLOBAL max across all bands -- preserves channel
+#   # balance for RGB display; per-band scaling would shift colour. Values
+#   # already within [0, 1] are treated as display-ready and left as-is.
+#   m <- max(a, na.rm = TRUE)
+#   if (is.finite(m) && m > 1) a <- a / m
+#   
+#   # Cells non-finite (e.g. NA padding) must stay NA so they render transparent
+#   nf <- !is.finite(a)
+#   na_cell <- apply(nf, c(1, 2), all)
+#   a[nf] <- 0
+#   a[] <- pmin(pmax(a, 0), 1)
+#   
+#   r <- if (nb == 1) {
+#     grDevices::as.raster(a[, , 1])
+#   } else if (nb == 2) {
+#     # as.raster needs 1, 3, or 4 planes; a 2-band array errors. Promote to RGB
+#     # with an empty blue channel: band1 -> R, band2 -> G. (a is already clamped
+#     # to [0,1] and NA-zeroed above, so these planes are display-ready)
+#     rgb <- array(0, dim = c(dim(a)[1], dim(a)[2], 3))
+#     rgb[, , 1:2] <- a[, , 1:2]
+#     grDevices::as.raster(rgb)
+#   } else {
+#     grDevices::as.raster(a[, , seq_len(min(nb, 3)), drop = FALSE])
+#   }
+#   r[na_cell] <- NA
+#   r
+# }
+
 

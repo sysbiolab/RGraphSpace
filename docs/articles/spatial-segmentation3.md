@@ -59,8 +59,6 @@ if (packageVersion("RGraphSpace") < "1.5.3"){
 
 # Load packages
 library("RGraphSpace")
-library("SpatialExperiment")
-library("SpatialExperimentIO")
 library("SpatialFeatureExperiment")
 library("sf")
 library("terra")
@@ -107,19 +105,17 @@ The Xenium image is a four-channel fluorescence stack, where each
 channel captures a different aspect of tissue morphology: DAPI (nuclei),
 membrane markers (cell boundaries), 18S rRNA (cytoplasm), and
 αSMA/Vimentin (stroma). To use it as a spatial background, we load the
-stack as a *SpatRaster* object, combine three channels into a
-false-color RGB image, and apply a linear contrast stretch to enhance
-the visibility of the low-intensity fluorescence signal. The resulting
-RGB image will feature ‘cytoplasm’ in red, ‘cell boundaries’ in green,
-and ‘nuclei’ in blue.
+stack as a *SpatRaster* object, which lets us combine channels into a
+false-color RGB image. The RGB image below features ‘cytoplasm’ in red,
+‘cell boundaries’ in green, and ‘nuclei’ in blue.
 
 ``` r
 
 # Xenium 'morphology_focus' is a 4-channel fluorescence image:
-#   [[1]] DAPI                         (nuclei)
-#   [[2]] ATP1A1 / E-Cadherin / CD45   (cell boundaries)
-#   [[3]] 18S rRNA                     (cytoplasm)
-#   [[4]] alphaSMA / Vimentin          (stroma)
+# [[1]] DAPI                         (nuclei)
+# [[2]] ATP1A1 / E-Cadherin / CD45   (cell boundaries)
+# [[3]] 18S rRNA                     (cytoplasm)
+# [[4]] alphaSMA / Vimentin          (stroma)
 
 # The downloaded image is an OME-TIFF pyramid consisting of four 
 # files, each containing multiple resolution levels
@@ -133,7 +129,8 @@ RBioFormats::read.metadata(imgSource(bfi))
 #> 1      2   15697 17112 4     1     1     4    
 #> 1      3   7848  8556  4     1     1     4    
 #> 1      4   3924  4278  4     1     1     4 
- 
+#> ...
+
 # Extract one pyramid level on disk; note: we used a finer
 # level for the downstream plots shown in this tutorial
 sri <- toSpatRasterImage(bfi, resolution = 4L)
@@ -142,20 +139,13 @@ sri <- toSpatRasterImage(bfi, resolution = 4L)
 # data on disk until accessed
 r_spat <- terra::rast(imgSource(sri))
 
-# Compose an RGB background from three channels:
-# R = cytoplasm (ch3), G = boundaries (ch2), B = nuclei (ch1).
-# Fluorescence intensities are low, so a 2%-98% linear stretch
-# to [0, 255] gives a clear, well-contrasted background.
-r_spat <- c(r_spat[[3]], r_spat[[2]], r_spat[[1]]) 
-r_spat <- terra::stretch(r_spat, minv = 0, maxv = 255,
-  minq = 0.02, maxq = 0.98)
-
-# Quick visual check, rotated 90° clockwise. We down-sample BEFORE rotating:
-# Transforming the full-resolution raster can cause a crash or memory overflow.
+# Quick visual check, rotated 90° clockwise. 
+# We down-sample BEFORE rotating: Transforming the full-resolution 
+# raster can cause a crash or memory overflow.
 r_small <- terra::spatSample(r_spat, size = 4e5, 
   method = "regular", as.raster = TRUE)
 terra::plotRGB(terra::trans(terra::flip(r_small, "vertical")),
-  r = 1, g = 2, b = 3)
+  r = 3, g = 2, b = 1, stretch = "lin")
 ```
 
 ![](figs_dev/spe2_main.png)
@@ -267,18 +257,20 @@ my_theme <- theme_gspace_coords(theme = "th3", is_norm = TRUE,
   xlab = "Tissue coordinates 1", ylab = "Tissue coordinates 2")
 ```
 
-Plot the full tissue, nodes colored by *PIGR* expression over the tissue
-image, with cells showing no expression made transparent. A box marks a
-region of interest to crop next.
+We now plot the full coordinate space with nodes colored by *PIGR*
+expression over the tissue image, and cells showing no expression made
+transparent. A box marks a region of interest to crop next. For this
+wide view, we set the background image to one channel, with ‘cytoplasm’
+in blue.
 
 ``` r
 
 # Plot node-level PIGR expression over the tissue image; 
 # a box marks the region of interest
 p <- ggplot(gs) + 
-  annotation_gspace_image(gs, opacity = 1) + 
+  annotation_gspace_image(gs, rgb_channels = c(NA, NA, 3)) + 
   geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
-    alpha = as.numeric(PIGR > 0)  ), size = 0.2, pch = 19) +
+    alpha = as.numeric(PIGR > 0)  ), size = 0.3, pch = 19) +
   scale_colour_continuous(palette = cpal, limits = data_range) +
   scale_alpha_identity() + my_theme +
   annotate("rect", 
@@ -318,7 +310,7 @@ view.
 
 # Plot the cropped region; a second box marks the next crop
 p <- ggplot(gs_crop1) + 
-  annotation_gspace_image(gs_crop1, opacity = 1) + 
+  annotation_gspace_image(gs_crop1, rgb_channels = c(NA, NA, 3)) + 
   geom_nodespace(mapping = aes(colour = log2(PIGR + 1), 
     alpha = as.numeric(PIGR > 0)), size = 0.7, pch = 19) +
   scale_colour_continuous(palette = cpal, limits = data_range) +
@@ -349,13 +341,14 @@ gs_crop2 <- rotateGraphSpace(gs_crop2, clockwise = TRUE)
 At this resolution, the real cell segmentation boundaries can be drawn
 side-by-side with the corresponding tissue image, alongside the node
 centroids. In this plot, we can observe the high-definition tissue image
-on the left and its correct alignment with the segmentation on the
-right.
+on the left and its correct alignment with cell segmentation on the
+right. The RGB image features ‘cytoplasm’ in red, ‘cell boundaries’ in
+green, and ‘nuclei’ in blue.
 
 ``` r
 
 p1 <- ggplot(gs_crop2) + 
-  annotation_gspace_image(gs_crop2, opacity = 1) + 
+  annotation_gspace_image(gs_crop2, rgb_channels = c(3, 2, 1)) + 
   my_theme
 
 p2 <- ggplot(gs_crop2) + 
@@ -365,8 +358,8 @@ p2 <- ggplot(gs_crop2) +
   scale_fill_continuous(palette = cpal, limits = data_range) +
   scale_colour_identity() + my_theme +
     annotate("rect", 
-    xmin = 0.2, xmax = 0.5, 
-    ymin = 0.2, ymax = 0.5, 
+    xmin = 0.2, xmax = 0.7, 
+    ymin = 0.2, ymax = 0.7, 
     fill = NA, colour = "red4", 
     lty = "21", lwd = 1) 
 
@@ -379,22 +372,22 @@ p1 + p2
 
 # Crop to the smaller region and re-normalize coordinates
 gs_crop3 <- cropGraphSpace(gs_crop2, 
-  xmin = 0.2, xmax = 0.5, 
-  ymin = 0.2, ymax = 0.5)
+  xmin = 0.2, xmax = 0.7, 
+  ymin = 0.2, ymax = 0.7)
 gs_crop3 <- normalizeGraphSpace(gs_crop3, mar = 0, norm.geometry = TRUE)
 gs_crop3 <- rotateGraphSpace(gs_crop3, clockwise = TRUE)
 ```
 
-Finally, we reach a zoom level that allows us to examine the subcellular
-segmentation in this high-resolution image (left) and overlay the cell
-and nucleus geometries (right). The cell boundaries are filled according
+Finally, we reach a zoom level that allows us to examine subcellular
+structures (left) along with the cell and nucleus segmentations overlaid
+as nested geometries (right). The cell geometries are filled according
 to *PIGR* expression levels, while the nucleus outlines are shown in
 semi-transparent black.
 
 ``` r
 
 p1 <- ggplot(gs_crop3) + 
-  annotation_gspace_image(gs_crop3, opacity = 1) + 
+  annotation_gspace_image(gs_crop3, rgb_channels = c(3, 2, 1)) + 
   my_theme
 
 p2 <- ggplot(gs_crop3) + 
@@ -432,86 +425,82 @@ p1 + p2
     #> tzcode source: system (glibc)
     #> 
     #> attached base packages:
-    #> [1] stats4    stats     graphics  grDevices utils     datasets  methods  
-    #> [8] base     
+    #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #>  [1] patchwork_1.3.2                 terra_1.9-34                   
-    #>  [3] sf_1.1-1                        SpatialFeatureExperiment_1.14.0
-    #>  [5] SpatialExperimentIO_1.4.0       SpatialExperiment_1.22.0       
-    #>  [7] SingleCellExperiment_1.34.0     SummarizedExperiment_1.42.0    
-    #>  [9] Biobase_2.72.0                  GenomicRanges_1.64.0           
-    #> [11] Seqinfo_1.2.0                   IRanges_2.46.0                 
-    #> [13] S4Vectors_0.50.1                BiocGenerics_0.58.1            
-    #> [15] generics_0.1.4                  MatrixGenerics_1.24.0          
-    #> [17] matrixStats_1.5.0               RGraphSpace_1.5.3              
-    #> [19] ggplot2_4.0.3                  
+    #> [1] patchwork_1.3.2                 terra_1.9-34                   
+    #> [3] sf_1.1-1                        SpatialFeatureExperiment_1.14.0
+    #> [5] RGraphSpace_1.5.3               ggplot2_4.0.3                  
     #> 
     #> loaded via a namespace (and not attached):
-    #>   [1] RColorBrewer_1.1-3        rstudioapi_0.19.0        
-    #>   [3] jsonlite_2.0.0            wk_0.9.5                 
-    #>   [5] magrittr_2.0.5            TH.data_1.1-5            
-    #>   [7] ggbeeswarm_0.7.3          magick_2.9.1             
-    #>   [9] farver_2.1.2              rmarkdown_2.31           
-    #>  [11] fs_2.1.0                  ragg_1.5.2               
-    #>  [13] vctrs_0.7.3               spdep_1.4-2              
-    #>  [15] DelayedMatrixStats_1.34.0 RCurl_1.98-1.19          
-    #>  [17] htmltools_0.5.9           S4Arrays_1.12.0          
-    #>  [19] BiocNeighbors_2.6.0       Rhdf5lib_2.0.0           
-    #>  [21] s2_1.1.11                 LearnBayes_2.15.2        
-    #>  [23] SparseArray_1.12.2        rhdf5_2.56.0             
-    #>  [25] sass_0.4.10               spData_2.3.5             
-    #>  [27] KernSmooth_2.23-27        bslib_0.11.0             
-    #>  [29] htmlwidgets_1.6.4         desc_1.4.3               
-    #>  [31] fontawesome_0.5.3         sandwich_3.1-3           
-    #>  [33] zoo_1.8-15                cachem_1.1.0             
-    #>  [35] igraph_2.3.3              lifecycle_1.0.5          
-    #>  [37] pkgconfig_2.0.3           Matrix_1.7-6             
-    #>  [39] R6_2.6.1                  fastmap_1.2.0            
-    #>  [41] digest_0.6.39             dqrng_0.4.1              
-    #>  [43] textshaping_1.0.5         beachmat_2.28.0          
-    #>  [45] spatialreg_1.4-3          abind_1.4-8              
-    #>  [47] compiler_4.6.1            proxy_0.4-29             
-    #>  [49] bit64_4.8.2               withr_3.0.3              
-    #>  [51] backports_1.5.1           S7_0.2.2                 
-    #>  [53] tiff_0.1-12               BiocParallel_1.46.0      
-    #>  [55] DBI_1.3.0                 HDF5Array_1.40.0         
-    #>  [57] R.utils_2.13.0            MASS_7.3-66              
-    #>  [59] DelayedArray_0.38.2       rjson_0.2.23             
-    #>  [61] classInt_0.4-11           tools_4.6.1              
-    #>  [63] units_1.0-1               vipor_0.4.7              
-    #>  [65] otel_0.2.0                beeswarm_0.4.0           
-    #>  [67] R.oo_1.27.1               glue_1.8.1               
-    #>  [69] h5mread_1.4.0             nlme_3.1-170             
-    #>  [71] EBImage_4.54.0            rhdf5filters_1.24.0      
-    #>  [73] grid_4.6.1                gtable_0.3.6             
-    #>  [75] R.methodsS3_1.8.2         class_7.3-24             
-    #>  [77] tidyr_1.3.2               data.table_1.18.4        
-    #>  [79] tidygraph_1.3.1           sp_2.2-1                 
-    #>  [81] XVector_0.52.0            pillar_1.11.1            
-    #>  [83] limma_3.68.4              splines_4.6.1            
-    #>  [85] dplyr_1.2.1               lattice_0.23-1           
-    #>  [87] survival_3.8-9            bit_4.6.0                
-    #>  [89] deldir_2.0-4              tidyselect_1.2.1         
-    #>  [91] locfit_1.5-9.12           scuttle_1.22.0           
-    #>  [93] sfheaders_0.4.5           knitr_1.51               
-    #>  [95] edgeR_4.10.1              xfun_0.59                
-    #>  [97] statmod_1.5.2             DropletUtils_1.32.0      
-    #>  [99] fftwtools_0.9-11          yaml_2.3.12              
-    #> [101] boot_1.3-32               evaluate_1.0.5           
-    #> [103] codetools_0.2-20          tibble_3.3.1             
-    #> [105] cli_3.6.6                 arrow_24.0.0             
-    #> [107] systemfonts_1.3.2         jquerylib_0.1.4          
-    #> [109] dichromat_2.0-1           Rcpp_1.1.2               
-    #> [111] zeallot_0.2.0             coda_0.19-4.1            
-    #> [113] png_0.1-9                 ggrastr_1.0.2            
-    #> [115] parallel_4.6.1            pkgdown_2.2.0            
-    #> [117] assertthat_0.2.1          jpeg_0.1-11              
-    #> [119] marginaleffects_0.32.0    sparseMatrixStats_1.24.0 
-    #> [121] bitops_1.0-9              mvtnorm_1.4-1            
-    #> [123] scales_1.4.0              e1071_1.7-17             
-    #> [125] purrr_1.2.2               rlang_1.3.0              
-    #> [127] multcomp_1.4-31
+    #>   [1] RColorBrewer_1.1-3          rstudioapi_0.19.0          
+    #>   [3] jsonlite_2.0.0              wk_0.9.5                   
+    #>   [5] magrittr_2.0.5              TH.data_1.1-5              
+    #>   [7] ggbeeswarm_0.7.3            magick_2.9.1               
+    #>   [9] farver_2.1.2                rmarkdown_2.31             
+    #>  [11] fs_2.1.0                    ragg_1.5.2                 
+    #>  [13] vctrs_0.7.3                 spdep_1.4-2                
+    #>  [15] DelayedMatrixStats_1.34.0   RCurl_1.98-1.19            
+    #>  [17] htmltools_0.5.9             S4Arrays_1.12.0            
+    #>  [19] BiocNeighbors_2.6.0         Rhdf5lib_2.0.0             
+    #>  [21] s2_1.1.11                   SparseArray_1.12.2         
+    #>  [23] rhdf5_2.56.0                LearnBayes_2.15.2          
+    #>  [25] sass_0.4.10                 spData_2.3.5               
+    #>  [27] KernSmooth_2.23-27          bslib_0.11.0               
+    #>  [29] htmlwidgets_1.6.4           desc_1.4.3                 
+    #>  [31] fontawesome_0.5.3           sandwich_3.1-3             
+    #>  [33] zoo_1.8-15                  cachem_1.1.0               
+    #>  [35] igraph_2.3.3                lifecycle_1.0.5            
+    #>  [37] pkgconfig_2.0.3             Matrix_1.7-6               
+    #>  [39] R6_2.6.1                    fastmap_1.2.0              
+    #>  [41] MatrixGenerics_1.24.0       digest_0.6.39              
+    #>  [43] S4Vectors_0.50.1            dqrng_0.4.1                
+    #>  [45] textshaping_1.0.5           GenomicRanges_1.64.0       
+    #>  [47] beachmat_2.28.0             spatialreg_1.4-3           
+    #>  [49] abind_1.4-8                 compiler_4.6.1             
+    #>  [51] proxy_0.4-29                withr_3.0.3                
+    #>  [53] backports_1.5.1             S7_0.2.2                   
+    #>  [55] tiff_0.1-12                 BiocParallel_1.46.0        
+    #>  [57] DBI_1.3.0                   HDF5Array_1.40.0           
+    #>  [59] R.utils_2.13.0              MASS_7.3-66                
+    #>  [61] DelayedArray_0.38.2         rjson_0.2.23               
+    #>  [63] classInt_0.4-11             tools_4.6.1                
+    #>  [65] units_1.0-1                 vipor_0.4.7                
+    #>  [67] otel_0.2.0                  beeswarm_0.4.0             
+    #>  [69] R.oo_1.27.1                 glue_1.8.1                 
+    #>  [71] h5mread_1.4.0               nlme_3.1-170               
+    #>  [73] EBImage_4.54.0              rhdf5filters_1.24.0        
+    #>  [75] grid_4.6.1                  generics_0.1.4             
+    #>  [77] gtable_0.3.6                R.methodsS3_1.8.2          
+    #>  [79] class_7.3-24                tidyr_1.3.2                
+    #>  [81] data.table_1.18.4           tidygraph_1.3.1            
+    #>  [83] sp_2.2-1                    XVector_0.52.0             
+    #>  [85] BiocGenerics_0.58.1         pillar_1.11.1              
+    #>  [87] limma_3.68.4                splines_4.6.1              
+    #>  [89] dplyr_1.2.1                 lattice_0.23-1             
+    #>  [91] survival_3.8-9              deldir_2.0-4               
+    #>  [93] tidyselect_1.2.1            SingleCellExperiment_1.34.0
+    #>  [95] locfit_1.5-9.12             scuttle_1.22.0             
+    #>  [97] sfheaders_0.4.5             knitr_1.51                 
+    #>  [99] IRanges_2.46.0              Seqinfo_1.2.0              
+    #> [101] edgeR_4.10.1                SummarizedExperiment_1.42.0
+    #> [103] stats4_4.6.1                xfun_0.59                  
+    #> [105] Biobase_2.72.0              statmod_1.5.2              
+    #> [107] DropletUtils_1.32.0         matrixStats_1.5.0          
+    #> [109] fftwtools_0.9-11            yaml_2.3.12                
+    #> [111] boot_1.3-32                 evaluate_1.0.5             
+    #> [113] codetools_0.2-20            tibble_3.3.1               
+    #> [115] cli_3.6.6                   systemfonts_1.3.2          
+    #> [117] jquerylib_0.1.4             dichromat_2.0-1            
+    #> [119] Rcpp_1.1.2                  zeallot_0.2.0              
+    #> [121] coda_0.19-4.1               png_0.1-9                  
+    #> [123] ggrastr_1.0.2               parallel_4.6.1             
+    #> [125] pkgdown_2.2.0               jpeg_0.1-11                
+    #> [127] marginaleffects_0.32.0      sparseMatrixStats_1.24.0   
+    #> [129] bitops_1.0-9                SpatialExperiment_1.22.0   
+    #> [131] mvtnorm_1.4-1               scales_1.4.0               
+    #> [133] e1071_1.7-17                purrr_1.2.2                
+    #> [135] rlang_1.3.0                 multcomp_1.4-31
 
 ## References
 

@@ -12,7 +12,9 @@ annotation_gspace_image(
   opacity = 1,
   flip.v = FALSE,
   flip.h = FALSE,
-  na.color = NA
+  na.color = NA,
+  rgb_channels = c(1, 2, 3),
+  stretch = c("lin", "hist")
 )
 ```
 
@@ -26,6 +28,10 @@ annotation_gspace_image(
     [`GraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
     object — the image is extracted via
     [`gs_image`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md).
+
+  - A
+    [`SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html))
+    object.
 
   - A `raster` object (see
     [`as.raster`](https://rdrr.io/r/grDevices/as.raster.html)).
@@ -57,6 +63,22 @@ annotation_gspace_image(
 - na.color:
 
   The colour to map to NA values. Defaults to `NA`.
+
+- rgb_channels:
+
+  When a
+  [`SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+  is provided, an integer vector of length 3 giving the layers to use as
+  the red, green, and blue channels. Use `NA` for an empty channel (e.g.
+  `c(3, 2, NA)`). Defaults to `c(1, 2, 3)`.
+
+- stretch:
+
+  When a
+  [`SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+  is provided, option to stretch RGB values to increase contrast: "lin"
+  (linear) or "hist" (histogram). To disable, set `stretch = NULL`. See
+  [`plotRGB`](https://rspatial.github.io/terra/reference/plotRGB.html).
 
 ## Value
 
