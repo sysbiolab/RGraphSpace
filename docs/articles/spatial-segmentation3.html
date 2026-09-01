@@ -102,7 +102,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-08-31</h4>
+            <h4 data-toc-skip class="date">2026-09-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/spatial-segmentation3.Rmd" class="external-link"><code>vignettes/articles/spatial-segmentation3.Rmd</code></a></small>
       <div class="d-none name"><code>spatial-segmentation3.Rmd</code></div>
@@ -220,7 +220,7 @@ into a false-color RGB image.</p>
 <span><span class="co">#&gt; ...</span></span>
 <span></span>
 <span><span class="co"># Extract one pyramid level and write it to disk at 4L</span></span>
-<span><span class="co"># (we used 2L resolution for the tutorial plots)</span></span>
+<span><span class="co"># (we used 2L resolution for the plots in this tutorial)</span></span>
 <span><span class="va">sri</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/toSpatRasterImage.html" class="external-link">toSpatRasterImage</a></span><span class="op">(</span><span class="va">bfi</span>, resolution <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Read the extracted level as a SpatRaster, keeping the raster </span></span>
@@ -251,47 +251,47 @@ blue.</p>
 <div class="section level3">
 <h3 id="attach-tissue-image-and-geometries">Attach tissue image and geometries<a class="anchor" aria-label="anchor" href="#attach-tissue-image-and-geometries"></a>
 </h3>
-<p>We attach the tissue image and align it with the graph using a scale
-factor that converts between the node coordinates (in microns) and the
-image (in pixels). We derive this factor from the image’s extent and
-dimensions: the square root of the pixel-to-micron area ratio gives
-pixels per micron. We then attach the nested cell and nucleus
-segmentations as <code>sf</code> geometries.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add tissue image</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">r_spat</span></span>
 <span></span>
-<span><span class="co"># Unlike datasets with pre-aligned image/coordinates, this Xenium data</span></span>
-<span><span class="co"># needs a pixel-per-micron scale factor (nodes in microns, image in pixels)</span></span>
+<span><span class="co"># Add cell geometry </span></span>
+<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"cell_geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/colGeometries.html" class="external-link">cellSeg</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#-- image area in microns (spatial extent)</span></span>
+<span><span class="co"># Add nucleus geometry </span></span>
+<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"nucleus_geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/colGeometries.html" class="external-link">nucSeg</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span></span></code></pre></div>
+<p>Unlike datasets with pre-aligned image and coordinates, this Xenium
+data needs a pixel-per-micron scale factor to align the graph with the
+attached tissue image, converting between the node coordinates (in
+microns) and the image (in pixels). We derive this factor from the
+image’s extent and dimensions: the square root of the pixel-to-micron
+area ratio gives pixels per micron.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Image area in microns (from the spatial extent)</span></span>
 <span><span class="va">e</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="va">r_spat</span><span class="op">)</span></span>
 <span><span class="va">area_microns</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">e</span><span class="op">$</span><span class="va">xmax</span> <span class="op">-</span> <span class="va">e</span><span class="op">$</span><span class="va">xmin</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="va">e</span><span class="op">$</span><span class="va">ymax</span> <span class="op">-</span> <span class="va">e</span><span class="op">$</span><span class="va">ymin</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#-- image area in pixels</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">r_spat</span><span class="op">)</span>                  </span>
+<span><span class="co"># Image area in pixels (nrow x ncol)</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">r_spat</span><span class="op">)</span></span>
 <span><span class="va">area_pixels</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">d</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">d</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#-- linear scale factor: sqrt(pixels / area) = pixels per micron</span></span>
+<span><span class="co"># Linear scale factor: pixels per micron</span></span>
 <span><span class="va">lsf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span> <span class="va">area_pixels</span> <span class="op">/</span> <span class="va">area_microns</span> <span class="op">)</span></span>
+<span></span>
+<span><span class="co">#-- this print shows lsf computed for 4L resolution</span></span>
+<span><span class="co">#-- (see Xenium image load)</span></span>
 <span><span class="va">lsf</span></span>
-<span><span class="co">#&gt; 0.5882353 </span></span>
+<span><span class="co">#&gt; 0.5882353</span></span>
 <span></span>
-<span><span class="co"># Update 'gs_scale_factor'</span></span>
-<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_scale_factor</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">lsf</span></span>
-<span></span>
-<span><span class="co"># Add cell geometry </span></span>
-<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"cell_geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/colGeometries.html" class="external-link">cellSeg</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="co"># Add nucleus geometry </span></span>
-<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"nucleus_geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/colGeometries.html" class="external-link">nucSeg</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="co"># Set the scale factor on the GraphSpace object</span></span>
+<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_scale_factor</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">lsf</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="normalize-node-and-geometry-coordinates">Normalize node and geometry coordinates<a class="anchor" aria-label="anchor" href="#normalize-node-and-geometry-coordinates"></a>
 </h3>
 <p>Next, we examine the spatial boundaries of the nodes relative to the
 image. The node coordinates fall within the image dimensions.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gs</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
 <span><span class="co">#&gt; IGRAPH fec0602 UN-- 340837 0 -- </span></span>
@@ -313,7 +313,7 @@ image. The node coordinates fall within the image dimensions.</p>
 <code>norm.geometry = TRUE</code> so the cell and nucleus polygons are
 normalized alongside the nodes. We then rotate the object to match the
 orientation of the tissue image shown above.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Normalize node coordinates to the image space</span></span>
 <span><span class="co"># -- this may take a few secs due to the large number of geometries!</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, mar <span class="op">=</span> <span class="fl">0</span>, norm.geometry <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -325,7 +325,7 @@ orientation of the tissue image shown above.</p>
 <div class="section level2">
 <h2 id="spatial-feature-visualization">Spatial feature visualization<a class="anchor" aria-label="anchor" href="#spatial-feature-visualization"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Inspect the data range</span></span>
 <span><span class="co"># log2(range(gs[["fdata"]]) + 1)</span></span>
 <span></span>
@@ -341,7 +341,7 @@ orientation of the tissue image shown above.</p>
 expression made transparent. A box marks a region of interest to crop
 next. For this wide view, we set the background image to one channel,
 with ‘cytoplasm’ in blue.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot node-level PIGR expression over the tissue image; </span></span>
 <span><span class="co"># a box marks the region of interest</span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -363,7 +363,7 @@ viewed window into a display canvas whose resolution is capped by
 <code>maxpixels</code>. Because this fixed pixel budget now covers a
 smaller area, zooming in yields progressively finer detail. The default
 works well in most cases.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Current pixel budget for the display canvas (adjustable if needed)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_image_maxpixels</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 4e+06</span></span>
@@ -376,7 +376,7 @@ works well in most cases.</p>
 <span><span class="va">gs_crop1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">rotateGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop1</span>, clockwise <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Zooming further, a second box outlines a smaller region for a closer
 view.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the cropped region; a second box marks the next crop</span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_crop1</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_crop1</span>, rgb_channels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -393,7 +393,7 @@ view.</p>
 <span><span class="va">p</span></span></code></pre></div>
 <p><img src="figs_dev/spe2_seg2.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>Crop to this smaller region.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Crop to the smaller region and re-normalize coordinates</span></span>
 <span><span class="va">gs_crop2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">cropGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop1</span>, </span>
 <span>  xmin <span class="op">=</span> <span class="fl">0.2</span>, xmax <span class="op">=</span> <span class="fl">0.5</span>, </span>
@@ -406,7 +406,7 @@ node centroids. In this plot, we can observe the high-definition tissue
 image on the left and its correct alignment with cell segmentation on
 the right. The RGB image features ‘cytoplasm’ in red, ‘cell boundaries’
 in green, and ‘nuclei’ in blue.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_crop2</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_crop2</span>, rgb_channels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="va">my_theme</span></span>
@@ -425,7 +425,7 @@ in green, and ‘nuclei’ in blue.</p>
 <span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
 <p><img src="figs_dev/spe2_seg3.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Crop to the smaller region and re-normalize coordinates</span></span>
 <span><span class="va">gs_crop3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">cropGraphSpace</a></span><span class="op">(</span><span class="va">gs_crop2</span>, </span>
 <span>  xmin <span class="op">=</span> <span class="fl">0.2</span>, xmax <span class="op">=</span> <span class="fl">0.7</span>, </span>
@@ -437,7 +437,7 @@ structures (left), with cell and nucleus segmentations overlaid as
 nested geometries (right). The cell geometries are filled according to
 <em>PIGR</em> expression levels, while the nucleus outlines are shown in
 semi-transparent black.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_crop3</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/annotation_gspace_image.html">annotation_gspace_image</a></span><span class="op">(</span><span class="va">gs_crop3</span>, rgb_channels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="va">my_theme</span></span>
