@@ -219,8 +219,8 @@ into a false-color RGB image.</p>
 <span><span class="co">#&gt; 1      4   3924  4278  4     1     1     4 </span></span>
 <span><span class="co">#&gt; ...</span></span>
 <span></span>
-<span><span class="co"># Extract one pyramid level and write it to disk, at 4L resolution</span></span>
-<span><span class="co"># (we used a finer level for the plots shown in this tutorial)</span></span>
+<span><span class="co"># Extract one pyramid level and write it to disk at 4L</span></span>
+<span><span class="co"># (we used 2L resolution for the tutorial plots)</span></span>
 <span><span class="va">sri</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/toSpatRasterImage.html" class="external-link">toSpatRasterImage</a></span><span class="op">(</span><span class="va">bfi</span>, resolution <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Read the extracted level as a SpatRaster, keeping the raster </span></span>
@@ -237,7 +237,7 @@ into a false-color RGB image.</p>
 <p>For this RGB image we set the fluorescence channels to show
 ‘cytoplasm’ in red, ‘cell boundaries’ in green, and ‘nuclei’ in
 blue.</p>
-<p><img src="figs_dev/spe2_main.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="figs_dev/spe2_main.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -357,7 +357,7 @@ with ‘cytoplasm’ in blue.</p>
 <span>    lty <span class="op">=</span> <span class="st">"21"</span>, lwd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p</span></span></code></pre></div>
-<p><img src="figs_dev/spe2_seg1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="figs_dev/spe2_seg1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>As we crop into smaller regions, <em>RGraphSpace</em> re-renders the
 viewed window into a display canvas whose resolution is capped by
 <code>maxpixels</code>. Because this fixed pixel budget now covers a
@@ -391,7 +391,7 @@ view.</p>
 <span>    lty <span class="op">=</span> <span class="st">"21"</span>, lwd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p</span></span></code></pre></div>
-<p><img src="figs_dev/spe2_seg2.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="figs_dev/spe2_seg2.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>Crop to this smaller region.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Crop to the smaller region and re-normalize coordinates</span></span>

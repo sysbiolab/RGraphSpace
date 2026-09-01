@@ -117,8 +117,8 @@ RBioFormats::read.metadata(imgSource(bfi))
 #> 1      4   3924  4278  4     1     1     4 
 #> ...
 
-# Extract one pyramid level and write it to disk, at 4L resolution
-# (we used a finer level for the plots shown in this tutorial)
+# Extract one pyramid level and write it to disk at 4L
+# (we used 2L resolution for the tutorial plots)
 sri <- toSpatRasterImage(bfi, resolution = 4L)
 
 # Read the extracted level as a SpatRaster, keeping the raster 
@@ -146,7 +146,7 @@ For this RGB image we set the fluorescence channels to show 'cytoplasm' in red, 
 # dev.off()
 ```
 
-```{r spe2_main, echo=FALSE, out.width = '100%', purl=FALSE}
+```{r spe2_main, echo=FALSE, out.width = '90%', purl=FALSE}
 knitr::include_graphics("figs_dev/spe2_main.png")
 ```
 
@@ -268,7 +268,7 @@ p
 #   height=5, width=5, units="in", device="png", dpi=200, plot=p)
 ```
 
-```{r spe_seg2, echo=FALSE, out.width = '100%', purl=FALSE}
+```{r spe_seg2, echo=FALSE, out.width = '90%', purl=FALSE}
 knitr::include_graphics("figs_dev/spe2_seg1.png")
 ```
 
@@ -311,7 +311,7 @@ p
 #   height=5, width=5, units="in", device="png", dpi=150, plot=p)
 ```
 
-```{r spe2_seg2, echo=FALSE, out.width = '100%', purl=FALSE}
+```{r spe2_seg2, echo=FALSE, out.width = '90%', purl=FALSE}
 knitr::include_graphics("figs_dev/spe2_seg2.png")
 ```
 
