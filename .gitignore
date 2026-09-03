@@ -34,8 +34,6 @@ src/*.dll
 
 # R check output
 /*.Rcheck/
-/man/
-/doc/
 
 # Security: credentials - secrets
 .Renviron

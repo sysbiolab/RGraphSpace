@@ -106,8 +106,7 @@ channel captures a different aspect of tissue morphology: DAPI (nuclei),
 membrane markers (cell boundaries), 18S rRNA (cytoplasm), and
 αSMA/Vimentin (stroma). To use it as a spatial background, we load the
 stack as a *SpatRaster* object, which lets us combine channels into a
-false-color RGB image. The RGB image below features ‘cytoplasm’ in red,
-‘cell boundaries’ in green, and ‘nuclei’ in blue.
+false-color RGB image.
 
 ``` r
 
@@ -131,8 +130,8 @@ RBioFormats::read.metadata(imgSource(bfi))
 #> 1      4   3924  4278  4     1     1     4 
 #> ...
 
-# Extract one pyramid level on disk; note: we used a finer
-# level for the downstream plots shown in this tutorial
+# Extract one pyramid level and write it to disk at 4L
+# (we used 2L resolution for the plots in this tutorial)
 sri <- toSpatRasterImage(bfi, resolution = 4L)
 
 # Read the extracted level as a SpatRaster, keeping the raster 
@@ -148,6 +147,9 @@ terra::plotRGB(terra::trans(terra::flip(r_small, "vertical")),
   r = 3, g = 2, b = 1, stretch = "lin")
 ```
 
+For this RGB image we set the fluorescence channels to show ‘cytoplasm’
+in red, ‘cell boundaries’ in green, and ‘nuclei’ in blue.
+
 ![](figs_dev/spe2_main.png)
 
 ## Creating a GraphSpace object
@@ -162,42 +164,45 @@ gs <- as.GraphSpace(sfe, assay = "counts")
 
 ### Attach tissue image and geometries
 
-We attach the tissue image and align it with the graph using a scale
-factor that converts between the node coordinates (in microns) and the
-image (in pixels). We derive this factor from the image’s extent and
-dimensions: the square root of the pixel-to-micron area ratio gives
-pixels per micron. We then attach the nested cell and nucleus
-segmentations as `sf` geometries.
-
 ``` r
 
 # Add tissue image
 gs_image(gs) <- r_spat
 
-# Unlike datasets with pre-aligned image/coordinates, this Xenium data
-# needs a pixel-per-micron scale factor (nodes in microns, image in pixels)
+# Add cell geometry 
+gs_geometry(gs, "cell_geometry") <- cellSeg(sfe)
 
-#-- image area in microns (spatial extent)
+# Add nucleus geometry 
+gs_geometry(gs, "nucleus_geometry") <- nucSeg(sfe)
+```
+
+Unlike datasets with pre-aligned image and coordinates, this Xenium data
+needs a pixel-per-micron scale factor to align the graph with the
+attached tissue image, converting between the node coordinates (in
+microns) and the image (in pixels). We derive this factor from the
+image’s extent and dimensions: the square root of the pixel-to-micron
+area ratio gives pixels per micron.
+
+``` r
+
+# Image area in microns (from the spatial extent)
 e <- terra::ext(r_spat)
 area_microns <- (e$xmax - e$xmin) * (e$ymax - e$ymin)
 
-#-- image area in pixels
-d <- dim(r_spat)                  
+# Image area in pixels (nrow x ncol)
+d <- dim(r_spat)
 area_pixels <- (d[1] * d[2])
 
-#-- linear scale factor: sqrt(pixels / area) = pixels per micron
+# Linear scale factor: pixels per micron
 lsf <- sqrt( area_pixels / area_microns )
+
+#-- this print shows lsf computed for 4L resolution
+#-- (see Xenium image load)
 lsf
-#> 0.5882353 
+#> 0.5882353
 
-# Update 'gs_scale_factor'
+# Set the scale factor on the GraphSpace object
 gs_scale_factor(gs) <- lsf
-
-# Add cell geometry 
-gs_geometry(gs, "cell_geometry") <- cellSeg(sfe) 
-
-# Add nucleus geometry 
-gs_geometry(gs, "nucleus_geometry") <- nucSeg(sfe) 
 ```
 
 ### Normalize node and geometry coordinates
@@ -379,9 +384,9 @@ gs_crop3 <- rotateGraphSpace(gs_crop3, clockwise = TRUE)
 ```
 
 Finally, we reach a zoom level that allows us to examine subcellular
-structures (left) along with the cell and nucleus segmentations overlaid
-as nested geometries (right). The cell geometries are filled according
-to *PIGR* expression levels, while the nucleus outlines are shown in
+structures (left), with cell and nucleus segmentations overlaid as
+nested geometries (right). The cell geometries are filled according to
+*PIGR* expression levels, while the nucleus outlines are shown in
 semi-transparent black.
 
 ``` r

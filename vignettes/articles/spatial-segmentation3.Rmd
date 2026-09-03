@@ -398,6 +398,25 @@ p1 + p2
 knitr::include_graphics("figs_dev/spe2_seg4.png")
 ```
 
+
+```{r , eval=FALSE, message=FALSE, results='hide', include=FALSE}
+# Downstream graph manipulation 
+
+gs_crop3_subset <- gs_crop3 |> gs_subset_nodes(rank(-PIGR) <= 10)
+
+ggplot(gs_crop3) + 
+  geom_sf( aes(geometry = cell_geometry, fill = log2(PIGR + 1) ), 
+    colour = adjustcolor("white", 1)) +
+  geom_sf( aes(geometry = nucleus_geometry), 
+    fill = adjustcolor("black", 0.5), colour = NA) +
+  geom_nodespace(data=gs_crop3_subset, colour = "cyan", 
+    size = 2, pch = 4, stroke = 2) +
+  scale_fill_continuous(palette = cpal, limits = data_range) +
+  scale_colour_identity() + my_theme
+
+```
+
+
 # Session information
 
 ```{r label='Session information', eval=TRUE, echo=FALSE}
