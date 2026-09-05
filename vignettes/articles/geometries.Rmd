@@ -42,6 +42,9 @@ Below, we construct a star-like network with varying node sizes to show how the 
 
 ```{r Load packages, eval=TRUE, message=FALSE}
 #--- Load packages
+if (!requireNamespace("sf", quietly = TRUE)) {
+    install.packages("sf")
+}
 library("RGraphSpace")
 library("igraph")
 library("ggplot2")
