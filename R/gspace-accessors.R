@@ -76,9 +76,11 @@
 #' # undo scaling 
 #' gs_scale_factor(gs) <- 1
 #' 
-#' # add an 'sfc' geometry column
-#' pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
-#' gs_geometry(gs) <- sf::st_sfc(pts)
+#' # add an 'sfc' geometry column (requires the optional 'sf' package)
+#' if (requireNamespace("sf", quietly = TRUE)) {
+#'   pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
+#'   gs_geometry(gs) <- sf::st_sfc(pts)
+#' }
 #' 
 #' @name GraphSpace-accessors
 #' @aliases names

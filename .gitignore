@@ -58,9 +58,7 @@ data/private/
 *.csv
 *.xlsx
 *.xls
-*.rds
 *.rda
-*.RData
 
 # OS & system files
 # Ubuntu/Linux
