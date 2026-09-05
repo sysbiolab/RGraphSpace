@@ -43,13 +43,14 @@ the geometry vignette for examples, and \code{\link{sfshape_stars}} for
 the star-shaped equivalent.
 }
 \examples{
+\dontshow{if (requireNamespace("sf", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 pentagon <- sfshape_ngon(0, 0, sides = 5, radius = 1)
 hexagon  <- sfshape_ngon(2, 0, sides = 6, radius = 1)
 plot(sf::st_sfc(pentagon, hexagon))
 
 many <- sfshape_ngons(7, sides = c(3, 5, 8), radius = 0.4)
 plot(many)
-
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link{sfshape_stars}}
