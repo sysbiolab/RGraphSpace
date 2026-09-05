@@ -123,9 +123,7 @@ gs_subset_nodes <- function(x, i) {
     rlang::abort("'x' must be a GraphSpace object.")
   }
   
-  nodes <- x@nodes
-  
-  if (nrow(nodes) == 0) {
+  if (gs_vcount(x) == 0) {
     rlang::warn("The 'GraphSpace' object has no nodes to filter.")
     return(invisible(x))
   }
@@ -135,7 +133,9 @@ gs_subset_nodes <- function(x, i) {
   }
   
   i_quo <- rlang::enquo(i)
-  idx   <- .resolve_gs_index(i_quo, data = nodes, what = "node")
+  fvars <- all.vars(rlang::quo_get_expr(i_quo))
+  nodes <- gs_nodes(x, vars = fvars)
+  idx <- .resolve_gs_index(i_quo, data = nodes, what = "node")
   
   # Nothing to do when every node survives
   if (setequal(idx, seq_len(nrow(nodes)))) {

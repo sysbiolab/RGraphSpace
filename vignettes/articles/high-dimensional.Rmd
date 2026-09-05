@@ -46,7 +46,7 @@ This vignette assumes prior experience with [*Seurat*](https://satijalab.org/seu
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.2"){
+if (packageVersion("RGraphSpace") < "1.5.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -105,11 +105,11 @@ We now apply `as.GraphSpace()` to coerce the `Seurat` object into a `GraphSpace`
 ```{r Create a GraphSpace - 1, eval=FALSE, message=FALSE, results='hide'}
 # Create a GraphSpace from 'seurat_obj'
 gs <- as.GraphSpace(seurat_obj, space = "embedding", reduction = "umap")
-#> Seurat object converted to GraphSpace:
-#> ℹ space=embedding, layer=default, features=13714, samples=2638, reduction="umap"
-#> Node spatial boundaries:
-#> ℹ x: [-9, 13] (cols)
-#> ℹ y: [-9, 14] (rows)
+#> Coercing 'Seurat' to 'GraphSpace'...
+#> Converting input data to an 'igraph' object...
+#> Validating the 'igraph' object...
+#> Creating a 'GraphSpace' object...
+#> Adding 'layer' data to the 'GraphSpace' object...
 ```
 
 ```{r Create a GraphSpace - 2, eval=FALSE, message=FALSE, results='hide'}

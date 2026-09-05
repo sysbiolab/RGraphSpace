@@ -34,6 +34,7 @@ install.packages("patchwork")
 # Used in the general-purpose vignettes
 install.packages("ggraph")
 install.packages("dplyr")
+install.packages("sf")
 install.packages("geometry")
 install.packages("maps")
 install.packages("flightsbr")
@@ -42,6 +43,7 @@ install.packages("BiocManager")
 BiocManager::install("RedeR")
 
 # Used in the advanced vignettes
+install.packages("terra")
 install.packages("Seurat")
 BiocManager::install("glmGamPoi")
 BiocManager::install("SpatialExperiment")
@@ -50,11 +52,3 @@ BiocManager::install("VisiumIO")
 BiocManager::install("OSTA.data")
 remotes::install_github("satijalab/seurat-data")
 ```
-
-## Citation
-
-* Sysbiolab Team. "RGraphSpace: A lightweight interface between igraph and ggplot2 graphics." R package, 2023. Doi: 10.32614/CRAN.package.RGraphSpace
-
-## Licenses
-
-The *PathwaySpace* package is distributed under [Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)

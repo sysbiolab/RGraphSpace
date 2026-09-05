@@ -52,7 +52,7 @@ as.GraphSpace(x, layer = NULL, space = c("embedding", "spatial"), ...)
 - layer:
 
   Name of the layer in the
-  [`Seurat`](https://satijalab.org/seurat/reference/Seurat-package.html)
+  [`Seurat`](https://satijalab.github.io/seurat-object/reference/Seurat-class.html)
   object from which node data should be retrieved (see
   [`LayerData`](https://satijalab.github.io/seurat-object/reference/Layers.html)).
 

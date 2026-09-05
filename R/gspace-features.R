@@ -167,6 +167,27 @@ gs_add_features <- function(x, data) {
     data <- result
   }
   
+  # Merge into existing fdata instead of overwriting it
+  if (.has_fdata(x)) {
+    old <- gs_fdata(x)
+    if (!identical(rownames(old), node_ids)) {
+      # setValidity guarantees the alignment on any valid object, 
+      # so this only fires if something upstream corrupted the object.
+      rlang::abort(
+        "Internal error: existing 'fdata' row names do not match node identifiers."
+      )
+    }
+    dup_cols <- intersect(colnames(old), colnames(data))
+    if (length(dup_cols) > 0) {
+      rlang::inform(sprintf(
+        "Replacing %d existing feature(s): %s",
+        length(dup_cols), paste(dup_cols, collapse = ", ")
+      ))
+      old <- old[, setdiff(colnames(old), dup_cols), drop = FALSE]
+    }
+    data <- cbind(old, data)
+  }
+  
   # Load fdata slot
   x@fdata <- data
   

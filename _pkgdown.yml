@@ -69,7 +69,7 @@ navbar:
       - text: "Spatial segmentation with SpatialExperiment"
         href: articles/spatial-segmentation2.html
       - text: "Nested geometries and high-resolution images"
-        href: articles/spatial-segmentation3.html
+        href: articles/nested-geometries.html
     - text: Index
       href: reference/index.html
 
@@ -95,6 +95,7 @@ reference:
     - gs_subset
     - gs_add_nodes
     - gs_add_edges
+    - gs_compute
     - GraphSpace-subscript
     
 - title: Features

@@ -4,9 +4,9 @@
 \name{RGraphSpace-package}
 \alias{RGraphSpace}
 \alias{RGraphSpace-package}
-\title{RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics}
+\title{RGraphSpace: Rendering Graphs as Coherent Spatial Objects in 'ggplot2'}
 \description{
-An interface for rendering 'igraph' objects as 'ggplot2' graphics within a normalized coordinate space. 'RGraphSpace' implements new geometries that treat a graph as a single coherent object, synchronizing node and edge layers under standard aesthetic mappings. Node features are resolved on demand, supporting high-dimensional data without expanding node tables. Spatial alignment is available at the pixel level, with node coordinates anchored to pixel centers through a half-pixel offset, enabling precise node positioning over external reference frames such as images and maps.
+An interface for rendering 'igraph' objects as 'ggplot2' graphics within a normalized coordinate space. 'RGraphSpace' implements new geometries that treat a graph as a single coherent object, synchronizing node and edge layers under standard aesthetic mappings. Node features are resolved on demand, supporting high-dimensional data without expanding node tables. Spatial alignment is available at the pixel level, with node coordinates anchored to pixel centers through a half-pixel offset, enabling precise node positioning over external reference frames such as images and maps. Core functionality builds on 'igraph', 'ggplot2', and 'tidygraph'; optional geometry and large raster-background images use 'sf' and 'terra' when installed.
 }
 \details{
 For a hands-on introduction, see the vignette:
@@ -17,8 +17,8 @@ running \code{help.start()} and selecting the RGraphSpace package
 from the package list.
 }
 \references{
-Sysbiolab Team (2026). \emph{RGraphSpace: A lightweight interface between
-'igraph' and 'ggplot2' graphics}. R package version 1.5.3 (Doi:
+Sysbiolab Team (2026). \emph{RGraphSpace: Rendering graphs as coherent
+spatial objects in ggplot2}. R package version 1.5.4 (Doi:
 10.32614/CRAN.package.RGraphSpace),
 \url{https://CRAN.R-project.org/package=RGraphSpace}.
 }
@@ -36,15 +36,15 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Sysbiolab Team
+  \item Mauro Castro \email{mauro.a.castro@gmail.com} (\href{https://orcid.org/0000-0003-4942-8131}{ORCID})
+  \item Flávio Kessler
+  \item Jonathan Back
+  \item Lana Querne
+  \item Victor Apolonio
 }
 
 Other contributors:
 \itemize{
-  \item Flávio Kessler [contributor]
-  \item Jonathan Back [contributor]
-  \item Lana Querne [contributor]
-  \item Victor Apolonio [contributor]
   \item Vinicius Chagas [contributor]
 }
 

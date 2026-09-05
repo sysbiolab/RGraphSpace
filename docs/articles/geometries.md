@@ -2,12 +2,12 @@
 
   
 
-**Package**: RGraphSpace 1.5.3
+**Package**: RGraphSpace 1.5.4
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.2"){
+if (packageVersion("RGraphSpace") < "1.5.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -128,22 +128,22 @@ ggplot(gs_star) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] sf_1.1-1          igraph_2.3.3      RGraphSpace_1.5.3 ggplot2_4.0.3    
+    #> [1] sf_1.1-2          igraph_2.3.3      RGraphSpace_1.5.4 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] tidyr_1.3.2        sass_0.4.10        generics_0.1.4     class_7.3-24      
+    #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        class_7.3-24      
     #>  [5] KernSmooth_2.23-27 lattice_0.23-1     digest_0.6.39      magrittr_2.0.5    
     #>  [9] evaluate_1.0.5     grid_4.6.1         RColorBrewer_1.1-3 fastmap_1.2.0     
-    #> [13] Matrix_1.7-6       jsonlite_2.0.0     e1071_1.7-17       ggrastr_1.0.2     
-    #> [17] DBI_1.3.0          purrr_1.2.2        scales_1.4.0       codetools_0.2-20  
-    #> [21] textshaping_1.0.5  jquerylib_0.1.4    cli_3.6.6          rlang_1.3.0       
-    #> [25] units_1.0-1        tidygraph_1.3.1    withr_3.0.3        cachem_1.1.0      
-    #> [29] yaml_2.3.12        otel_0.2.0         ggbeeswarm_0.7.3   tools_4.6.1       
-    #> [33] dplyr_1.2.1        vctrs_0.7.3        R6_2.6.1           proxy_0.4-29      
-    #> [37] lifecycle_1.0.5    classInt_0.4-11    fs_2.1.0           htmlwidgets_1.6.4 
-    #> [41] vipor_0.4.7        ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0    
-    #> [45] desc_1.4.3         terra_1.9-34       pkgdown_2.2.0      pillar_1.11.1     
-    #> [49] bslib_0.11.0       gtable_0.3.6       Rcpp_1.1.2         glue_1.8.1        
-    #> [53] systemfonts_1.3.2  xfun_0.59          tibble_3.3.1       tidyselect_1.2.1  
-    #> [57] rstudioapi_0.19.0  knitr_1.51         dichromat_2.0-1    farver_2.1.2      
-    #> [61] htmltools_0.5.9    rmarkdown_2.31     compiler_4.6.1     S7_0.2.2
+    #> [13] jsonlite_2.0.0     Matrix_1.7-6       e1071_1.7-17       ggrastr_1.0.2     
+    #> [17] DBI_1.3.0          purrr_1.2.2        scales_1.4.0       textshaping_1.0.5 
+    #> [21] jquerylib_0.1.4    cli_3.6.6          rlang_1.3.0        units_1.0-1       
+    #> [25] tidygraph_1.3.1    withr_3.0.3        cachem_1.1.0       yaml_2.3.12       
+    #> [29] otel_0.2.0         ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1       
+    #> [33] vctrs_0.7.3        R6_2.6.1           proxy_0.4-29       classInt_0.4-11   
+    #> [37] lifecycle_1.0.5    fs_2.1.0           htmlwidgets_1.6.4  vipor_0.4.7       
+    #> [41] ragg_1.5.2         pkgconfig_2.0.3    beeswarm_0.4.0     desc_1.4.3        
+    #> [45] pkgdown_2.2.0      pillar_1.11.1      bslib_0.11.0       gtable_0.3.6      
+    #> [49] Rcpp_1.1.2         glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
+    #> [53] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
+    #> [57] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    rmarkdown_2.31    
+    #> [61] compiler_4.6.1     S7_0.2.2

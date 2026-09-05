@@ -54,6 +54,8 @@ setMethod("normalizeGeometry", "GraphSpace",
     
     gs <- updateGraphSpace(gs)
     
+    .gs_require_sf("geometry normalization")
+    
     .validate_gs_args("singleString", "name", name)
     .validate_gs_args("singleLogical", "verbose", verbose)
     
@@ -71,7 +73,8 @@ setMethod("normalizeGeometry", "GraphSpace",
     if(name %in% valid_names){
       gs <- .gs_geometry_normalize(gs, name = name, verbose = verbose)
     } else {
-      rlang::warn(sprintf("Name '%s' not a valid geometry in the `gs` object", name))
+      rlang::warn(
+        sprintf("Name '%s' not a valid geometry in the `gs` object", name))
     }
     
     return(gs)
@@ -86,6 +89,8 @@ setMethod("fitGeometry", "GraphSpace",
   function(gs, name = "geometry", use_node_size = TRUE, verbose = TRUE){
     
     gs <- updateGraphSpace(gs)
+    
+    .gs_require_sf("geometry fitting")
     
     .validate_gs_args("singleString", "name", name)
     .validate_gs_args("singleLogical", "use_node_size", use_node_size)
@@ -103,6 +108,18 @@ setMethod("fitGeometry", "GraphSpace",
     return(gs)
   }
 )
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.gs_require_sf <- function(what = "geometry features") {
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    rlang::abort(c(
+      sprintf("The 'sf' package is required for %s.", what),
+      i = "Install it with install.packages('sf')."
+    ))
+  }
+}
+
 
 #-------------------------------------------------------------------------------
 #' @keywords internal
@@ -285,52 +302,9 @@ setMethod("fitGeometry", "GraphSpace",
 #' @keywords internal
 .is_valid_geometry <- function(value){
   c1 <- inherits(value, "sfc") || inherits(value, "sf")
-  c2 <- (is.list(value) && length(value) > 0 && all(vapply(value, inherits, logical(1), "sfg")))
+  c2 <- (is.list(value) && length(value) > 0 && all(vapply(value,
+    inherits, logical(1), "sfg")))
   c1 || c2
 }
 
-
-#-------------------------------------------------------------------------------
-# gs_geometry_size <- function(gs, name = "geometry", size = NA, verbose = TRUE) {
-#   
-#   gs <- updateGraphSpace(gs)
-#   
-#   if(!.is_normalized(gs)){
-#     rlang::abort(
-#       message = c(
-#         "The 'GraphSpace' object must be normalized before fitting geometry.",
-#         "i" = "Please run 'normalizeGraphSpace(gs)' first."
-#       )
-#     )
-#   }
-#   
-#   if (anyNA(gs$nodeSize)) {
-#     rlang::abort("'nodeSize' contains NA; every node needs a size to fit geometry to.")
-#   }
-#   
-#   geom <- gs@coords[[name]]
-#   
-#   if (verbose){
-#     rlang::inform(sprintf("Fitting '%s' geometry to node size...", name))
-#   }
-#   npc_per_unit <- .gs_nsz_to_npc()     # same constant geom_nodespace() itself uses
-#   target_diam <- gs$nodeSize * npc_per_unit
-#   current_diam <- .geometry_diameter(geom)
-#   
-#   zero_extent <- current_diam < 1e-9
-#   if (any(zero_extent)) {
-#     geom[zero_extent] <- sf::st_buffer(geom[zero_extent], dist = target_diam[zero_extent] / 2)
-#   }
-#   
-#   scaled <- geom
-#   if (any(!zero_extent)) {
-#     centroids_s <- sf::st_centroid(geom[!zero_extent])
-#     scale_vec <- target_diam[!zero_extent] / current_diam[!zero_extent]
-#     scaled[!zero_extent] <- (sf::st_geometry(geom[!zero_extent]) - centroids_s) * scale_vec + centroids_s
-#   }
-#   
-#   gs <- .add_node_geometry(gs, name, scaled, slots = "nodes", verbose = FALSE)
-#   
-#   gs
-# }
 

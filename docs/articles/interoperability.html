@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,7 +75,7 @@
     <li><a class="dropdown-item" href="../articles/spatial-data.html">Spatial feature data</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation1.html">Spatial segmentation with Seurat</a></li>
     <li><a class="dropdown-item" href="../articles/spatial-segmentation2.html">Spatial segmentation with SpatialExperiment</a></li>
-    <li><a class="dropdown-item" href="../articles/spatial-segmentation3.html">Nested geometries and high-resolution images</a></li>
+    <li><a class="dropdown-item" href="../articles/nested-geometries.html">Nested geometries and high-resolution images</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
@@ -102,7 +102,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-03</h4>
+            <h4 data-toc-skip class="date">2026-09-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/interoperability.Rmd" class="external-link"><code>vignettes/articles/interoperability.Rmd</code></a></small>
       <div class="d-none name"><code>interoperability.Rmd</code></div>
@@ -110,7 +110,7 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.5.3</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.5.4</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -134,7 +134,7 @@ Before proceeding, ensure that all packages described in the <a href="install.ht
 installed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.2"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.4"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -479,35 +479,34 @@ repository.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
 <span><span class="co">#&gt;  [1] airportr_0.1.3      flightsbr_1.1.10999 geometry_0.5.2     </span></span>
-<span><span class="co">#&gt;  [4] maps_3.4.3          sf_1.1-1            ggraph_2.2.2       </span></span>
+<span><span class="co">#&gt;  [4] maps_3.4.3          sf_1.1-2            ggraph_2.2.2       </span></span>
 <span><span class="co">#&gt;  [7] dplyr_1.2.1         tidygraph_1.3.1     igraph_2.3.3       </span></span>
-<span><span class="co">#&gt; [10] RGraphSpace_1.5.3   ggplot2_4.0.3      </span></span>
+<span><span class="co">#&gt; [10] RGraphSpace_1.5.4   ggplot2_4.0.3      </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] tidyselect_1.2.1   viridisLite_0.4.3  vipor_0.4.7        farver_2.1.2      </span></span>
-<span><span class="co">#&gt;  [5] viridis_0.6.5      S7_0.2.2           fastmap_1.2.0      tweenr_2.0.3      </span></span>
-<span><span class="co">#&gt;  [9] janitor_2.2.1      digest_0.6.39      timechange_0.4.0   lifecycle_1.0.5   </span></span>
-<span><span class="co">#&gt; [13] terra_1.9-34       magrittr_2.0.5     compiler_4.6.1     rlang_1.3.0       </span></span>
-<span><span class="co">#&gt; [17] sass_0.4.10        tools_4.6.1        yaml_2.3.12        data.table_1.18.4 </span></span>
-<span><span class="co">#&gt; [21] knitr_1.51         labeling_0.4.3     graphlayouts_1.2.4 htmlwidgets_1.6.4 </span></span>
-<span><span class="co">#&gt; [25] classInt_0.4-11    curl_7.1.0         xml2_1.6.0         RColorBrewer_1.1-3</span></span>
-<span><span class="co">#&gt; [29] abind_1.4-8        KernSmooth_2.23-27 withr_3.0.3        purrr_1.2.2       </span></span>
-<span><span class="co">#&gt; [33] desc_1.4.3         grid_4.6.1         polyclip_1.10-7    e1071_1.7-17      </span></span>
-<span><span class="co">#&gt; [37] scales_1.4.0       MASS_7.3-66        dichromat_2.0-1    cli_3.6.6         </span></span>
-<span><span class="co">#&gt; [41] rmarkdown_2.31     ragg_1.5.2         generics_0.1.4     otel_0.2.0        </span></span>
-<span><span class="co">#&gt; [45] rstudioapi_0.19.0  httr_1.4.8         magic_1.6-1        pbapply_1.7-4     </span></span>
-<span><span class="co">#&gt; [49] DBI_1.3.0          ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0     </span></span>
-<span><span class="co">#&gt; [53] proxy_0.4-29       stringr_1.6.0      parallel_4.6.1     rvest_1.0.5       </span></span>
-<span><span class="co">#&gt; [57] selectr_0.6-0      ggrastr_1.0.2      vctrs_0.7.3        Matrix_1.7-6      </span></span>
-<span><span class="co">#&gt; [61] jsonlite_2.0.0     ggrepel_0.9.8      archive_1.1.14     beeswarm_0.4.0    </span></span>
-<span><span class="co">#&gt; [65] systemfonts_1.3.2  fontawesome_0.5.3  tidyr_1.3.2        jquerylib_0.1.4   </span></span>
-<span><span class="co">#&gt; [69] units_1.0-1        glue_1.8.1         pkgdown_2.2.0      codetools_0.2-20  </span></span>
-<span><span class="co">#&gt; [73] stringi_1.8.9      lubridate_1.9.5    gtable_0.3.6       tibble_3.3.1      </span></span>
-<span><span class="co">#&gt; [77] parzer_0.4.4       pillar_1.11.1      htmltools_0.5.9    R6_2.6.1          </span></span>
-<span><span class="co">#&gt; [81] httr2_1.3.0        textshaping_1.0.5  evaluate_1.0.5     lattice_0.23-1    </span></span>
-<span><span class="co">#&gt; [85] snakecase_0.11.1   memoise_2.0.1      bslib_0.11.0       class_7.3-24      </span></span>
-<span><span class="co">#&gt; [89] Rcpp_1.1.2         gridExtra_2.3.1    xfun_0.59          fs_2.1.0          </span></span>
-<span><span class="co">#&gt; [93] pkgconfig_2.0.3</span></span></code></pre>
+<span><span class="co">#&gt;  [5] viridis_0.6.5      S7_0.2.2           fastmap_1.2.0      janitor_2.2.1     </span></span>
+<span><span class="co">#&gt;  [9] tweenr_2.0.3       digest_0.6.39      timechange_0.4.0   lifecycle_1.0.5   </span></span>
+<span><span class="co">#&gt; [13] magrittr_2.0.5     compiler_4.6.1     rlang_1.3.0        sass_0.4.10       </span></span>
+<span><span class="co">#&gt; [17] tools_4.6.1        yaml_2.3.12        data.table_1.18.4  knitr_1.51        </span></span>
+<span><span class="co">#&gt; [21] labeling_0.4.3     graphlayouts_1.2.4 htmlwidgets_1.6.4  classInt_0.4-11   </span></span>
+<span><span class="co">#&gt; [25] curl_7.1.0         xml2_1.6.0         RColorBrewer_1.1-3 abind_1.4-8       </span></span>
+<span><span class="co">#&gt; [29] KernSmooth_2.23-27 withr_3.0.3        purrr_1.2.2        desc_1.4.3        </span></span>
+<span><span class="co">#&gt; [33] grid_4.6.1         polyclip_1.10-7    e1071_1.7-17       scales_1.4.0      </span></span>
+<span><span class="co">#&gt; [37] MASS_7.3-66        dichromat_2.0-1    cli_3.6.6          rmarkdown_2.31    </span></span>
+<span><span class="co">#&gt; [41] ragg_1.5.2         generics_0.1.4     otel_0.2.0         rstudioapi_0.19.0 </span></span>
+<span><span class="co">#&gt; [45] httr_1.4.8         magic_1.6-1        pbapply_1.7-4      DBI_1.3.0         </span></span>
+<span><span class="co">#&gt; [49] ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0      proxy_0.4-29      </span></span>
+<span><span class="co">#&gt; [53] stringr_1.6.0      parallel_4.6.1     rvest_1.0.5        selectr_0.6-0     </span></span>
+<span><span class="co">#&gt; [57] ggrastr_1.0.2      vctrs_0.7.3        Matrix_1.7-6       jsonlite_2.0.0    </span></span>
+<span><span class="co">#&gt; [61] ggrepel_0.9.8      archive_1.1.14     beeswarm_0.4.0     systemfonts_1.3.2 </span></span>
+<span><span class="co">#&gt; [65] fontawesome_0.5.3  tidyr_1.3.2        jquerylib_0.1.4    units_1.0-1       </span></span>
+<span><span class="co">#&gt; [69] glue_1.8.1         pkgdown_2.2.0      stringi_1.8.9      lubridate_1.9.5   </span></span>
+<span><span class="co">#&gt; [73] gtable_0.3.6       tibble_3.3.1       parzer_0.4.4       pillar_1.11.1     </span></span>
+<span><span class="co">#&gt; [77] htmltools_0.5.9    R6_2.6.1           httr2_1.3.0        textshaping_1.0.5 </span></span>
+<span><span class="co">#&gt; [81] evaluate_1.0.5     lattice_0.23-1     snakecase_0.11.1   memoise_2.0.1     </span></span>
+<span><span class="co">#&gt; [85] bslib_0.11.0       class_7.3-24       Rcpp_1.1.2         gridExtra_2.3.1   </span></span>
+<span><span class="co">#&gt; [89] xfun_0.59          fs_2.1.0           pkgconfig_2.0.3</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

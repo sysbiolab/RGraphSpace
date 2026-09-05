@@ -66,8 +66,10 @@
 - [`gs_add_edges(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   : Add edges to a GraphSpace object
+- [`gs_compute()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_compute.md)
+  : Apply an igraph function to the graph inside a GraphSpace
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
-  [`` `[[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
 
 ## Features
@@ -159,5 +161,5 @@
 
 - [`RGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
   [`RGraphSpace-package`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
-  : RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2'
-  Graphics
+  : RGraphSpace: Rendering Graphs as Coherent Spatial Objects in
+  'ggplot2'

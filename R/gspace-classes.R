@@ -5,8 +5,6 @@
 methods::setOldClass("igraph")
 methods::setOldClass("tbl_graph")
 methods::setOldClass("gs_graph")
-methods::setOldClass("raster")
-methods::setClassUnion("gs_image_source", c("raster", "SpatRaster"))
 
 #-------------------------------------------------------------------------------
 #' @title GraphSpace: An S4 class for igraph objects
@@ -40,15 +38,14 @@ methods::setClassUnion("gs_image_source", c("raster", "SpatRaster"))
 #' see \code{\link{GraphSpace}} constructor.
 #' @import igraph
 #' @importClassesFrom Matrix Matrix dgeMatrix
-#' @importClassesFrom terra SpatRaster
 #' @exportClass GraphSpace
 setClass("GraphSpace",
   slots = c(
     nodes = "data.frame",
     edges = "data.frame",
     graph = "igraph",
-    image = "gs_image_source",
-    canvas = "gs_image_source",
+    image = "ANY",
+    canvas = "ANY",
     fdata = "Matrix",
     coords = "data.frame",
     pars = "list",
@@ -139,23 +136,39 @@ setValidity("GraphSpace", function(object) {
       } else if (nrow(object@nodes) > 0) {
         if (!setequal(rownames(object@nodes), g_vertex_names)) {
           errors <- c(errors, 
-            "Vertex names in '@graph' slot must match row names in '@nodes' slot.")
+            "Vertex names in '@graph' slot must match row names in '@nodes'.")
         }
       }
     }
+  }
+  
+  # image/canvas type
+  # @image and @canvas are typed 'ANY' so that terra need not be present at
+  # class-definition time; enforce the accepted representations here instead.
+  if (!.gs_valid_image_source(object@image)) {
+    errors <- c(errors, sprintf(
+      "'@image' slot must be a raster, a SpatRaster, or empty; got '%s'.",
+      paste(class(object@image), collapse = "/")))
+  }
+  if (!.gs_valid_image_source(object@canvas)) {
+    errors <- c(errors, sprintf(
+      "'@canvas' slot must be a raster, a SpatRaster, or empty; got '%s'.",
+      paste(class(object@canvas), collapse = "/")))
   }
   
   # image <-> canvas consistency
   # @canvas is always derived from @image; a populated canvas without a source
   # image indicates an invalid object state.
   canvas_has_content <- .hasSlot(object, "canvas") && 
-    prod(dim(object@canvas)) > 1
+    .gs_image_has_content(object@canvas)
   image_has_content  <- .hasSlot(object, "image")  && 
-    prod(dim(object@image))  > 1
+    .gs_image_has_content(object@image)
   
   if (canvas_has_content && !image_has_content) {
-    errors <- c(errors,
-      "'@canvas' is populated but '@image' is empty; canvas requires a source image.")
+    errors <- c(errors, paste(
+      "'@canvas' is populated but '@image' is empty;",
+      "canvas requires a source image.")
+    )
   }
   
   # pars$image.space <-> canvas consistency
@@ -169,6 +182,19 @@ setValidity("GraphSpace", function(object) {
   if (length(errors) == 0) TRUE else errors
   
 })
+
+#-------------------------------------------------------------------------------
+# A valid image source under the 'ANY'-typed @image/@canvas slots.
+.gs_valid_image_source <- function(x) {
+  is.null(x) || inherits(x, "raster") || inherits(x, "SpatRaster")
+}
+
+# TRUE when the slot holds a populated image (not NULL, not the 1x1 sentinel).
+.gs_image_has_content <- function(x) {
+  if (is.null(x)) return(FALSE)
+  d <- dim(x)
+  !is.null(d) && prod(d) > 1
+}
 
 #-------------------------------------------------------------------------------
 #' Generate a unique identifier for GraphSpace objects
@@ -203,7 +229,8 @@ setValidity("GraphSpace", function(object) {
 
 #-------------------------------------------------------------------------------
 
-setGeneric("updateGraphSpace", function(x, ...) standardGeneric("updateGraphSpace"))
+setGeneric("updateGraphSpace", function(x, ...) 
+  standardGeneric("updateGraphSpace"))
 
 #' @title Update a GraphSpace object
 #' @description Updates \code{GraphSpace} objects serialized from
@@ -238,8 +265,10 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
     if(reset_image_fdata){
       msg <- c(
         "!" = "Outdated 'GraphSpace' object detected.",
-        "x" = paste0("Missing slot(s): ", paste(shQuote(missing_slots), collapse = ", "), "."),
-        "x" = "Image, canvas, and feature data cannot be safely reused and were reset to empty.",
+        "x" = paste0("Missing slot(s): ", paste(shQuote(missing_slots), 
+          collapse = ", "), "."),
+        "x" = paste0("Image, canvas, and feature data cannot ",
+          "be safely reused and were reset to empty."),
         "*" = "To ensure full compatibility, rebuild the object from scratch."
       )
     } else {
@@ -495,17 +524,17 @@ setMethod("show", "GraphSpace",
 #-------------------------------------------------------------------------------
 #' @keywords internal
 .has_canvas <- function(gs) {
-  .hasSlot(gs, "canvas") && prod(dim(gs@canvas)) > 1
+  .hasSlot(gs, "canvas") && .gs_image_has_content(gs@canvas)
 }
 
 #' @keywords internal
 .has_image <- function(gs) {
-  .hasSlot(gs, "image") && prod(dim(gs@image)) > 1
+  .hasSlot(gs, "image") && .gs_image_has_content(gs@image)
 }
 
 #' @keywords internal
 .has_fdata <- function(gs) {
-  .hasSlot(gs, "fdata") && prod(dim(gs@fdata)) > 1
+  .hasSlot(gs, "fdata") && prod(dim(gs@fdata)) > 0
 }
 
 #' @keywords internal

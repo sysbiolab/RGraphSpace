@@ -1,10 +1,11 @@
-### *RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics
+### *RGraphSpace*: Rendering Graphs as Coherent Spatial Objects in *ggplot2*
   <!-- badges: start -->
   [![CRAN status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
   [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
   [![CRAN downloads](https://cranlogs.r-pkg.org/badges/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
   [![License: Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](https://cran.r-project.org/web/licenses/Artistic-2.0)
   [![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.RGraphSpace-blue.svg)](https://doi.org/10.32614/CRAN.package.RGraphSpace)
+  [![R-CMD-check](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml)
   <!-- badges: end -->
 
 ### Highlights
@@ -32,16 +33,26 @@ and dynamically adjusts start and end points based on node position and size.
 common case; use the individual geoms directly when independent control of
 node and edge layers is needed.
 
+Core functionality relies only on lightweight R packages; optional geometry and large raster-image features use 'sf' and 'terra' (and their system libraries) when installed.
+
 ### Installation in R (>=4.5)
 
-##### Dependencies to build the vignettes
+##### Release version
+
 ```r
+# Release version from CRAN
+install.packages("RGraphSpace")
+```
+
+##### Development version
+
+```r
+# Dependencies to build the vignettes
 install.packages("knitr")
 install.packages("rmarkdown")
 install.packages("remotes")
-```
-##### Development version
-```r
+
+# Package source
 remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 ```
 
@@ -49,7 +60,9 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 
 If you use *RGraphSpace*, please cite:
 
-* Sysbiolab Team (2026). RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics. R package version 1.5.0. Doi: 10.32614/CRAN.package.RGraphSpace
+```r
+citation("RGraphSpace")
+```
 
 ### Licenses
 

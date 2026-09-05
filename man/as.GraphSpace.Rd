@@ -39,7 +39,7 @@ as.GraphSpace(x, ...)
 \code{\link[SpatialExperiment]{SpatialExperiment}} object from which
 data should be retrieved (see \code{\link[SummarizedExperiment]{assay}}).}
 
-\item{layer}{Name of the layer in the \code{\link[Seurat]{Seurat}} object
+\item{layer}{Name of the layer in the \code{\link[SeuratObject]{Seurat}} object
 from which node data should be retrieved
 (see \code{\link[SeuratObject]{LayerData}}).}
 

@@ -205,7 +205,7 @@ as.GraphSpace.SpatialExperiment <- function(x, assay = "counts", ...) {
 #-------------------------------------------------------------------------------
 #' @rdname as.GraphSpace
 #'
-#' @param layer Name of the layer in the \code{\link[Seurat]{Seurat}} object 
+#' @param layer Name of the layer in the \code{\link[SeuratObject]{Seurat}} object 
 #' from which node data should be retrieved 
 #' (see \code{\link[SeuratObject]{LayerData}}).
 #' @param space Character specifying the coordinate space used for node
@@ -362,8 +362,10 @@ as.GraphSpace.Seurat <- function(x, layer = NULL,
     n <- sum(!bl)
     pct <- round(100 * n / length(bl))
     rlang::warn(c(
-      sprintf("%d of %d (%d%%) %s did not match %s.", n, length(bl), pct, id_label, ref_label),
-      "i" = sprintf("%s will be overwritten with %s by position.", id_label, ref_label),
+      sprintf("%d of %d (%d%%) %s did not match %s.", n, length(bl), 
+        pct, id_label, ref_label),
+      "i" = sprintf("%s will be overwritten with %s by position.", 
+        id_label, ref_label),
       "!" = "If the two are not already in the same order, values will be misaligned."
     ))
   }

@@ -1,4 +1,4 @@
-## *RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics
+## *RGraphSpace*: Rendering graphs as coherent spatial objects in *ggplot2*
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
@@ -50,11 +50,14 @@ graph data into geometric layers.
     in sequence. Use this for the common case; use the individual geoms
     directly when independent control of node and edge layers is needed.
 
+Core functionality relies only on lightweight R packages; optional
+geometry and large raster-image features use ‘sf’ and ‘terra’ (and their
+system libraries) when installed.
+
 ### Citation
 
-- Sysbiolab Team (2026). RGraphSpace: A lightweight interface between
-  ‘igraph’ and ‘ggplot2’ graphics. R package version 1.5.0. Doi:
-  10.32614/CRAN.package.RGraphSpace
+- [Authors and
+  Citation](https://sysbiolab.github.io/RGraphSpace/authors.md)
 
 ### Licenses
 
@@ -142,8 +145,10 @@ The *RGraphSpace* package is distributed under
 - [`gs_add_edges(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   : Add edges to a GraphSpace object
+- [`gs_compute()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_compute.md)
+  : Apply an igraph function to the graph inside a GraphSpace
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
-  [`` `[[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
 
 ## Features
@@ -235,8 +240,8 @@ The *RGraphSpace* package is distributed under
 
 - [`RGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
   [`RGraphSpace-package`](https://sysbiolab.github.io/RGraphSpace/reference/RGraphSpace-package.md)
-  : RGraphSpace: A Lightweight Interface Between 'igraph' and 'ggplot2'
-  Graphics
+  : RGraphSpace: Rendering Graphs as Coherent Spatial Objects in
+  'ggplot2'
 
 # Articles
 
@@ -262,6 +267,8 @@ The *RGraphSpace* package is distributed under
   'sf'](https://sysbiolab.github.io/RGraphSpace/articles/interoperability.md):
 - [Mapping Graphs to
   Images](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md):
+- [Working with nested geometries and high-resolution
+  images](https://sysbiolab.github.io/RGraphSpace/articles/nested-geometries.md):
 - [Getting started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md):
 - [Fine-Tuning Scales and
@@ -272,5 +279,3 @@ The *RGraphSpace* package is distributed under
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation1.md):
 - [Spatial-segmented data with SpatialExperiment and
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md):
-- [Working with nested geometries and high-resolution
-  images](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md):

@@ -2,6 +2,20 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
+\section{CHANGES IN VERSION 1.5.4 (2026-09-10)}{
+  \itemize{
+    \item Address issues identified during the JOSS review.
+    \item Improvements to the package documentation.
+    \item Improvements the codebase and unit tests.
+  }
+}
+
+\section{CHANGES IN VERSION 1.5.3 (2026-09-01)}{
+  \itemize{
+    \item Implement support for SpatRaster image.
+  }
+}
+
 \section{CHANGES IN VERSION 1.5.2 (2026-08-23)}{
   \itemize{
     \item Implement support for sf geometry.

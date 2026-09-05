@@ -1,6 +1,6 @@
 # Spatial-segmented data with SpatialExperiment and RGraphSpace
 
-**Package**: RGraphSpace 1.5.3  
+**Package**: RGraphSpace 1.5.4  
 
 ## Overview
 
@@ -44,7 +44,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.2"){
+if (packageVersion("RGraphSpace") < "1.5.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -363,7 +363,7 @@ gs_geometry(gs, "cellseg") <- sf::st_make_valid(cellseg)
     #> [8] base     
     #> 
     #> other attached packages:
-    #>  [1] sf_1.1-1                    patchwork_1.3.2            
+    #>  [1] sf_1.1-2                    patchwork_1.3.2            
     #>  [3] VisiumIO_1.8.0              TENxIO_1.14.0              
     #>  [5] OSTA.data_1.4.0             SpatialExperiment_1.22.0   
     #>  [7] SingleCellExperiment_1.34.0 SummarizedExperiment_1.42.0
@@ -371,7 +371,7 @@ gs_geometry(gs, "cellseg") <- sf::st_make_valid(cellseg)
     #> [11] Seqinfo_1.2.0               IRanges_2.46.0             
     #> [13] S4Vectors_0.50.1            BiocGenerics_0.58.1        
     #> [15] generics_0.1.4              MatrixGenerics_1.24.0      
-    #> [17] matrixStats_1.5.0           RGraphSpace_1.5.3          
+    #> [17] matrixStats_1.5.0           RGraphSpace_1.5.4          
     #> [19] ggplot2_4.0.3              
     #> 
     #> loaded via a namespace (and not attached):
@@ -384,28 +384,27 @@ gs_geometry(gs, "cellseg") <- sf::st_make_valid(cellseg)
     #> [19] tzdb_0.5.0           ggbeeswarm_0.7.3     ragg_1.5.2          
     #> [22] purrr_1.2.2          bit_4.6.0            xfun_0.59           
     #> [25] cachem_1.1.0         jsonlite_2.0.0       blob_1.3.0          
-    #> [28] DelayedArray_0.38.2  terra_1.9-34         R6_2.6.1            
-    #> [31] bslib_0.11.0         stringi_1.8.9        RColorBrewer_1.1-3  
-    #> [34] jquerylib_0.1.4      Rcpp_1.1.2           knitr_1.51          
-    #> [37] readr_2.2.0          BiocBaseUtils_1.14.2 Matrix_1.7-6        
-    #> [40] igraph_2.3.3         tidyselect_1.2.1     rstudioapi_0.19.0   
-    #> [43] dichromat_2.0-1      abind_1.4-8          yaml_2.3.12         
-    #> [46] codetools_0.2-20     curl_7.1.0           lattice_0.23-1      
-    #> [49] tibble_3.3.1         withr_3.0.3          S7_0.2.2            
-    #> [52] evaluate_1.0.5       ggrastr_1.0.2        desc_1.4.3          
-    #> [55] units_1.0-1          proxy_0.4-29         BiocFileCache_3.2.0 
-    #> [58] pillar_1.11.1        filelock_1.0.3       KernSmooth_2.23-27  
-    #> [61] hms_1.1.4            scales_1.4.0         class_7.3-24        
-    #> [64] glue_1.8.1           tools_4.6.1          BiocIO_1.22.0       
-    #> [67] fs_2.1.0             tidygraph_1.3.1      grid_4.6.1          
-    #> [70] tidyr_1.3.2          beeswarm_0.4.0       vipor_0.4.7         
-    #> [73] cli_3.6.6            textshaping_1.0.5    S4Arrays_1.12.0     
-    #> [76] dplyr_1.2.1          gtable_0.3.6         sass_0.4.10         
-    #> [79] digest_0.6.39        classInt_0.4-11      SparseArray_1.12.2  
-    #> [82] crul_1.6.0           osfr_0.2.9           rjson_0.2.23        
-    #> [85] htmlwidgets_1.6.4    farver_2.1.2         memoise_2.0.1       
-    #> [88] htmltools_0.5.9      pkgdown_2.2.0        lifecycle_1.0.5     
-    #> [91] httr_1.4.8           bit64_4.8.2
+    #> [28] DelayedArray_0.38.2  R6_2.6.1             bslib_0.11.0        
+    #> [31] stringi_1.8.9        RColorBrewer_1.1-3   jquerylib_0.1.4     
+    #> [34] Rcpp_1.1.2           knitr_1.51           readr_2.2.0         
+    #> [37] BiocBaseUtils_1.14.2 Matrix_1.7-6         igraph_2.3.3        
+    #> [40] tidyselect_1.2.1     rstudioapi_0.19.0    dichromat_2.0-1     
+    #> [43] abind_1.4-8          yaml_2.3.12          curl_7.1.0          
+    #> [46] lattice_0.23-1       tibble_3.3.1         withr_3.0.3         
+    #> [49] S7_0.2.2             evaluate_1.0.5       ggrastr_1.0.2       
+    #> [52] desc_1.4.3           units_1.0-1          proxy_0.4-29        
+    #> [55] BiocFileCache_3.2.0  pillar_1.11.1        filelock_1.0.3      
+    #> [58] KernSmooth_2.23-27   hms_1.1.4            scales_1.4.0        
+    #> [61] class_7.3-24         glue_1.8.1           tools_4.6.1         
+    #> [64] BiocIO_1.22.0        fs_2.1.0             tidygraph_1.3.1     
+    #> [67] grid_4.6.1           tidyr_1.3.2          beeswarm_0.4.0      
+    #> [70] vipor_0.4.7          cli_3.6.6            textshaping_1.0.5   
+    #> [73] S4Arrays_1.12.0      dplyr_1.2.1          gtable_0.3.6        
+    #> [76] sass_0.4.10          digest_0.6.39        classInt_0.4-11     
+    #> [79] SparseArray_1.12.2   crul_1.6.0           osfr_0.2.9          
+    #> [82] rjson_0.2.23         htmlwidgets_1.6.4    farver_2.1.2        
+    #> [85] memoise_2.0.1        htmltools_0.5.9      pkgdown_2.2.0       
+    #> [88] lifecycle_1.0.5      httr_1.4.8           bit64_4.8.2
 
 ## References
 

@@ -168,6 +168,8 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
 .spatraster_to_raster <- function(x, maxpixels = 4e6, 
   rgb_channels = c(1, 2, 3), stretch = "lin") {
   
+  .gs_require_terra("rendering SpatRaster images") 
+  
   nb_src <- terra::nlyr(x)
   rgb_channels <- as.integer(rgb_channels)
   if (length(rgb_channels) != 3L)
@@ -221,61 +223,29 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
 }
 
 #-------------------------------------------------------------------------------
-# Convert a base R raster to SpatRaster
-.raster_to_spatraster <- function(r) {
-  m <- as.matrix(r)              # char matrix of "#RRGGBB"
-  rgb <- grDevices::col2rgb(m)   # 3 x N matrix (R,G,B rows), 0-255
-  nr <- nrow(m); nc <- ncol(m)
-  # build a 3-band SpatRaster
-  arr <- array(0, dim = c(nr, nc, 3))
-  arr[,,1] <- matrix(rgb[1,], nr, nc)
-  arr[,,2] <- matrix(rgb[2,], nr, nc)
-  arr[,,3] <- matrix(rgb[3,], nr, nc)
-  terra::rast(arr)
+#' @keywords internal
+.gs_require_terra <- function(what = "raster image features") {
+  if (!requireNamespace("terra", quietly = TRUE)) {
+    rlang::abort(c(
+      sprintf("The 'terra' package is required for %s.", what),
+      i = "Install it with install.packages('terra')."
+    ))
+  }
 }
 
 #-------------------------------------------------------------------------------
-# Convert a (multi-band) SpatRaster window to a base R raster of colour strings.
-# .spatraster_to_raster <- function(x, maxpixels = 4e6) {
-#   
-#   if (terra::ncell(x) > maxpixels) {
-#     scale  <- sqrt(maxpixels / terra::ncell(x))
-#     target <- terra::rast(nrows = max(1L, floor(nrow(x) * scale)),
-#       ncols = max(1L, floor(ncol(x) * scale)),
-#       extent = terra::ext(x), crs = terra::crs(x))
-#     x <- terra::resample(x, target, method = "bilinear")
-#   }
-#   
-#   a  <- terra::as.array(x)
-#   if (length(dim(a)) == 2L) dim(a) <- c(dim(a), 1L)
-#   nb <- dim(a)[3]
-#   
-#   # scale to [0, 1] by the GLOBAL max across all bands -- preserves channel
-#   # balance for RGB display; per-band scaling would shift colour. Values
-#   # already within [0, 1] are treated as display-ready and left as-is.
-#   m <- max(a, na.rm = TRUE)
-#   if (is.finite(m) && m > 1) a <- a / m
-#   
-#   # Cells non-finite (e.g. NA padding) must stay NA so they render transparent
-#   nf <- !is.finite(a)
-#   na_cell <- apply(nf, c(1, 2), all)
-#   a[nf] <- 0
-#   a[] <- pmin(pmax(a, 0), 1)
-#   
-#   r <- if (nb == 1) {
-#     grDevices::as.raster(a[, , 1])
-#   } else if (nb == 2) {
-#     # as.raster needs 1, 3, or 4 planes; a 2-band array errors. Promote to RGB
-#     # with an empty blue channel: band1 -> R, band2 -> G. (a is already clamped
-#     # to [0,1] and NA-zeroed above, so these planes are display-ready)
-#     rgb <- array(0, dim = c(dim(a)[1], dim(a)[2], 3))
-#     rgb[, , 1:2] <- a[, , 1:2]
-#     grDevices::as.raster(rgb)
-#   } else {
-#     grDevices::as.raster(a[, , seq_len(min(nb, 3)), drop = FALSE])
-#   }
-#   r[na_cell] <- NA
-#   r
+# Convert a base R raster to SpatRaster
+# .raster_to_spatraster <- function(r) {
+#   m <- as.matrix(r)              # char matrix of "#RRGGBB"
+#   rgb <- grDevices::col2rgb(m)   # 3 x N matrix (R,G,B rows), 0-255
+#   nr <- nrow(m); nc <- ncol(m)
+#   # build a 3-band SpatRaster
+#   arr <- array(0, dim = c(nr, nc, 3))
+#   arr[,,1] <- matrix(rgb[1,], nr, nc)
+#   arr[,,2] <- matrix(rgb[2,], nr, nc)
+#   arr[,,3] <- matrix(rgb[3,], nr, nc)
+#   terra::rast(arr)
 # }
+
 
 

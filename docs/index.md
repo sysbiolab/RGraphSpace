@@ -1,4 +1,4 @@
-## *RGraphSpace*: A lightweight interface between *igraph* and *ggplot2* graphics
+## *RGraphSpace*: Rendering graphs as coherent spatial objects in *ggplot2*
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
@@ -50,11 +50,14 @@ graph data into geometric layers.
     in sequence. Use this for the common case; use the individual geoms
     directly when independent control of node and edge layers is needed.
 
+Core functionality relies only on lightweight R packages; optional
+geometry and large raster-image features use ‘sf’ and ‘terra’ (and their
+system libraries) when installed.
+
 ### Citation
 
-- Sysbiolab Team (2026). RGraphSpace: A lightweight interface between
-  ‘igraph’ and ‘ggplot2’ graphics. R package version 1.5.0. Doi:
-  10.32614/CRAN.package.RGraphSpace
+- [Authors and
+  Citation](https://sysbiolab.github.io/RGraphSpace/authors.md)
 
 ### Licenses
 

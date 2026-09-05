@@ -1,5 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/404.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/CONTRIBUTING.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/LICENSE-text.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.html</loc></url>
@@ -13,11 +15,11 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/interactive.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/interoperability.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/nested-geometries.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-data.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation1.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.html</loc></url>
-<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/authors.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/index.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.html</loc></url>
@@ -43,6 +45,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/ggplot-GraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_compute.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_image_toy.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.html</loc></url>

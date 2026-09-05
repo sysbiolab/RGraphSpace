@@ -138,7 +138,6 @@ setMethod("normalizeGraphSpace", "GraphSpace",
 )
 
 #-------------------------------------------------------------------------------
-#' @importFrom sf st_coordinates st_centroid st_set_crs
 #' @importFrom stats lm residuals coef
 #' @keywords internal
 .normalizeGraphSpace.graph <- function(gs, mar, flip.x, flip.y, 

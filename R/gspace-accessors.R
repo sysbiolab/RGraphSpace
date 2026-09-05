@@ -487,11 +487,13 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   
   nodes <- .get_nodes(x@graph)
   keep <- setdiff(colnames(x@nodes), colnames(nodes))
-  for (col in keep) nodes[[col]] <- x@nodes[[col]][match(nodes$name, x@nodes$name)]
+  for (col in keep) nodes[[col]] <- x@nodes[[col]][match(nodes$name,
+    x@nodes$name)]
   
   coords <- nodes[ , c("x", "y")]
   keep <- setdiff(colnames(x@coords), colnames(coords))
-  for (col in keep) coords[[col]] <- x@coords[[col]][match(rownames(coords), rownames(x@coords))]
+  for (col in keep) coords[[col]] <- x@coords[[col]][match(rownames(coords), 
+    rownames(x@coords))]
   
   if (.is_normalized(x)) {
     nodes[x@nodes$name, c("x","y")] <- x@nodes[, c("x","y")]
@@ -534,10 +536,11 @@ setMethod("gs_geometry", "GraphSpace", function(x, name = "geometry") {
   x@nodes[[name]]
 })
 
-#' @importFrom sf st_geometry st_sfc st_is_valid
 #' @rdname GraphSpace-accessors
 #' @export
-setReplaceMethod("gs_geometry", "GraphSpace", function(x, name = "geometry", value) {
+setReplaceMethod("gs_geometry", "GraphSpace", function(x, 
+  name = "geometry", value) {
+  .gs_require_sf()
   .add_node_geometry(x, name, value)
 })
 
@@ -603,4 +606,84 @@ NULL
 #' @export
 .DollarNames.GraphSpace <- function(x, pattern = "") {
   grep(pattern, names(x@nodes), value = TRUE)
+}
+
+
+################################################################################
+### Internal for GraphSpace objects
+################################################################################
+#' Apply an igraph function to the graph inside a GraphSpace
+#'
+#' @description
+#' `gs_compute()` runs any \pkg{igraph} function on the graph carried by a
+#' `GraphSpace`, without needing a dedicated `gs_*` wrapper for each one. It
+#' extracts the underlying igraph via [as.igraph()], applies `.f`, and returns
+#' the result unchanged. This is the read-only lane onto the whole igraph
+#' ecosystem: measures such as `degree()`, `betweenness()`, `coreness()`,
+#' community detection, and distances all work through this one entry point.
+#'
+#' It is deliberately *not* a graph-modification path. If `.f` returns a graph
+#' (e.g. `simplify()`, `induced_subgraph()`), `gs_compute()` errors, because
+#' reintegrating a modified graph must go through the graph-modification verb
+#' so that node, edge, and coordinate data stay consistent.
+#'
+#' @param gs A `GraphSpace` object.
+#' @param .f An \pkg{igraph} function, or the name of one as a string.
+#' @param ... Further arguments passed on to `.f`.
+#'
+#' @return Whatever `.f` returns (typically a named vector, matrix, or
+#' summary), aligned to the graph's vertex order.
+#'
+#' @examples
+#' \dontrun{
+#' gs_compute(gs, degree)
+#' gs_compute(gs, "betweenness", directed = FALSE)
+#' gs_compute(gs, cluster_louvain)
+#'
+#' ## fold a per-vertex result back as a node attribute:
+#' gs$degree <- gs_compute(gs, degree)
+#' }
+#'
+#' @name gs_compute
+#' @importFrom igraph as.igraph is_igraph
+#' @export
+gs_compute <- function(gs, .f, ...) {
+  
+  if (!methods::is(gs, "GraphSpace")) {
+    rlang::abort(c(
+      "`gs` must be a <GraphSpace> object.",
+      x = sprintf("Got an object of class <%s>.", class(gs)[1])
+    ))
+  }
+  
+  f   <- .gs_resolve_fun(.f)
+  g   <- igraph::as.igraph(gs)        # the read seam: the bare @graph
+  out <- f(g, ...)
+  
+  if (igraph::is_igraph(out)) {
+    rlang::abort(c(
+      "`.f` returned an <igraph>, which `gs_compute()` does not reintegrate.",
+      i = "Use the graph-modification verb so node, edge and coordinate data stay consistent.",
+      i = "`gs_compute()` is for read-only measures returning vectors, matrices or summaries."
+    ))
+  }
+  
+  out
+}
+
+#' @keywords internal
+.gs_resolve_fun <- function(.f) {
+  if (is.function(.f)) return(.f)
+  if (is.character(.f) && length(.f) == 1L) {
+    # prefer igraph's own function, so `gs_compute(gs, "degree")` works
+    # even when igraph is imported but not attached.
+    if (exists(.f, envir = asNamespace("igraph"), inherits = FALSE)) {
+      return(get(.f, envir = asNamespace("igraph")))
+    }
+    return(match.fun(.f))
+  }
+  rlang::abort(c(
+    "`.f` must be a function or the name of a function.",
+    x = sprintf("Got an object of class <%s>.", class(.f)[1])
+  ))
 }

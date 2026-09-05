@@ -1,7 +1,7 @@
 # Getting Started with RGraphSpace
 
   
-**Package**: RGraphSpace 1.5.3
+**Package**: RGraphSpace 1.5.4
 
 For a self-contained introduction that works offline, run
 **vignette(“RGraphSpace”)** after installing the package.
@@ -99,10 +99,10 @@ segmentation1*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segment
 walks through attaching real cell-segmentation boundaries to a
 `GraphSpace` from a `Seurat` object; [*spatial
 segmentation2*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md)
-builds a `GraphSpace` from a `SpatialExperiment` object with tissue
-image integration; [*spatial
-segmentation3*](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
-extends this to nested geometries and high-resolution images.
+demonstrates how to construct a `GraphSpace` from a `SpatialExperiment`
+object with integrated tissue images, and [*nested
+geometries*](https://sysbiolab.github.io/RGraphSpace/articles/nested-geometries.md)
+extends this to more complex geometries and high-resolution images.
 
 [![](cards/high_dim.png)](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md)
 
@@ -128,11 +128,11 @@ extends this to nested geometries and high-resolution images.
 
 ###### Spatial Segmentation2
 
-[![](cards/segmentation3.png)](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
+[![](cards/segmentation3.png)](https://sysbiolab.github.io/RGraphSpace/articles/nested-geometries.md)
 
-[](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md)
+[](https://sysbiolab.github.io/RGraphSpace/articles/nested-geometries.md)
 
-###### Spatial Segmentation3
+###### Nested Geometries
 
 ## *PathwaySpace* workflows
 

@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
   
-**Package**: RGraphSpace 1.5.3
+**Package**: RGraphSpace 1.5.4
 
 ## Overview
 
@@ -28,7 +28,7 @@ are installed.
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.2"){
+if (packageVersion("RGraphSpace") < "1.5.4"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -407,35 +407,34 @@ repository.
     #> 
     #> other attached packages:
     #>  [1] airportr_0.1.3      flightsbr_1.1.10999 geometry_0.5.2     
-    #>  [4] maps_3.4.3          sf_1.1-1            ggraph_2.2.2       
+    #>  [4] maps_3.4.3          sf_1.1-2            ggraph_2.2.2       
     #>  [7] dplyr_1.2.1         tidygraph_1.3.1     igraph_2.3.3       
-    #> [10] RGraphSpace_1.5.3   ggplot2_4.0.3      
+    #> [10] RGraphSpace_1.5.4   ggplot2_4.0.3      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] tidyselect_1.2.1   viridisLite_0.4.3  vipor_0.4.7        farver_2.1.2      
-    #>  [5] viridis_0.6.5      S7_0.2.2           fastmap_1.2.0      tweenr_2.0.3      
-    #>  [9] janitor_2.2.1      digest_0.6.39      timechange_0.4.0   lifecycle_1.0.5   
-    #> [13] terra_1.9-34       magrittr_2.0.5     compiler_4.6.1     rlang_1.3.0       
-    #> [17] sass_0.4.10        tools_4.6.1        yaml_2.3.12        data.table_1.18.4 
-    #> [21] knitr_1.51         labeling_0.4.3     graphlayouts_1.2.4 htmlwidgets_1.6.4 
-    #> [25] classInt_0.4-11    curl_7.1.0         xml2_1.6.0         RColorBrewer_1.1-3
-    #> [29] abind_1.4-8        KernSmooth_2.23-27 withr_3.0.3        purrr_1.2.2       
-    #> [33] desc_1.4.3         grid_4.6.1         polyclip_1.10-7    e1071_1.7-17      
-    #> [37] scales_1.4.0       MASS_7.3-66        dichromat_2.0-1    cli_3.6.6         
-    #> [41] rmarkdown_2.31     ragg_1.5.2         generics_0.1.4     otel_0.2.0        
-    #> [45] rstudioapi_0.19.0  httr_1.4.8         magic_1.6-1        pbapply_1.7-4     
-    #> [49] DBI_1.3.0          ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0     
-    #> [53] proxy_0.4-29       stringr_1.6.0      parallel_4.6.1     rvest_1.0.5       
-    #> [57] selectr_0.6-0      ggrastr_1.0.2      vctrs_0.7.3        Matrix_1.7-6      
-    #> [61] jsonlite_2.0.0     ggrepel_0.9.8      archive_1.1.14     beeswarm_0.4.0    
-    #> [65] systemfonts_1.3.2  fontawesome_0.5.3  tidyr_1.3.2        jquerylib_0.1.4   
-    #> [69] units_1.0-1        glue_1.8.1         pkgdown_2.2.0      codetools_0.2-20  
-    #> [73] stringi_1.8.9      lubridate_1.9.5    gtable_0.3.6       tibble_3.3.1      
-    #> [77] parzer_0.4.4       pillar_1.11.1      htmltools_0.5.9    R6_2.6.1          
-    #> [81] httr2_1.3.0        textshaping_1.0.5  evaluate_1.0.5     lattice_0.23-1    
-    #> [85] snakecase_0.11.1   memoise_2.0.1      bslib_0.11.0       class_7.3-24      
-    #> [89] Rcpp_1.1.2         gridExtra_2.3.1    xfun_0.59          fs_2.1.0          
-    #> [93] pkgconfig_2.0.3
+    #>  [5] viridis_0.6.5      S7_0.2.2           fastmap_1.2.0      janitor_2.2.1     
+    #>  [9] tweenr_2.0.3       digest_0.6.39      timechange_0.4.0   lifecycle_1.0.5   
+    #> [13] magrittr_2.0.5     compiler_4.6.1     rlang_1.3.0        sass_0.4.10       
+    #> [17] tools_4.6.1        yaml_2.3.12        data.table_1.18.4  knitr_1.51        
+    #> [21] labeling_0.4.3     graphlayouts_1.2.4 htmlwidgets_1.6.4  classInt_0.4-11   
+    #> [25] curl_7.1.0         xml2_1.6.0         RColorBrewer_1.1-3 abind_1.4-8       
+    #> [29] KernSmooth_2.23-27 withr_3.0.3        purrr_1.2.2        desc_1.4.3        
+    #> [33] grid_4.6.1         polyclip_1.10-7    e1071_1.7-17       scales_1.4.0      
+    #> [37] MASS_7.3-66        dichromat_2.0-1    cli_3.6.6          rmarkdown_2.31    
+    #> [41] ragg_1.5.2         generics_0.1.4     otel_0.2.0         rstudioapi_0.19.0 
+    #> [45] httr_1.4.8         magic_1.6-1        pbapply_1.7-4      DBI_1.3.0         
+    #> [49] ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0      proxy_0.4-29      
+    #> [53] stringr_1.6.0      parallel_4.6.1     rvest_1.0.5        selectr_0.6-0     
+    #> [57] ggrastr_1.0.2      vctrs_0.7.3        Matrix_1.7-6       jsonlite_2.0.0    
+    #> [61] ggrepel_0.9.8      archive_1.1.14     beeswarm_0.4.0     systemfonts_1.3.2 
+    #> [65] fontawesome_0.5.3  tidyr_1.3.2        jquerylib_0.1.4    units_1.0-1       
+    #> [69] glue_1.8.1         pkgdown_2.2.0      stringi_1.8.9      lubridate_1.9.5   
+    #> [73] gtable_0.3.6       tibble_3.3.1       parzer_0.4.4       pillar_1.11.1     
+    #> [77] htmltools_0.5.9    R6_2.6.1           httr2_1.3.0        textshaping_1.0.5 
+    #> [81] evaluate_1.0.5     lattice_0.23-1     snakecase_0.11.1   memoise_2.0.1     
+    #> [85] bslib_0.11.0       class_7.3-24       Rcpp_1.1.2         gridExtra_2.3.1   
+    #> [89] xfun_0.59          fs_2.1.0           pkgconfig_2.0.3
 
 ## References
 

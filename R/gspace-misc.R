@@ -167,12 +167,30 @@ as_colorraster <- function(x, palette = hcl.colors(30), na.color = "white") {
 #' @rdname sfshape_ngons
 #' @export
 sfshape_ngon <- function(cx = 0, cy = 0, sides = 5, radius = 1) {
+  
   if (sides < 3) stop("A polygon needs at least 3 sides.")
+  
+  .gs_require_sf("building geometries")
+  
   theta <- seq(0, 2*pi, length.out = sides + 1)[1:sides]
   x <- cx + radius * sin(theta)
   y <- cy + radius * cos(theta)
   x <- c(x, x[1]); y <- c(y, y[1])
   sf::st_polygon(list(cbind(x, y)))
+}
+
+#' @rdname sfshape_ngons
+#' @export
+sfshape_ngons <- function(n, sides = c(3, 5, 7), radius = 0.3, spacing = NULL) {
+  
+  .gs_require_sf("building geometries")
+  
+  sides  <- rep_len(sides, n)
+  radius <- rep_len(radius, n)
+  if (is.null(spacing)) spacing <- max(radius) * 2.5
+  pos <- .grid_positions(n, spacing)
+  geoms <- Map(sfshape_ngon, pos$cx, pos$cy, sides, radius)
+  sf::st_sfc(geoms)
 }
 
 #-------------------------------------------------------------------------------
@@ -184,17 +202,6 @@ sfshape_ngon <- function(cx = 0, cy = 0, sides = 5, radius = 1) {
   col  <- (seq_len(n) - 1) %% ncol
   row  <- (seq_len(n) - 1) %/% ncol
   list(cx = col * spacing, cy = -row * spacing)
-}
-
-#' @rdname sfshape_ngons
-#' @export
-sfshape_ngons <- function(n, sides = c(3, 5, 7), radius = 0.3, spacing = NULL) {
-  sides  <- rep_len(sides, n)
-  radius <- rep_len(radius, n)
-  if (is.null(spacing)) spacing <- max(radius) * 2.5
-  pos <- .grid_positions(n, spacing)
-  geoms <- Map(sfshape_ngon, pos$cx, pos$cy, sides, radius)
-  sf::st_sfc(geoms)
 }
 
 #-------------------------------------------------------------------------------
@@ -243,8 +250,13 @@ sfshape_ngons <- function(n, sides = c(3, 5, 7), radius = 0.3, spacing = NULL) {
 #' @seealso \code{\link{sfshape_ngons}}
 #' @rdname sfshape_stars
 #' @export
-sfshape_star <- function(cx = 0, cy = 0, points = 5, r_outer = 0.3, r_inner = 0.1) {
+sfshape_star <- function(cx = 0, cy = 0, points = 5, 
+  r_outer = 0.3, r_inner = 0.1) {
+  
   if (points < 2) stop("A star needs at least 2 points.")
+  
+  .gs_require_sf("building geometries")
+  
   n <- points * 2
   theta <- seq(0, 2*pi, length.out = n + 1)[1:n]
   r <- rep(c(r_outer, r_inner), length.out = n)
@@ -256,7 +268,11 @@ sfshape_star <- function(cx = 0, cy = 0, points = 5, r_outer = 0.3, r_inner = 0.
 
 #' @rdname sfshape_stars
 #' @export
-sfshape_stars <- function(n, points = c(3, 4, 5), r_outer = 0.3, r_inner = 0.1, spacing = NULL) {
+sfshape_stars <- function(n, points = c(3, 4, 5), r_outer = 0.3, 
+  r_inner = 0.1, spacing = NULL) {
+  
+  .gs_require_sf("building geometries")
+  
   points  <- rep_len(points, n)
   r_outer <- rep_len(r_outer, n)
   r_inner <- rep_len(r_inner, n)

@@ -2,19 +2,17 @@
 
 ## Authors
 
-- **Sysbiolab Team**. Author.
+- **Flávio Kessler**. Author.
 
-- **Flávio Kessler**. Contributor.
+- **Jonathan Back**. Author.
 
-- **Jonathan Back**. Contributor.
+- **Lana Querne**. Author.
 
-- **Lana Querne**. Contributor.
-
-- **Victor Apolonio**. Contributor.
+- **Victor Apolonio**. Author.
 
 - **Vinicius Chagas**. Contributor.
 
-- **Mauro Castro**. Maintainer.
+- **Mauro Castro**. Author, maintainer.
   [](https://orcid.org/0000-0003-4942-8131)
 
 ## Citation
@@ -22,14 +20,14 @@
 Source:
 [`inst/CITATION`](https://github.com/sysbiolab/RGraphSpace/blob/HEAD/inst/CITATION)
 
-Sysbiolab Team (2026). RGraphSpace: A lightweight interface between
-'igraph' and 'ggplot2' graphics. R package version 1.5.3. Doi:
+Sysbiolab Team (2026). RGraphSpace: Rendering graphs as coherent spatial
+objects in ggplot2. R package version 1.5.4. Doi:
 10.32614/CRAN.package.RGraphSpace
 
     @Manual{,
       author = {{Sysbiolab Team}},
-      title = {RGraphSpace: A lightweight interface between 'igraph' and 'ggplot2' graphics},
+      title = {RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2},
       year = {2026},
-      note = {R package version 1.5.3 (Doi: 10.32614/CRAN.package.RGraphSpace)},
+      note = {R package version 1.5.4 (Doi: 10.32614/CRAN.package.RGraphSpace)},
       url = {https://CRAN.R-project.org/package=RGraphSpace},
     }

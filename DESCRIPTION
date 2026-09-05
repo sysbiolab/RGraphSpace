@@ -1,7 +1,7 @@
 Package: RGraphSpace
 Type: Package
-Version: 1.5.3
-Title: A Lightweight Interface Between 'igraph' and 'ggplot2' Graphics
+Version: 1.5.4
+Title: Rendering Graphs as Coherent Spatial Objects in 'ggplot2'
 Description: An interface for rendering 'igraph' objects as 'ggplot2' graphics 
     within a normalized coordinate space. 'RGraphSpace' implements new 
     geometries that treat a graph as a single coherent object, synchronizing 
@@ -10,20 +10,21 @@ Description: An interface for rendering 'igraph' objects as 'ggplot2' graphics
     node tables. Spatial alignment is available at the pixel level, 
     with node coordinates anchored to pixel centers through a half-pixel 
     offset, enabling precise node positioning over external reference frames 
-    such as images and maps.
+    such as images and maps. Core functionality builds on 'igraph', 'ggplot2', 
+    and 'tidygraph'; optional geometry and large raster-background 
+    images use 'sf' and 'terra' when installed.
 Authors@R: 
-    c(person("Sysbiolab Team", role = "aut"),
-      person("Flávio", "Kessler", role = "ctb"),
-      person("Jonathan", "Back", role = "ctb"),
-      person("Lana", "Querne", role = "ctb"),
-      person("Victor", "Apolonio", role = c("ctb")),
+    c(person("Flávio", "Kessler", role = "aut"),
+      person("Jonathan", "Back", role = "aut"),
+      person("Lana", "Querne", role = "aut"),
+      person("Victor", "Apolonio", role = c("aut")),
       person("Vinicius", "Chagas", role = "ctb"),
-      person("Mauro", "Castro", role = c("cre"),
+      person("Mauro", "Castro", role = c("aut","cre"),
               email = "mauro.a.castro@gmail.com",
               comment = c(ORCID = "0000-0003-4942-8131")))
 Depends: R(>= 4.5), methods, ggplot2 (>= 4.0)
-Imports: grDevices, grid, igraph, tidygraph, scales, rlang, ggrastr, Matrix, stats, sf, terra, lifecycle
-Suggests: knitr, rmarkdown, testthat, ggraph, ggnewscale, patchwork, Seurat, SeuratObject, SummarizedExperiment, SpatialExperiment
+Imports: igraph, tidygraph, Matrix, stats, scales, ggrastr, grid, grDevices, rlang, lifecycle
+Suggests: knitr, rmarkdown, testthat, ggraph, ggnewscale, patchwork, sf, terra, SeuratObject, SummarizedExperiment, SpatialExperiment
 Enhances: RedeR
 License: Artistic-2.0
 VignetteBuilder: knitr

@@ -22,6 +22,8 @@
   'sf'](https://sysbiolab.github.io/RGraphSpace/articles/interoperability.md):
 - [Mapping Graphs to
   Images](https://sysbiolab.github.io/RGraphSpace/articles/mapping-images.md):
+- [Working with nested geometries and high-resolution
+  images](https://sysbiolab.github.io/RGraphSpace/articles/nested-geometries.md):
 - [Getting started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/RGraphSpace.md):
 - [Fine-Tuning Scales and
@@ -32,5 +34,3 @@
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation1.md):
 - [Spatial-segmented data with SpatialExperiment and
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.md):
-- [Working with nested geometries and high-resolution
-  images](https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation3.md):
