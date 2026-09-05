@@ -56,12 +56,13 @@ sfshape_ngons(n, sides = c(3, 5, 7), radius = 0.3, spacing = NULL)
 ## Examples
 
 ``` r
-pentagon <- sfshape_ngon(0, 0, sides = 5, radius = 1)
-hexagon  <- sfshape_ngon(2, 0, sides = 6, radius = 1)
-plot(sf::st_sfc(pentagon, hexagon))
+if (requireNamespace("sf", quietly = TRUE)){
+  pentagon <- sfshape_ngon(0, 0, sides = 5, radius = 1)
+  hexagon  <- sfshape_ngon(2, 0, sides = 6, radius = 1)
+  plot(sf::st_sfc(pentagon, hexagon))
+  many <- sfshape_ngons(7, sides = c(3, 5, 8), radius = 0.4)
+  plot(many)
+}
 
-
-many <- sfshape_ngons(7, sides = c(3, 5, 8), radius = 0.4)
-plot(many)
 
 ```

@@ -69,12 +69,13 @@ sfshape_stars(
 ## Examples
 
 ``` r
+if (requireNamespace("sf", quietly = TRUE)){
 star5 <- sfshape_star(0, 0, points = 5, r_outer = 1, r_inner = 0.4)
 star8 <- sfshape_star(3, 0, points = 8, r_outer = 1, r_inner = 0.7)
 plot(sf::st_sfc(star5, star8))
-
-
 many <- sfshape_stars(6, points = 5, r_outer = 0.4, r_inner = 0.16)
 plot(many)
+}
+
 
 ```

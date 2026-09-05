@@ -155,13 +155,14 @@ as_colorraster <- function(x, palette = hcl.colors(30), na.color = "white") {
 #'   \code{POLYGON}. \code{sfshape_ngons()} returns an \code{sfc} of
 #'   \code{n} such polygons.
 #'
-#' @examplesIf requireNamespace("sf", quietly = TRUE)
-#' pentagon <- sfshape_ngon(0, 0, sides = 5, radius = 1)
-#' hexagon  <- sfshape_ngon(2, 0, sides = 6, radius = 1)
-#' plot(sf::st_sfc(pentagon, hexagon))
-#'
-#' many <- sfshape_ngons(7, sides = c(3, 5, 8), radius = 0.4)
-#' plot(many)
+#' @examples
+#' if (requireNamespace("sf", quietly = TRUE)){
+#'   pentagon <- sfshape_ngon(0, 0, sides = 5, radius = 1)
+#'   hexagon  <- sfshape_ngon(2, 0, sides = 6, radius = 1)
+#'   plot(sf::st_sfc(pentagon, hexagon))
+#'   many <- sfshape_ngons(7, sides = c(3, 5, 8), radius = 0.4)
+#'   plot(many)
+#' }
 #'
 #' @seealso \code{\link{sfshape_stars}}
 #' @rdname sfshape_ngons
@@ -239,13 +240,14 @@ sfshape_ngons <- function(n, sides = c(3, 5, 7), radius = 0.3, spacing = NULL) {
 #'   \code{POLYGON}. \code{sfshape_stars()} returns an \code{sfc} of
 #'   \code{n} such stars.
 #'
-#' @examplesIf requireNamespace("sf", quietly = TRUE)
+#' @examples
+#' if (requireNamespace("sf", quietly = TRUE)){
 #' star5 <- sfshape_star(0, 0, points = 5, r_outer = 1, r_inner = 0.4)
 #' star8 <- sfshape_star(3, 0, points = 8, r_outer = 1, r_inner = 0.7)
 #' plot(sf::st_sfc(star5, star8))
-#'
 #' many <- sfshape_stars(6, points = 5, r_outer = 0.4, r_inner = 0.16)
 #' plot(many)
+#' }
 #'
 #' @seealso \code{\link{sfshape_ngons}}
 #' @rdname sfshape_stars

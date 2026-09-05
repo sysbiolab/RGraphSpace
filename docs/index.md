@@ -1,4 +1,4 @@
-## *RGraphSpace*: Rendering graphs as coherent spatial objects in *ggplot2*
+## *RGraphSpace*: Rendering Graphs as Coherent Spatial Objects in *ggplot2*
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
