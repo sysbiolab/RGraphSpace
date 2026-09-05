@@ -41,7 +41,7 @@ jobs:
             any::knitr
             any::rmarkdown
           needs: check
-          dependencies: '"Depends", "Imports", "LinkingTo"'
+          dependencies: '"hard"'
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
