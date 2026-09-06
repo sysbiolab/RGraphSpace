@@ -60,8 +60,8 @@ graph data into geometric layers.
     control of node and edge layers is needed.
 
 Core functionality relies only on lightweight R packages; optional
-geometry and large raster-image features use ‘sf’ and ‘terra’ packages
-(and their system libraries) when installed.
+geometry and large raster-image features use the *sf* and *terra*
+packages (and their system libraries) when installed.
 
 ### Installation in R (\>=4.5)
 
