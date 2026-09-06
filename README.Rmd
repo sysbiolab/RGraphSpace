@@ -50,7 +50,7 @@ and dynamically adjusts start and end points based on node position and size.
 common case; use the individual geoms directly when independent control of
 node and edge layers is needed.
 
-Core functionality relies only on lightweight R packages; optional geometry and large raster-image features use 'sf' and 'terra' (and their system libraries) when installed.
+Core functionality relies only on lightweight R packages; optional geometry and large raster-image features use 'sf' and 'terra' packages (and their system libraries) when installed.
 
 ### Installation in R (>=4.5)
 
