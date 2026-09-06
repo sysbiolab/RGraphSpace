@@ -1,52 +1,80 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+<!-- devtools::build_readme() -->
+
 ### *RGraphSpace*: Rendering Graphs as Coherent Spatial Objects in *ggplot2*
-  <!-- badges: start -->
-  [![CRAN status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
-  [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-  [![CRAN downloads](https://cranlogs.r-pkg.org/badges/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
-  [![License: Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](https://cran.r-project.org/web/licenses/Artistic-2.0)
-  [![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.RGraphSpace-blue.svg)](https://doi.org/10.32614/CRAN.package.RGraphSpace)
-  [![R-CMD-check](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml)
-  <!-- badges: end -->
+
+<!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
+[![License:
+Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](https://cran.r-project.org/web/licenses/Artistic-2.0)
+[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.RGraphSpace-blue.svg)](https://doi.org/10.32614/CRAN.package.RGraphSpace)
+[![R-CMD-check](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 ### Highlights
-* Native *ggplot2* interface for *igraph* objects
-* Coherent rendering of node and edge layers
-* Optimized *geoms* for high-dimensional data
-* Spatial alignment to external reference frames
+
+- Native *ggplot2* interface for *igraph* objects
+- Coherent rendering of node and edge layers
+- Optimized *geoms* for high-dimensional data
+- Spatial alignment to external reference frames
 
 ### Tutorials
-* https://sysbiolab.github.io/RGraphSpace
+
+- <https://sysbiolab.github.io/RGraphSpace>
 
 ### Overview
 
-*RGraphSpace* is an R package that generates *ggplot2* graphics for *igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)) within a normalized coordinate space. The package implements new geometries that treat a graph as a single coherent object, synchronizing node and edge layers under standard aesthetic mappings. Node features are resolved on demand, supporting high-dimensional data without expanding node tables. Spatial alignment is available at the pixel level, with node coordinates anchored to pixel centers through a half-pixel offset, enabling precise node placement over external reference frames such as images and maps. The package also interoperates with *ggraph* and *tidygraph* workflows ([Pedersen 2024](#ref-pedersen)). Three specialized geoms translate graph data into geometric layers.
+*RGraphSpace* is an R package that generates *ggplot2* graphics for
+*igraph* objects ([Csardi and Nepusz 2006](#ref-nepusz)) within a
+normalized coordinate space. The package implements new geometries that
+treat a graph as a single coherent object, synchronizing node and edge
+layers under standard aesthetic mappings. Node features are resolved on
+demand, supporting high-dimensional data without expanding node tables.
+Spatial alignment is available at the pixel level, with node coordinates
+anchored to pixel centers through a half-pixel offset, enabling precise
+node placement over external reference frames such as images and maps.
+The package also interoperates with *ggraph* and *tidygraph* workflows
+([Pedersen 2024](#ref-pedersen)). Three specialized geoms translate
+graph data into geometric layers.
 
-1. **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint`
-aesthetic mappings and exposes node state information to the edge layer.
+1.  **`geom_nodespace()`**: Renders network nodes. Extends `GeomPoint`
+    aesthetic mappings and exposes node state information to the edge
+    layer.
 
-2. **`geom_edgespace()`**: Renders the relationships between nodes. Extends
-`GeomSegment` aesthetic mappings; unlike standard segments, it is node-aware
-and dynamically adjusts start and end points based on node position and size.
+2.  **`geom_edgespace()`**: Renders the relationships between nodes.
+    Extends `GeomSegment` aesthetic mappings; unlike standard segments,
+    it is node-aware and dynamically adjusts start and end points based
+    on node position and size.
 
-3. **`geom_graphspace()`**: A convenience wrapper that calls
-`geom_nodespace()` and `geom_edgespace()` in sequence. Use this for the
-common case; use the individual geoms directly when independent control of
-node and edge layers is needed.
+3.  **`geom_graphspace()`**: A convenience wrapper that calls
+    `geom_nodespace()` and `geom_edgespace()` in sequence. Use this for
+    the common case; use the individual geoms directly when independent
+    control of node and edge layers is needed.
 
-Core functionality relies only on lightweight R packages; optional geometry and large raster-image features use 'sf' and 'terra' (and their system libraries) when installed.
+Core functionality relies only on lightweight R packages; optional
+geometry and large raster-image features use ‘sf’ and ‘terra’ (and their
+system libraries) when installed.
 
-### Installation in R (>=4.5)
+### Installation in R (\>=4.5)
 
 ##### Release version
 
-```r
+``` r
 # Release version from CRAN
 install.packages("RGraphSpace")
 ```
 
 ##### Development version
 
-```r
+``` r
 # Dependencies to build the vignettes
 install.packages("knitr")
 install.packages("rmarkdown")
@@ -60,24 +88,31 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 
 If you use *RGraphSpace*, please cite:
 
-```{r, echo=FALSE, results='asis'}
-print(citation("RGraphSpace"), style = "text")
-```
+Sysbiolab Team (2026). *RGraphSpace: Rendering graphs as coherent
+spatial objects in ggplot2*. R package version 1.5.4 (Doi:
+10.32614/CRAN.package.RGraphSpace),
+<https://CRAN.R-project.org/package=RGraphSpace>.
 
 ### Licenses
 
-The *RGraphSpace* package is distributed under [Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)
+The *RGraphSpace* package is distributed under
+[Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)
 
 ### References
 
 <a name="ref-wickham"></a>
 
-* Wickham H: *ggplot2: Elegant Graphics for Data Analysis*. Springer-Verlag New York, 2016. [https://ggplot2.tidyverse.org](https://ggplot2.tidyverse.org)
+- Wickham H: *ggplot2: Elegant Graphics for Data Analysis*.
+  Springer-Verlag New York, 2016. <https://ggplot2.tidyverse.org>
 
 <a name="ref-nepusz"></a>
 
-* Csardi G, Nepusz T: The igraph software package for complex network research. *InterJournal, Complex Systems* 1695. 2006. [https://igraph.org](https://igraph.org)
+- Csardi G, Nepusz T: The igraph software package for complex network
+  research. *InterJournal, Complex Systems* 1695. 2006.
+  <https://igraph.org>
 
 <a name="ref-pedersen"></a>
 
-* Pedersen T: *tidygraph: A Tidy API for Graph Manipulation*. R package version 1.3.1. 2024. [doi:10.32614/CRAN.package.tidygraph](https://doi.org/10.32614/CRAN.package.tidygraph)
+- Pedersen T: *tidygraph: A Tidy API for Graph Manipulation*. R package
+  version 1.3.1. 2024.
+  [doi:10.32614/CRAN.package.tidygraph](https://doi.org/10.32614/CRAN.package.tidygraph)

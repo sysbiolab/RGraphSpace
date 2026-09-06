@@ -442,7 +442,7 @@ p1 + p2
     #>   [3] jsonlite_2.0.0              wk_0.9.5                   
     #>   [5] magrittr_2.0.5              TH.data_1.1-5              
     #>   [7] ggbeeswarm_0.7.3            magick_2.9.1               
-    #>   [9] farver_2.1.2                rmarkdown_2.31             
+    #>   [9] farver_2.1.2                rmarkdown_2.32             
     #>  [11] fs_2.1.0                    ragg_1.5.2                 
     #>  [13] vctrs_0.7.3                 spdep_1.4-2                
     #>  [15] DelayedMatrixStats_1.34.0   RCurl_1.98-1.19            

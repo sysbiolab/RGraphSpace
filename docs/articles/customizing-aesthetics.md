@@ -97,7 +97,7 @@ gs <- GraphSpace(gtoy2)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH fdd9feb UN-- 90 329 -- 
+#> IGRAPH 2316599 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/n), edge_var (e/n)
@@ -233,7 +233,7 @@ ggplot(data = gs) +
     #> [41] bslib_0.11.0       gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2 
     #> [45] xfun_0.59          tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0 
     #> [49] knitr_1.51         dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9   
-    #> [53] rmarkdown_2.31     labeling_0.4.3     compiler_4.6.1     S7_0.2.2
+    #> [53] rmarkdown_2.32     labeling_0.4.3     compiler_4.6.1     S7_0.2.2
 
 ## References
 

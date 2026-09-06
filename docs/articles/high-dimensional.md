@@ -244,7 +244,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.19.0      jsonlite_2.0.0        
     #>   [4] magrittr_2.0.5         spatstat.utils_3.2-3   ggbeeswarm_0.7.3      
-    #>   [7] farver_2.1.2           rmarkdown_2.31         fs_2.1.0              
+    #>   [7] farver_2.1.2           rmarkdown_2.32         fs_2.1.0              
     #>  [10] ragg_1.5.2             vctrs_0.7.3            ROCR_1.0-12           
     #>  [13] spatstat.explore_3.8-1 htmltools_0.5.9        sass_0.4.10           
     #>  [16] sctransform_0.4.3      parallelly_1.47.0      KernSmooth_2.23-27    

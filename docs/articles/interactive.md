@@ -232,7 +232,7 @@ plotGraphSpace(gtoy2_2, node.labels = FALSE)
     #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
     #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
     #> [49] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    labeling_0.4.3    
-    #> [53] rmarkdown_2.31     compiler_4.6.1     S7_0.2.2
+    #> [53] rmarkdown_2.32     compiler_4.6.1     S7_0.2.2
 
 ## References
 

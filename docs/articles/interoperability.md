@@ -421,7 +421,7 @@ repository.
     #> [25] curl_7.1.0         xml2_1.6.0         RColorBrewer_1.1-3 abind_1.4-8       
     #> [29] KernSmooth_2.23-27 withr_3.0.3        purrr_1.2.2        desc_1.4.3        
     #> [33] grid_4.6.1         polyclip_1.10-7    e1071_1.7-17       scales_1.4.0      
-    #> [37] MASS_7.3-66        dichromat_2.0-1    cli_3.6.6          rmarkdown_2.31    
+    #> [37] MASS_7.3-66        dichromat_2.0-1    cli_3.6.6          rmarkdown_2.32    
     #> [41] ragg_1.5.2         generics_0.1.4     otel_0.2.0         rstudioapi_0.19.0 
     #> [45] httr_1.4.8         magic_1.6-1        pbapply_1.7-4      DBI_1.3.0         
     #> [49] ggbeeswarm_0.7.3   cachem_1.1.0       ggforce_0.5.0      proxy_0.4-29      

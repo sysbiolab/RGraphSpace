@@ -44,6 +44,7 @@ install.packages("BiocManager")
 BiocManager::install("RedeR")
 
 # Used in the advanced vignettes
+install.packages("sf")
 install.packages("terra")
 install.packages("Seurat")
 BiocManager::install("glmGamPoi")

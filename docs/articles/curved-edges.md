@@ -69,7 +69,7 @@ gs_toy <- normalizeGraphSpace(gs_toy)
 
 gs_toy
 #> A GraphSpace-class object for:
-#> IGRAPH bbd1c11 DN-- 10 27 -- 
+#> IGRAPH 50fc5ff DN-- 10 27 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), edgeColor (e/c), arrowType (e/n), label (e/n)
 #> + node spatial boundaries: normalized to graph space
@@ -206,6 +206,6 @@ sessionInfo()
 #> [37] digest_0.6.39      grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0    
 #> [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       
 #> [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        
-#> [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.31     tools_4.6.1       
+#> [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.32     tools_4.6.1       
 #> [53] pkgconfig_2.0.3    htmltools_0.5.9
 ```

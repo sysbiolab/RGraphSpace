@@ -214,7 +214,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 386afd9 DN-- 39 0 -- 
+#> IGRAPH ca751e6 DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space
@@ -349,7 +349,7 @@ tutorial for examples using a reference image.
     #> [41] gtable_0.3.6       glue_1.8.1         systemfonts_1.3.2  xfun_0.59         
     #> [45] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
     #> [49] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    labeling_0.4.3    
-    #> [53] rmarkdown_2.31     compiler_4.6.1     S7_0.2.2
+    #> [53] rmarkdown_2.32     compiler_4.6.1     S7_0.2.2
 
 ## References
 

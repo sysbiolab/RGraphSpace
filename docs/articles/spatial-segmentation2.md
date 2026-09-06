@@ -380,7 +380,7 @@ gs_geometry(gs, "cellseg") <- sf::st_make_valid(cellseg)
     #>  [7] compiler_4.6.1       RSQLite_3.53.2       systemfonts_1.3.2   
     #> [10] vctrs_0.7.3          httpcode_0.3.0       pkgconfig_2.0.3     
     #> [13] fastmap_1.2.0        dbplyr_2.6.0         magick_2.9.1        
-    #> [16] XVector_0.52.0       fontawesome_0.5.3    rmarkdown_2.31      
+    #> [16] XVector_0.52.0       fontawesome_0.5.3    rmarkdown_2.32      
     #> [19] tzdb_0.5.0           ggbeeswarm_0.7.3     ragg_1.5.2          
     #> [22] purrr_1.2.2          bit_4.6.0            xfun_0.59           
     #> [25] cachem_1.1.0         jsonlite_2.0.0       blob_1.3.0          
