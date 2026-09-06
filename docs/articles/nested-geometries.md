@@ -361,8 +361,7 @@ p2 <- ggplot(gs_crop2) +
     colour = adjustcolor("white", 1)) +
   geom_nodespace(colour = "black", size = 0.1, pch = 19) +
   scale_fill_continuous(palette = cpal, limits = data_range) +
-  scale_colour_identity() + my_theme +
-    annotate("rect", 
+  my_theme + annotate("rect", 
     xmin = 0.2, xmax = 0.7, 
     ymin = 0.2, ymax = 0.7, 
     fill = NA, colour = "red4", 
@@ -396,17 +395,38 @@ p1 <- ggplot(gs_crop3) +
   my_theme
 
 p2 <- ggplot(gs_crop3) + 
-  geom_sf( aes(geometry = cell_geometry, fill = log2(PIGR + 1) ), 
-    colour = adjustcolor("white", 1)) +
+  geom_sf( aes(geometry = cell_geometry, 
+    fill = log2(PIGR + 1) ), colour = "white") +
   geom_sf( aes(geometry = nucleus_geometry), 
     fill = adjustcolor("black", 0.5), colour = NA) +
   scale_fill_continuous(palette = cpal, limits = data_range) +
-  scale_colour_identity() + my_theme
+  my_theme
 
 p1 + p2
 ```
 
 ![](figs_dev/spe2_seg4.png)
+
+## Downstream graph manipulation
+
+*RGraphSpace* is primarily designed for graph rendering and expects
+graphs to be prepared before they enter the *RGraphSpace* workflow. More
+extensive graph manipulation is therefore generally best performed
+upstream, while preparing the data used as input to *RGraphSpace*.
+
+Nevertheless, downstream analyses may require accessing and modifying a
+`GraphSpace` object to explore alternative graph configurations or
+highlight specific subsets of the data. For example, the following code
+selects the five cells with the highest expression of the *PIGR* gene,
+adds arbitrary directed edges connecting them, and renders the resulting
+subgraph as an additional layer on top of the original visualization.
+
+This deliberately naive example illustrates one possible approach to
+downstream graph manipulation. The edges have no specific biological
+meaning and are included solely to demonstrate how a graph can be
+modified at this later stage of the pipeline.
+
+![](figs_dev/spe2_seg5.png)
 
 ## Session information
 
