@@ -2,11 +2,11 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
-\section{CHANGES IN VERSION 1.5.4 (2026-09-10)}{
+\section{CHANGES IN VERSION 1.5.4 (2026-09-06)}{
   \itemize{
     \item Address issues identified during the JOSS review.
-    \item Improvements to the package documentation.
-    \item Improvements the codebase and unit tests.
+    \item Added a GitHub Actions workflow running 'R CMD check'.
+    \item Improvements to documentation, codebase, and unit tests.
   }
 }
 

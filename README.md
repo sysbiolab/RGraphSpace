@@ -60,8 +60,8 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 
 If you use *RGraphSpace*, please cite:
 
-```r
-citation("RGraphSpace")
+```{r, echo=FALSE, results='asis'}
+print(citation("RGraphSpace"), style = "text")
 ```
 
 ### Licenses
