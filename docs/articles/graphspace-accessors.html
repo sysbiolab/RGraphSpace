@@ -356,7 +356,7 @@ survived node filtering.</li>
 <code class="sourceCode R"><span><span class="co"># Node-induced subgraph: keep named nodes, prune dangling edges</span></span>
 <span><span class="va">gs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n2"</span>, <span class="st">"n3"</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH db584e0 DNW- 3 3 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 1dbcc49 DNW- 3 3 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
 <span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),</span></span>
@@ -370,7 +370,7 @@ survived node filtering.</li>
 <span><span class="co"># Node-induced subgraph by integer position</span></span>
 <span><span class="va">gs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH a103409 DNW- 4 5 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 02dba6c DNW- 4 5 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
 <span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),</span></span>
@@ -384,7 +384,7 @@ survived node filtering.</li>
 <span><span class="co"># Node-induced subgraph by pre-evaluated logical mask</span></span>
 <span><span class="va">gs</span><span class="op">[</span><span class="va">gs</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&gt;</span> <span class="fl">5</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 0208d8c DNW- 6 7 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 5b91f13 DNW- 6 7 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
 <span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),</span></span>
@@ -398,7 +398,7 @@ survived node filtering.</li>
 <span><span class="co"># Edge selection only: keep all nodes</span></span>
 <span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 286da26 DNW- 9 7 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 6e0c9f8 DNW- 9 7 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
 <span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),</span></span>
@@ -412,7 +412,7 @@ survived node filtering.</li>
 <span><span class="co"># Edge selection by endpoint: predicates must be pre-evaluated</span></span>
 <span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 652b01e DNW- 9 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH dab2ea3 DNW- 9 4 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
 <span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),</span></span>
@@ -426,7 +426,7 @@ survived node filtering.</li>
 <span><span class="co"># Alternatively, wrap the predicate in quote()</span></span>
 <span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span> <span class="op">&amp;</span> <span class="va">name2</span> <span class="op">==</span> <span class="st">"n2"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 95c81da DNW- 9 1 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 9035736 DNW- 9 1 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
 <span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),</span></span>
@@ -440,7 +440,7 @@ survived node filtering.</li>
 <span><span class="co"># Combined: node filter first, then edge intersection</span></span>
 <span><span class="va">gs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n2"</span>, <span class="st">"n3"</span><span class="op">)</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 05fccc2 DNW- 3 3 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 625e4cc DNW- 3 3 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize</span></span>
 <span><span class="co">#&gt; | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),</span></span>
@@ -604,8 +604,8 @@ permutations, with no resampling, no interpolation, and no risk of
 misaligning nodes against the background image. When applied to a
 normalized <code>GraphSpace</code>, these transformations are
 reversible, allowing the original coordinates and image orientation to
-be restored without loss of information; otherwise, they are applied to
-raw coordinates, permanently modifying them.</li>
+be restored without loss of information; otherwise, they persist after
+normalization, permanently modifying the raw coordinates.</li>
 </ul>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a GraphSpace</span></span>

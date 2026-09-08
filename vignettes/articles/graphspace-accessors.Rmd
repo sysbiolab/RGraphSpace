@@ -336,7 +336,7 @@ It is deliberately *not* a GraphSpace-modification path. If `.f` returns a graph
 These functions are special accessors, as they operate on a reference frame, either the graph or image spaces, not on the graph alone.
 
 - `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by the cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the window.
-- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. When applied to a normalized `GraphSpace`, these transformations are reversible, allowing the original coordinates and image orientation to be restored without loss of information; otherwise, they are applied to raw coordinates, permanently modifying them.
+- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. When applied to a normalized `GraphSpace`, these transformations are reversible, allowing the original coordinates and image orientation to be restored without loss of information; otherwise, they persist after normalization, permanently modifying the raw coordinates.
 
 
 ```{r , eval=TRUE, message=FALSE}
