@@ -35,11 +35,11 @@ if (packageVersion("RGraphSpace") < "1.5.4"){
 
 # Overview
 
-*RGraphSpace* is primarily designed for graph rendering and expects graphs to be prepared before they enter the *RGraphSpace* workflow. More extensive graph transformations is therefore generally best performed upstream, while preparing the data used as input to *RGraphSpace*.
+*RGraphSpace* is primarily designed for graph rendering and expects graphs to be prepared before they enter the *RGraphSpace* workflow. More extensive graph transformations are therefore generally best performed upstream, while preparing the data used as input to *RGraphSpace*.
 
 Nevertheless, downstream analyses may require accessing and modifying a `GraphSpace` object to explore alternative graph configurations or highlight specific subsets of the data.
 
-In the following we demonstrate *RGraphSpace* accessors for graph manipulations.
+In the following, we demonstrate the `GraphSpace` accessors for graph manipulation. All `GraphSpace` accessors use the `gs_*` prefix to reduce the chance of masking functions from other packages, particularly graph-analysis packages that are commonly used side-by-side.
 
 ## Setting basic input data
 
@@ -254,7 +254,7 @@ gs$nodeShape[1] <- 19
 
 # General accessors
 
-All `GraphSpace` accessors start with a `gs_*` prefix to avoid naming conflicts with functions from other packages, particularly graph-analysis packages that are commonly used alongside. Here we reproduce the general usage for these accessors, already documented individually in the function help pages.
+Here we show typical usage of the general accessors, used across the other tutorials.
 
 ```{r , eval=TRUE, message=FALSE, results='hide'}
 # Vertex names
@@ -333,10 +333,10 @@ It is deliberately *not* a GraphSpace-modification path. If `.f` returns a graph
 
 # Crop, rotate, flip, and transpose
 
-These functions are special accessors, as they operate on a reference frame, either the graph or image spaces, not on the graph alone.
+These functions are special accessors, as they operate on a reference frame, either the graph or image space, not on the graph alone.
 
 - `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by the cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the window.
-- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. When applied to a normalized `GraphSpace`, these transformations are reversible, allowing the original coordinates and image orientation to be restored without loss of information; otherwise, they persist after normalization, permanently modifying the raw coordinates.
+- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. Applied to a normalized `GraphSpace`, they transform the normalized coordinates, leaving the raw coordinates intact so the original orientation can be restored without loss. Applied to a `GraphSpace` that has not been normalized, there are no normalized coordinates to act on, so the transformation is applied to the raw coordinates and is permanent. The `persist` argument controls this behavior: `persist = TRUE` writes the transformation into the raw coordinates regardless of normalization state.
 
 
 ```{r , eval=TRUE, message=FALSE}
@@ -357,6 +357,9 @@ gs_flip <- flipGraphSpace(gs)
 
 # Transpose
 gs_t <- transposeGraphSpace(gs)
+
+# Rotate
+gs_rot90 <- rotateGraphSpace(gs, persist = TRUE)
 ```
 
 

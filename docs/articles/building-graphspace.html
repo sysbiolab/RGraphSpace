@@ -208,7 +208,7 @@ internally.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 6e3bc59 DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 0080c05 DN-- 5 4 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
@@ -446,10 +446,10 @@ applies (highest to lowest):</p>
 <div class="table table-sm table-striped">
 <table class="table">
 <colgroup>
-<col width="11%">
-<col width="11%">
-<col width="33%">
-<col width="44%">
+<col width="10%">
+<col width="10%">
+<col width="37%">
+<col width="41%">
 </colgroup>
 <thead><tr class="header">
 <th align="center">Priority</th>
@@ -459,21 +459,22 @@ applies (highest to lowest):</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="center">1</td>
-<td align="center">Aesthetic mapping</td>
-<td>Data-driven, scale-trained, shown in legends.</td>
-<td><code>geom_nodespace(aes(fill = node_var))</code></td>
+<td align="center">1 (highest)</td>
+<td align="center">Fixed parameter</td>
+<td>Constant value applied to all entities as-is, with no scale.</td>
+<td><code>geom_nodespace(fill = "red")</code></td>
 </tr>
 <tr class="even">
 <td align="center">2</td>
-<td align="center">Fixed parameter</td>
-<td>Identity value applied uniformly.</td>
-<td><code>geom_nodespace(fill = "red")</code></td>
+<td align="center">Aesthetic mapping</td>
+<td>Data-driven value, trained through a scale and shown in
+legends.</td>
+<td><code>geom_nodespace(aes(fill = node_var))</code></td>
 </tr>
 <tr class="odd">
-<td align="center">3</td>
-<td align="center">Graph attribute</td>
-<td>Identity values from the <code>GraphSpace</code> object.</td>
+<td align="center">3 (fallback)</td>
+<td align="center">GraphSpace attribute</td>
+<td>Value stored on the <code>GraphSpace</code> object, used as-is.</td>
 <td><code><a href="../reference/geom_nodespace.html">geom_nodespace()</a></code></td>
 </tr>
 </tbody>

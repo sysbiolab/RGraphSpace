@@ -71,13 +71,8 @@ cropping, and drops nodes (and edges) that fall outside the window.
 permutation, with no resampling, no interpolation, and no risk of
 misaligning nodes against the background image.
 \code{rotateGraphSpace()} is restricted to a single 90-degree turn: apply
-it again to its own output for 180 or 270 degrees, e.g.
-\code{rotateGraphSpace(rotateGraphSpace(gs))} for 180 degrees. Combine
-all three with each other to reach any of the 8 symmetries of a square.
-}
-\note{
-This is an accessory function typically called during
-the preprocessing of \code{GraphSpace} objects before rendering.
+it again to its own output for 180 or 270 degrees. Combine all three with
+each other to reach any of the 8 symmetries of a square.
 }
 \examples{
 library(RGraphSpace)

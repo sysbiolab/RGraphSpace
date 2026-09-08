@@ -251,8 +251,8 @@ This design allows the two interfaces to coexist cleanly. When multiple sources 
 
 Priority | Source | Description
 :-------: | :------: | -----------
-1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends.
-2 | Fixed parameter | Identity value applied uniformly to all nodes or edges.
+1 | Fixed parameter | Identity value applied uniformly to all nodes or edges.
+2 | Aesthetic mapping | Data-driven, scale-trained, shown in legends.
 3 | Graph attribute | Per-node or per-edge identity values from the `GraphSpace` object.
 
 # Online tutorials
