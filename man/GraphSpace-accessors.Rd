@@ -147,9 +147,21 @@ gs_vcount(gs)
 # Edge count
 gs_ecount(gs)
 
-# Add an image and rescale graph coordinates to image space
-# Images may be provided as a raster or numeric matrix
+# Images may be provided as raster or numeric matrices;
+# 'SpatRaster' objects are supported when the optional 
+# 'terra' package is available
 gs_image(gs) <- as_colorraster(volcano)
+
+# Apply a scaling factor to node coordinates
+gs_scale_factor(gs) <- 0.1
+
+# Undo scaling 
+gs_scale_factor(gs) <- 1
+
+# Set a pixel budget for image operations
+gs_image_maxpixels(gs) <- 4e+06
+
+# Normalize image and node coordinates to graph space
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
 
 # Add a sparse Matrix aligned to nodes
@@ -165,19 +177,10 @@ gs_features(gs)
 # Feature count
 gs_nfeatures(gs)
 
-# Apply a scaling factor to node coordinates
-gs_scale_factor(gs) <- 0.1
-# undo scaling 
-gs_scale_factor(gs) <- 1
-
 # Add an 'sfc' geometry column (requires the optional 'sf' package)
 if (requireNamespace("sf", quietly = TRUE)) {
-  pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
-  gs_geometry(gs) <- sf::st_sfc(pts)
+  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
 }
-
-# Set a pixel budget for image operations
-gs_image_maxpixels(gs) <- 4e+06
 
 }
 \seealso{

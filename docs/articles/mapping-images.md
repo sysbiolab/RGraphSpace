@@ -214,7 +214,7 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH ba6a3f2 DN-- 39 0 -- 
+#> IGRAPH 4df5b9a DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), arrowType (e/n)
 #> + node spatial boundaries: normalized to image space

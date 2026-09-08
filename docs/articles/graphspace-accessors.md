@@ -62,42 +62,7 @@ components.
 ``` r
 
 # Access all vertex attributes
-gs_vertex_attr(gs)
-#> $x
-#> [1]  0  2 -2 -4 -8
-#> 
-#> $y
-#> [1]  0  0  2 -4  0
-#> 
-#> $name
-#> [1] "n1" "n2" "n3" "n4" "n5"
-#> 
-#> $nodeLabel
-#> [1] "V1" "V2" "V3" "V4" "V5"
-#> 
-#> $nodeLabelSize
-#> [1] 3 3 3 3 3
-#> 
-#> $nodeLabelColor
-#> [1] "black" "black" "black" "black" "black"
-#> 
-#> $nodeShape
-#> [1] 21 22 23 24 25
-#> 
-#> $nodeSize
-#> [1]  8  5  5 10  5
-#> 
-#> $nodeFillColor
-#> [1] "red"       "#00ad39"   "grey80"    "lightblue" "cyan"     
-#> 
-#> $nodeLineWidth
-#> [1] 1 1 1 1 1
-#> 
-#> $nodeLineColor
-#> [1] "grey20" "grey20" "grey20" "grey20" "grey20"
-#> 
-#> $nodeAlpha
-#> [1] 1 1 1 1 1
+# gs_vertex_attr(gs)
 
 # Access a specific vertex attribute
 gs_vertex_attr(gs, "nodeLabel")
@@ -135,6 +100,7 @@ gs
 
 # Access a specific edge attribute
 gs_edge_attr(gs, "edgeColor")
+#> [1] "red"   "green" "blue"  "black"
 
 # Replace an entire edge attribute
 gs_edge_attr(gs, "edgeLineWidth") <- 1
@@ -146,6 +112,16 @@ gs_edge_attr(gs, "new_edge_var") <- rnorm(gs_ecount(gs))
 gs_edge_attr(gs, "new_edge_var") <- NULL
 
 gs
+#> A GraphSpace-class object for:
+#> IGRAPH 5fb8aab DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeFillColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c),
+#> | nodeAlpha (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth
+#> | (e/n), arrowType (e/n), edgeAlpha (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 2] (cols)
+#> | y: [-4, 2] (rows)
 ```
 
 ## Adding nodes
@@ -153,11 +129,11 @@ gs
 The
 [`gs_add_nodes()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.md)
 function adds one or more nodes to a `GraphSpace` object. Attributes
-present on existing nodes but absent from value are filled from package
-defaults. Standard node attributes (such as `nodeSize` and `nodeColor`)
-are kept consistent across old and new nodes; the`@graph`, `@nodes`, and
-`@fdata` slots are updated consistently. Because new nodes introduce
-coordinates into the existing layout, the normalized state is
+present on existing nodes but absent in the input `value` are filled
+from package defaults. Standard node attributes (such as `nodeSize` and
+`nodeColor`) are kept consistent across old and new nodes; the`@graph`,
+`@nodes`, and `@fdata` slots are updated consistently. Because new nodes
+introduce coordinates into the existing layout, the normalized state is
 invalidated and
 [`normalizeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
 must be re-run afterwards.
@@ -219,16 +195,16 @@ whose endpoint is no longer present. The result is propagated to all
 
 ``` r
 
-# By node name (character vector)
+# Subset by node name (character vector)
 gs2 <- gs_subset_nodes(gs, c("n1", "n2", "n3"))
 
-# By integer position
+# Subset by integer position
 gs2 <- gs_subset_nodes(gs, 1:5)
 
-# By predicate (data masking against @nodes columns)
+# Subset by predicate (data masking against @nodes columns)
 gs2 <- gs_subset_nodes(gs, nodeSize > 5)
 
-# By pre-evaluated logical vector
+# Subset by pre-evaluated logical vector
 keep <- gs$nodeSize > 5
 gs2  <- gs_subset_nodes(gs, keep)
 
@@ -247,12 +223,12 @@ is propagated to all `GraphSpace` components.
 
 ``` r
 
-# By predicate on an edge attribute
+# Subset by predicate on an edge attribute
 gs3 <- gs_subset_edges(gs, weight > 0.5)
 
-# By endpoint names: name1 and name2 are columns in @edges and
-# can be used directly inside any predicate expression
-gs3 <- gs_subset_edges(gs, name1 == "n1")
+# Subset by endpoint names: 'name1' and 'name2' are columns in
+# @edges and can be used directly inside any predicate expression
+gs3 <- gs_subset_edges(gs, name1 == "n1" & name2 == "n2")
 
 # Combining endpoint and attribute conditions
 gs3 <- gs_subset_edges(gs, name1 == "n1" & weight > 0.5)
@@ -269,10 +245,9 @@ gs3 <- gs_subset_edges(gs, gs_edges(gs)$weight > 0.5)
 The `[` operator subsets a `GraphSpace` object along two independent
 dimensions: nodes (`i`) and edges (`j`). This differs from the usual
 data-frame convention, where `[i, j]` indexes rows and columns of a
-single table — here, `i` and `j` each address a distinct structural
-component of the graph rather than rows and columns of one. Neither
-index subsets columns; both select graph entities directly. Omitting an
-index retains all elements along that dimension.
+single table. Here, neither index subsets columns; both select graph
+entities directly. Omitting an index retains all elements along that
+dimension.
 
 **Synchronization rules:**
 
@@ -282,35 +257,109 @@ index retains all elements along that dimension.
 - `x[, j]` **Edge selection.** Edges are selected by `j`; the node set
   is untouched and no node pruning occurs.
 - `x[i, j]` **Combined selection.** Node filtering is applied first,
-  then `j` is then evaluated against the **original**, unfiltered edge
-  table; an edge survives only if it satisfies `j` **and** both its
-  endpoints survived node filtering.
+  then `j` is evaluated against the **original**, unfiltered edge table;
+  an edge survives only if it satisfies `j` **and** both its endpoints
+  survived node filtering.
 
 ``` r
 
 # Node-induced subgraph: keep named nodes, prune dangling edges
 gs[c("n1", "n2", "n3"), ]
+#> A GraphSpace-class object for:
+#> IGRAPH 7cd9dc6 DNW- 3 3 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
+#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
+#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-2, 2] (cols)
+#> | y: [0, 2] (rows)
 
 # Node-induced subgraph by integer position
 gs[1:4, ]
+#> A GraphSpace-class object for:
+#> IGRAPH aa2b283 DNW- 4 5 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
+#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
+#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-4, 2] (cols)
+#> | y: [-4, 2] (rows)
 
 # Node-induced subgraph by pre-evaluated logical mask
 gs[gs$nodeSize > 5, ]
+#> A GraphSpace-class object for:
+#> IGRAPH 7c8e813 DNW- 6 7 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
+#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
+#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 2] (cols)
+#> | y: [-4, 2] (rows)
 
 # Edge selection only: keep all nodes
-gs[, 1:3]
 gs[, gs_edges(gs)$weight > 0.5]
+#> A GraphSpace-class object for:
+#> IGRAPH db31546 DNW- 9 7 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
+#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
+#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 2] (cols)
+#> | y: [-4, 2] (rows)
 
-# Edge selection by endpoint: 'name1' and 'name2' must be pre-evaluated
-# when using [, because [ evaluates j in the calling environment.
-# Use gs_subset_edges() for unquoted predicate expressions instead.
+# Edge selection by endpoint: predicates must be pre-evaluated
 gs[, gs_edges(gs)$name1 == "n1"]
-gs[, gs_edges(gs)$name1 == "n1" & gs_edges(gs)$name2 == "n2"]
+#> A GraphSpace-class object for:
+#> IGRAPH 83c7487 DNW- 9 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
+#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
+#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 2] (cols)
+#> | y: [-4, 2] (rows)
+
+# Alternatively, wrap the predicate in quote()
 gs[, quote(name1 == "n1" & name2 == "n2")]
+#> A GraphSpace-class object for:
+#> IGRAPH c8af4d2 DNW- 9 1 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
+#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
+#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 2] (cols)
+#> | y: [-4, 2] (rows)
 
 # Combined: node filter first, then edge intersection
 gs[c("n1", "n2", "n3"), gs_edges(gs)$weight > 0.5]
-gs[c("n1", "n2", "n3"), gs_edges(gs)$name1 == "n1"]
+#> A GraphSpace-class object for:
+#> IGRAPH c58b3dd DNW- 3 3 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
+#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
+#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
+#> | (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-2, 2] (cols)
+#> | y: [0, 2] (rows)
 ```
 
 The `[[` operator, by contrast, is a simple accessor: `x[["nodes"]]`,
@@ -339,6 +388,7 @@ listing the vertex attributes currently defined on the graph.
 
 # Return the vertex attribute `name`
 gs$name
+#> [1] "n1" "n2" "n3" "n4" "n5" "n6" "n7" "n8" "n9"
 
 # Sets the vertex attribute `nodeShape`
 gs$nodeShape <- 21
@@ -355,10 +405,11 @@ modifying it. Reading via `gs$` is unaffected.
 
 ## General accessors
 
-All `GraphSpace` accessors start with a `gs_*` prefix to avoid
-overlapping with other namespaces, especially other graph packages that
-are often used alongside. Here we reproduce the general usage for these
-accessors, already documented individually in the function help pages.
+All `GraphSpace` accessors start with a `gs_*` prefix to avoid naming
+conflicts with functions from other packages, particularly
+graph-analysis packages that are commonly used alongside. Here we
+reproduce the general usage for these accessors, already documented
+individually in the function help pages.
 
 ``` r
 
@@ -368,32 +419,41 @@ names(gs)
 # Vertex attribute names
 gs_names(gs)
 
-# Get a data frame with nodes
+# Get the node data frame
 gs_nodes(gs)
 
-# Get a data frame with edges
+# Get the edge data frame
 gs_edges(gs)
 
-# Get an igraph object
+# Get the underlying igraph object
 gs_graph(gs)
 
-# Get a data frame with nodes
-gs_nodes(gs)
-
-# Vertex count
+# Number of vertices
 gs_vcount(gs)
 
-# Edge count
+# Number of edges
 gs_ecount(gs)
 
-# Add an image and rescale graph coordinates to image space
-# Images may be provided as a raster or numeric matrix
+# Images may be provided as raster or numeric matrices;
+# 'SpatRaster' objects are supported when the optional 
+# 'terra' package is available
 gs_image(gs) <- as_colorraster(volcano)
+
+# Set a pixel budget for image operations
+gs_image_maxpixels(gs) <- 4e+06
+
+# Apply a scaling factor to node coordinates
+gs_scale_factor(gs) <- 0.1
+
+# Undo scaling
+gs_scale_factor(gs) <- 1
+
+# Normalize image and node coordinates to graph space
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
 
 # Add a sparse Matrix aligned to nodes
 library(Matrix)
-mtx <- Matrix(0, gs_vcount(gs), 2)
+mtx <- Matrix::Matrix(0, gs_vcount(gs), 2)
 rownames(mtx) <- names(gs)
 colnames(mtx) <- c("feature1","feature2")
 gs_fdata(gs) <- mtx
@@ -404,19 +464,10 @@ gs_features(gs)
 # Feature count
 gs_nfeatures(gs)
 
-# Apply a scaling factor to node coordinates
-gs_scale_factor(gs) <- 0.1
-# undo scaling
-gs_scale_factor(gs) <- 1
-
 # Add an 'sfc' geometry column (requires the optional 'sf' package)
 if (requireNamespace("sf", quietly = TRUE)) {
-  pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
-  gs_geometry(gs) <- sf::st_sfc(pts)
+  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
 }
-
-# Set a pixel budget for image operations
-gs_image_maxpixels(gs) <- 4e+06
 ```
 
 ## Applying *igraph* functions
@@ -428,28 +479,35 @@ function runs any igraph function on the graph carried by a
 It extracts the underlying igraph via
 [`as.igraph()`](https://r.igraph.org/reference/as.igraph.html), applies
 `.f`, and returns the result unchanged. This is the read-only lane onto
-the whole igraph ecosystem: measures such as
+the broader igraph ecosystem: measures such as
 [`degree()`](https://r.igraph.org/reference/degree.html),
 [`betweenness()`](https://r.igraph.org/reference/betweenness.html),
 [`coreness()`](https://r.igraph.org/reference/coreness.html), and
-distances all work through this one entry point.
+distances all work through this single entry point.
 
 ``` r
 
 # Apply igraph functions
 gs_compute(gs, igraph::degree)
+#> n1 n2 n3 n4 n5 n6 n7 n8 n9 
+#>  4  2  3  3  3  1  0  0  0
+
 gs_compute(gs, "betweenness", directed = FALSE)
+#>  n1  n2  n3  n4  n5  n6  n7  n8  n9 
+#> 2.5 0.0 0.5 2.0 4.0 0.0 0.0 0.0 0.0
 
 # Fold a per-vertex result back as a node attribute
 gs$degree <- gs_compute(gs, igraph::degree)
 ```
 
-It is deliberately *not* a graph-modification path. If `.f` returns a
-graph
+It is deliberately *not* a GraphSpace-modification path. If `.f` returns
+a graph
 (e.g. [`simplify()`](https://r.igraph.org/reference/simplify.html),
 [`induced_subgraph()`](https://r.igraph.org/reference/subgraph.html)),
-this cannot be reintegrated to `gs` as a modified graph must go through
-the graph-modification checks.
+this cannot be reintegrated to the `gs` object, as graph modifications
+may invalidate the correspondence between the graph and other components
+of the object. A modified graph must instead go through the
+graph-modification checks of the `GraphSpace` constructor.
 
 ## Crop, rotate, flip, and transpose
 
@@ -520,20 +578,22 @@ gs_t <- transposeGraphSpace(gs)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RGraphSpace_1.5.4 ggplot2_4.0.3    
+    #> [1] Matrix_1.7-6      igraph_2.3.3      RGraphSpace_1.5.4 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] Matrix_1.7-6       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       
-    #>  [5] compiler_4.6.1     tidyselect_1.2.1   ggbeeswarm_0.7.3   dichromat_2.0-1   
-    #>  [9] tidyr_1.3.2        jquerylib_0.1.4    systemfonts_1.3.2  scales_1.4.0      
-    #> [13] textshaping_1.0.5  yaml_2.3.12        fastmap_1.2.0      lattice_0.23-1    
-    #> [17] R6_2.6.1           generics_0.1.4     knitr_1.51         htmlwidgets_1.6.4 
-    #> [21] tibble_3.3.1       desc_1.4.3         bslib_0.11.0       pillar_1.11.1     
-    #> [25] RColorBrewer_1.1-3 rlang_1.3.0        cachem_1.1.0       xfun_0.59         
-    #> [29] fs_2.1.0           sass_0.4.10        S7_0.2.2           otel_0.2.0        
-    #> [33] cli_3.6.6          pkgdown_2.2.0      withr_3.0.3        magrittr_2.0.5    
-    #> [37] digest_0.6.39      grid_4.6.1         rstudioapi_0.19.0  beeswarm_0.4.0    
-    #> [41] lifecycle_1.0.5    vipor_0.4.7        ggrastr_1.0.2      vctrs_0.7.3       
-    #> [45] evaluate_1.0.5     glue_1.8.1         farver_2.1.2       ragg_1.5.2        
-    #> [49] tidygraph_1.3.1    purrr_1.2.2        rmarkdown_2.32     tools_4.6.1       
-    #> [53] pkgconfig_2.0.3    htmltools_0.5.9
+    #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        class_7.3-24      
+    #>  [5] KernSmooth_2.23-27 lattice_0.23-1     digest_0.6.39      magrittr_2.0.5    
+    #>  [9] evaluate_1.0.5     grid_4.6.1         RColorBrewer_1.1-3 fastmap_1.2.0     
+    #> [13] jsonlite_2.0.0     e1071_1.7-17       ggrastr_1.0.2      DBI_1.3.0         
+    #> [17] purrr_1.2.2        scales_1.4.0       textshaping_1.0.5  jquerylib_0.1.4   
+    #> [21] cli_3.6.6          rlang_1.3.0        units_1.0-1        tidygraph_1.3.1   
+    #> [25] withr_3.0.3        cachem_1.1.0       yaml_2.3.12        otel_0.2.0        
+    #> [29] ggbeeswarm_0.7.3   tools_4.6.1        dplyr_1.2.1        vctrs_0.7.3       
+    #> [33] R6_2.6.1           proxy_0.4-29       classInt_0.4-11    lifecycle_1.0.5   
+    #> [37] fs_2.1.0           htmlwidgets_1.6.4  vipor_0.4.7        ragg_1.5.2        
+    #> [41] pkgconfig_2.0.3    beeswarm_0.4.0     desc_1.4.3         pkgdown_2.2.0     
+    #> [45] pillar_1.11.1      bslib_0.11.0       gtable_0.3.6       Rcpp_1.1.2        
+    #> [49] glue_1.8.1         sf_1.1-2           systemfonts_1.3.2  xfun_0.59         
+    #> [53] tibble_3.3.1       tidyselect_1.2.1   rstudioapi_0.19.0  knitr_1.51        
+    #> [57] dichromat_2.0-1    farver_2.1.2       htmltools_0.5.9    rmarkdown_2.32    
+    #> [61] compiler_4.6.1     S7_0.2.2

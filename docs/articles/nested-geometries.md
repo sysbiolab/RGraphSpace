@@ -416,10 +416,14 @@ upstream, while preparing the data used as input to *RGraphSpace*.
 
 Nevertheless, downstream analyses may require accessing and modifying a
 `GraphSpace` object to explore alternative graph configurations or
-highlight specific subsets of the data. For example, the following code
-selects the five cells with the highest expression of the *PIGR* gene,
-adds arbitrary directed edges connecting them, and renders the resulting
-subgraph as an additional layer on top of the original visualization.
+highlight specific subsets of the data (see [*GraphSpace
+accessors*](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
+for an overview on the available graph transformations).
+
+For example, the following code selects the five cells with the highest
+expression of the *PIGR* gene, adds arbitrary directed edges connecting
+them, and renders the resulting subgraph as an additional layer on top
+of the original visualization.
 
 ``` r
 

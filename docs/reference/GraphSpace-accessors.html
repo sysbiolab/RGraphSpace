@@ -287,9 +287,21 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-in"><span><span class="fu">gs_ecount</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add an image and rescale graph coordinates to image space</span></span></span>
-<span class="r-in"><span><span class="co"># Images may be provided as a raster or numeric matrix</span></span></span>
+<span class="r-in"><span><span class="co"># Images may be provided as raster or numeric matrices;</span></span></span>
+<span class="r-in"><span><span class="co"># 'SpatRaster' objects are supported when the optional </span></span></span>
+<span class="r-in"><span><span class="co"># 'terra' package is available</span></span></span>
 <span class="r-in"><span><span class="fu">gs_image</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="as_colorraster.html">as_colorraster</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Apply a scaling factor to node coordinates</span></span></span>
+<span class="r-in"><span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Undo scaling </span></span></span>
+<span class="r-in"><span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Set a pixel budget for image operations</span></span></span>
+<span class="r-in"><span><span class="fu">gs_image_maxpixels</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">4e+06</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Normalize image and node coordinates to graph space</span></span></span>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, image.space <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Normalizing node coordinates to graph space...</span>
 <span class="r-in"><span></span></span>
@@ -308,20 +320,10 @@ container. See also <code><a href="gs_features-utils.html">gs_fetch_features</a>
 <span class="r-in"><span><span class="fu">gs_nfeatures</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Apply a scaling factor to node coordinates</span></span></span>
-<span class="r-in"><span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Denormalizing graph coordinates...</span>
-<span class="r-in"><span><span class="co"># undo scaling </span></span></span>
-<span class="r-in"><span><span class="fu">gs_scale_factor</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add an 'sfc' geometry column (requires the optional 'sf' package)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sf"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fu">gs_vcount</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span>, <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">st_point</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">gs_geometry</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="va">pts</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">gs_geometry</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sfshape_ngons.html">sfshape_ngons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu">gs_vcount</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Set a pixel budget for image operations</span></span></span>
-<span class="r-in"><span><span class="fu">gs_image_maxpixels</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">4e+06</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

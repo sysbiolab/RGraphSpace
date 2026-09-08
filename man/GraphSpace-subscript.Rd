@@ -56,7 +56,7 @@ selects edges.
 \strong{Mental model:} unlike a data frame, where \code{[i, j]} means rows
 and columns of the same table, for \code{GraphSpace} the two indices
 address the two primary components of the graph: nodes (\code{i}) and
-edges (\code{j}). Neither index subsets columns — they select graph
+edges (\code{j}). Neither index subsets columns, they select graph
 entities.
 
 \strong{Synchronization rules:}

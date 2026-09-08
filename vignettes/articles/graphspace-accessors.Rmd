@@ -106,7 +106,7 @@ gs
 
 # Adding nodes
 
-The `gs_add_nodes()` function adds one or more nodes to a `GraphSpace` object. Attributes present on existing nodes but absent from value are filled from package defaults. Standard node attributes (such as `nodeSize` and `nodeColor`) are kept consistent across old and new nodes; the` @graph`, `@nodes`, and `@fdata` slots are updated consistently. Because new nodes introduce coordinates into the existing layout, the normalized state is invalidated and `normalizeGraphSpace()` must be re-run afterwards.
+The `gs_add_nodes()` function adds one or more nodes to a `GraphSpace` object. Attributes present on existing nodes but absent in the input `value` are filled from package defaults. Standard node attributes (such as `nodeSize` and `nodeColor`) are kept consistent across old and new nodes; the` @graph`, `@nodes`, and `@fdata` slots are updated consistently. Because new nodes introduce coordinates into the existing layout, the normalized state is invalidated and `normalizeGraphSpace()` must be re-run afterwards.
 
 ```{r , eval=TRUE, message=FALSE}
 # Functional form (pipe-friendly) returns a modified copy
@@ -149,16 +149,16 @@ For objects built with `simplify = TRUE` (the default), loop edges (`from == to`
 The `gs_subset_nodes()` function retains a subset of nodes and automatically removes any edge whose endpoint is no longer present. The result is propagated to all `GraphSpace` components.
 
 ```{r , eval=TRUE, message=FALSE}
-# By node name (character vector)
+# Subset by node name (character vector)
 gs2 <- gs_subset_nodes(gs, c("n1", "n2", "n3"))
 
-# By integer position
+# Subset by integer position
 gs2 <- gs_subset_nodes(gs, 1:5)
 
-# By predicate (data masking against @nodes columns)
+# Subset by predicate (data masking against @nodes columns)
 gs2 <- gs_subset_nodes(gs, nodeSize > 5)
 
-# By pre-evaluated logical vector
+# Subset by pre-evaluated logical vector
 keep <- gs$nodeSize > 5
 gs2  <- gs_subset_nodes(gs, keep)
 
@@ -173,12 +173,12 @@ gs2 <- gs |>
 The `gs_subset_edges()` retains a subset of edges without modifying the node set, and the result is propagated to all `GraphSpace` components.
 
 ```{r , eval=TRUE, message=FALSE}
-# By predicate on an edge attribute
+# Subset by predicate on an edge attribute
 gs3 <- gs_subset_edges(gs, weight > 0.5)
 
-# By endpoint names: name1 and name2 are columns in @edges and
-# can be used directly inside any predicate expression
-gs3 <- gs_subset_edges(gs, name1 == "n1")
+# Subset by endpoint names: 'name1' and 'name2' are columns in
+# @edges and can be used directly inside any predicate expression
+gs3 <- gs_subset_edges(gs, name1 == "n1" & name2 == "n2")
 
 # Combining endpoint and attribute conditions
 gs3 <- gs_subset_edges(gs, name1 == "n1" & weight > 0.5)
@@ -192,14 +192,13 @@ gs3 <- gs_subset_edges(gs, gs_edges(gs)$weight > 0.5)
 
 # Subscript operators
 
-The `[` operator subsets a `GraphSpace` object along two independent dimensions: nodes (`i`) and edges (`j`). This differs from the usual data-frame convention, where `[i, j]` indexes rows and columns of a single table — here, `i` and `j` each address a distinct structural component of the graph rather than rows and columns of one. Neither index subsets columns; both select graph entities directly. Omitting an index retains all elements along that dimension.
+The `[` operator subsets a `GraphSpace` object along two independent dimensions: nodes (`i`) and edges (`j`). This differs from the usual data-frame convention, where `[i, j]` indexes rows and columns of a single table. Here, neither index subsets columns; both select graph entities directly. Omitting an index retains all elements along that dimension.
 
 **Synchronization rules:**
 
 - `x[i, ]` **Node-induced subgraph.** Nodes are selected by `i`, then edges are automatically pruned to those whose endpoints both survived. Normalized coordinates are preserved.
 - `x[, j]` **Edge selection.** Edges are selected by `j`; the node set is untouched and no node pruning occurs.
-- `x[i, j]` **Combined selection.** Node filtering is applied first, then `j` is then evaluated against the **original**, unfiltered edge table; an edge survives only if it satisfies `j` **and**
-  both its endpoints survived node filtering.
+- `x[i, j]` **Combined selection.** Node filtering is applied first, then `j` is evaluated against the **original**, unfiltered edge table; an edge survives only if it satisfies `j` **and** both its endpoints survived node filtering.
 
 ```{r , eval=TRUE, message=FALSE}
 # Node-induced subgraph: keep named nodes, prune dangling edges
@@ -255,7 +254,7 @@ gs$nodeShape[1] <- 19
 
 # General accessors
 
-All `GraphSpace` accessors start with a `gs_*` prefix to avoid overlapping with other namespaces, especially other graph packages that are often used alongside. Here we reproduce the general usage for these accessors, already documented individually in the function help pages.
+All `GraphSpace` accessors start with a `gs_*` prefix to avoid naming conflicts with functions from other packages, particularly graph-analysis packages that are commonly used alongside. Here we reproduce the general usage for these accessors, already documented individually in the function help pages.
 
 ```{r , eval=TRUE, message=FALSE, results='hide'}
 # Vertex names
@@ -264,32 +263,41 @@ names(gs)
 # Vertex attribute names
 gs_names(gs)
 
-# Get a data frame with nodes
+# Get the node data frame
 gs_nodes(gs)
 
-# Get a data frame with edges
+# Get the edge data frame
 gs_edges(gs)
 
-# Get an igraph object
+# Get the underlying igraph object
 gs_graph(gs)
 
-# Get a data frame with nodes
-gs_nodes(gs)
-
-# Vertex count
+# Number of vertices
 gs_vcount(gs)
 
-# Edge count
+# Number of edges
 gs_ecount(gs)
 
-# Add an image and rescale graph coordinates to image space
-# Images may be provided as a raster or numeric matrix
+# Images may be provided as raster or numeric matrices;
+# 'SpatRaster' objects are supported when the optional 
+# 'terra' package is available
 gs_image(gs) <- as_colorraster(volcano)
+
+# Set a pixel budget for image operations
+gs_image_maxpixels(gs) <- 4e+06
+
+# Apply a scaling factor to node coordinates
+gs_scale_factor(gs) <- 0.1
+
+# Undo scaling
+gs_scale_factor(gs) <- 1
+
+# Normalize image and node coordinates to graph space
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
 
 # Add a sparse Matrix aligned to nodes
 library(Matrix)
-mtx <- Matrix(0, gs_vcount(gs), 2)
+mtx <- Matrix::Matrix(0, gs_vcount(gs), 2)
 rownames(mtx) <- names(gs)
 colnames(mtx) <- c("feature1","feature2")
 gs_fdata(gs) <- mtx
@@ -300,26 +308,16 @@ gs_features(gs)
 # Feature count
 gs_nfeatures(gs)
 
-# Apply a scaling factor to node coordinates
-gs_scale_factor(gs) <- 0.1
-
-# undo scaling
-gs_scale_factor(gs) <- 1
-
 # Add an 'sfc' geometry column (requires the optional 'sf' package)
 if (requireNamespace("sf", quietly = TRUE)) {
-  pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
-  gs_geometry(gs) <- sf::st_sfc(pts)
+  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
 }
-
-# Set a pixel budget for image operations
-gs_image_maxpixels(gs) <- 4e+06
 ```
 
 
 # Applying *igraph* functions
 
-The `gs_compute()` function runs any igraph function on the graph carried by a `GraphSpace`, without needing a dedicated `gs_*` wrapper for each one. It extracts the underlying igraph via `as.igraph()`, applies `.f`, and returns the result unchanged. This is the read-only lane onto the whole igraph ecosystem: measures such as `degree()`, `betweenness()`, `coreness()`, and distances all work through this one entry point.
+The `gs_compute()` function runs any igraph function on the graph carried by a `GraphSpace`, without needing a dedicated `gs_*` wrapper for each one. It extracts the underlying igraph via `as.igraph()`, applies `.f`, and returns the result unchanged. This is the read-only lane onto the broader igraph ecosystem: measures such as `degree()`, `betweenness()`, `coreness()`, and distances all work through this single entry point.
 
 ```{r , eval=TRUE, message=FALSE}
 # Apply igraph functions
@@ -331,15 +329,14 @@ gs_compute(gs, "betweenness", directed = FALSE)
 gs$degree <- gs_compute(gs, igraph::degree)
 ```
 
-It is deliberately *not* a graph-modification path. If `.f` returns a graph (e.g. `simplify()`, `induced_subgraph()`), this cannot be reintegrated to `gs` as a modified graph must go through the graph-modification checks.
-
+It is deliberately *not* a GraphSpace-modification path. If `.f` returns a graph (e.g. `simplify()`, `induced_subgraph()`), this cannot be reintegrated to the `gs` object, as graph modifications may invalidate the correspondence between the graph and other components of the object. A modified graph must instead go through the graph-modification checks of the `GraphSpace` constructor.
 
 # Crop, rotate, flip, and transpose
 
-These functions are special accessors, as they operate on a reference frame, either the graph or image spaces, not on the graph alone. Node and edge attributes, and the underlying `igraph` object, are left untouched (aside from cropping's node/edge dropping, which follows from the region no longer containing them).
+These functions are special accessors, as they operate on a reference frame, either the graph or image spaces, not on the graph alone.
 
 - `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by the cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the window.
-- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact — a coordinate/pixel permutation, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. When these transformations are applied to a normalized `GraphSpace`, the changes are reversible. Otherwise they are applied to raw coordinates.
+- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. When applied to a normalized `GraphSpace`, these transformations are reversible, allowing the original coordinates and image orientation to be restored without loss of information; otherwise, they are applied to raw coordinates, permanently modifying them.
 
 
 ```{r , eval=TRUE, message=FALSE}

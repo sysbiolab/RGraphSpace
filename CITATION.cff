@@ -1,0 +1,540 @@
+# ------------------------------------------------
+# CITATION.cff file created with {cffr} R package
+# See also: https://docs.ropensci.org/cffr/
+# ------------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "RGraphSpace" in publications use:'
+type: software
+license: Artistic-2.0
+title: 'RGraphSpace: Rendering Graphs as Coherent Spatial Objects in ''ggplot2'''
+version: 1.5.4
+identifiers:
+- type: doi
+  value: 10.32614/CRAN.package.RGraphSpace
+abstract: An interface for rendering 'igraph' objects as 'ggplot2' graphics within
+  a normalized coordinate space. 'RGraphSpace' implements new geometries that treat
+  a graph as a single coherent object, synchronizing node and edge layers under standard
+  aesthetic mappings. Node features are resolved on demand, supporting high-dimensional
+  data without expanding node tables. Spatial alignment is available at the pixel
+  level, with node coordinates anchored to pixel centers through a half-pixel offset,
+  enabling precise node positioning over external reference frames such as images
+  and maps. Core functionality builds on 'igraph', 'ggplot2', and 'tidygraph'; optional
+  geometry and large raster-background images use 'sf' and 'terra' when installed.
+authors:
+- family-names: Kessler
+  given-names: Flávio
+- family-names: Back
+  given-names: Jonathan
+- family-names: Querne
+  given-names: Lana
+- family-names: Apolonio
+  given-names: Victor
+- family-names: Castro
+  given-names: Mauro
+  email: mauro.a.castro@gmail.com
+  orcid: https://orcid.org/0000-0003-4942-8131
+preferred-citation:
+  type: manual
+  title: 'RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2'
+  authors:
+  - name: Sysbiolab Team
+  year: '2026'
+  notes: 'R package version 1.5.4 (Doi: 10.32614/CRAN.package.RGraphSpace)'
+  url: https://CRAN.R-project.org/package=RGraphSpace
+repository: https://CRAN.R-project.org/package=RGraphSpace
+repository-code: https://github.com/sysbiolab/RGraphSpace
+url: https://sysbiolab.github.io/RGraphSpace/
+contact:
+- family-names: Castro
+  given-names: Mauro
+  email: mauro.a.castro@gmail.com
+  orcid: https://orcid.org/0000-0003-4942-8131
+references:
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  url: https://www.R-project.org/
+  authors:
+  - name: R Core Team
+    website: https://ror.org/02zz1nj61
+  institution:
+    name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
+    address: Vienna, Austria
+  year: '2026'
+  doi: 10.32614/R.manuals
+  version: '>= 4.5'
+- type: software
+  title: methods
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  authors:
+  - name: R Core Team
+    website: https://ror.org/02zz1nj61
+  institution:
+    name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
+    address: Vienna, Austria
+  year: '2026'
+  doi: 10.32614/R.manuals
+- type: software
+  title: ggplot2
+  abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
+  notes: Depends
+  url: https://ggplot2.tidyverse.org
+  repository: https://CRAN.R-project.org/package=ggplot2
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: Chang
+    given-names: Winston
+    orcid: https://orcid.org/0000-0002-1576-2126
+  - family-names: Henry
+    given-names: Lionel
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Takahashi
+    given-names: Kohske
+  - family-names: Wilke
+    given-names: Claus
+    orcid: https://orcid.org/0000-0002-7470-9261
+  - family-names: Woo
+    given-names: Kara
+    orcid: https://orcid.org/0000-0002-5125-4188
+  - family-names: Yutani
+    given-names: Hiroaki
+    orcid: https://orcid.org/0000-0002-3385-7233
+  - family-names: Dunnington
+    given-names: Dewey
+    orcid: https://orcid.org/0000-0002-9415-4582
+  - family-names: Brand
+    given-names: Teun
+    name-particle: van den
+    orcid: https://orcid.org/0000-0002-9335-7468
+  year: '2026'
+  doi: 10.32614/CRAN.package.ggplot2
+  version: '>= 4.0'
+- type: software
+  title: igraph
+  abstract: 'igraph: Network Analysis and Visualization'
+  notes: Imports
+  url: https://r.igraph.org/
+  repository: https://CRAN.R-project.org/package=igraph
+  authors:
+  - family-names: Csárdi
+    given-names: Gábor
+    email: csardi.gabor@gmail.com
+    orcid: https://orcid.org/0000-0001-7098-9676
+  - family-names: Nepusz
+    given-names: Tamás
+    email: ntamas@gmail.com
+    orcid: https://orcid.org/0000-0002-1451-338X
+  - family-names: Traag
+    given-names: Vincent
+    orcid: https://orcid.org/0000-0003-3170-3879
+  - family-names: Horvát
+    given-names: Szabolcs
+    email: szhorvat@gmail.com
+    orcid: https://orcid.org/0000-0002-3100-523X
+  - family-names: Zanini
+    given-names: Fabio
+    email: fabio.zanini@unsw.edu.au
+    orcid: https://orcid.org/0000-0001-7097-8539
+  - family-names: Noom
+    given-names: Daniel
+  - family-names: Müller
+    given-names: Kirill
+    email: kirill@cynkra.com
+    orcid: https://orcid.org/0000-0002-1416-3412
+  - family-names: Schoch
+    given-names: David
+    email: david.schoch@cynkra.com
+    orcid: https://orcid.org/0000-0003-2952-4812
+  - family-names: Salmon
+    given-names: Maëlle
+    email: maelle@cynkra.com
+    orcid: https://orcid.org/0000-0002-2815-0399
+  year: '2026'
+  doi: 10.32614/CRAN.package.igraph
+- type: software
+  title: tidygraph
+  abstract: 'tidygraph: A Tidy API for Graph Manipulation'
+  notes: Imports
+  url: https://tidygraph.data-imaginist.com
+  repository: https://CRAN.R-project.org/package=tidygraph
+  authors:
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomasp85@gmail.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  year: '2026'
+  doi: 10.32614/CRAN.package.tidygraph
+- type: software
+  title: Matrix
+  abstract: 'Matrix: Sparse and Dense Matrix Classes and Methods'
+  notes: Imports
+  url: https://codeberg.org/jaganmn/Matrix
+  repository: https://CRAN.R-project.org/package=Matrix
+  authors:
+  - family-names: Bates
+    given-names: Douglas
+    orcid: https://orcid.org/0000-0001-8316-9503
+  - family-names: Maechler
+    given-names: Martin
+    email: mmaechler+Matrix@gmail.com
+    orcid: https://orcid.org/0000-0002-8685-9910
+  - family-names: Jagan
+    given-names: Mikael
+    orcid: https://orcid.org/0000-0002-3542-2938
+  year: '2026'
+  doi: 10.32614/CRAN.package.Matrix
+- type: software
+  title: stats
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+    website: https://ror.org/02zz1nj61
+  institution:
+    name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
+    address: Vienna, Austria
+  year: '2026'
+  doi: 10.32614/R.manuals
+- type: software
+  title: scales
+  abstract: 'scales: Scale Functions for Visualization'
+  notes: Imports
+  url: https://scales.r-lib.org
+  repository: https://CRAN.R-project.org/package=scales
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Seidel
+    given-names: Dana
+  year: '2026'
+  doi: 10.32614/CRAN.package.scales
+- type: software
+  title: ggrastr
+  abstract: 'ggrastr: Rasterize Layers for ''ggplot2'''
+  notes: Imports
+  url: https://github.com/VPetukhov/ggrastr
+  repository: https://CRAN.R-project.org/package=ggrastr
+  authors:
+  - family-names: Petukhov
+    given-names: Viktor
+    email: viktor.s.petukhov@ya.ru
+  - family-names: Brand
+    given-names: Teun
+    name-particle: van den
+    email: t.vd.brand@nki.nl
+  - family-names: Biederstedt
+    given-names: Evan
+    email: evan.biederstedt@gmail.com
+  year: '2026'
+  doi: 10.32614/CRAN.package.ggrastr
+- type: software
+  title: grid
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+    website: https://ror.org/02zz1nj61
+  institution:
+    name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
+    address: Vienna, Austria
+  year: '2026'
+  doi: 10.32614/R.manuals
+- type: software
+  title: grDevices
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+    website: https://ror.org/02zz1nj61
+  institution:
+    name: R Foundation for Statistical Computing
+    website: https://ror.org/05qewa988
+    address: Vienna, Austria
+  year: '2026'
+  doi: 10.32614/R.manuals
+- type: software
+  title: rlang
+  abstract: 'rlang: Functions for Base Types and Core R and ''Tidyverse'' Features'
+  notes: Imports
+  url: https://rlang.r-lib.org
+  repository: https://CRAN.R-project.org/package=rlang
+  authors:
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2026'
+  doi: 10.32614/CRAN.package.rlang
+- type: software
+  title: lifecycle
+  abstract: 'lifecycle: Manage the Life Cycle of your Package Functions'
+  notes: Imports
+  url: https://lifecycle.r-lib.org/
+  repository: https://CRAN.R-project.org/package=lifecycle
+  authors:
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+    orcid: https://orcid.org/0000-0003-4757-117X
+  year: '2026'
+  doi: 10.32614/CRAN.package.lifecycle
+- type: software
+  title: knitr
+  abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
+  notes: Suggests
+  url: https://yihui.org/knitr/
+  repository: https://CRAN.R-project.org/package=knitr
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2026'
+  doi: 10.32614/CRAN.package.knitr
+- type: software
+  title: rmarkdown
+  abstract: 'rmarkdown: Dynamic Documents for R'
+  notes: Suggests
+  url: https://pkgs.rstudio.com/rmarkdown/
+  repository: https://CRAN.R-project.org/package=rmarkdown
+  authors:
+  - family-names: Allaire
+    given-names: JJ
+    email: jj@posit.co
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  - family-names: Dervieux
+    given-names: Christophe
+    email: cderv@posit.co
+    orcid: https://orcid.org/0000-0003-4474-2498
+  - family-names: McPherson
+    given-names: Jonathan
+    email: jonathan@posit.co
+  - family-names: Luraschi
+    given-names: Javier
+  - family-names: Ushey
+    given-names: Kevin
+    email: kevin@posit.co
+  - family-names: Atkins
+    given-names: Aron
+    email: aron@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Cheng
+    given-names: Joe
+    email: joe@posit.co
+  - family-names: Chang
+    given-names: Winston
+    email: winston@posit.co
+  - family-names: Iannone
+    given-names: Richard
+    email: rich@posit.co
+    orcid: https://orcid.org/0000-0003-3925-190X
+  year: '2026'
+  doi: 10.32614/CRAN.package.rmarkdown
+- type: software
+  title: testthat
+  abstract: 'testthat: Unit Testing for R'
+  notes: Suggests
+  url: https://testthat.r-lib.org
+  repository: https://CRAN.R-project.org/package=testthat
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2026'
+  doi: 10.32614/CRAN.package.testthat
+- type: software
+  title: ggraph
+  abstract: 'ggraph: An Implementation of Grammar of Graphics for Graphs and Networks'
+  notes: Suggests
+  url: https://ggraph.data-imaginist.com
+  repository: https://CRAN.R-project.org/package=ggraph
+  authors:
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomasp85@gmail.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  year: '2026'
+  doi: 10.32614/CRAN.package.ggraph
+- type: software
+  title: ggnewscale
+  abstract: 'ggnewscale: Multiple Fill and Colour Scales in ''ggplot2'''
+  notes: Suggests
+  url: https://eliocamp.github.io/ggnewscale/
+  repository: https://CRAN.R-project.org/package=ggnewscale
+  authors:
+  - family-names: Campitelli
+    given-names: Elio
+    email: eliocampitelli@gmail.com
+    orcid: https://orcid.org/0000-0002-7742-9230
+  year: '2026'
+  doi: 10.32614/CRAN.package.ggnewscale
+- type: software
+  title: patchwork
+  abstract: 'patchwork: The Composer of Plots'
+  notes: Suggests
+  url: https://patchwork.data-imaginist.com
+  repository: https://CRAN.R-project.org/package=patchwork
+  authors:
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomasp85@gmail.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  year: '2026'
+  doi: 10.32614/CRAN.package.patchwork
+- type: software
+  title: sf
+  abstract: 'sf: Simple Features for R'
+  notes: Suggests
+  url: https://r-spatial.github.io/sf/
+  repository: https://CRAN.R-project.org/package=sf
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+    orcid: https://orcid.org/0000-0001-8049-7069
+  year: '2026'
+  doi: 10.32614/CRAN.package.sf
+- type: software
+  title: terra
+  abstract: 'terra: Spatial Data Analysis'
+  notes: Suggests
+  url: https://rspatial.org/
+  repository: https://CRAN.R-project.org/package=terra
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+    orcid: https://orcid.org/0000-0001-5872-2872
+  - family-names: Brown
+    given-names: Andrew
+    orcid: https://orcid.org/0000-0002-4565-533X
+  - family-names: Barbosa
+    given-names: Márcia
+    orcid: https://orcid.org/0000-0001-8972-7713
+  year: '2026'
+  doi: 10.32614/CRAN.package.terra
+- type: software
+  title: SeuratObject
+  abstract: 'SeuratObject: Data Structures for Single Cell Data'
+  notes: Suggests
+  url: https://satijalab.github.io/seurat-object/
+  repository: https://CRAN.R-project.org/package=SeuratObject
+  authors:
+  - family-names: Hoffman
+    given-names: Paul
+    email: hoff0792@alumni.umn.edu
+    orcid: https://orcid.org/0000-0002-7693-8957
+  - family-names: Satija
+    given-names: Rahul
+    email: seurat@nygenome.org
+    orcid: https://orcid.org/0000-0001-9448-8833
+  - family-names: Collins
+    given-names: David
+    email: dcollins@nygenome.org
+    orcid: https://orcid.org/0000-0001-9243-7821
+  - family-names: Hao
+    given-names: Yuhan
+    email: yhao@nygenome.org
+    orcid: https://orcid.org/0000-0002-1810-0822
+  - family-names: Hartman
+    given-names: Austin
+    email: ahartman@nygenome.org
+    orcid: https://orcid.org/0000-0001-7278-1852
+  - family-names: Molla
+    given-names: Gesmira
+    email: gmolla@nygenome.org
+    orcid: https://orcid.org/0000-0002-8628-5056
+  - family-names: Butler
+    given-names: Andrew
+    email: abutler@nygenome.org
+    orcid: https://orcid.org/0000-0003-3608-0463
+  - family-names: Stuart
+    given-names: Tim
+    email: tstuart@nygenome.org
+    orcid: https://orcid.org/0000-0002-3044-0897
+  year: '2026'
+  doi: 10.32614/CRAN.package.SeuratObject
+- type: software
+  title: SummarizedExperiment
+  abstract: 'SummarizedExperiment: A container (S4 class) for matrix-like assays'
+  notes: Suggests
+  url: https://bioconductor.org/packages/SummarizedExperiment
+  repository: https://bioconductor.org/
+  authors:
+  - family-names: Morgan
+    given-names: Martin
+  - family-names: Obenchain
+    given-names: Valerie
+  - family-names: Hester
+    given-names: Jim
+  - family-names: Pagès
+    given-names: Hervé
+    email: hpages.on.github@gmail.com
+  year: '2026'
+  doi: 10.18129/B9.bioc.SummarizedExperiment
+- type: software
+  title: SpatialExperiment
+  abstract: 'SpatialExperiment: S4 Class for Spatially Resolved -omics Data'
+  notes: Suggests
+  url: https://github.com/drighelli/SpatialExperiment
+  repository: https://bioconductor.org/
+  authors:
+  - family-names: Righelli
+    given-names: Dario
+    email: dario.righelli@gmail.com
+    orcid: https://orcid.org/0000-0003-1504-3583
+  - family-names: Risso
+    given-names: Davide
+    email: risso.davide@gmail.com
+    orcid: https://orcid.org/0000-0001-8508-5012
+  - family-names: Crowell
+    given-names: Helena L.
+    email: helena.crowell@cnag.eu
+    orcid: https://orcid.org/0000-0002-4801-1767
+  - family-names: Weber
+    given-names: Lukas M.
+    email: lmweb012@gmail.com
+    orcid: https://orcid.org/0000-0002-3282-1730
+  year: '2026'
+  doi: 10.18129/B9.bioc.SpatialExperiment
+- type: software
+  title: RedeR
+  abstract: 'RedeR: Interactive visualization and manipulation of nested networks'
+  notes: Enhances
+  url: https://doi.org/10.1186/gb-2012-13-4-r29
+  repository: https://bioconductor.org/
+  authors:
+  - family-names: Castro
+    given-names: Mauro
+    email: mauro.a.castro@gmail.com
+    orcid: https://orcid.org/0000-0003-4942-8131
+  year: '2026'
+  doi: 10.1186/gb-2012-13-4-r29
+

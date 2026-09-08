@@ -208,9 +208,21 @@ gs_vcount(gs)
 gs_ecount(gs)
 #> [1] 4
 
-# Add an image and rescale graph coordinates to image space
-# Images may be provided as a raster or numeric matrix
+# Images may be provided as raster or numeric matrices;
+# 'SpatRaster' objects are supported when the optional 
+# 'terra' package is available
 gs_image(gs) <- as_colorraster(volcano)
+
+# Apply a scaling factor to node coordinates
+gs_scale_factor(gs) <- 0.1
+
+# Undo scaling 
+gs_scale_factor(gs) <- 1
+
+# Set a pixel budget for image operations
+gs_image_maxpixels(gs) <- 4e+06
+
+# Normalize image and node coordinates to graph space
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
 #> Normalizing node coordinates to graph space...
 
@@ -229,18 +241,8 @@ gs_features(gs)
 gs_nfeatures(gs)
 #> [1] 2
 
-# Apply a scaling factor to node coordinates
-gs_scale_factor(gs) <- 0.1
-#> Denormalizing graph coordinates...
-# undo scaling 
-gs_scale_factor(gs) <- 1
-
 # Add an 'sfc' geometry column (requires the optional 'sf' package)
 if (requireNamespace("sf", quietly = TRUE)) {
-  pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
-  gs_geometry(gs) <- sf::st_sfc(pts)
+  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
 }
-
-# Set a pixel budget for image operations
-gs_image_maxpixels(gs) <- 4e+06
 ```
