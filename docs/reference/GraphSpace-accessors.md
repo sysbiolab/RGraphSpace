@@ -1,9 +1,8 @@
-# Accessors and attribute utilities for GraphSpace objects
+# Accessors for GraphSpace objects
 
 Access and modify individual components of a
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-class.md)
-object. Selected igraph methods are applied to the internal graph
-representation and propagated to downstream node and edge components.
+object.
 
 ## Usage
 
@@ -55,24 +54,6 @@ gs_vcount(x)
 
 # S4 method for class 'GraphSpace'
 gs_ecount(x)
-
-# S4 method for class 'GraphSpace'
-gs_vertex_attr(x, name, ..., value)
-
-# S4 method for class 'GraphSpace'
-gs_vertex_attr(x, name, ...) <- value
-
-# S4 method for class 'GraphSpace'
-gs_delete_v_attr(x, name)
-
-# S4 method for class 'GraphSpace'
-gs_delete_e_attr(x, name)
-
-# S4 method for class 'GraphSpace'
-gs_edge_attr(x, name, ..., value)
-
-# S4 method for class 'GraphSpace'
-gs_edge_attr(x, name, ...) <- value
 
 # S4 method for class 'GraphSpace'
 gs_scale_factor(x)
@@ -127,8 +108,6 @@ features retrieved from the `fdata` container. See also
 
 ## See also
 
-[`vertex_attr`](https://r.igraph.org/reference/vertex_attr.html),
-[`edge_attr`](https://r.igraph.org/reference/edge_attr.html),
 [`gs_fetch_features`](https://sysbiolab.github.io/RGraphSpace/reference/gs_features-utils.md)
 
 ## Examples
@@ -154,7 +133,7 @@ gs <- GraphSpace(gtoy1)
 #> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
-#--- Usage of GraphSpace attribute accessors:
+#--- Usage of GraphSpace accessors:
 
 # Vertex names
 names(gs)
@@ -195,70 +174,39 @@ gs_edges(gs)
 #> 3         1            1       FALSE   FALSE
 #> 4         1            1       FALSE   FALSE
 
-# Get vertex count
+# Get an igraph object
+gs_graph(gs)
+#> IGRAPH 5fb8aab DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeFillColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c),
+#> | nodeAlpha (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth
+#> | (e/n), arrowType (e/n), edgeAlpha (e/n)
+#> + edges from 5fb8aab (vertex names):
+#> [1] n1->n2 n1->n3 n1->n4 n1->n5
+
+# Get a data frame with nodes
+gs_nodes(gs)
+#>    vertex  x  y name nodeLabel nodeLabelSize nodeLabelColor nodeShape nodeSize
+#> n1      1  0  0   n1        V1             3          black        21        8
+#> n2      2  2  0   n2        V2             3          black        22        5
+#> n3      3 -2  2   n3        V3             3          black        23        5
+#> n4      4 -4 -4   n4        V4             3          black        24       10
+#> n5      5 -8  0   n5        V5             3          black        25        5
+#>    nodeFillColor nodeLineWidth nodeLineColor nodeAlpha
+#> n1           red             1        grey20         1
+#> n2       #00ad39             1        grey20         1
+#> n3        grey80             1        grey20         1
+#> n4     lightblue             1        grey20         1
+#> n5          cyan             1        grey20         1
+
+# Vertex count
 gs_vcount(gs)
 #> [1] 5
 
-# Get edge count
+# Edge count
 gs_ecount(gs)
 #> [1] 4
-
-# Access all vertex attributes
-gs_vertex_attr(gs)
-#> $x
-#> [1]  0  2 -2 -4 -8
-#> 
-#> $y
-#> [1]  0  0  2 -4  0
-#> 
-#> $name
-#> [1] "n1" "n2" "n3" "n4" "n5"
-#> 
-#> $nodeLabel
-#> [1] "V1" "V2" "V3" "V4" "V5"
-#> 
-#> $nodeLabelSize
-#> [1] 3 3 3 3 3
-#> 
-#> $nodeLabelColor
-#> [1] "black" "black" "black" "black" "black"
-#> 
-#> $nodeShape
-#> [1] 21 22 23 24 25
-#> 
-#> $nodeSize
-#> [1]  8  5  5 10  5
-#> 
-#> $nodeFillColor
-#> [1] "red"       "#00ad39"   "grey80"    "lightblue" "cyan"     
-#> 
-#> $nodeLineWidth
-#> [1] 1 1 1 1 1
-#> 
-#> $nodeLineColor
-#> [1] "grey20" "grey20" "grey20" "grey20" "grey20"
-#> 
-#> $nodeAlpha
-#> [1] 1 1 1 1 1
-#> 
-
-# Access a specific vertex attribute
-gs_vertex_attr(gs, "nodeLabel")
-#>   n1   n2   n3   n4   n5 
-#> "V1" "V2" "V3" "V4" "V5" 
-
-# Modify a single value within a vertex attribute
-gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
-
-# Replace an entire vertex attribute
-gs_vertex_attr(gs, "nodeSize") <- 10
-
-# Access a specific edge attribute
-gs_edge_attr(gs, "edgeColor")
-#> [1] "red"   "green" "blue"  "black"
-
-# Replace an entire edge attribute
-gs_edge_attr(gs, "edgeLineWidth") <- 1
 
 # Add an image and rescale graph coordinates to image space
 # Images may be provided as a raster or numeric matrix
@@ -266,15 +214,33 @@ gs_image(gs) <- as_colorraster(volcano)
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
 #> Normalizing node coordinates to graph space...
 
-# apply a scaling factor to node coordinates
+# Add a sparse Matrix aligned to nodes
+library(Matrix)
+mtx <- Matrix(0, gs_vcount(gs), 2)
+rownames(mtx) <- names(gs)
+colnames(mtx) <- c("feature1","feature2")
+gs_fdata(gs) <- mtx
+
+# Feature names
+gs_features(gs)
+#> [1] "feature1" "feature2"
+
+# Feature count
+gs_nfeatures(gs)
+#> [1] 2
+
+# Apply a scaling factor to node coordinates
 gs_scale_factor(gs) <- 0.1
 #> Denormalizing graph coordinates...
 # undo scaling 
 gs_scale_factor(gs) <- 1
 
-# add an 'sfc' geometry column (requires the optional 'sf' package)
+# Add an 'sfc' geometry column (requires the optional 'sf' package)
 if (requireNamespace("sf", quietly = TRUE)) {
   pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
   gs_geometry(gs) <- sf::st_sfc(pts)
 }
+
+# Set a pixel budget for image operations
+gs_image_maxpixels(gs) <- 4e+06
 ```

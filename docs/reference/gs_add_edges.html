@@ -59,11 +59,12 @@ calling environment. Both forms are equivalent."><style>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
-    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
+    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a GraphSpace</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
-    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Scales and offsets</a></li>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
-    <li><a class="dropdown-item" href="../articles/geometries.html">Geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -150,7 +151,7 @@ in <code>@nodes</code> are left untouched and <code>normalizeGraphSpace</code> d
 not need to be re-run.</p>
 <p>For objects built with <code>simplify = TRUE</code> (the default), loop edges
 (<code>from == to</code>), parallel edges, and duplicate rows within
-<code>value</code> are silently dropped with a warning. Admissible edges in
+<code>value</code> are dropped with a warning. Admissible edges in
 the same call are still added. To allow loops or parallel edges, rebuild
 the object with <code>GraphSpace(g, simplify = FALSE)</code>.</p>
 <p>Because adding an edge to a group of parallel edges changes the derived
@@ -160,7 +161,7 @@ for all members of that group, the full edge table is recomputed from
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="gs_add_nodes.html">gs_add_nodes</a></code>, <code><a href="GraphSpace-accessors.html">gs_edge_attr</a></code>,
+    <div class="dont-index"><p><code><a href="gs_add_nodes.html">gs_add_nodes</a></code>, <code><a href="GraphSpace-attributes.html">gs_edge_attr</a></code>,
 <code><a href="gs_subset.html">gs_subset_edges</a></code>, <code><a href="GraphSpace-accessors.html">gs_edges</a></code></p></div>
     </div>
 
@@ -185,7 +186,7 @@ for all members of that group, the full edge table is recomputed from
 <span class="r-in"><span><span class="co"># Assignment form: modifies gs in place</span></span></span>
 <span class="r-in"><span><span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>from <span class="op">=</span> <span class="st">"n3"</span>, to <span class="op">=</span> <span class="st">"n4"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add multiple edges with an analytical attribute</span></span></span>
+<span class="r-in"><span><span class="co"># Add multiple edges with a numeric attribute</span></span></span>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">gs_add_edges</span><span class="op">(</span><span class="va">gs</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  from   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n4"</span>, <span class="st">"n5"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  to     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n5"</span>, <span class="st">"n6"</span><span class="op">)</span>,</span></span>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gspace-accessors.R
 \name{gs_compute}
 \alias{gs_compute}
-\title{Apply an igraph function to the graph inside a GraphSpace}
+\title{Apply igraph functions to the graph inside a GraphSpace}
 \usage{
 gs_compute(gs, .f, ...)
 }
@@ -26,18 +26,24 @@ ecosystem: measures such as \code{degree()}, \code{betweenness()}, \code{corenes
 community detection, and distances all work through this one entry point.
 
 It is deliberately \emph{not} a graph-modification path. If \code{.f} returns a graph
-(e.g. \code{simplify()}, \code{induced_subgraph()}), \code{gs_compute()} errors, because
-reintegrating a modified graph must go through the graph-modification verb
-so that node, edge, and coordinate data stay consistent.
+(e.g. \code{simplify()}, \code{induced_subgraph()}), this cannot be reintegrated as
+a modified graph must go through the graph-modification checks.
 }
 \examples{
-\dontrun{
-gs_compute(gs, degree)
-gs_compute(gs, "betweenness", directed = FALSE)
-gs_compute(gs, cluster_louvain)
+library(RGraphSpace)
+library(igraph)
 
-## fold a per-vertex result back as a node attribute:
-gs$degree <- gs_compute(gs, degree)
-}
+# Load a demo igraph
+data('gtoy1', package = 'RGraphSpace')
+
+# Create a new GraphSpace object
+gs <- GraphSpace(gtoy1)
+
+# Apply igraph functions
+gs_compute(gs, igraph::degree)
+gs_compute(gs, "betweenness", directed = FALSE)
+
+# Fold a per-vertex result back as a node attribute
+gs$degree <- gs_compute(gs, igraph::degree)
 
 }

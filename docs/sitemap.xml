@@ -9,6 +9,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/geometries.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/get-started.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/index.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/install.html</loc></url>
@@ -25,6 +26,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-class.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-internal.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.html</loc></url>
@@ -36,6 +38,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/annotation_gspace_image.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/as.GraphSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/as_colorraster.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/deprecated-attr.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/dot-generate_gs_uuid.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.html</loc></url>

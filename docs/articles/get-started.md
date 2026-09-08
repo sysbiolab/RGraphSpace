@@ -9,23 +9,27 @@ For a self-contained introduction that works offline, run
 ## Introductory vignettes
 
 These tutorials introduce *RGraphSpace* using simple toy examples:
-[*building a graph
-space*](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md)
+[*building a
+GraphSpace*](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md)
 walks through basic graph conventions; [*customizing
 aesthetics*](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md)
-demonstrates how to set up `geoms` to handle graph data types;
-[*fine-tuning
-scales*](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md)
-describes the trade-offs involved in synchronizing node and edge layers;
+demonstrates how to set up `geoms` to handle graph data types; [*scales
 and
-[*geometries*](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md)
-demonstrates how to attach `sf` geometries to nodes as custom markers.
+offsets*](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md)
+describes the trade-offs involved in synchronizing node and edge layers;
+[*geometries and
+nodes*](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md)
+demonstrates how to attach `sf` geometries to nodes as custom markers,
+and [*GraphSpace
+accessors*](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
+covers graph transformation functions, attribute manipulation, and the
+package’s general accessors.
 
 [![](cards/building_gspace.png)](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md)
 
 [](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md)
 
-###### Building GraphSpace
+###### Building a GraphSpace
 
 [![](cards/using_geoms.png)](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md)
 
@@ -37,7 +41,7 @@ demonstrates how to attach `sf` geometries to nodes as custom markers.
 
 [](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md)
 
-###### Fine-tuning Scales
+###### Scales and Offsets
 
 [![](cards/curved_edges.png)](https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.md)
 
@@ -50,6 +54,12 @@ demonstrates how to attach `sf` geometries to nodes as custom markers.
 [](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md)
 
 ###### Geometries and Nodes
+
+[![](cards/accessors.png)](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
+
+[](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
+
+###### GraphSpace Accessors
 
 ------------------------------------------------------------------------
 

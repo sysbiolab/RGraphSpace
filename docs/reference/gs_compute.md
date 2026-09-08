@@ -1,4 +1,4 @@
-# Apply an igraph function to the graph inside a GraphSpace
+# Apply igraph functions to the graph inside a GraphSpace
 
 `gs_compute()` runs any igraph function on the graph carried by a
 `GraphSpace`, without needing a dedicated `gs_*` wrapper for each one.
@@ -15,9 +15,8 @@ It is deliberately *not* a graph-modification path. If `.f` returns a
 graph (e.g.
 [`simplify()`](https://r.igraph.org/reference/simplify.html),
 [`induced_subgraph()`](https://r.igraph.org/reference/subgraph.html)),
-`gs_compute()` errors, because reintegrating a modified graph must go
-through the graph-modification verb so that node, edge, and coordinate
-data stay consistent.
+this cannot be reintegrated as a modified graph must go through the
+graph-modification checks.
 
 ## Usage
 
@@ -47,12 +46,26 @@ aligned to the graph's vertex order.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-gs_compute(gs, degree)
-gs_compute(gs, "betweenness", directed = FALSE)
-gs_compute(gs, cluster_louvain)
+library(RGraphSpace)
+library(igraph)
 
-## fold a per-vertex result back as a node attribute:
-gs$degree <- gs_compute(gs, degree)
-} # }
+# Load a demo igraph
+data('gtoy1', package = 'RGraphSpace')
+
+# Create a new GraphSpace object
+gs <- GraphSpace(gtoy1)
+#> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+
+# Apply igraph functions
+gs_compute(gs, igraph::degree)
+#> n1 n2 n3 n4 n5 
+#>  4  1  1  1  1 
+gs_compute(gs, "betweenness", directed = FALSE)
+#> n1 n2 n3 n4 n5 
+#>  6  0  0  0  0 
+
+# Fold a per-vertex result back as a node attribute
+gs$degree <- gs_compute(gs, igraph::degree)
 ```

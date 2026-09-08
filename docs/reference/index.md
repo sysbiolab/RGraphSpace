@@ -41,19 +41,13 @@
   [`as.igraph(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_vcount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_ecount(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`gs_vertex_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`` `gs_vertex_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`gs_delete_v_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`gs_delete_e_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`gs_edge_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  [`` `gs_edge_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_scale_factor(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_scale_factor<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`gs_geometry(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `gs_geometry<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `$`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
   [`` `$<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
-  : Accessors and attribute utilities for GraphSpace objects
+  : Accessors for GraphSpace objects
 
 ## Graph manipulation
 
@@ -67,10 +61,15 @@
   [`` `gs_add_edges<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md)
   : Add edges to a GraphSpace object
 - [`gs_compute()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_compute.md)
-  : Apply an igraph function to the graph inside a GraphSpace
+  : Apply igraph functions to the graph inside a GraphSpace
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
+- [`gs_vertex_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)
+  [`` `gs_vertex_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)
+  [`gs_edge_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)
+  [`` `gs_edge_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)
+  : Attribute utilities for GraphSpace objects
 
 ## Features
 

@@ -1,0 +1,370 @@
+---
+title: "GraphSpace accessors and transformations"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+bibliography: ../bibliography.bib
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5,
+  out.width="90%"
+  )
+```
+
+<br/>
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+
+```{r Check required version, eval=TRUE, message=FALSE}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.5.4"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
+# Overview
+
+*RGraphSpace* is primarily designed for graph rendering and expects graphs to be prepared before they enter the *RGraphSpace* workflow. More extensive graph transformations is therefore generally best performed upstream, while preparing the data used as input to *RGraphSpace*.
+
+Nevertheless, downstream analyses may require accessing and modifying a `GraphSpace` object to explore alternative graph configurations or highlight specific subsets of the data.
+
+In the following we demonstrate *RGraphSpace* accessors for graph manipulations.
+
+## Setting basic input data
+
+```{r Load packages for quick start, eval=TRUE, message=FALSE}
+#--- Load required packages
+library("RGraphSpace")
+library("igraph")
+library("ggplot2")
+```
+
+```{r , eval=TRUE, message=FALSE, results='hide'}
+# Load a demo igraph
+data('gtoy1', package = 'RGraphSpace')
+
+# Create a new GraphSpace object
+gs <- GraphSpace(gtoy1)
+```
+
+# Manipulating attributes
+
+The `gs_vertex_attr()` and `gs_edge_attr()` functions provide a single interface to access, add, modify, and delete node and edges attributes, respectively. This interface wraps the corresponding *igraph* methods, applying them to the internal graph representation and propagating the result to all `GraphSpace` components.
+
+## Node attributes
+
+```{r , eval=TRUE, message=FALSE}
+# Access all vertex attributes
+# gs_vertex_attr(gs)
+
+# Access a specific vertex attribute
+gs_vertex_attr(gs, "nodeLabel")
+
+# Modify a single value within a vertex attribute
+gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
+
+# Replace an entire vertex attribute
+gs_vertex_attr(gs, "nodeSize") <- 10
+
+# Add a new vertex attribute
+gs_vertex_attr(gs, "new_node_var") <- rnorm(gs_vcount(gs))
+
+# Delete a vertex attribute by assigning NULL
+gs_vertex_attr(gs, "new_node_var") <- NULL
+
+gs
+```
+
+## Edge attributes
+
+```{r , eval=TRUE, message=FALSE}
+# Access a specific edge attribute
+gs_edge_attr(gs, "edgeColor")
+
+# Replace an entire edge attribute
+gs_edge_attr(gs, "edgeLineWidth") <- 1
+
+# Add a new edge attribute
+gs_edge_attr(gs, "new_edge_var") <- rnorm(gs_ecount(gs))
+
+# Delete an edge attribute by assigning NULL
+gs_edge_attr(gs, "new_edge_var") <- NULL
+
+gs
+```
+
+# Adding nodes
+
+The `gs_add_nodes()` function adds one or more nodes to a `GraphSpace` object. Attributes present on existing nodes but absent from value are filled from package defaults. Standard node attributes (such as `nodeSize` and `nodeColor`) are kept consistent across old and new nodes; the` @graph`, `@nodes`, and `@fdata` slots are updated consistently. Because new nodes introduce coordinates into the existing layout, the normalized state is invalidated and `normalizeGraphSpace()` must be re-run afterwards.
+
+```{r , eval=TRUE, message=FALSE}
+# Functional form (pipe-friendly) returns a modified copy
+gs <- gs |> gs_add_nodes(data.frame(name = "n6", x = 0.5, y = 0.5))
+
+# Assignment form modifies gs in place
+gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
+
+# Add multiple nodes with visual attributes
+gs <- gs_add_nodes(gs, data.frame(
+  name = c("n8", "n9"),
+  x = c(0.5, 0.8),
+  y = c(0.5, 0.2),
+  nodeSize = c(8, 5),
+  nodeColor = c("steelblue", "tomato")) )
+```
+
+# Adding edges
+
+The `gs_add_edges()` function adds one or more edges to a `GraphSpace` object. Both endpoints of every new edge must already exist in the node set. The `@graph` and `@edges` slots, along with all derived edge quantities, are updated consistently; the node set and the normalized coordinate state are not affected.
+
+```{r , eval=TRUE, message=FALSE}
+# Functional form (pipe-friendly) returns a modified copy
+gs <- gs |> gs_add_edges(data.frame(from = "n2", to = "n3"))
+
+# Assignment form modifies gs in place
+gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
+
+# Add multiple edges with a numeric attribute
+gs <- gs_add_edges(gs, data.frame(
+  from   = c("n4", "n5"),
+  to     = c("n5", "n6"),
+  weight = c(0.8, 0.4)) )
+```
+
+For objects built with `simplify = TRUE` (the default), loop edges (`from == to`), parallel edges, and duplicate rows within `value` are dropped with a warning. To allow loops or parallel edges, rebuild the object with `GraphSpace(g, simplify = FALSE)`.
+
+# Subsetting nodes
+
+The `gs_subset_nodes()` function retains a subset of nodes and automatically removes any edge whose endpoint is no longer present. The result is propagated to all `GraphSpace` components.
+
+```{r , eval=TRUE, message=FALSE}
+# By node name (character vector)
+gs2 <- gs_subset_nodes(gs, c("n1", "n2", "n3"))
+
+# By integer position
+gs2 <- gs_subset_nodes(gs, 1:5)
+
+# By predicate (data masking against @nodes columns)
+gs2 <- gs_subset_nodes(gs, nodeSize > 5)
+
+# By pre-evaluated logical vector
+keep <- gs$nodeSize > 5
+gs2  <- gs_subset_nodes(gs, keep)
+
+# Combining with pipes
+gs2 <- gs |>
+  gs_subset_nodes(nodeSize > 5) |>
+  gs_subset_edges(weight > 0.3)
+```
+
+# Subsetting edges
+
+The `gs_subset_edges()` retains a subset of edges without modifying the node set, and the result is propagated to all `GraphSpace` components.
+
+```{r , eval=TRUE, message=FALSE}
+# By predicate on an edge attribute
+gs3 <- gs_subset_edges(gs, weight > 0.5)
+
+# By endpoint names: name1 and name2 are columns in @edges and
+# can be used directly inside any predicate expression
+gs3 <- gs_subset_edges(gs, name1 == "n1")
+
+# Combining endpoint and attribute conditions
+gs3 <- gs_subset_edges(gs, name1 == "n1" & weight > 0.5)
+
+# By integer position
+gs3 <- gs_subset_edges(gs, 1:3)
+
+# By logical vector
+gs3 <- gs_subset_edges(gs, gs_edges(gs)$weight > 0.5)
+```
+
+# Subscript operators
+
+The `[` operator subsets a `GraphSpace` object along two independent dimensions: nodes (`i`) and edges (`j`). This differs from the usual data-frame convention, where `[i, j]` indexes rows and columns of a single table — here, `i` and `j` each address a distinct structural component of the graph rather than rows and columns of one. Neither index subsets columns; both select graph entities directly. Omitting an index retains all elements along that dimension.
+
+**Synchronization rules:**
+
+- `x[i, ]` **Node-induced subgraph.** Nodes are selected by `i`, then edges are automatically pruned to those whose endpoints both survived. Normalized coordinates are preserved.
+- `x[, j]` **Edge selection.** Edges are selected by `j`; the node set is untouched and no node pruning occurs.
+- `x[i, j]` **Combined selection.** Node filtering is applied first, then `j` is then evaluated against the **original**, unfiltered edge table; an edge survives only if it satisfies `j` **and**
+  both its endpoints survived node filtering.
+
+```{r , eval=TRUE, message=FALSE}
+# Node-induced subgraph: keep named nodes, prune dangling edges
+gs[c("n1", "n2", "n3"), ]
+
+# Node-induced subgraph by integer position
+gs[1:4, ]
+
+# Node-induced subgraph by pre-evaluated logical mask
+gs[gs$nodeSize > 5, ]
+
+# Edge selection only: keep all nodes
+gs[, gs_edges(gs)$weight > 0.5]
+
+# Edge selection by endpoint: predicates must be pre-evaluated
+gs[, gs_edges(gs)$name1 == "n1"]
+
+# Alternatively, wrap the predicate in quote()
+gs[, quote(name1 == "n1" & name2 == "n2")]
+
+# Combined: node filter first, then edge intersection
+gs[c("n1", "n2", "n3"), gs_edges(gs)$weight > 0.5]
+```
+
+The `[[` operator, by contrast, is a simple accessor: `x[["nodes"]]`, `x[["edges"]]`, `x[["graph"]]`, and `x[["fdata"]]` return the corresponding component unmodified, equivalent to `getGraphSpace(x, "nodes")` and so on. No subsetting or synchronization logic applies.
+
+```{r , eval=TRUE, message=FALSE, results='hide'}
+gs[["nodes"]]   # same as getGraphSpace(gs, "nodes")
+gs[["edges"]]   # same as getGraphSpace(gs, "edges")
+gs[["graph"]]   # same as getGraphSpace(gs, "graph")
+gs[["fdata"]]   # same as getGraphSpace(gs, "fdata")
+```
+
+
+# The `$` accessor
+
+The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (e.g. RStudio), listing the vertex attributes currently defined on the graph.
+
+```{r , eval=TRUE, message=FALSE}
+# Return the vertex attribute `name`
+gs$name
+
+# Sets the vertex attribute `nodeShape`
+gs$nodeShape <- 21
+gs$nodeShape[1] <- 19
+
+# Protected attributes cannot be modified this way
+# gs$vertex <- 1  # error: 'vertex' is a read-only node attribute.
+```
+
+**Protected attributes**: those the package relies on internally (e.g. node `name` and `vertex`) are not editable through `$<-`; attempting to assign to one raises an error rather than silently modifying it. Reading via `gs$` is unaffected.
+
+
+# General accessors
+
+All `GraphSpace` accessors start with a `gs_*` prefix to avoid overlapping with other namespaces, especially other graph packages that are often used alongside. Here we reproduce the general usage for these accessors, already documented individually in the function help pages.
+
+```{r , eval=TRUE, message=FALSE, results='hide'}
+# Vertex names
+names(gs)
+
+# Vertex attribute names
+gs_names(gs)
+
+# Get a data frame with nodes
+gs_nodes(gs)
+
+# Get a data frame with edges
+gs_edges(gs)
+
+# Get an igraph object
+gs_graph(gs)
+
+# Get a data frame with nodes
+gs_nodes(gs)
+
+# Vertex count
+gs_vcount(gs)
+
+# Edge count
+gs_ecount(gs)
+
+# Add an image and rescale graph coordinates to image space
+# Images may be provided as a raster or numeric matrix
+gs_image(gs) <- as_colorraster(volcano)
+gs <- normalizeGraphSpace(gs, image.space = FALSE)
+
+# Add a sparse Matrix aligned to nodes
+library(Matrix)
+mtx <- Matrix(0, gs_vcount(gs), 2)
+rownames(mtx) <- names(gs)
+colnames(mtx) <- c("feature1","feature2")
+gs_fdata(gs) <- mtx
+
+# Feature names
+gs_features(gs)
+
+# Feature count
+gs_nfeatures(gs)
+
+# Apply a scaling factor to node coordinates
+gs_scale_factor(gs) <- 0.1
+
+# undo scaling
+gs_scale_factor(gs) <- 1
+
+# Add an 'sfc' geometry column (requires the optional 'sf' package)
+if (requireNamespace("sf", quietly = TRUE)) {
+  pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
+  gs_geometry(gs) <- sf::st_sfc(pts)
+}
+
+# Set a pixel budget for image operations
+gs_image_maxpixels(gs) <- 4e+06
+```
+
+
+# Applying *igraph* functions
+
+The `gs_compute()` function runs any igraph function on the graph carried by a `GraphSpace`, without needing a dedicated `gs_*` wrapper for each one. It extracts the underlying igraph via `as.igraph()`, applies `.f`, and returns the result unchanged. This is the read-only lane onto the whole igraph ecosystem: measures such as `degree()`, `betweenness()`, `coreness()`, and distances all work through this one entry point.
+
+```{r , eval=TRUE, message=FALSE}
+# Apply igraph functions
+gs_compute(gs, igraph::degree)
+
+gs_compute(gs, "betweenness", directed = FALSE)
+
+# Fold a per-vertex result back as a node attribute
+gs$degree <- gs_compute(gs, igraph::degree)
+```
+
+It is deliberately *not* a graph-modification path. If `.f` returns a graph (e.g. `simplify()`, `induced_subgraph()`), this cannot be reintegrated to `gs` as a modified graph must go through the graph-modification checks.
+
+
+# Crop, rotate, flip, and transpose
+
+These functions are special accessors, as they operate on a reference frame, either the graph or image spaces, not on the graph alone. Node and edge attributes, and the underlying `igraph` object, are left untouched (aside from cropping's node/edge dropping, which follows from the region no longer containing them).
+
+- `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by the cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the window.
+- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact — a coordinate/pixel permutation, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. When these transformations are applied to a normalized `GraphSpace`, the changes are reversible. Otherwise they are applied to raw coordinates.
+
+
+```{r , eval=TRUE, message=FALSE}
+# Create a GraphSpace
+gs <- GraphSpace(make_full_graph(30))
+
+# Normalize coordinates
+gs <- normalizeGraphSpace(gs)
+
+# Crop
+gs_crop <- cropGraphSpace(gs, ymax = 0.5)
+
+# Rotate
+gs_rot90 <- rotateGraphSpace(gs)
+
+# Flip
+gs_flip <- flipGraphSpace(gs)
+
+# Transpose
+gs_t <- transposeGraphSpace(gs)
+```
+
+
+# Session information
+```{r label='Session information', eval=TRUE, echo=FALSE}
+sessionInfo()
+```
+

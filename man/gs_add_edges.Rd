@@ -51,7 +51,7 @@ not need to be re-run.
 
 For objects built with \code{simplify = TRUE} (the default), loop edges
 (\code{from == to}), parallel edges, and duplicate rows within
-\code{value} are silently dropped with a warning. Admissible edges in
+\code{value} are dropped with a warning. Admissible edges in
 the same call are still added. To allow loops or parallel edges, rebuild
 the object with \code{GraphSpace(g, simplify = FALSE)}.
 
@@ -74,7 +74,7 @@ gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
 # Assignment form: modifies gs in place
 gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
 
-# Add multiple edges with an analytical attribute
+# Add multiple edges with a numeric attribute
 gs <- gs_add_edges(gs, data.frame(
   from   = c("n4", "n5"),
   to     = c("n5", "n6"),

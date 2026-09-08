@@ -4,314 +4,6 @@
 ################################################################################
 
 #-------------------------------------------------------------------------------
-#' @title Add edges to a GraphSpace object
-#'
-#' @description
-#' \code{gs_add_edges()} and \code{gs_add_edges<-} add one or more edges to a
-#' \code{\link{GraphSpace}} object. Both endpoints of every new edge must
-#' already exist in the node set. The \code{@graph}, \code{@edges}, and
-#' all derived edge quantities are updated consistently; the node set and
-#' the normalized coordinate state are not affected.
-#'
-#' \code{gs_add_edges(x, value)} is the pipe-friendly functional form and
-#' returns the modified object. \code{gs_add_edges(x) <- value} is the
-#' in-place replacement form and modifies \code{x} by reference in the
-#' calling environment. Both forms are equivalent.
-#'
-#' @param x A \code{\link{GraphSpace}} object.
-#' @param value A data frame with at least two columns identifying the edge
-#' endpoints. Two column naming conventions are accepted:
-#' \itemize{
-#'   \item \code{from} / \code{to} — the tidygraph / igraph convention.
-#'   \item \code{name1} / \code{name2} — the \code{@edges} slot convention,
-#'     useful when constructing \code{value} directly from \code{gs_edges()}.
-#' }
-#' If both conventions are present, \code{from}/\code{to} takes priority.
-#' Any additional columns are treated as edge attributes and passed through
-#' to \code{@edges}. Standard visual attributes (\code{edgeColor},
-#' \code{arrowType}, etc.) are filled from package defaults when omitted;
-#' analytical attributes such as \code{weight} are stored as-is.
-#' @param ... Additional arguments (currently unused; reserved for future use).
-#'
-#' @details
-#' Adding edges does not invalidate the normalized layout. Node coordinates
-#' in \code{@nodes} are left untouched and \code{normalizeGraphSpace} does
-#' not need to be re-run.
-#'
-#' For objects built with \code{simplify = TRUE} (the default), loop edges
-#' (\code{from == to}), parallel edges, and duplicate rows within
-#' \code{value} are silently dropped with a warning. Admissible edges in
-#' the same call are still added. To allow loops or parallel edges, rebuild
-#' the object with \code{GraphSpace(g, simplify = FALSE)}.
-#'
-#' Because adding an edge to a group of parallel edges changes the derived
-#' attributes \code{curve_weight}, \code{is_multiple}, and \code{is_loop}
-#' for all members of that group, the full edge table is recomputed from
-#' \code{@graph} after each assignment.
-#'
-#' @return A \code{\link{GraphSpace}} object with the new edges appended.
-#'
-#' @seealso
-#' \code{\link{gs_add_nodes}}, \code{\link{gs_edge_attr}},
-#' \code{\link{gs_subset_edges}}, \code{\link{gs_edges}}
-#'
-#' @examples
-#' library(RGraphSpace)
-#' library(igraph)
-#'
-#' g <- make_star(6, mode = "out")
-#' gs <- GraphSpace(g)
-#' gs <- normalizeGraphSpace(gs)
-#'
-#' # Functional form (pipe-friendly): returns a modified copy
-#' gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
-#'
-#' # Assignment form: modifies gs in place
-#' gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
-#'
-#' # Add multiple edges with an analytical attribute
-#' gs <- gs_add_edges(gs, data.frame(
-#'   from   = c("n4", "n5"),
-#'   to     = c("n5", "n6"),
-#'   weight = c(0.8, 0.4)
-#' ))
-#'
-#' @importFrom igraph get_edge_ids
-#' @name gs_add_edges
-#' @aliases gs_add_edges<-
-NULL
-
-#-------------------------------------------------------------------------------
-#' @rdname gs_add_edges
-#' @export
-setMethod("gs_add_edges", "GraphSpace", function(x, value, ...) {
-  `gs_add_edges<-`(x, value = value)
-})
-
-#-------------------------------------------------------------------------------
-#' @rdname gs_add_edges
-#' @export
-setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
-
-  #--- validate and normalize value
-  if (!is.data.frame(value)) {
-    rlang::abort(c(
-      x = "'value' must be a data frame.",
-      i = "Required columns: 'from'/'to' or 'name1'/'name2' (vertex names)."
-    ))
-  }
-
-  # Accept name1/name2 as aliases for from/to; from/to takes priority
-  if (!"from" %in% colnames(value) && "name1" %in% colnames(value)) {
-    value$from <- value$name1
-  }
-  if (!"to" %in% colnames(value) && "name2" %in% colnames(value)) {
-    value$to <- value$name2
-  }
-  # Drop name1/name2 to avoid passing them as edge attributes
-  value <- value[, setdiff(colnames(value), c("name1", "name2")), drop = FALSE]
-  
-  # Strip protected and derived edge columns that originate from @edges but
-  # are not user-editable attributes: passing them to igraph::add_edges()
-  # would store stale values and corrupt the reconstructed @edges.
-  value <- value[, setdiff(colnames(value), .gs_protected_edge_cols()), 
-    drop = FALSE]
-
-  missing_cols <- setdiff(c("from", "to"), colnames(value))
-  if (length(missing_cols) > 0L) {
-    rlang::abort(c(
-      x = sprintf(
-        "Missing required column(s) in 'value': %s.",
-        paste(paste0("'", missing_cols, "'"), collapse = ", ")
-      ),
-      i = "Provide 'from'/'to' or 'name1'/'name2' columns containing node names."
-    ))
-  }
-
-  # Coerce from/to to character: factor inputs are common from read.csv() or
-  # merge() and would cause spurious mismatches in the endpoint check.
-  value$from <- as.character(value$from)
-  value$to <- as.character(value$to)
-
-  # Empty value: return x silently — a legitimate outcome in pipelines
-  if (nrow(value) == 0L) return(x)
-
-  #--- validate endpoints
-  na_endpoints <- is.na(value$from) | is.na(value$to)
-  if (any(na_endpoints)) {
-    rlang::abort(c(
-      x = sprintf(
-        "%d row(s) in 'value' contain NA in 'from' or 'to'.",
-        sum(na_endpoints)
-      ),
-      i = "Both endpoints must be non-NA node names."
-    ))
-  }
-
-  node_names <- igraph::V(x@graph)$name
-  missing_ids <- setdiff(union(value$from, value$to), node_names)
-
-  if (length(missing_ids) > 0L) {
-    rlang::abort(c(
-      x = "All edge endpoints must already exist in the node set.",
-      i = sprintf(
-        "%d unknown name(s): %s",
-        length(missing_ids),
-        .gs_preview(missing_ids)
-      ),
-      "*" = "Modify the underlying igraph object to add nodes before connecting them."
-    ))
-  }
-
-  #--- check simplification constraints
-  # Returns value with inadmissible edges dropped and warnings issued.
-  # If nothing survives, return x unchanged.
-  value <- .check_new_edges(x, value)
-  if (nrow(value) == 0L) return(x)
-
-  #--- add edges to the igraph object
-  g <- x@graph
-  vp <- as.vector(rbind(value$from, value$to))
-
-  #--- synchronise standard edge attributes across old and new edges
-  # igraph backfills NA for any attribute that exists on only one side of an
-  # add_edges() call. Because the validator rejects NA in standard attributes,
-  # we must ensure every standard attribute is either present on both sides or
-  # absent from both before the call:
-  #-- old edges have it, new edges don't -> fill default into value (new edges)
-  #-- new edges have it, old edges don't -> backfill default onto existing edges
-  #-- present on both / absent from both -> no action needed
-  existing_eatt <- igraph::edge_attr_names(g)
-  defaults <- .get_default_eatt(igraph::is_directed(g))
-  for (att in names(defaults)) {
-    in_graph <- att %in% existing_eatt
-    in_value <- att %in% colnames(value)
-    if (in_graph && !in_value) {
-      value[[att]] <- defaults[[att]]
-    } else if (!in_graph && in_value) {
-      igraph::edge_attr(g, att) <- defaults[[att]]
-    }
-  }
-
-  extra_cols <- setdiff(colnames(value), c("from", "to"))
-
-  if (length(extra_cols) > 0L) {
-    attr_list <- as.list(value[, extra_cols, drop = FALSE])
-    g <- do.call(igraph::add_edges, c(list(graph = g, edges = vp), attr_list))
-  } else {
-    g <- igraph::add_edges(g, vp)
-  }
-
-  #--- rebuild @edges via the authoritative update path
-  # .updateEdgeSpace() re-validates the igraph object
-  x <- .updateEdgeSpace(x, g)
-
-  validObject(x)
-  return(x)
-
-})
-
-################################################################################
-### Internal helpers
-################################################################################
-
-#-------------------------------------------------------------------------------
-# Check new edges against simplification constraints.
-# For simplified objects, loops, parallel edges, and duplicate rows within
-# value are inadmissible. Rather than aborting, inadmissible rows are dropped
-# and a warning is issued. Returns the filtered value (may have 0 rows).
-.check_new_edges <- function(x, value) {
-
-  if (!.is_simplified(x)) return(value)
-
-  g <- x@graph
-  is_dir <- igraph::is_directed(g)
-
-  #--- loops
-  is_loop <- value$from == value$to
-  if (any(is_loop)) {
-    rlang::warn(c(
-      "!" = sprintf(
-        "%d loop edge(s) ignored: simplified GraphSpace do not allow loops.",
-        sum(is_loop)
-      ),
-      "i" = sprintf(
-        "Affected loops (showing %d of %d): %s",
-        min(sum(is_loop), 3L),
-        sum(is_loop),
-        .gs_preview(paste0(value$from[is_loop], " -> ", value$to[is_loop]))
-      )
-    ))
-    value <- value[!is_loop, , drop = FALSE]
-    rownames(value) <- NULL
-  }
-
-  if (nrow(value) == 0L) return(value)
-
-  #--- duplicates within value
-  if (is_dir) {
-    pair_keys <- paste(value$from, value$to, sep = "\x01")
-  } else {
-    lo <- pmin(value$from, value$to)
-    hi <- pmax(value$from, value$to)
-    pair_keys <- paste(lo, hi, sep = "\x01")
-  }
-  is_dup <- duplicated(pair_keys)
-  if (any(is_dup)) {
-    rlang::warn(c(
-      "!" = sprintf(
-        "%d duplicate edge(s) ignored: each (from, to) pair is kept only once.",
-        sum(is_dup)
-      ),
-      "i" = sprintf(
-        "Affected pairs (showing %d of %d): %s",
-        min(sum(is_dup), 3L),
-        sum(is_dup),
-        .gs_preview(paste0(value$from[is_dup], " -> ", value$to[is_dup]))
-      )
-    ))
-    value <- value[!is_dup, , drop = FALSE]
-    rownames(value) <- NULL
-  }
-
-  if (nrow(value) == 0L) return(value)
-
-  #--- parallel edges (against existing graph)
-  is_parallel <- vapply(seq_len(nrow(value)), function(i) {
-    n1 <- value$from[i]
-    n2 <- value$to[i]
-    if (is_dir) {
-      igraph::get_edge_ids(g, vp = c(n1, n2), error = FALSE) > 0L
-    } else {
-      igraph::get_edge_ids(
-        g, vp = c(n1, n2), directed = FALSE, error = FALSE) > 0L
-    }
-  }, logical(1L))
-
-  if (any(is_parallel)) {
-    rlang::warn(c(
-      "!" = sprintf(
-        "%d parallel edge(s) ignored: simplified GraphSpace do not allow parallel edges.",
-        sum(is_parallel)
-      ),
-      "i" = .gs_preview(paste0(
-        value$from[is_parallel], " -> ", value$to[is_parallel])),
-      "*" = "Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges."
-    ))
-    value <- value[!is_parallel, , drop = FALSE]
-    rownames(value) <- NULL
-  }
-
-  return(value)
-
-}
-
-
-################################################################################
-### gs_add_nodes replacement method
-################################################################################
-
-#-------------------------------------------------------------------------------
 #' @title Add nodes to a GraphSpace object
 #'
 #' @description
@@ -546,3 +238,293 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
   return(x)
   
 })
+
+#-------------------------------------------------------------------------------
+#' @title Add edges to a GraphSpace object
+#'
+#' @description
+#' \code{gs_add_edges()} and \code{gs_add_edges<-} add one or more edges to a
+#' \code{\link{GraphSpace}} object. Both endpoints of every new edge must
+#' already exist in the node set. The \code{@graph}, \code{@edges}, and
+#' all derived edge quantities are updated consistently; the node set and
+#' the normalized coordinate state are not affected.
+#'
+#' \code{gs_add_edges(x, value)} is the pipe-friendly functional form and
+#' returns the modified object. \code{gs_add_edges(x) <- value} is the
+#' in-place replacement form and modifies \code{x} by reference in the
+#' calling environment. Both forms are equivalent.
+#'
+#' @param x A \code{\link{GraphSpace}} object.
+#' @param value A data frame with at least two columns identifying the edge
+#' endpoints. Two column naming conventions are accepted:
+#' \itemize{
+#'   \item \code{from} / \code{to} — the tidygraph / igraph convention.
+#'   \item \code{name1} / \code{name2} — the \code{@edges} slot convention,
+#'     useful when constructing \code{value} directly from \code{gs_edges()}.
+#' }
+#' If both conventions are present, \code{from}/\code{to} takes priority.
+#' Any additional columns are treated as edge attributes and passed through
+#' to \code{@edges}. Standard visual attributes (\code{edgeColor},
+#' \code{arrowType}, etc.) are filled from package defaults when omitted;
+#' analytical attributes such as \code{weight} are stored as-is.
+#' @param ... Additional arguments (currently unused; reserved for future use).
+#'
+#' @details
+#' Adding edges does not invalidate the normalized layout. Node coordinates
+#' in \code{@nodes} are left untouched and \code{normalizeGraphSpace} does
+#' not need to be re-run.
+#'
+#' For objects built with \code{simplify = TRUE} (the default), loop edges
+#' (\code{from == to}), parallel edges, and duplicate rows within
+#' \code{value} are dropped with a warning. Admissible edges in
+#' the same call are still added. To allow loops or parallel edges, rebuild
+#' the object with \code{GraphSpace(g, simplify = FALSE)}.
+#'
+#' Because adding an edge to a group of parallel edges changes the derived
+#' attributes \code{curve_weight}, \code{is_multiple}, and \code{is_loop}
+#' for all members of that group, the full edge table is recomputed from
+#' \code{@graph} after each assignment.
+#'
+#' @return A \code{\link{GraphSpace}} object with the new edges appended.
+#'
+#' @seealso
+#' \code{\link{gs_add_nodes}}, \code{\link{gs_edge_attr}},
+#' \code{\link{gs_subset_edges}}, \code{\link{gs_edges}}
+#'
+#' @examples
+#' library(RGraphSpace)
+#' library(igraph)
+#'
+#' g <- make_star(6, mode = "out")
+#' gs <- GraphSpace(g)
+#' gs <- normalizeGraphSpace(gs)
+#'
+#' # Functional form (pipe-friendly): returns a modified copy
+#' gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
+#'
+#' # Assignment form: modifies gs in place
+#' gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
+#'
+#' # Add multiple edges with a numeric attribute
+#' gs <- gs_add_edges(gs, data.frame(
+#'   from   = c("n4", "n5"),
+#'   to     = c("n5", "n6"),
+#'   weight = c(0.8, 0.4)
+#' ))
+#'
+#' @importFrom igraph get_edge_ids
+#' @name gs_add_edges
+#' @aliases gs_add_edges<-
+NULL
+
+#-------------------------------------------------------------------------------
+#' @rdname gs_add_edges
+#' @export
+setMethod("gs_add_edges", "GraphSpace", function(x, value, ...) {
+  `gs_add_edges<-`(x, value = value)
+})
+
+#-------------------------------------------------------------------------------
+#' @rdname gs_add_edges
+#' @export
+setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
+
+  #--- validate and normalize value
+  if (!is.data.frame(value)) {
+    rlang::abort(c(
+      x = "'value' must be a data frame.",
+      i = "Required columns: 'from'/'to' or 'name1'/'name2' (vertex names)."
+    ))
+  }
+
+  # Accept name1/name2 as aliases for from/to; from/to takes priority
+  if (!"from" %in% colnames(value) && "name1" %in% colnames(value)) {
+    value$from <- value$name1
+  }
+  if (!"to" %in% colnames(value) && "name2" %in% colnames(value)) {
+    value$to <- value$name2
+  }
+  # Drop name1/name2 to avoid passing them as edge attributes
+  value <- value[, setdiff(colnames(value), c("name1", "name2")), drop = FALSE]
+  
+  # Strip protected and derived edge columns that originate from @edges but
+  # are not user-editable attributes: passing them to igraph::add_edges()
+  # would store stale values and corrupt the reconstructed @edges.
+  value <- value[, setdiff(colnames(value), .gs_protected_edge_cols()), 
+    drop = FALSE]
+
+  missing_cols <- setdiff(c("from", "to"), colnames(value))
+  if (length(missing_cols) > 0L) {
+    rlang::abort(c(
+      x = sprintf(
+        "Missing required column(s) in 'value': %s.",
+        paste(paste0("'", missing_cols, "'"), collapse = ", ")
+      ),
+      i = "Provide 'from'/'to' or 'name1'/'name2' columns containing node names."
+    ))
+  }
+
+  # Coerce from/to to character: factor inputs are common from read.csv() or
+  # merge() and would cause spurious mismatches in the endpoint check.
+  value$from <- as.character(value$from)
+  value$to <- as.character(value$to)
+
+  # Empty value: return x silently — a legitimate outcome in pipelines
+  if (nrow(value) == 0L) return(x)
+
+  #--- validate endpoints
+  na_endpoints <- is.na(value$from) | is.na(value$to)
+  if (any(na_endpoints)) {
+    rlang::abort(c(
+      x = sprintf(
+        "%d row(s) in 'value' contain NA in 'from' or 'to'.",
+        sum(na_endpoints)
+      ),
+      i = "Both endpoints must be non-NA node names."
+    ))
+  }
+
+  node_names <- igraph::V(x@graph)$name
+  missing_ids <- setdiff(union(value$from, value$to), node_names)
+
+  if (length(missing_ids) > 0L) {
+    rlang::abort(c(
+      x = "All edge endpoints must already exist in the node set.",
+      i = sprintf(
+        "%d unknown name(s): %s",
+        length(missing_ids),
+        .gs_preview(missing_ids)
+      ),
+      "*" = "Modify the underlying igraph object to add nodes before connecting them."
+    ))
+  }
+
+  #--- check simplification constraints
+  # Returns value with inadmissible edges dropped and warnings issued.
+  # If nothing survives, return x unchanged.
+  value <- .check_new_edges(x, value)
+  if (nrow(value) == 0L) return(x)
+
+  #--- add edges to the igraph object
+  g <- x@graph
+  vp <- as.vector(rbind(value$from, value$to))
+
+  #--- synchronise standard edge attributes across old and new edges
+  # igraph backfills NA for any attribute that exists on only one side of an
+  # add_edges() call. Because the validator rejects NA in standard attributes,
+  # we must ensure every standard attribute is either present on both sides or
+  # absent from both before the call:
+  #-- old edges have it, new edges don't -> fill default into value (new edges)
+  #-- new edges have it, old edges don't -> backfill default onto existing edges
+  #-- present on both / absent from both -> no action needed
+  existing_eatt <- igraph::edge_attr_names(g)
+  defaults <- .get_default_eatt(igraph::is_directed(g))
+  for (att in names(defaults)) {
+    in_graph <- att %in% existing_eatt
+    in_value <- att %in% colnames(value)
+    if (in_graph && !in_value) {
+      value[[att]] <- defaults[[att]]
+    } else if (!in_graph && in_value) {
+      igraph::edge_attr(g, att) <- defaults[[att]]
+    }
+  }
+
+  extra_cols <- setdiff(colnames(value), c("from", "to"))
+
+  if (length(extra_cols) > 0L) {
+    attr_list <- as.list(value[, extra_cols, drop = FALSE])
+    g <- do.call(igraph::add_edges, c(list(graph = g, edges = vp), attr_list))
+  } else {
+    g <- igraph::add_edges(g, vp)
+  }
+
+  #--- rebuild @edges via the authoritative update path
+  # .updateEdgeSpace() re-validates the igraph object
+  x <- .updateEdgeSpace(x, g)
+
+  validObject(x)
+  return(x)
+
+})
+
+################################################################################
+### Internal helpers
+################################################################################
+
+#-------------------------------------------------------------------------------
+# Check new edges against simplification constraints.
+# For simplified objects, loops, parallel edges, and duplicate rows within
+# value are inadmissible. Rather than aborting, inadmissible rows are dropped
+# and a warning is issued. Returns the filtered value (may have 0 rows).
+.check_new_edges <- function(x, value) {
+
+  if (!.is_simplified(x)) return(value)
+
+  g <- x@graph
+  is_dir <- igraph::is_directed(g)
+
+  #--- loops
+  is_loop <- value$from == value$to
+  if (any(is_loop)) {
+    ms <- .gs_preview(paste0(value$from[is_loop], " -> ", value$to[is_loop]))
+    rlang::warn(c(
+      sprintf("%d loop edge(s) ignored: %s", sum(is_loop), ms ),
+      "i" = "Simplified GraphSpace do not allow loop edges.",
+      "*" = "Rebuild with GraphSpace(g, simplify = FALSE) to allow loops."
+    ))
+    value <- value[!is_loop, , drop = FALSE]
+    rownames(value) <- NULL
+  }
+
+  if (nrow(value) == 0L) return(value)
+
+  #--- duplicates within value
+  if (is_dir) {
+    pair_keys <- paste(value$from, value$to, sep = "\x01")
+  } else {
+    lo <- pmin(value$from, value$to)
+    hi <- pmax(value$from, value$to)
+    pair_keys <- paste(lo, hi, sep = "\x01")
+  }
+  is_dup <- duplicated(pair_keys)
+  if (any(is_dup)) {
+    ms <- .gs_preview(paste0(value$from[is_dup], " -> ", value$to[is_dup]))
+    rlang::warn(c(
+      sprintf("%d duplicate edge(s) ignored: %s", sum(is_dup), ms ),
+      "!" = "Each (from, to) pair is kept only once.",
+      "i" = "Simplified GraphSpace do not allow duplicate edges.",
+      "*" = "Rebuild with GraphSpace(g, simplify = FALSE) to allow duplicates."
+    ))
+    value <- value[!is_dup, , drop = FALSE]
+    rownames(value) <- NULL
+  }
+
+  if (nrow(value) == 0L) return(value)
+
+  #--- parallel edges (against existing graph)
+  is_parallel <- vapply(seq_len(nrow(value)), function(i) {
+    n1 <- value$from[i]
+    n2 <- value$to[i]
+    if (is_dir) {
+      igraph::get_edge_ids(g, vp = c(n1, n2), error = FALSE) > 0L
+    } else {
+      igraph::get_edge_ids(
+        g, vp = c(n1, n2), directed = FALSE, error = FALSE) > 0L
+    }
+  }, logical(1L))
+
+  if (any(is_parallel)) {
+    ms <- .gs_preview(paste0(value$from[is_parallel], " -> ", value$to[is_parallel]))
+    rlang::warn(c(
+      sprintf("%d parallel edge(s) ignored: %s", sum(is_parallel), ms ),
+      "!" = "Only the first occurrence of each is kept.",
+      "i" = "Simplified GraphSpace do not allow parallel edges.",
+      "*" = "Rebuild with GraphSpace(g, simplify = FALSE) to allow parallel edges."
+    ))
+    value <- value[!is_parallel, , drop = FALSE]
+    rownames(value) <- NULL
+  }
+
+  return(value)
+
+}

@@ -113,7 +113,6 @@ gs2  <- gs_subset_nodes(gs, keep)
 gs2 <- gs |>
   gs_subset_nodes(nodeSize > 5) |>
   gs_subset_edges(weight > 0.3)
-#> Warning: The 'GraphSpace' object has no edges to filter.
 
 #--- gs_subset_edges examples ---
 
@@ -123,9 +122,7 @@ gs3 <- gs_subset_edges(gs, weight > 0.5)
 # By endpoint names: name1 and name2 are columns in @edges and
 # can be used directly inside any predicate expression
 gs3 <- gs_subset_edges(gs, name1 == "n1")
-gs3 <- gs_subset_edges(gs, name2 == "n1")
-#> Warning: No edges matched the filter expression.
-#> ℹ The returned object contains no edges.
+gs3 <- gs_subset_edges(gs, name2 == "n2")
 
 # Combining endpoint and attribute conditions
 gs3 <- gs_subset_edges(gs, name1 == "n1" & weight > 0.5)

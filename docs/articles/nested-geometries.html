@@ -59,11 +59,12 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
-    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
+    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a GraphSpace</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
-    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Scales and offsets</a></li>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
-    <li><a class="dropdown-item" href="../articles/geometries.html">Geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -102,7 +103,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-06</h4>
+            <h4 data-toc-skip class="date">2026-09-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/nested-geometries.Rmd" class="external-link"><code>vignettes/articles/nested-geometries.Rmd</code></a></small>
       <div class="d-none name"><code>nested-geometries.Rmd</code></div>
@@ -462,11 +463,12 @@ performed upstream, while preparing the data used as input to
 <em>RGraphSpace</em>.</p>
 <p>Nevertheless, downstream analyses may require accessing and modifying
 a <code>GraphSpace</code> object to explore alternative graph
-configurations or highlight specific subsets of the data. For example,
-the following code selects the five cells with the highest expression of
-the <em>PIGR</em> gene, adds arbitrary directed edges connecting them,
-and renders the resulting subgraph as an additional layer on top of the
-original visualization.</p>
+configurations or highlight specific subsets of the data (see <a href="graphspace-accessors.html"><em>GraphSpace accessors</em></a> for
+an overview on the available graph transformations).</p>
+<p>For example, the following code selects the five cells with the
+highest expression of the <em>PIGR</em> gene, adds arbitrary directed
+edges connecting them, and renders the resulting subgraph as an
+additional layer on top of the original visualization.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Subgraph containing the 5 cells with the highest PIGR expression</span></span>
 <span><span class="va">subgs_crop3</span> <span class="op">&lt;-</span> <span class="va">gs_crop3</span> <span class="op">|&gt;</span> </span>

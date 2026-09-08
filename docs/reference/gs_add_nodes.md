@@ -79,7 +79,7 @@ feature matrix remains aligned with `@nodes`.
 ## See also
 
 [`gs_add_edges`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.md),
-[`gs_vertex_attr`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md),
+[`gs_vertex_attr`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md),
 [`gs_subset_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md),
 [`gs_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
 

@@ -7,20 +7,14 @@
 \alias{gs_nodes}
 \alias{gs_edges}
 \alias{gs_graph}
+\alias{gs_vcount}
+\alias{gs_ecount}
 \alias{gs_image}
 \alias{gs_image<-}
 \alias{gs_fdata}
 \alias{gs_fdata<-}
 \alias{gs_features}
 \alias{gs_nfeatures}
-\alias{gs_vcount}
-\alias{gs_ecount}
-\alias{gs_vertex_attr}
-\alias{gs_vertex_attr<-}
-\alias{gs_edge_attr}
-\alias{gs_edge_attr<-}
-\alias{gs_delete_v_attr}
-\alias{gs_delete_e_attr}
 \alias{gs_scale_factor}
 \alias{gs_scale_factor<-}
 \alias{gs_geometry}
@@ -43,12 +37,6 @@
 \alias{as.igraph.GraphSpace}
 \alias{gs_vcount,GraphSpace-method}
 \alias{gs_ecount,GraphSpace-method}
-\alias{gs_vertex_attr,GraphSpace-method}
-\alias{gs_vertex_attr<-,GraphSpace-method}
-\alias{gs_delete_v_attr,GraphSpace-method}
-\alias{gs_delete_e_attr,GraphSpace-method}
-\alias{gs_edge_attr,GraphSpace-method}
-\alias{gs_edge_attr<-,GraphSpace-method}
 \alias{gs_scale_factor,GraphSpace-method}
 \alias{gs_scale_factor<-,GraphSpace-method}
 \alias{gs_geometry,GraphSpace-method}
@@ -56,7 +44,7 @@
 \alias{$,GraphSpace-method}
 \alias{$<-,GraphSpace-method}
 \alias{[[<-,GraphSpace-method}
-\title{Accessors and attribute utilities for GraphSpace objects}
+\title{Accessors for GraphSpace objects}
 \usage{
 \S4method{names}{GraphSpace}(x)
 
@@ -90,18 +78,6 @@
 
 \S4method{gs_ecount}{GraphSpace}(x)
 
-\S4method{gs_vertex_attr}{GraphSpace}(x, name, ..., value)
-
-\S4method{gs_vertex_attr}{GraphSpace}(x, name, ...) <- value
-
-\S4method{gs_delete_v_attr}{GraphSpace}(x, name)
-
-\S4method{gs_delete_e_attr}{GraphSpace}(x, name)
-
-\S4method{gs_edge_attr}{GraphSpace}(x, name, ..., value)
-
-\S4method{gs_edge_attr}{GraphSpace}(x, name, ...) <- value
-
 \S4method{gs_scale_factor}{GraphSpace}(x)
 
 \S4method{gs_scale_factor}{GraphSpace}(x) <- value
@@ -128,9 +104,7 @@ Updated \linkS4class{GraphSpace} object.
 }
 \description{
 Access and modify individual components of a
-\linkS4class{GraphSpace} object. Selected \pkg{igraph} methods are
-applied to the internal graph representation and propagated to
-downstream node and edge components.
+\linkS4class{GraphSpace} object.
 }
 \details{
 For \code{gs_nodes()}, the optional \code{vars} argument specifies
@@ -147,7 +121,7 @@ data('gtoy1', package = 'RGraphSpace')
 # Create a new GraphSpace object
 gs <- GraphSpace(gtoy1)
 
-#--- Usage of GraphSpace attribute accessors:
+#--- Usage of GraphSpace accessors:
 
 # Vertex names
 names(gs)
@@ -161,48 +135,51 @@ gs_nodes(gs)
 # Get a data frame with edges
 gs_edges(gs)
 
-# Get vertex count
+# Get an igraph object
+gs_graph(gs)
+
+# Get a data frame with nodes
+gs_nodes(gs)
+
+# Vertex count
 gs_vcount(gs)
 
-# Get edge count
+# Edge count
 gs_ecount(gs)
-
-# Access all vertex attributes
-gs_vertex_attr(gs)
-
-# Access a specific vertex attribute
-gs_vertex_attr(gs, "nodeLabel")
-
-# Modify a single value within a vertex attribute
-gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
-
-# Replace an entire vertex attribute
-gs_vertex_attr(gs, "nodeSize") <- 10
-
-# Access a specific edge attribute
-gs_edge_attr(gs, "edgeColor")
-
-# Replace an entire edge attribute
-gs_edge_attr(gs, "edgeLineWidth") <- 1
 
 # Add an image and rescale graph coordinates to image space
 # Images may be provided as a raster or numeric matrix
 gs_image(gs) <- as_colorraster(volcano)
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
 
-# apply a scaling factor to node coordinates
+# Add a sparse Matrix aligned to nodes
+library(Matrix)
+mtx <- Matrix(0, gs_vcount(gs), 2)
+rownames(mtx) <- names(gs)
+colnames(mtx) <- c("feature1","feature2")
+gs_fdata(gs) <- mtx
+
+# Feature names
+gs_features(gs)
+
+# Feature count
+gs_nfeatures(gs)
+
+# Apply a scaling factor to node coordinates
 gs_scale_factor(gs) <- 0.1
 # undo scaling 
 gs_scale_factor(gs) <- 1
 
-# add an 'sfc' geometry column (requires the optional 'sf' package)
+# Add an 'sfc' geometry column (requires the optional 'sf' package)
 if (requireNamespace("sf", quietly = TRUE)) {
   pts <- replicate(gs_vcount(gs), sf::st_point(runif(2)), simplify = FALSE)
   gs_geometry(gs) <- sf::st_sfc(pts)
 }
 
+# Set a pixel budget for image operations
+gs_image_maxpixels(gs) <- 4e+06
+
 }
 \seealso{
-\code{\link[igraph]{vertex_attr}}, \code{\link[igraph]{edge_attr}},
 \code{\link{gs_fetch_features}}
 }

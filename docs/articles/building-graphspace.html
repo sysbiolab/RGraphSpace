@@ -59,11 +59,12 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
-    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
+    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a GraphSpace</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
-    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Scales and offsets</a></li>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
-    <li><a class="dropdown-item" href="../articles/geometries.html">Geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -102,7 +103,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-06</h4>
+            <h4 data-toc-skip class="date">2026-09-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/building-graphspace.Rmd" class="external-link"><code>vignettes/articles/building-graphspace.Rmd</code></a></small>
       <div class="d-none name"><code>building-graphspace.Rmd</code></div>
@@ -207,7 +208,7 @@ internally.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 47dc50c DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 9358957 DN-- 5 4 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>

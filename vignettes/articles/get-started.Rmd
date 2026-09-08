@@ -26,15 +26,18 @@ For a self-contained introduction that works offline, run **vignette("RGraphSpac
 
 # Introductory vignettes
 
-These tutorials introduce *RGraphSpace* using simple toy examples: [*building a graph space*](building-graphspace.html) walks through basic graph conventions; [*customizing aesthetics*](customizing-aesthetics.html) demonstrates how to set up `geoms` to handle graph data types; [*fine-tuning scales*](scales-and-offsets.html) describes the trade-offs involved in synchronizing node and edge layers; and [*geometries*](geometries.html) demonstrates how to attach `sf` geometries to nodes as custom markers.
+These tutorials introduce *RGraphSpace* using simple toy examples: [*building a GraphSpace*](building-graphspace.html) walks through basic graph conventions; [*customizing aesthetics*](customizing-aesthetics.html) demonstrates how to set up `geoms` to handle graph data types; [*scales and offsets*](scales-and-offsets.html) describes the trade-offs involved in synchronizing node and edge layers; [*geometries and nodes*](geometries.html) demonstrates how to attach `sf` geometries to nodes as custom markers, and [*GraphSpace accessors*](graphspace-accessors.html) covers graph transformation functions, attribute manipulation, and the package's general accessors.
 
 ```{r, include=FALSE}
-title <- c("Building GraphSpace", "Customizing Aesthetics", 
-  "Fine-tuning Scales", "Curved Edges and Loops", "Geometries and Nodes")
+title <- c("Building a GraphSpace", "Customizing Aesthetics", 
+  "Scales and Offsets", "Curved Edges and Loops", "Geometries and Nodes", 
+  "GraphSpace Accessors")
 image <- c("cards/building_gspace.png", "cards/using_geoms.png", 
-  "cards/scales_and_offsets.png", "cards/curved_edges.png", "cards/geometry.png")
+  "cards/scales_and_offsets.png", "cards/curved_edges.png", "cards/geometry.png", 
+  "cards/accessors.png")
 link <- c("building-graphspace.html","customizing-aesthetics.html",
-  "scales-and-offsets.html", "curved-edges.html", "geometries.html")
+  "scales-and-offsets.html", "curved-edges.html", "geometries.html",
+  "graphspace-accessors.html")
 ps_cards1 <- data.frame(title = title, image = image, link = link)
 ```
 

@@ -38,16 +38,18 @@ navbar:
       menu:
       - text: "Introductory vignettes"
         header: true
-      - text: "Building a graph space"
+      - text: "Building a GraphSpace"
         href: articles/building-graphspace.html
       - text: "Customizing aesthetics"
         href: articles/customizing-aesthetics.html
-      - text: "Fine-tuning scales and offsets"
+      - text: "Scales and offsets"
         href: articles/scales-and-offsets.html
       - text: "Curved edges and loops"
         href: articles/curved-edges.html
-      - text: "Geometries"
+      - text: "Using sf geometries"
         href: articles/geometries.html
+      - text: "GraphSpace accessors"
+        href: articles/graphspace-accessors.html
       - text: -------
       - text: "General applications"
         header: true
@@ -97,6 +99,7 @@ reference:
     - gs_add_edges
     - gs_compute
     - GraphSpace-subscript
+    - GraphSpace-attributes
     
 - title: Features
   contents:

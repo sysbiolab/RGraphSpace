@@ -421,12 +421,48 @@ selects the five cells with the highest expression of the *PIGR* gene,
 adds arbitrary directed edges connecting them, and renders the resulting
 subgraph as an additional layer on top of the original visualization.
 
+``` r
+
+# Subgraph containing the 5 cells with the highest PIGR expression
+subgs_crop3 <- gs_crop3 |> 
+  gs_subset_nodes(rank(-PIGR) <= 5)
+```
+
+``` r
+
+# Create directed edges from the highest-ranked cell to all others
+edges <- data.frame(
+  from = subgs_crop3$name[1], 
+  to = subgs_crop3$name[-1], 
+  arrowType = 1)
+
+# Add the edges to GraphSpace
+subgs_crop3 <- gs_add_edges(subgs_crop3, value = edges)
+```
+
+``` r
+
+# Add the subgraph as a new layer with its own graphical representation
+p <- ggplot(gs_crop3) + 
+  geom_sf( aes(geometry = cell_geometry,
+    fill = log2(PIGR + 1) ), colour = "white") +
+  geom_sf( aes(geometry = nucleus_geometry), alpha = 0.1,
+    fill = adjustcolor("black", 0.5), colour = NA) +
+  geom_edgespace(data = subgs_crop3, colour = "black", 
+    curve = 0.3, lwd = 0.8, lty = "21", arrow_size = 1) +
+  scale_fill_continuous(palette = adjustcolor(cpal, 0.5), 
+    limits = data_range) +
+  my_theme
+
+p
+```
+
+![](figs_dev/spe2_seg5.png)
+
 This deliberately naive example illustrates one possible approach to
 downstream graph manipulation. The edges have no specific biological
 meaning and are included solely to demonstrate how a graph can be
 modified at this later stage of the pipeline.
-
-![](figs_dev/spe2_seg5.png)
 
 ## Session information
 

@@ -12,6 +12,8 @@
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md):
 - [Getting Started with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/get-started.md):
+- [GraphSpace accessors and
+  transformations](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md):
 - [Using RGraphSpace with High-Dimensional
   Data](https://sysbiolab.github.io/RGraphSpace/articles/high-dimensional.md):
 - [Installation

@@ -65,8 +65,8 @@ to be re-run.
 
 For objects built with `simplify = TRUE` (the default), loop edges
 (`from == to`), parallel edges, and duplicate rows within `value` are
-silently dropped with a warning. Admissible edges in the same call are
-still added. To allow loops or parallel edges, rebuild the object with
+dropped with a warning. Admissible edges in the same call are still
+added. To allow loops or parallel edges, rebuild the object with
 `GraphSpace(g, simplify = FALSE)`.
 
 Because adding an edge to a group of parallel edges changes the derived
@@ -77,7 +77,7 @@ each assignment.
 ## See also
 
 [`gs_add_nodes`](https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.md),
-[`gs_edge_attr`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md),
+[`gs_edge_attr`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md),
 [`gs_subset_edges`](https://sysbiolab.github.io/RGraphSpace/reference/gs_subset.md),
 [`gs_edges`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
 
@@ -103,7 +103,7 @@ gs <- gs_add_edges(gs, data.frame(from = "n2", to = "n3"))
 # Assignment form: modifies gs in place
 gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
 
-# Add multiple edges with an analytical attribute
+# Add multiple edges with a numeric attribute
 gs <- gs_add_edges(gs, data.frame(
   from   = c("n4", "n5"),
   to     = c("n5", "n6"),

@@ -59,11 +59,12 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><h6 class="dropdown-header" data-toc-skip>Introductory vignettes</h6></li>
-    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a graph space</a></li>
+    <li><a class="dropdown-item" href="../articles/building-graphspace.html">Building a GraphSpace</a></li>
     <li><a class="dropdown-item" href="../articles/customizing-aesthetics.html">Customizing aesthetics</a></li>
-    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Fine-tuning scales and offsets</a></li>
+    <li><a class="dropdown-item" href="../articles/scales-and-offsets.html">Scales and offsets</a></li>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
-    <li><a class="dropdown-item" href="../articles/geometries.html">Geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
+    <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -102,7 +103,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-06</h4>
+            <h4 data-toc-skip class="date">2026-09-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/get-started.Rmd" class="external-link"><code>vignettes/articles/get-started.Rmd</code></a></small>
       <div class="d-none name"><code>get-started.Rmd</code></div>
@@ -123,13 +124,16 @@ package.</p>
 <h2 id="introductory-vignettes">Introductory vignettes<a class="anchor" aria-label="anchor" href="#introductory-vignettes"></a>
 </h2>
 <p>These tutorials introduce <em>RGraphSpace</em> using simple toy
-examples: <a href="building-graphspace.html"><em>building a graph
-space</em></a> walks through basic graph conventions; <a href="customizing-aesthetics.html"><em>customizing aesthetics</em></a>
+examples: <a href="building-graphspace.html"><em>building a
+GraphSpace</em></a> walks through basic graph conventions; <a href="customizing-aesthetics.html"><em>customizing aesthetics</em></a>
 demonstrates how to set up <code>geoms</code> to handle graph data
-types; <a href="scales-and-offsets.html"><em>fine-tuning scales</em></a>
+types; <a href="scales-and-offsets.html"><em>scales and offsets</em></a>
 describes the trade-offs involved in synchronizing node and edge layers;
-and <a href="geometries.html"><em>geometries</em></a> demonstrates how
-to attach <code>sf</code> geometries to nodes as custom markers.</p>
+<a href="geometries.html"><em>geometries and nodes</em></a> demonstrates
+how to attach <code>sf</code> geometries to nodes as custom markers, and
+<a href="graphspace-accessors.html"><em>GraphSpace accessors</em></a>
+covers graph transformation functions, attribute manipulation, and the
+package’s general accessors.</p>
 <div>
 <div class="row p-0 row-cols-1 row-cols-md-2 row-cols-lg-3" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 1rem 1rem 1rem 1rem ;">
@@ -137,7 +141,7 @@ to attach <code>sf</code> geometries to nodes as custom markers.</p>
 <img src="cards/building_gspace.png" class="card-img-top" style="border-style:solid; border-color:inherits; border-width:1px 1px 0 1px; border-radius: 1rem 1rem 0 0 ;"></a>
 <div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
 <a href="building-graphspace.html">
-<h6 class="card-title my-auto px-3 pt-3 pb-3">Building GraphSpace</h6>
+<h6 class="card-title my-auto px-3 pt-3 pb-3">Building a GraphSpace</h6>
 </a>
 </div>
 </div>
@@ -155,7 +159,7 @@ to attach <code>sf</code> geometries to nodes as custom markers.</p>
 <img src="cards/scales_and_offsets.png" class="card-img-top" style="border-style:solid; border-color:inherits; border-width:1px 1px 0 1px; border-radius: 1rem 1rem 0 0 ;"></a>
 <div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
 <a href="scales-and-offsets.html">
-<h6 class="card-title my-auto px-3 pt-3 pb-3">Fine-tuning Scales</h6>
+<h6 class="card-title my-auto px-3 pt-3 pb-3">Scales and Offsets</h6>
 </a>
 </div>
 </div>
@@ -174,6 +178,15 @@ to attach <code>sf</code> geometries to nodes as custom markers.</p>
 <div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
 <a href="geometries.html">
 <h6 class="card-title my-auto px-3 pt-3 pb-3">Geometries and Nodes</h6>
+</a>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 1rem 1rem 1rem 1rem ;">
+<a href="graphspace-accessors.html" style="color: inherit;">
+<img src="cards/accessors.png" class="card-img-top" style="border-style:solid; border-color:inherits; border-width:1px 1px 0 1px; border-radius: 1rem 1rem 0 0 ;"></a>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
+<a href="graphspace-accessors.html">
+<h6 class="card-title my-auto px-3 pt-3 pb-3">GraphSpace Accessors</h6>
 </a>
 </div>
 </div>

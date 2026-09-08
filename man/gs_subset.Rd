@@ -101,7 +101,7 @@ gs3 <- gs_subset_edges(gs, weight > 0.5)
 # By endpoint names: name1 and name2 are columns in @edges and
 # can be used directly inside any predicate expression
 gs3 <- gs_subset_edges(gs, name1 == "n1")
-gs3 <- gs_subset_edges(gs, name2 == "n1")
+gs3 <- gs_subset_edges(gs, name2 == "n2")
 
 # Combining endpoint and attribute conditions
 gs3 <- gs_subset_edges(gs, name1 == "n1" & weight > 0.5)
