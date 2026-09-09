@@ -113,6 +113,7 @@ gs2  <- gs_subset_nodes(gs, keep)
 gs2 <- gs |>
   gs_subset_nodes(nodeSize > 5) |>
   gs_subset_edges(weight > 0.3)
+#> Warning: The 'GraphSpace' object has no edges to filter.
 
 #--- gs_subset_edges examples ---
 

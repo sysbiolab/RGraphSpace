@@ -85,14 +85,8 @@ cropping, and drops nodes (and edges) that fall outside the window.
 are all exact, a coordinate/pixel permutation, with no resampling, no
 interpolation, and no risk of misaligning nodes against the background
 image. `rotateGraphSpace()` is restricted to a single 90-degree turn:
-apply it again to its own output for 180 or 270 degrees, e.g.
-`rotateGraphSpace(rotateGraphSpace(gs))` for 180 degrees. Combine all
+apply it again to its own output for 180 or 270 degrees. Combine all
 three with each other to reach any of the 8 symmetries of a square.
-
-## Note
-
-This is an accessory function typically called during the preprocessing
-of `GraphSpace` objects before rendering.
 
 ## See also
 

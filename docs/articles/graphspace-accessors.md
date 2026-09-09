@@ -15,16 +15,18 @@ if (packageVersion("RGraphSpace") < "1.5.4"){
 ## Overview
 
 *RGraphSpace* is primarily designed for graph rendering and expects
-graphs to be prepared before they enter the *RGraphSpace* workflow. More
-extensive graph transformations is therefore generally best performed
-upstream, while preparing the data used as input to *RGraphSpace*.
+graphs in their final form before they enter its workflow. More
+extensive graph transformations are therefore best performed upstream,
+while preparing the input data.
 
 Nevertheless, downstream analyses may require accessing and modifying a
 `GraphSpace` object to explore alternative graph configurations or
 highlight specific subsets of the data.
 
-In the following we demonstrate *RGraphSpace* accessors for graph
-manipulations.
+In the following, we demonstrate the `GraphSpace` accessors for graph
+manipulation. All general accessors use the `gs_*` prefix to reduce the
+chance of masking functions from other packages, particularly
+graph-analysis packages that are commonly used side-by-side.
 
 ### Setting basic input data
 
@@ -38,11 +40,29 @@ library("ggplot2")
 
 ``` r
 
-# Load a demo igraph
-data('gtoy1', package = 'RGraphSpace')
+# Make a toy modular graph
+set.seed(42)
+g <- sample_islands(
+  islands.n = 3,       # number of modules
+  islands.size = 30,   # nodes per module
+  islands.pin = 0.25,  # probability of edges within modules
+  n.inter = 2)         # edges between modules
 
-# Create a new GraphSpace object
-gs <- GraphSpace(gtoy1)
+# Assign module membership to nodes
+V(g)$module <- rep(1:3, each = 30)
+
+# Assign colors to nodes
+V(g)$nodeFillColor <- rainbow(3)[V(g)$module]
+
+# Assign a categorical variable to nodes
+V(g)$node_group <- c("A", "B", "C")[V(g)$module]
+
+# Assign numeric variables to nodes and edges
+V(g)$node_var <- rnorm(vcount(g))
+E(g)$edge_var <- rnorm(ecount(g))
+
+# Create a GraphSpace object
+gs <- GraphSpace(g, simplify = FALSE)
 ```
 
 ## Manipulating attributes
@@ -65,33 +85,31 @@ components.
 # gs_vertex_attr(gs)
 
 # Access a specific vertex attribute
-gs_vertex_attr(gs, "nodeLabel")
-#>   n1   n2   n3   n4   n5 
-#> "V1" "V2" "V3" "V4" "V5"
+gs_vertex_attr(gs, "node_group")[1:5]
+#>  n1  n2  n3  n4  n5 
+#> "A" "A" "A" "A" "A"
+
+# Add or replace an entire vertex attribute
+gs_vertex_attr(gs, "nodeSize") <- 5
 
 # Modify a single value within a vertex attribute
 gs_vertex_attr(gs, "nodeSize")["n1"] <- 10
 
-# Replace an entire vertex attribute
-gs_vertex_attr(gs, "nodeSize") <- 10
-
-# Add a new vertex attribute
+# Add a new vertex variable
 gs_vertex_attr(gs, "new_node_var") <- rnorm(gs_vcount(gs))
 
-# Delete a vertex attribute by assigning NULL
+# Delete a vertex attribute or variable by assigning NULL
 gs_vertex_attr(gs, "new_node_var") <- NULL
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 5fb8aab DN-- 5 4 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeFillColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c),
-#> | nodeAlpha (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth
-#> | (e/n), arrowType (e/n), edgeAlpha (e/n)
+#> IGRAPH 3a30e52 UN-- 90 329 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-8, 2] (cols)
-#> | y: [-4, 2] (rows)
+#> | x: [-8, 11] (cols)
+#> | y: [-10, 8] (rows)
 ```
 
 ### Edge attributes
@@ -99,29 +117,27 @@ gs
 ``` r
 
 # Access a specific edge attribute
-gs_edge_attr(gs, "edgeColor")
-#> [1] "red"   "green" "blue"  "black"
+gs_edge_attr(gs, "arrowType")[1:3]
+#> [1] 0 0 0
 
-# Replace an entire edge attribute
-gs_edge_attr(gs, "edgeLineWidth") <- 1
+# Add or replace an entire edge attribute
+gs_edge_attr(gs, "edgeColor") <- "grey"
 
-# Add a new edge attribute
+# Add a new edge variable
 gs_edge_attr(gs, "new_edge_var") <- rnorm(gs_ecount(gs))
 
-# Delete an edge attribute by assigning NULL
+# Delete an edge attribute or variable by assigning NULL
 gs_edge_attr(gs, "new_edge_var") <- NULL
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 5fb8aab DN-- 5 4 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeFillColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c),
-#> | nodeAlpha (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth
-#> | (e/n), arrowType (e/n), edgeAlpha (e/n)
+#> IGRAPH 3a30e52 UN-- 90 329 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-8, 2] (cols)
-#> | y: [-4, 2] (rows)
+#> | x: [-8, 11] (cols)
+#> | y: [-10, 8] (rows)
 ```
 
 ## Adding nodes
@@ -131,7 +147,7 @@ The
 function adds one or more nodes to a `GraphSpace` object. Attributes
 present on existing nodes but absent in the input `value` are filled
 from package defaults. Standard node attributes (such as `nodeSize` and
-`nodeColor`) are kept consistent across old and new nodes; the`@graph`,
+`nodeColor`) are kept consistent across old and new nodes; the `@graph`,
 `@nodes`, and `@fdata` slots are updated consistently. Because new nodes
 introduce coordinates into the existing layout, the normalized state is
 invalidated and
@@ -141,18 +157,21 @@ must be re-run afterwards.
 ``` r
 
 # Functional form (pipe-friendly) returns a modified copy
-gs <- gs |> gs_add_nodes(data.frame(name = "n6", x = 0.5, y = 0.5))
+gs <- gs |> gs_add_nodes(data.frame(name = "new1", x = 0, y = -2))
 
 # Assignment form modifies gs in place
-gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
+gs_add_nodes(gs) <- data.frame(name = "new2", x = 0, y = 2)
 
 # Add multiple nodes with visual attributes
 gs <- gs_add_nodes(gs, data.frame(
-  name = c("n8", "n9"),
-  x = c(0.5, 0.8),
-  y = c(0.5, 0.2),
+  name = c("new3", "new4"),
+  x = c(-2, 2),
+  y = c(0, 0),
   nodeSize = c(8, 5),
-  nodeColor = c("steelblue", "tomato")) )
+  nodeFillColor = c("steelblue", "tomato")) )
+
+# Add two nodes; x and y are assigned random values
+gs_add_nodes(gs) <- c("new5", "new6")
 ```
 
 ## Adding edges
@@ -168,16 +187,16 @@ affected.
 ``` r
 
 # Functional form (pipe-friendly) returns a modified copy
-gs <- gs |> gs_add_edges(data.frame(from = "n2", to = "n3"))
+gs <- gs |> gs_add_edges(data.frame(from = "new1", to = "new2"))
 
 # Assignment form modifies gs in place
-gs_add_edges(gs) <- data.frame(from = "n3", to = "n4")
+gs_add_edges(gs) <- data.frame(from = "new3", to = "new4")
 
 # Add multiple edges with a numeric attribute
 gs <- gs_add_edges(gs, data.frame(
-  from   = c("n4", "n5"),
-  to     = c("n5", "n6"),
-  weight = c(0.8, 0.4)) )
+  from = c("new1", "new3"),
+  to = c("new2", "new4"),
+  edge_var = c(10, 20)) )
 ```
 
 For objects built with `simplify = TRUE` (the default), loop edges
@@ -202,16 +221,16 @@ gs2 <- gs_subset_nodes(gs, c("n1", "n2", "n3"))
 gs2 <- gs_subset_nodes(gs, 1:5)
 
 # Subset by predicate (data masking against @nodes columns)
-gs2 <- gs_subset_nodes(gs, nodeSize > 5)
+gs2 <- gs_subset_nodes(gs, node_group != "A")
 
 # Subset by pre-evaluated logical vector
-keep <- gs$nodeSize > 5
+keep <- gs$node_var > 0
 gs2  <- gs_subset_nodes(gs, keep)
 
 # Combining with pipes
 gs2 <- gs |>
-  gs_subset_nodes(nodeSize > 5) |>
-  gs_subset_edges(weight > 0.3)
+  gs_subset_nodes(node_group == "C") |>
+  gs_subset_edges(edge_var > 0)
 ```
 
 ## Subsetting edges
@@ -224,27 +243,27 @@ is propagated to all `GraphSpace` components.
 ``` r
 
 # Subset by predicate on an edge attribute
-gs3 <- gs_subset_edges(gs, weight > 0.5)
+gs2 <- gs_subset_edges(gs, edge_var > 0)
 
 # Subset by endpoint names: 'name1' and 'name2' are columns in
 # @edges and can be used directly inside any predicate expression
-gs3 <- gs_subset_edges(gs, name1 == "n1" & name2 == "n2")
+gs2 <- gs_subset_edges(gs, name1 == "new1" & name2 == "new2")
 
 # Combining endpoint and attribute conditions
-gs3 <- gs_subset_edges(gs, name1 == "n1" & weight > 0.5)
+gs2 <- gs_subset_edges(gs, name1 == "new1" & edge_var > 0)
 
 # By integer position
-gs3 <- gs_subset_edges(gs, 1:3)
+gs2 <- gs_subset_edges(gs, 1:3)
 
 # By logical vector
-gs3 <- gs_subset_edges(gs, gs_edges(gs)$weight > 0.5)
+gs2 <- gs_subset_edges(gs, gs_edges(gs)$edge_var > 0)
 ```
 
 ## Subscript operators
 
 The `[` operator subsets a `GraphSpace` object along two independent
 dimensions: nodes (`i`) and edges (`j`). This differs from the usual
-data-frame convention, where `[i, j]` indexes rows and columns of a
+data-frame convention, where `[i, j]` refers to rows and columns of a
 single table. Here, neither index subsets columns; both select graph
 entities directly. Omitting an index retains all elements along that
 dimension.
@@ -266,100 +285,83 @@ dimension.
 # Node-induced subgraph: keep named nodes, prune dangling edges
 gs[c("n1", "n2", "n3"), ]
 #> A GraphSpace-class object for:
-#> IGRAPH 7cd9dc6 DNW- 3 3 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
-#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
-#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
-#> | (e/n)
+#> IGRAPH 7fe8d89 UN-- 3 1 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-2, 2] (cols)
-#> | y: [0, 2] (rows)
+#> | x: [4, 7] (cols)
+#> | y: [3, 4] (rows)
 
 # Node-induced subgraph by integer position
 gs[1:4, ]
 #> A GraphSpace-class object for:
-#> IGRAPH aa2b283 DNW- 4 5 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
-#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
-#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
-#> | (e/n)
+#> IGRAPH a9649c5 UN-- 4 3 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-4, 2] (cols)
-#> | y: [-4, 2] (rows)
+#> | x: [4, 7] (cols)
+#> | y: [2, 4] (rows)
 
 # Node-induced subgraph by pre-evaluated logical mask
-gs[gs$nodeSize > 5, ]
+gs[gs$node_var > 0, ]
 #> A GraphSpace-class object for:
-#> IGRAPH 7c8e813 DNW- 6 7 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
-#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
-#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
-#> | (e/n)
+#> IGRAPH d1b9dd6 UN-- 39 70 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-8, 2] (cols)
-#> | y: [-4, 2] (rows)
+#> | x: [-8, 8] (cols)
+#> | y: [-9, 7] (rows)
 
 # Edge selection only: keep all nodes
-gs[, gs_edges(gs)$weight > 0.5]
+gs[, gs_edges(gs)$edge_var > 0.5]
 #> A GraphSpace-class object for:
-#> IGRAPH db31546 DNW- 9 7 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
-#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
-#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
-#> | (e/n)
+#> IGRAPH 8204ddf UN-- 96 103 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-8, 2] (cols)
-#> | y: [-4, 2] (rows)
+#> | x: [-8, 11] (cols)
+#> | y: [-10, 8] (rows)
 
 # Edge selection by endpoint: predicates must be pre-evaluated
 gs[, gs_edges(gs)$name1 == "n1"]
 #> A GraphSpace-class object for:
-#> IGRAPH 83c7487 DNW- 9 4 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
-#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
-#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
-#> | (e/n)
+#> IGRAPH 750b853 UN-- 96 10 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-8, 2] (cols)
-#> | y: [-4, 2] (rows)
+#> | x: [-8, 11] (cols)
+#> | y: [-10, 8] (rows)
 
 # Alternatively, wrap the predicate in quote()
 gs[, quote(name1 == "n1" & name2 == "n2")]
+#> Warning: No edges matched the filter expression.
+#> ℹ The returned object contains no edges.
 #> A GraphSpace-class object for:
-#> IGRAPH c8af4d2 DNW- 9 1 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
-#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
-#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
-#> | (e/n)
+#> IGRAPH de1a63c UN-- 96 0 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-8, 2] (cols)
-#> | y: [-4, 2] (rows)
+#> | x: [-8, 11] (cols)
+#> | y: [-10, 8] (rows)
 
 # Combined: node filter first, then edge intersection
-gs[c("n1", "n2", "n3"), gs_edges(gs)$weight > 0.5]
+gs[c("n1", "n2", "n3"), gs_edges(gs)$edge_var > 0]
+#> Warning: No edges matched the filter expression.
+#> ℹ The returned object contains no edges.
 #> A GraphSpace-class object for:
-#> IGRAPH c58b3dd DNW- 3 3 -- 
-#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
-#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
-#> | nodeColor (v/c), nodeFillColor (v/c), nodeLineWidth (v/n),
-#> | nodeLineColor (v/c), nodeAlpha (v/n), edgeLineType (e/c), edgeColor
-#> | (e/c), edgeLineWidth (e/n), arrowType (e/n), weight (e/n), edgeAlpha
-#> | (e/n)
+#> IGRAPH 91160ac UN-- 3 0 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [-2, 2] (cols)
-#> | y: [0, 2] (rows)
+#> | x: [4, 7] (cols)
+#> | y: [3, 4] (rows)
 ```
 
 The `[[` operator, by contrast, is a simple accessor: `x[["nodes"]]`,
@@ -387,8 +389,8 @@ listing the vertex attributes currently defined on the graph.
 ``` r
 
 # Return the vertex attribute `name`
-gs$name
-#> [1] "n1" "n2" "n3" "n4" "n5" "n6" "n7" "n8" "n9"
+head(gs$name)
+#> [1] "n1" "n2" "n3" "n4" "n5" "n6"
 
 # Sets the vertex attribute `nodeShape`
 gs$nodeShape <- 21
@@ -403,13 +405,11 @@ gs$nodeShape[1] <- 19
 attempting to assign to one raises an error rather than silently
 modifying it. Reading via `gs$` is unaffected.
 
-## General accessors
+## Other general accessors
 
-All `GraphSpace` accessors start with a `gs_*` prefix to avoid naming
-conflicts with functions from other packages, particularly
-graph-analysis packages that are commonly used alongside. Here we
-reproduce the general usage for these accessors, already documented
-individually in the function help pages.
+Here we show typical usage of other general accessors used across the
+tutorials. Output is omitted for brevity; run the calls interactively to
+see each result.
 
 ``` r
 
@@ -435,7 +435,7 @@ gs_vcount(gs)
 gs_ecount(gs)
 
 # Images may be provided as raster or numeric matrices;
-# 'SpatRaster' objects are supported when the optional 
+# 'SpatRaster' objects are supported when the optional
 # 'terra' package is available
 gs_image(gs) <- as_colorraster(volcano)
 
@@ -455,7 +455,7 @@ gs <- normalizeGraphSpace(gs, image.space = FALSE)
 library(Matrix)
 mtx <- Matrix::Matrix(0, gs_vcount(gs), 2)
 rownames(mtx) <- names(gs)
-colnames(mtx) <- c("feature1","feature2")
+colnames(mtx) <- c("feature1", "feature2")
 gs_fdata(gs) <- mtx
 
 # Feature names
@@ -488,13 +488,13 @@ distances all work through this single entry point.
 ``` r
 
 # Apply igraph functions
-gs_compute(gs, igraph::degree)
-#> n1 n2 n3 n4 n5 n6 n7 n8 n9 
-#>  4  2  3  3  3  1  0  0  0
+gs_compute(gs, igraph::degree)[1:5]
+#> n1 n2 n3 n4 n5 
+#> 10  7 10  6 12
 
-gs_compute(gs, "betweenness", directed = FALSE)
-#>  n1  n2  n3  n4  n5  n6  n7  n8  n9 
-#> 2.5 0.0 0.5 2.0 4.0 0.0 0.0 0.0 0.0
+gs_compute(gs, "betweenness", directed = FALSE)[1:5]
+#>        n1        n2        n3        n4        n5 
+#>  22.49768 397.61509  74.85332  43.29269  43.56965
 
 # Fold a per-vertex result back as a node attribute
 gs$degree <- gs_compute(gs, igraph::degree)
@@ -512,10 +512,7 @@ graph-modification checks of the `GraphSpace` constructor.
 ## Crop, rotate, flip, and transpose
 
 These functions are special accessors, as they operate on a reference
-frame, either the graph or image spaces, not on the graph alone. Node
-and edge attributes, and the underlying `igraph` object, are left
-untouched (aside from cropping’s node/edge dropping, which follows from
-the region no longer containing them).
+frame, either the graph or image space, not on the graph alone.
 
 - [`cropGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
   subsets a normalized `GraphSpace` to a specific region defined by the
@@ -526,11 +523,15 @@ the region no longer containing them).
   [`flipGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md),
   and
   [`transposeGraphSpace()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-transform.md)
-  are all exact — a coordinate/pixel permutation, with no resampling, no
+  are all exact coordinate/pixel permutations, with no resampling, no
   interpolation, and no risk of misaligning nodes against the background
-  image. When these transformations are applied to a normalized
-  `GraphSpace`, the changes are reversible. Otherwise they are applied
-  to raw coordinates.
+  image. Applied to a normalized `GraphSpace`, these operations
+  transform the normalized coordinates, leaving the raw coordinates
+  intact so the original orientation can be restored without loss.
+  Applied to a `GraphSpace` that has not been normalized, they transform
+  the raw coordinates permanently. The `persist` argument controls this
+  behavior: `persist = TRUE` writes the transformation into the raw
+  coordinates regardless of normalization state.
 
 ``` r
 
@@ -551,6 +552,9 @@ gs_flip <- flipGraphSpace(gs)
 
 # Transpose
 gs_t <- transposeGraphSpace(gs)
+
+# Rotate
+gs_rot90 <- rotateGraphSpace(gs, persist = TRUE)
 ```
 
 ## Session information

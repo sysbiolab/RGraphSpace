@@ -170,8 +170,8 @@ gs_subset_edges <- function(x, i) {
     rlang::abort("'x' must be a GraphSpace object.")
   }
 
-  edges <- x@edges
-
+  edges <- gs_edges(x)
+  
   if (nrow(edges) == 0L) {
     rlang::warn("The 'GraphSpace' object has no edges to filter.")
     return(invisible(x))
@@ -180,32 +180,40 @@ gs_subset_edges <- function(x, i) {
   if (missing(i)) {
     return(x)
   }
-
+  
   i_quo <- rlang::enquo(i)
-  idx   <- .resolve_gs_index(i_quo, data = edges, what = "edge")
-
+  keep_idx <- .resolve_gs_index(i_quo, data = edges, what = "edge")
+  
   # Nothing to do when every edge survives
-  if (setequal(idx, seq_len(nrow(edges)))) {
+  if (setequal(keep_idx, seq_len(nrow(edges)))) {
     return(x)
   }
 
-  if (length(idx) == 0L) {
+  if (length(keep_idx) == 0L) {
     rlang::warn(c(
       "No edges matched the filter expression.",
       "i" = "The returned object contains no edges."
     ))
   }
-
-  remove_idx    <- setdiff(seq_len(nrow(edges)), idx)
-  edges_removed <- edges[remove_idx, , drop = FALSE]
-
-  # Map the removed @edges rows back to igraph edge IDs and delete them.
-  # For simplified directed graphs, arrowType ±3 rows map to TWO igraph
-  # edges (A->B and B->A), both of which must be removed.
-  igraph_ids <- .gs_get_edge_ids(x@graph, edges_removed)
+  remove_idx <- setdiff(seq_len(nrow(edges)), keep_idx)
+  
+  gg <- gs_graph(x)
+  if ( .is_simplified(x) && igraph::is_simple(gg) && 
+      igraph::is_directed(gg) ) {
+    # Map the removed @edges rows back to igraph edge IDs and delete them.
+    # For simplified directed graphs, arrowType ±3 rows map to TWO igraph
+    # edges (A->B and B->A), both of which must be removed.
+    edges_removed <- edges[remove_idx, , drop = FALSE]
+    igraph_ids <- .get_simplified_edge_ids(gg, edges_removed)
+  } else {
+    # Graphs not subject to simplification, including directed 
+    # and undirected graphs, preserved the original order from 
+    # igraph::as_edgelist(gg)
+    igraph_ids <- remove_idx
+  }
 
   if (length(igraph_ids) > 0L) {
-    x@graph <- igraph::delete_edges(x@graph, igraph_ids)
+    x@graph <- igraph::delete_edges(gg, igraph_ids)
   }
 
   # Rebuild @edges from the updated @graph so that derived quantities
@@ -334,41 +342,27 @@ gs_subset_edges <- function(x, i) {
 }
 
 #-------------------------------------------------------------------------------
-# Map a subset of @edges rows to the corresponding igraph edge IDs.
-# For undirected graphs each @edges row corresponds to a single igraph edge,
-# looked up via igraph::get.edge.ids(..., directed = FALSE).
-# For simplified directed graphs, a row whose arrowType is +/-3 represents a
-# MUTUAL pair -- two distinct igraph edges (A->B and B->A). Both IDs are
-# collected so that deleting the logical row removes both underlying edges.
-# Returns a unique integer vector of igraph edge IDs, excluding any 0 values
-# returned by get.edge.ids() when an edge is not found.
-.gs_get_edge_ids <- function(g, edges_df) {
+.get_simplified_edge_ids <- function(g, edges_df) {
 
   if (nrow(edges_df) == 0L) {
     return(integer(0L))
   }
 
-  is_dir <- igraph::is_directed(g)
+  if(!igraph::is_simple(g) || !igraph::is_directed(g)){
+    rlang::abort("'g' must be a simple directed graph.")
+  }
 
   ids <- lapply(seq_len(nrow(edges_df)), function(i) {
-
     n1 <- edges_df$name1[i]
     n2 <- edges_df$name2[i]
-
-    if (is_dir) {
-      fwd <- igraph::get.edge.ids(g, vp = c(n1, n2), error = FALSE)
-      # arrowType +/-3 signals a mutual pair: collect the reverse edge too
-      if (isTRUE(abs(edges_df$arrowType[i]) == 3L)) {
-        bwd <- igraph::get.edge.ids(g, vp = c(n2, n1), error = FALSE)
-        c(fwd, bwd)
-      } else {
-        fwd
-      }
+    fwd <- igraph::get_edge_ids(g, vp = c(n1, n2), error = FALSE)
+    # arrowType +/-3 signals a mutual pair: collect the reverse edge too
+    if (isTRUE(abs(edges_df$arrowType[i]) == 3L)) {
+      bwd <- igraph::get_edge_ids(g, vp = c(n2, n1), error = FALSE)
+      c(fwd, bwd)
     } else {
-      igraph::get.edge.ids(
-        g, vp = c(n1, n2), directed = FALSE, error = FALSE)
+      fwd
     }
-
   })
 
   ids <- unique(unlist(ids, use.names = FALSE))

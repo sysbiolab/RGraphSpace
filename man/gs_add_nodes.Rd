@@ -14,15 +14,16 @@
 \arguments{
 \item{x}{A \code{\link{GraphSpace}} object.}
 
-\item{value}{A data frame with at minimum three columns:
-\itemize{
-\item \code{name} — unique node identifier (character).
-\item \code{x}, \code{y} — node coordinates in raw graph space.
-}
-Any additional columns are treated as node attributes. Standard visual
-attributes (\code{nodeSize}, \code{nodeColor}, \code{nodeShape}, etc.)
-are filled from package defaults when omitted. The column \code{vertex}
-is reserved and stripped automatically if present.}
+\item{value}{A data frame with, at minimum, a \code{name} column giving
+the node identifier (character). The \code{x} and \code{y} columns, if
+not provided, are assigned random values within the range of the graph
+space. Any additional columns are treated as node attributes. Standard
+visual attributes (\code{nodeSize}, \code{nodeColor}, \code{nodeShape},
+etc.) are filled from package defaults when omitted. The \code{vertex}
+column is reserved and is stripped automatically if present.
+Alternatively, a character vector of node names can be supplied; it
+will be converted internally to a data frame with a single \code{name}
+column.}
 
 \item{...}{Additional arguments (currently unused; reserved for future use).}
 }
@@ -73,6 +74,9 @@ gs <- gs_add_nodes(gs, data.frame(name = "n6", x = 0.5, y = 0.5))
 
 # Assignment form: modifies gs in place
 gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
+
+# Add two nodes; x and y are assigned random values
+gs_add_nodes(gs) <- c("new_node1", "new_node2")
 
 # Add multiple nodes with visual attributes
 gs <- gs_add_nodes(gs, data.frame(

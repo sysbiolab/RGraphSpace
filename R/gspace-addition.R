@@ -19,15 +19,16 @@
 #' calling environment. Both forms are equivalent.
 #'
 #' @param x A \code{\link{GraphSpace}} object.
-#' @param value A data frame with at minimum three columns:
-#' \itemize{
-#'   \item \code{name} — unique node identifier (character).
-#'   \item \code{x}, \code{y} — node coordinates in raw graph space.
-#' }
-#' Any additional columns are treated as node attributes. Standard visual
-#' attributes (\code{nodeSize}, \code{nodeColor}, \code{nodeShape}, etc.)
-#' are filled from package defaults when omitted. The column \code{vertex}
-#' is reserved and stripped automatically if present.
+#' @param value A data frame with, at minimum, a \code{name} column giving
+#'   the node identifier (character). The \code{x} and \code{y} columns, if
+#'   not provided, are assigned random values within the range of the graph
+#'   space. Any additional columns are treated as node attributes. Standard
+#'   visual attributes (\code{nodeSize}, \code{nodeColor}, \code{nodeShape},
+#'   etc.) are filled from package defaults when omitted. The \code{vertex}
+#'   column is reserved and is stripped automatically if present.
+#'   Alternatively, a character vector of node names can be supplied; it
+#'   will be converted internally to a data frame with a single \code{name}
+#'   column.
 #' @param ... Additional arguments (currently unused; reserved for future use).
 #'
 #' @details
@@ -69,6 +70,9 @@
 #' # Assignment form: modifies gs in place
 #' gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
 #'
+#' # Add two nodes; x and y are assigned random values
+#' gs_add_nodes(gs) <- c("new_node1", "new_node2")
+#' 
 #' # Add multiple nodes with visual attributes
 #' gs <- gs_add_nodes(gs, data.frame(
 #'   name      = c("n8", "n9"),
@@ -96,25 +100,49 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
   
   #--- validate and normalize value
   if (!is.data.frame(value)) {
-    rlang::abort(c(
-      x = "'value' must be a data frame.",
-      i = "Required columns: 'name' (node identifier), 'x' and 'y' (coordinates)."
-    ))
+    if(is.character(value)){
+      if (length(value) == 0) {
+        rlang::abort("'value' must not be an empty character vector.")
+      }
+      if (anyNA(value)) {
+        rlang::abort("'value' must not contain missing (NA) names.")
+      }
+      value <- data.frame(name = value)
+    } else {
+      rlang::abort(c(
+        x = "'value' must be a data frame or character vector.",
+        i = "If a data frame, required columns: 'name', 'x' and 'y' (coordinates)."
+      ))
+    }
   }
   
   # Strip vertex (auto-assigned) and away_angle (render-only derived column
   # added by gs_nodes(render = TRUE)): neither is a user-editable attribute.
   value <- value[, setdiff(colnames(value), c("vertex", "away_angle")), drop = FALSE]
   
-  missing_cols <- setdiff(c("name", "x", "y"), colnames(value))
-  if (length(missing_cols) > 0L) {
+  if (!"name" %in% colnames(value)) {
     rlang::abort(c(
-      x = sprintf(
-        "Missing required column(s) in 'value': %s.",
-        paste(paste0("'", missing_cols, "'"), collapse = ", ")
-      ),
+      x = "Missing required column in 'value': name.",
       i = "Provide 'name' (character), 'x' and 'y' (numeric coordinates)."
     ))
+  }
+  
+  if (!"x" %in% colnames(value)){
+    if(gs_vcount(x) > 0){
+      rg <- range(x@coords$x, na.rm = TRUE)
+    } else {
+      rg <- c(0, 1)
+    }
+    value$x <- stats::runif(nrow(value), min = rg[1], max = rg[2])
+  }
+  
+  if (!"y" %in% colnames(value)){
+    if(gs_vcount(x) > 0){
+      rg <- range(x@coords$y, na.rm = TRUE)
+    } else {
+      rg <- c(0, 1)
+    }
+    value$y <- stats::runif(nrow(value), min = rg[1], max = rg[2])
   }
   
   # Coerce required columns to their expected types
@@ -219,7 +247,7 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
   
   # Denormalize first so .updateNodeSpace() rebuilds @nodes
   # in raw coordinates rather than restoring normalized ones.
-  x <- .denormalize_graph_space(x)
+  x <- .denormalize_graph_space(x, verbose = .is_normalized(x))
   x <- .updateNodeSpace(x, g)
   
   #--- extend @fdata with NA rows for new nodes --------------------------------

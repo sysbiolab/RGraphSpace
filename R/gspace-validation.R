@@ -36,7 +36,7 @@
         if(is.vector(vnames) && !is.list(vnames)){
             if(any(is.na(vnames))){
                 msg <- "NA values found in vertex attribute 'name'."
-                rlang::abort(msg, call. = FALSE)
+                rlang::abort(msg)
             }
             if(!.all_characterValues(vnames)){
                 rlang::warn("vertex attribute 'name' converted to character.")

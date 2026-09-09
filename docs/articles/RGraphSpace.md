@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH 8d816d6 DN-- 5 4 -- 
+#> IGRAPH c006f2e DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -333,8 +333,8 @@ sources define the same aesthetic, the following priority applies
 
 | Priority | Source | Description |
 |:--:|:--:|----|
-| 1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. |
-| 2 | Fixed parameter | Identity value applied uniformly to all nodes or edges. |
+| 1 | Fixed parameter | Identity value applied uniformly to all nodes or edges. |
+| 2 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. |
 | 3 | Graph attribute | Per-node or per-edge identity values from the `GraphSpace` object. |
 
 ## Online tutorials

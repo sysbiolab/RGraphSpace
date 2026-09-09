@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH 6e3bc59 DN-- 5 4 -- 
+#> IGRAPH ee52233 DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -391,9 +391,9 @@ sources define the same aesthetic, the following priority applies
 
 | Priority | Source | Description | Example |
 |:--:|:--:|----|----|
-| 1 | Aesthetic mapping | Data-driven, scale-trained, shown in legends. | `geom_nodespace(aes(fill = node_var))` |
-| 2 | Fixed parameter | Identity value applied uniformly. | `geom_nodespace(fill = "red")` |
-| 3 | Graph attribute | Identity values from the `GraphSpace` object. | [`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md) |
+| 1 (highest) | Fixed parameter | Constant value applied to all entities as-is, with no scale. | `geom_nodespace(fill = "red")` |
+| 2 | Aesthetic mapping | Data-driven value, trained through a scale and shown in legends. | `geom_nodespace(aes(fill = node_var))` |
+| 3 (fallback) | GraphSpace attribute | Value stored on the `GraphSpace` object, used as-is. | [`geom_nodespace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md) |
 
 ## Session information
 

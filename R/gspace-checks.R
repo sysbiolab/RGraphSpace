@@ -3,66 +3,71 @@
 .validate_gs_args <- function(check, name, para, notNA = TRUE) {
   if (check == "numeric_vec") {
     msg <- paste0("'", name, "' should be a numeric vector.")
-    if (!is.vector(para) || !.all_numericValues(para)) stop(msg, call. = FALSE)
+    if (!is.vector(para) || !.all_numericValues(para)) rlang::abort(msg)
   } else if (check == "character_vec") {
     msg <- paste0("'", name, "' should be a character vector.")
     if (!is.vector(para) || !.all_characterValues(para)) 
-      stop(msg, call. = FALSE)
+      rlang::abort(msg)
   } else if (check == "integer_vec") {
     msg <- paste0("'", name, "' should be an integer vector.")
     if (!is.vector(para) || !.all_integerValues(para, notNA)) 
-      stop(msg, call. = FALSE)
+      rlang::abort(msg)
   } else if (check == "numeric_mtx") {
     msg <- paste0("'", name, "' should be a numeric matrix")
-    if (!is.numeric(para) || !is.matrix(para)) stop(msg, call. = FALSE)
+    if (!is.numeric(para) || !is.matrix(para)) rlang::abort(msg)
   } else if (check == "image_mtx") {
     msg1 <- paste0("Invalid '", name, "' input. Expected a raster object\n")
     msg2 <- c("or a numeric matrix with values in the range [0, 1]")
     if (!is.raster(para)){
       if (!is.matrix(para) || !is.numeric(para)) {
-        stop(msg1, msg2, call. = FALSE)
+        rlang::abort(paste0(msg1, msg2))
       }
       rg <- range(para, na.rm = TRUE)
       if (rg[1] < 0 || rg[2] > 1) {
-        stop(msg1, msg2, call. = FALSE)
+        rlang::abort(paste0(msg1, msg2))
       }
     }
   } else if (check == "allCharacter") {
     msg <- paste0("'", name, "' should be a vector of strings.")
-    if (!.all_characterValues(para)) stop(msg, call. = FALSE)
+    if (!.all_characterValues(para)) rlang::abort(msg)
   } else if (check == "allCharacterOrInteger") {
     msg <- paste0("'", name, " 'should be a vector of strings of integers.")
     if (! (.all_characterValues(para) | .all_integerValues(para) ) ) 
-      stop(msg, call. = FALSE)
+      rlang::abort(msg)
   } else if (check == "allCharacterOrNa") {
     msg <- paste0("'", name, "' should be a vector of strings.")
-    if (!.all_characterValues(para, notNA=FALSE)) stop(msg, call. = FALSE)
+    if (!.all_characterValues(para, notNA=FALSE)) rlang::abort(msg)
   } else if (check == "allBinary") {
     msg <- paste0("'", name, "' should be a vector of binary values.")
-    if (!.all_binaryValues(para)) stop(msg, call. = FALSE)
+    if (!.all_binaryValues(para)) rlang::abort(msg)
   } else if (check == "allInteger") {
     msg <- paste0("'", name, "' should be a vector of integer values.")
-    if (!.all_integerValues(para)) stop(msg, call. = FALSE)
+    if (!.all_integerValues(para)) rlang::abort(msg)
   } else if (check == "singleString") {
     msg <- paste0("'", name, "' should be a single string.")
-    if (!.is_singleString(para)) stop(msg, call. = FALSE)
+    if (!.is_singleString(para)) rlang::abort(msg)
   } else if (check == "singleInteger") {
     msg <- paste0("'", name, "' should be a single integer value.")
-    if (!.is_singleInteger(para)) stop(msg, call. = FALSE)
+    if (!.is_singleInteger(para)) rlang::abort(msg)
   } else if (check == "singleNumber") {
     msg <- paste0("'", name, "' should be a single numeric value.")
-    if (!.is_singleNumber(para)) stop(msg, call. = FALSE)
+    if (!.is_singleNumber(para)) rlang::abort(msg)
   } else if (check == "singlePositiveNumber") {
     msg <- paste0("'", name, "' should be a single numeric value >=0.")
-    if (!.is_singleNumber(para) || para<0) stop(msg, call. = FALSE)
+    if (!.is_singleNumber(para) || para<0) rlang::abort(msg)
   } else if (check == "function") {
     msg <- paste0("'", name, "' should be a function.")
-    if (!is.function(para)) stop(msg, call. = FALSE)
+    if (!is.function(para)) rlang::abort(msg)
   } else if (check == "singleLogical") {
     msg <- paste0("'", name, "' should be a single logical value.")
-    if (!.is_singleLogical(para)) stop(msg, call. = FALSE)
+    if (!.is_singleLogical(para)) rlang::abort(msg)
   } else {
-    stop("Skipped arg validation.", call. = FALSE)
+    rlang::abort(
+      c(paste0("Unrecognised `check` value: '", check, "'."),
+        "i" = "This is an internal check and shouldn't be reachable.",
+        "i" = "If you see this, please report it as a bug."
+      )
+    )
   }
 }
 
@@ -71,15 +76,20 @@
   if (check == "singleColor") {
     if (!.is_singleColor(para)) {
       msg <- paste0("'", name, "' should be a single color.")
-      stop(msg, call. = FALSE)
+      rlang::abort(msg)
     }
   } else if (check == "allColors") {
     if (!.is_color(para)) {
       msg <- paste0("'", name, "' should be a vector with colors.")
-      stop(msg, call. = FALSE)
+      rlang::abort(msg)
     }
   } else {
-    stop("Skipped color validation.", call. = FALSE)
+    rlang::abort(
+      c(paste0("Unrecognised `check` value: '", check, "'."),
+        "i" = "This is an internal check and shouldn't be reachable.",
+        "i" = "If you see this, please report it as a bug."
+      )
+    )
   }
 }
 

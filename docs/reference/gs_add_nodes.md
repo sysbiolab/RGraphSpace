@@ -33,16 +33,15 @@ gs_add_nodes(x) <- value
 
 - value:
 
-  A data frame with at minimum three columns:
-
-  - `name` — unique node identifier (character).
-
-  - `x`, `y` — node coordinates in raw graph space.
-
-  Any additional columns are treated as node attributes. Standard visual
+  A data frame with, at minimum, a `name` column giving the node
+  identifier (character). The `x` and `y` columns, if not provided, are
+  assigned random values within the range of the graph space. Any
+  additional columns are treated as node attributes. Standard visual
   attributes (`nodeSize`, `nodeColor`, `nodeShape`, etc.) are filled
-  from package defaults when omitted. The column `vertex` is reserved
-  and stripped automatically if present.
+  from package defaults when omitted. The `vertex` column is reserved
+  and is stripped automatically if present. Alternatively, a character
+  vector of node names can be supplied; it will be converted internally
+  to a data frame with a single `name` column.
 
 - ...:
 
@@ -99,11 +98,12 @@ gs <- GraphSpace(g)
 
 # Functional form (pipe-friendly): returns a modified copy
 gs <- gs_add_nodes(gs, data.frame(name = "n6", x = 0.5, y = 0.5))
-#> Denormalizing graph coordinates...
 
 # Assignment form: modifies gs in place
 gs_add_nodes(gs) <- data.frame(name = "n7", x = 0.5, y = 0.5)
-#> Denormalizing graph coordinates...
+
+# Add two nodes; x and y are assigned random values
+gs_add_nodes(gs) <- c("new_node1", "new_node2")
 
 # Add multiple nodes with visual attributes
 gs <- gs_add_nodes(gs, data.frame(
@@ -113,5 +113,4 @@ gs <- gs_add_nodes(gs, data.frame(
   nodeSize  = c(8, 5),
   nodeColor = c("steelblue", "tomato")
 ))
-#> Denormalizing graph coordinates...
 ```

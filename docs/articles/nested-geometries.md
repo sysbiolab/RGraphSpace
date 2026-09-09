@@ -409,21 +409,10 @@ p1 + p2
 
 ## Downstream graph manipulation
 
-*RGraphSpace* is primarily designed for graph rendering and expects
-graphs to be prepared before they enter the *RGraphSpace* workflow. More
-extensive graph manipulation is therefore generally best performed
-upstream, while preparing the data used as input to *RGraphSpace*.
-
-Nevertheless, downstream analyses may require accessing and modifying a
-`GraphSpace` object to explore alternative graph configurations or
-highlight specific subsets of the data (see [*GraphSpace
-accessors*](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
-for an overview on the available graph transformations).
-
-For example, the following code selects the five cells with the highest
-expression of the *PIGR* gene, adds arbitrary directed edges connecting
-them, and renders the resulting subgraph as an additional layer on top
-of the original visualization.
+The following code selects the five cells with the highest expression of
+the *PIGR* gene, adds arbitrary directed edges connecting them, and
+renders the resulting subgraph as an additional layer on top of the
+original visualization.
 
 ``` r
 
@@ -448,9 +437,9 @@ subgs_crop3 <- gs_add_edges(subgs_crop3, value = edges)
 
 # Add the subgraph as a new layer with its own graphical representation
 p <- ggplot(gs_crop3) + 
-  geom_sf( aes(geometry = cell_geometry,
+  geom_sf(aes(geometry = cell_geometry,
     fill = log2(PIGR + 1) ), colour = "white") +
-  geom_sf( aes(geometry = nucleus_geometry), alpha = 0.1,
+  geom_sf(aes(geometry = nucleus_geometry), alpha = 0.1,
     fill = adjustcolor("black", 0.5), colour = NA) +
   geom_edgespace(data = subgs_crop3, colour = "black", 
     curve = 0.3, lwd = 0.8, lty = "21", arrow_size = 1) +
@@ -464,9 +453,11 @@ p
 ![](figs_dev/spe2_seg5.png)
 
 This deliberately naive example illustrates one possible approach to
-downstream graph manipulation. The edges have no specific biological
-meaning and are included solely to demonstrate how a graph can be
-modified at this later stage of the pipeline.
+downstream graph manipulation. The edges have no biological meaning and
+are included solely to demonstrate how a graph can be modified at this
+later stage of the pipeline (see [*GraphSpace
+accessors*](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
+for an overview of the available graph transformations).
 
 ## Session information
 

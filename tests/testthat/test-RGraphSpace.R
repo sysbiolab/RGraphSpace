@@ -309,3 +309,28 @@ test_that("Seurat coercion, embedding space (integration)", {
   expect_true(RGraphSpace:::.has_fdata(gs))
 })
 
+#-------------------------------------------------------------------------------
+# Regression tests for gs_subset_edges()
+
+# Helper: a non-simplified graph with four parallel new1/new2
+.make_parallel_gs <- function() {
+  g <- igraph::make_empty_graph(10)
+  gs <- GraphSpace(g, simplify = FALSE, verbose = FALSE)
+  gs <- gs |> gs_add_nodes(data.frame(name = c("new1", "new2")))
+  gs <- gs_add_edges(gs, data.frame(
+    from = c("new1", "new1", "new1", "new1"),
+    to   = c("new2", "new2", "new2", "new2"),
+    edge_var = c(0, 10, 20, 30)))
+  gs
+}
+
+test_that("removing parallel edges", {
+  gs  <- .make_parallel_gs()
+  gs2 <- gs_subset_edges(gs, name1 == "new1" & edge_var > 10)
+  e <- gs_edges(gs2)
+  # Only new1 & edge_var > 10 rows survive
+  expect_equal(nrow(e), 2L)
+  expect_true(all(e$name1 == "new1"))
+  expect_true(all(e$edge_var > 10))
+})
+

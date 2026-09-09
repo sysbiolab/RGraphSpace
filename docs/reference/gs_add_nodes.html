@@ -125,12 +125,16 @@ calling environment. Both forms are equivalent.</p>
 
 
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
-<dd><p>A data frame with at minimum three columns:</p><ul><li><p><code>name</code> — unique node identifier (character).</p></li>
-<li><p><code>x</code>, <code>y</code> — node coordinates in raw graph space.</p></li>
-</ul><p>Any additional columns are treated as node attributes. Standard visual
-attributes (<code>nodeSize</code>, <code>nodeColor</code>, <code>nodeShape</code>, etc.)
-are filled from package defaults when omitted. The column <code>vertex</code>
-is reserved and stripped automatically if present.</p></dd>
+<dd><p>A data frame with, at minimum, a <code>name</code> column giving
+the node identifier (character). The <code>x</code> and <code>y</code> columns, if
+not provided, are assigned random values within the range of the graph
+space. Any additional columns are treated as node attributes. Standard
+visual attributes (<code>nodeSize</code>, <code>nodeColor</code>, <code>nodeShape</code>,
+etc.) are filled from package defaults when omitted. The <code>vertex</code>
+column is reserved and is stripped automatically if present.
+Alternatively, a character vector of node names can be supplied; it
+will be converted internally to a data frame with a single <code>name</code>
+column.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -180,11 +184,12 @@ so the feature matrix remains aligned with <code>@nodes</code>.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Functional form (pipe-friendly): returns a modified copy</span></span></span>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">gs_add_nodes</span><span class="op">(</span><span class="va">gs</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"n6"</span>, x <span class="op">=</span> <span class="fl">0.5</span>, y <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Denormalizing graph coordinates...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Assignment form: modifies gs in place</span></span></span>
 <span class="r-in"><span><span class="fu">gs_add_nodes</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"n7"</span>, x <span class="op">=</span> <span class="fl">0.5</span>, y <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Denormalizing graph coordinates...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Add two nodes; x and y are assigned random values</span></span></span>
+<span class="r-in"><span><span class="fu">gs_add_nodes</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"new_node1"</span>, <span class="st">"new_node2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add multiple nodes with visual attributes</span></span></span>
 <span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">gs_add_nodes</span><span class="op">(</span><span class="va">gs</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
@@ -194,7 +199,6 @@ so the feature matrix remains aligned with <code>@nodes</code>.</p>
 <span class="r-in"><span>  nodeSize  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  nodeColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"steelblue"</span>, <span class="st">"tomato"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Denormalizing graph coordinates...</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
