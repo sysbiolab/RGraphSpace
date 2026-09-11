@@ -255,7 +255,7 @@ gs[["fdata"]]   # same as getGraphSpace(gs, "fdata")
 
 # The `$` accessor
 
-The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio console), listing the vertex attributes currently defined on the graph. Attributes created via `$<-` are stored as **payload**: they are added to the node table but not expanded into vertex attributes in the underlying `igraph` object (see [geometries](#geometries) for details).
+The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio console), listing all columns currently in the node table. Attributes created via `$<-` are stored as **payload**: they are added to the node table but not expanded into vertex attributes in the underlying `igraph` object (see [geometries](#geometries) for an example).
 
 ```{r , eval=TRUE, message=FALSE}
 # Return the vertex attribute `name`
@@ -277,11 +277,11 @@ gs
 # gs$name <- 1  # error: 'name' is a read-only node attribute.
 ```
 
-# Other accessors
+# General accessors
 
 Here we show typical usage of other accessors used across the tutorials. Output is omitted for brevity; run the calls interactively to see each result.
 
-## General accessors
+## Graph-related accessors
 
 ```{r , eval=TRUE, message=FALSE, results='hide'}
 # Vertex names
@@ -290,13 +290,13 @@ names(gs)
 # Vertex attribute names
 gs_names(gs)
 
-# Get the node data frame
+# Return the node data frame
 gs_nodes(gs)
 
-# Get the edge data frame
+# Return the edge data frame
 gs_edges(gs)
 
-# Get the underlying igraph object
+# Return the underlying igraph object
 gs_graph(gs)
 
 # Number of vertices
@@ -306,7 +306,25 @@ gs_vcount(gs)
 gs_ecount(gs)
 ```
 
-## Image accessors
+## Feature-related accessors
+
+```{r , eval=TRUE, message=FALSE, results='hide'}
+# Make a sparse Matrix aligned to nodes
+mtx <- Matrix::Matrix(0, gs_vcount(gs), 2)
+rownames(mtx) <- names(gs)
+colnames(mtx) <- c("feature1", "feature2")
+
+# Add a sparse matrix
+gs_fdata(gs) <- mtx
+
+# Feature names
+gs_features(gs)
+
+# Number of features
+gs_nfeatures(gs)
+```
+
+## Image-related accessors
 
 ```{r , eval=TRUE, message=FALSE, results='hide'}
 # Images may be provided as raster or numeric matrices;
@@ -323,59 +341,24 @@ gs_scale_factor(gs) <- 0.1
 
 # Undo scaling
 gs_scale_factor(gs) <- 1
-
-# Normalize image and node coordinates to graph space
-gs <- normalizeGraphSpace(gs, image.space = FALSE)
 ```
 
-## Feature-related accessors
+# Spatial transformations
 
-```{r , eval=TRUE, message=FALSE, results='hide'}
-# Make a sparse Matrix aligned to nodes
-library(Matrix)
-mtx <- Matrix::Matrix(0, gs_vcount(gs), 2)
-rownames(mtx) <- names(gs)
-colnames(mtx) <- c("feature1", "feature2")
+Spatial transformation functions are specialized accessors that operate on a reference frame, either graph or image space, rather than on the graph structure alone.
 
-# Add a sparse matrix
-gs_fdata(gs) <- mtx
-
-# Feature names
-gs_features(gs)
-
-# Feature count
-gs_nfeatures(gs)
-```
-
-# Applying *igraph* functions
-
-The `gs_compute()` function runs any igraph function on the graph carried by a `GraphSpace`, without needing a dedicated `gs_*` wrapper for each one. It extracts the underlying igraph via `as.igraph()`, applies `.f`, and returns the result unchanged. This is the read-only lane onto the broader igraph ecosystem: measures such as `degree()`, `betweenness()`, `coreness()`, and distances all work through this single entry point.
-
-```{r , eval=TRUE, message=FALSE}
-# Apply igraph functions
-gs_compute(gs, igraph::degree)[1:5]
-
-gs_compute(gs, "betweenness", directed = FALSE)[1:5]
-
-# Fold a per-vertex result back as a node attribute
-gs$degree <- gs_compute(gs, igraph::degree)
-```
-
-It is deliberately *not* a GraphSpace-modification path. If `.f` returns a graph (e.g. `simplify()`, `induced_subgraph()`), this cannot be reintegrated to the `gs` object, as graph modifications may invalidate the correspondence between the graph and other components of the object. A modified graph must instead go through the graph-modification checks of the `GraphSpace` constructor.
-
-# Crop, rotate, flip, and transpose
-
-These functions are special accessors, as they operate on a reference frame, either the graph or image space, not on the graph alone.
-
-- `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by the cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the window.
-- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. Applied to a normalized `GraphSpace`, these operations transform the normalized coordinates, leaving the raw coordinates intact so the original orientation can be restored without loss. Applied to a `GraphSpace` that has not been normalized, they transform the raw coordinates permanently. The `persist` argument controls this behavior: `persist = TRUE` writes the transformation into the raw coordinates regardless of normalization state.
+- `normalizeGraphSpace()` normalizes the graph and, when present, the background image into a common reference frame. The `image.space` argument controls which is used as the reference map.
+- `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the cropping window.
+- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling or interpolation and therefore no risk of misaligning nodes against the background image. Applied to a normalized `GraphSpace`, these operations transform the normalized coordinates, leaving the raw coordinates intact so the original orientation can be restored without loss. Applied to a `GraphSpace` that has not been normalized, they transform the raw coordinates permanently. The `persist` argument controls this behavior: `persist = TRUE` writes the transformation into the raw coordinates regardless of normalization state.
 
 ```{r , eval=TRUE, message=FALSE}
 # Create a GraphSpace
 gs <- GraphSpace(make_full_graph(30))
 
 # Normalize coordinates
-gs <- normalizeGraphSpace(gs)
+# The 'image.space' argument controls whether the image
+# (when present) is used as the reference map
+gs <- normalizeGraphSpace(gs, image.space = FALSE)
 
 # Crop
 gs_crop <- cropGraphSpace(gs, ymax = 0.5)
@@ -389,7 +372,9 @@ gs_flip <- flipGraphSpace(gs)
 # Transpose
 gs_t <- transposeGraphSpace(gs)
 
-# Rotate
+# Set 'persist' to TRUE to rotate, flip, or transpose
+# the raw coordinates directly; the transformation
+# will persist through re-normalization
 gs_rot90 <- rotateGraphSpace(gs, persist = TRUE)
 ```
 
@@ -397,7 +382,7 @@ gs_rot90 <- rotateGraphSpace(gs, persist = TRUE)
 
 Geometry columns from the `sf` package (class `sfc`) are specialized list-columns, where each element contains a spatial object, such as a point, line, or polygon. *RGraphSpace* accepts these objects as node payloads.
 
-Unlike numeric, character, and logical attributes, geometry list-columns add overhead that increases with graph size when stored as vertex attributes. Node payload avoids this: geometries stay in the node table and are not expanded into vertex attributes, so assigning or updating them is a standard data-frame operation.
+Unlike numeric, character, and logical attributes, geometry list-columns add overhead that increases with graph size when stored as vertex attributes. Node payload avoids this: geometries remain in the node table and are not expanded into vertex attributes, so assigning or updating them is a standard data-frame operation.
 
 ```{r , eval=TRUE, message=FALSE}
 # Add an 'sfc' geometry column (requires the optional 'sf' package)
@@ -408,6 +393,24 @@ if (requireNamespace("sf", quietly = TRUE)) {
 
 gs
 ```
+
+Other geometry accessors are cover in the [geometries and nodes](geometries.html) tutorial.
+
+# Applying *igraph* functions
+
+The `gs_compute()` function runs any igraph function on the graph carried by a `GraphSpace`, without needing a dedicated `gs_*` wrapper for each one. It extracts the underlying igraph via `as.igraph()`, applies `.f`, and returns the result unchanged. This is the read-only lane onto the broader igraph ecosystem: measures such as `degree()`, `betweenness()`, and `coreness()`, all work through this single entry point.
+
+```{r , eval=TRUE, message=FALSE}
+# Apply igraph functions
+gs_compute(gs, igraph::degree)[1:5]
+
+gs_compute(gs, "betweenness", directed = FALSE)[1:5]
+
+# Fold a per-vertex result back as a node attribute
+gs$degree <- gs_compute(gs, igraph::degree)
+```
+
+It is deliberately *not* a GraphSpace-modification path. If `.f` returns a graph (*e.g.* `simplify()`, `induced_subgraph()`), this cannot be reintegrated to the `gs` object, as graph modifications may invalidate the correspondence between the graph and other components of the object. A modified graph must instead go through the graph-modification checks of the `GraphSpace()` constructor.
 
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}
