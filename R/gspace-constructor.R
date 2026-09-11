@@ -14,8 +14,8 @@
   g <- .drop_list_vertex_attrs(g)
   
   gg <- .validate_igraph(g, layout, simplify, verbose)
-  edges <- .get_edges(gg, simplify)
-  nodes <- .get_nodes(gg)
+  edges <- .build_edges(gg, simplify)
+  nodes <- .build_nodes(gg)
   
   # Reattach captured list columns to @nodes
   # It will exist only on table for optimization
@@ -130,7 +130,7 @@
 ################################################################################
 ### Get nodes and edges in a df object
 ################################################################################
-.get_nodes <- function(gg){
+.build_nodes <- function(gg){
   lt <- igraph::vertex_attr(gg)
   n <- igraph::vcount(gg)
   nodes <- data.frame(row.names = seq_len(n) )
@@ -141,7 +141,7 @@
   rownames(nodes) <- nodes$name
   return(nodes)
 }
-.get_edges <- function(gg, simplify = TRUE){
+.build_edges <- function(gg, simplify = TRUE){
   
   if (simplify && igraph::is_simple(gg) && igraph::is_directed(gg)) {
     # Entry point for simplified directed graphs.
@@ -150,7 +150,8 @@
   } else {
     # Entry point for graphs not subject to simplification,
     # including directed and undirected graphs.
-    # Preserve the original edge order.
+    # Preserve the original edge order from 
+    # igraph::as_edgelist(gg)
     edges <- .get_edgelist(gg)
   }
   # Post-processing only: curve_weight, is_multiple and is_loop 

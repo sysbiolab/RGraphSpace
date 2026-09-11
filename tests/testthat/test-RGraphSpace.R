@@ -313,10 +313,15 @@ test_that("Seurat coercion, embedding space (integration)", {
 # Regression tests for gs_subset_edges()
 
 # Helper: a non-simplified graph with four parallel new1/new2
-.make_parallel_gs <- function() {
-  g <- igraph::make_empty_graph(10)
+.make_parallel_gs <- function(simplify = FALSE) {
+  # Make a GraphSpace with 5 nodes
+  g <- igraph::make_empty_graph(5)
   gs <- GraphSpace(g, simplify = FALSE, verbose = FALSE)
+  # Add parallel edges and loops
+  gs <- gs_add_edges(gs, c(1,2, 1,2, 1,2, 3,3, 5,5))
+  # Add new nodes
   gs <- gs |> gs_add_nodes(data.frame(name = c("new1", "new2")))
+  # Add new edges
   gs <- gs_add_edges(gs, data.frame(
     from = c("new1", "new1", "new1", "new1"),
     to   = c("new2", "new2", "new2", "new2"),

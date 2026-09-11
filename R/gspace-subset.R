@@ -170,16 +170,22 @@ gs_subset_edges <- function(x, i) {
     rlang::abort("'x' must be a GraphSpace object.")
   }
 
-  edges <- gs_edges(x)
+  gg <- gs_graph(x)
   
-  if (nrow(edges) == 0L) {
+  if (igraph::ecount(gg) == 0L) {
     rlang::warn("The 'GraphSpace' object has no edges to filter.")
     return(invisible(x))
   }
-
+  
   if (missing(i)) {
     return(x)
   }
+  
+  # Tag each edge with its current id before building edge table.
+  # Parallel edges share endpoints, so they can only be told apart
+  # by identity; .etag carries that identity into edges.
+  igraph::E(gg)$.etag <- seq_len(igraph::ecount(gg))
+  edges <- .build_edges(gg, simplify = .is_simplified(x))
   
   i_quo <- rlang::enquo(i)
   keep_idx <- .resolve_gs_index(i_quo, data = edges, what = "edge")
@@ -197,30 +203,31 @@ gs_subset_edges <- function(x, i) {
   }
   remove_idx <- setdiff(seq_len(nrow(edges)), keep_idx)
   
-  gg <- gs_graph(x)
   if ( .is_simplified(x) && igraph::is_simple(gg) && 
       igraph::is_directed(gg) ) {
-    # Map the removed @edges rows back to igraph edge IDs and delete them.
-    # For simplified directed graphs, arrowType ±3 rows map to TWO igraph
-    # edges (A->B and B->A), both of which must be removed.
+    # Simplified directed graphs do not preserve the original edge
+    # order, but every edge is unique (no loops or parallels), so
+    # removed edges are resolved by their endpoint names.
     edges_removed <- edges[remove_idx, , drop = FALSE]
-    igraph_ids <- .get_simplified_edge_ids(gg, edges_removed)
+    edge_ids <- .get_simplified_edge_ids(gg, edges_removed)
   } else {
-    # Graphs not subject to simplification, including directed 
-    # and undirected graphs, preserved the original order from 
-    # igraph::as_edgelist(gg)
-    igraph_ids <- remove_idx
+    # Graphs not subject to simplification, including directed
+    # and undirected graphs, preserve the original order from
+    # igraph::as_edgelist(gg). Even so, .etag does not rely on that
+    # order: it records each edge's id explicitly, so removal stays
+    # correct even if the order were ever disturbed.
+    edge_ids <- edges$.etag[remove_idx]
   }
 
-  if (length(igraph_ids) > 0L) {
-    x@graph <- igraph::delete_edges(gg, igraph_ids)
+  if (length(edge_ids) > 0L) {
+    gg <- igraph::delete_edges(gg, edge_ids)
   }
-
-  # Rebuild @edges from the updated @graph so that derived quantities
-  # (curve_weight, is_multiple, is_loop) are consistent. A surviving
-  # partner of a removed parallel edge must have is_multiple updated.
-  x@edges <- .get_edges(x@graph, simplify = .is_simplified(x))
-
+  gg <- igraph::delete_edge_attr(gg, ".etag")
+  
+  # Rebuild @edges from the updated igraph
+  x@edges <- .build_edges(gg, simplify = .is_simplified(x))
+  x@graph <- gg
+    
   validObject(x)
   return(x)
 
@@ -359,10 +366,11 @@ gs_subset_edges <- function(x, i) {
     # arrowType +/-3 signals a mutual pair: collect the reverse edge too
     if (isTRUE(abs(edges_df$arrowType[i]) == 3L)) {
       bwd <- igraph::get_edge_ids(g, vp = c(n2, n1), error = FALSE)
-      c(fwd, bwd)
+      res <- c(fwd, bwd)
     } else {
-      fwd
+      res <- fwd
     }
+    res
   })
 
   ids <- unique(unlist(ids, use.names = FALSE))

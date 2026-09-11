@@ -232,16 +232,16 @@ gs[1:4, ]
 gs[gs$node_var > 0, ]
 
 # Edge selection only: keep all nodes
-gs[, gs_edges(gs)$edge_var > 0.5]
+gs[, gs_edges(gs)$edge_var > 0]
 
 # Edge selection by endpoint: predicates must be pre-evaluated
 gs[, gs_edges(gs)$name1 == "n1"]
 
 # Alternatively, wrap the predicate in quote()
-gs[, quote(name1 == "n1" & name2 == "n2")]
+gs[, quote(name1 == "n1" & edge_var > 0)]
 
 # Combined: node filter first, then edge intersection
-gs[c("n1", "n2", "n3"), gs_edges(gs)$edge_var > 0]
+gs[quote(node_group == "A"), gs_edges(gs)$edge_var > 0]
 ```
 
 The `[[` operator, by contrast, is a simple accessor: `x[["nodes"]]`, `x[["edges"]]`, `x[["graph"]]`, and `x[["fdata"]]` return the corresponding component unmodified, equivalent to `getGraphSpace(x, "nodes")` and so on. No subsetting or synchronization logic applies.
@@ -253,29 +253,35 @@ gs[["graph"]]   # same as getGraphSpace(gs, "graph")
 gs[["fdata"]]   # same as getGraphSpace(gs, "fdata")
 ```
 
-
 # The `$` accessor
 
-The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (e.g. RStudio), listing the vertex attributes currently defined on the graph.
+The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio console), listing the vertex attributes currently defined on the graph. Attributes created via `$<-` are stored as **payload**: they are added to the node table but not expanded into vertex attributes in the underlying `igraph` object (see [geometries](#geometries) for details).
 
 ```{r , eval=TRUE, message=FALSE}
 # Return the vertex attribute `name`
 head(gs$name)
 
-# Sets the vertex attribute `nodeShape`
-gs$nodeShape <- 21
-gs$nodeShape[1] <- 19
+# Set the vertex attribute `nodeSize`
+gs$nodeSize <- 10
 
-# Protected attributes cannot be modified this way
-# gs$vertex <- 1  # error: 'vertex' is a read-only node attribute.
+# Create a new attribute
+gs$new_attribute <- 1
+
+gs
 ```
 
 **Protected attributes**: those the package relies on internally (e.g. node `name` and `vertex`) are not editable through `$<-`; attempting to assign to one raises an error rather than silently modifying it. Reading via `gs$` is unaffected.
 
+```{r , eval=TRUE, message=FALSE}
+# Protected attributes cannot be modified this way
+# gs$name <- 1  # error: 'name' is a read-only node attribute.
+```
 
-# Other general accessors
+# Other accessors
 
-Here we show typical usage of other general accessors used across the tutorials. Output is omitted for brevity; run the calls interactively to see each result.
+Here we show typical usage of other accessors used across the tutorials. Output is omitted for brevity; run the calls interactively to see each result.
+
+## General accessors
 
 ```{r , eval=TRUE, message=FALSE, results='hide'}
 # Vertex names
@@ -298,7 +304,11 @@ gs_vcount(gs)
 
 # Number of edges
 gs_ecount(gs)
+```
 
+## Image accessors
+
+```{r , eval=TRUE, message=FALSE, results='hide'}
 # Images may be provided as raster or numeric matrices;
 # 'SpatRaster' objects are supported when the optional
 # 'terra' package is available
@@ -307,7 +317,8 @@ gs_image(gs) <- as_colorraster(volcano)
 # Set a pixel budget for image operations
 gs_image_maxpixels(gs) <- 4e+06
 
-# Apply a scaling factor to node coordinates
+# Scale node coordinates into image coordinate space
+# (e.g. when node/image use different units/resolution)
 gs_scale_factor(gs) <- 0.1
 
 # Undo scaling
@@ -315,12 +326,18 @@ gs_scale_factor(gs) <- 1
 
 # Normalize image and node coordinates to graph space
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
+```
 
-# Add a sparse Matrix aligned to nodes
+## Feature-related accessors
+
+```{r , eval=TRUE, message=FALSE, results='hide'}
+# Make a sparse Matrix aligned to nodes
 library(Matrix)
 mtx <- Matrix::Matrix(0, gs_vcount(gs), 2)
 rownames(mtx) <- names(gs)
 colnames(mtx) <- c("feature1", "feature2")
+
+# Add a sparse matrix
 gs_fdata(gs) <- mtx
 
 # Feature names
@@ -328,13 +345,7 @@ gs_features(gs)
 
 # Feature count
 gs_nfeatures(gs)
-
-# Add an 'sfc' geometry column (requires the optional 'sf' package)
-if (requireNamespace("sf", quietly = TRUE)) {
-  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
-}
 ```
-
 
 # Applying *igraph* functions
 
@@ -359,7 +370,6 @@ These functions are special accessors, as they operate on a reference frame, eit
 - `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by the cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the window.
 - `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling, no interpolation, and no risk of misaligning nodes against the background image. Applied to a normalized `GraphSpace`, these operations transform the normalized coordinates, leaving the raw coordinates intact so the original orientation can be restored without loss. Applied to a `GraphSpace` that has not been normalized, they transform the raw coordinates permanently. The `persist` argument controls this behavior: `persist = TRUE` writes the transformation into the raw coordinates regardless of normalization state.
 
-
 ```{r , eval=TRUE, message=FALSE}
 # Create a GraphSpace
 gs <- GraphSpace(make_full_graph(30))
@@ -383,6 +393,21 @@ gs_t <- transposeGraphSpace(gs)
 gs_rot90 <- rotateGraphSpace(gs, persist = TRUE)
 ```
 
+# Geometries {#geometries}
+
+Geometry columns from the `sf` package (class `sfc`) are specialized list-columns, where each element contains a spatial object, such as a point, line, or polygon. *RGraphSpace* accepts these objects as node payloads.
+
+Unlike numeric, character, and logical attributes, geometry list-columns add overhead that increases with graph size when stored as vertex attributes. Node payload avoids this: geometries stay in the node table and are not expanded into vertex attributes, so assigning or updating them is a standard data-frame operation.
+
+```{r , eval=TRUE, message=FALSE}
+# Add an 'sfc' geometry column (requires the optional 'sf' package)
+# 'sf' is optional to avoid introducing a heavy dependency
+if (requireNamespace("sf", quietly = TRUE)) {
+  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
+}
+
+gs
+```
 
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}

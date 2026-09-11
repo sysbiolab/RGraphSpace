@@ -258,7 +258,8 @@
     if (!is.null(atts$nodeLabelSize)) {
         .validate_gs_args("numeric_vec", "nodeLabelSize", atts$nodeLabelSize)
         if (min(atts$nodeLabelSize, na.rm = TRUE) <= 0) {
-            rlang::abort("'nodeLabelSize' should be a vector of numeric values >0")
+            rlang::abort(
+                "'nodeLabelSize' should be a vector of numeric values >0")
         }
     }
     if (!is.null(atts$nodeLabelColor)) {
@@ -266,8 +267,10 @@
     }
     if (!is.null(atts$nodeSize)) {
         .validate_gs_args("numeric_vec", "nodeSize", atts$nodeSize)
-        if (max(atts$nodeSize, na.rm = TRUE) > 100 || min(atts$nodeSize, na.rm = TRUE) < 0) {
-            rlang::abort("'nodeSize' should be a vector of numeric values in [0, 100]")
+        if (max(atts$nodeSize, na.rm = TRUE) > 100 || 
+                min(atts$nodeSize, na.rm = TRUE) < 0) {
+            rlang::abort(
+                "'nodeSize' should be a vector of numeric values in [0, 100]")
         }
     }
     if (!is.null(atts$nodeShape)) {
@@ -282,7 +285,8 @@
     if (!is.null(atts$nodeLineWidth)) {
         .validate_gs_args("numeric_vec", "nodeLineWidth", atts$nodeLineWidth)
         if (min(atts$nodeLineWidth, na.rm = TRUE) < 0) {
-            rlang::abort("'nodeLineWidth' should be a vector of numeric values >=0")
+            rlang::abort(
+                "'nodeLineWidth' should be a vector of numeric values >=0")
         }
     }
     if (!is.null(atts$nodeLineColor)) {
@@ -298,7 +302,8 @@
     if (!is.null(atts$edgeLineWidth)) {
         .validate_gs_args("numeric_vec", "edgeLineWidth", atts$edgeLineWidth)
         if (min(atts$edgeLineWidth, na.rm = TRUE) <= 0) {
-            rlang::abort("'edgeLineWidth' should be a vector of numeric values >0")
+            rlang::abort(
+                "'edgeLineWidth' should be a vector of numeric values >0")
         }
     }
     if (!is.null(atts$edgeColor)) {

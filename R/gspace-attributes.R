@@ -237,7 +237,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
 
 .updateEdgeSpace <- function(x, g){
   x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
-  x@edges <- .get_edges(x@graph, simplify = .is_simplified(x))
+  x@edges <- .build_edges(x@graph, simplify = .is_simplified(x))
   return(x)
 }
 
@@ -245,7 +245,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   
   x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
   
-  nodes <- .get_nodes(x@graph)
+  nodes <- .build_nodes(x@graph)
   keep <- setdiff(colnames(x@nodes), colnames(nodes))
   for (col in keep) nodes[[col]] <- x@nodes[[col]][match(nodes$name,
     x@nodes$name)]

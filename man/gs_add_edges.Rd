@@ -14,18 +14,26 @@
 \arguments{
 \item{x}{A \code{\link{GraphSpace}} object.}
 
-\item{value}{A data frame with at least two columns identifying the edge
-endpoints. Two column naming conventions are accepted:
+\item{value}{Edges to add, given as a data frame or a vertex sequence:
+\itemize{
+\item \strong{Data frame}: at least two columns identifying the edge
+endpoints, using one of two accepted naming conventions:
 \itemize{
 \item \code{from} / \code{to} — the tidygraph / igraph convention.
-\item \code{name1} / \code{name2} — the \code{@edges} slot convention,
-useful when constructing \code{value} directly from \code{gs_edges()}.
+\item \code{name1} / \code{name2} — the \code{@edges} slot
+convention, useful when constructing \code{value} directly from
+\code{gs_edges()}.
 }
-If both conventions are present, \code{from}/\code{to} takes priority.
-Any additional columns are treated as edge attributes and passed through
-to \code{@edges}. Standard visual attributes (\code{edgeColor},
-\code{arrowType}, etc.) are filled from package defaults when omitted;
-analytical attributes such as \code{weight} are stored as-is.}
+If both conventions are present, \code{from}/\code{to} takes
+priority. Any additional columns are treated as edge attributes and
+passed through to \code{@edges}. Standard visual attributes
+(\code{edgeColor}, \code{arrowType}, etc.) are filled from package
+defaults when omitted; analytical attributes such as \code{weight}
+are stored as-is.
+\item \strong{Vertex sequence}: an even number of vertices, taken
+pairwise (1st–2nd, 3rd–4th, ...) as the \code{from}/\code{to}
+endpoints of each edge.
+}}
 
 \item{...}{Additional arguments (currently unused; reserved for future use).}
 }
@@ -65,7 +73,7 @@ library(RGraphSpace)
 library(igraph)
 
 g <- make_star(6, mode = "out")
-gs <- GraphSpace(g)
+gs <- GraphSpace(g, simplify = FALSE)
 gs <- normalizeGraphSpace(gs)
 
 # Functional form (pipe-friendly): returns a modified copy
@@ -80,6 +88,10 @@ gs <- gs_add_edges(gs, data.frame(
   to     = c("n5", "n6"),
   weight = c(0.8, 0.4)
 ))
+
+# Add multiple edges as a vertex sequence
+# (pairs: 1-2, 1-3, 1-4)
+gs <- gs_add_edges(gs, c(1,2, 1,3, 1,4) )
 
 }
 \seealso{

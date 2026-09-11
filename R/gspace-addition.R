@@ -283,18 +283,26 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
 #' calling environment. Both forms are equivalent.
 #'
 #' @param x A \code{\link{GraphSpace}} object.
-#' @param value A data frame with at least two columns identifying the edge
-#' endpoints. Two column naming conventions are accepted:
+#' @param value Edges to add, given as a data frame or a vertex sequence:
 #' \itemize{
-#'   \item \code{from} / \code{to} — the tidygraph / igraph convention.
-#'   \item \code{name1} / \code{name2} — the \code{@edges} slot convention,
-#'     useful when constructing \code{value} directly from \code{gs_edges()}.
+#'   \item \strong{Data frame}: at least two columns identifying the edge
+#'     endpoints, using one of two accepted naming conventions:
+#'     \itemize{
+#'       \item \code{from} / \code{to} — the tidygraph / igraph convention.
+#'       \item \code{name1} / \code{name2} — the \code{@edges} slot
+#'         convention, useful when constructing \code{value} directly from
+#'         \code{gs_edges()}.
+#'     }
+#'     If both conventions are present, \code{from}/\code{to} takes
+#'     priority. Any additional columns are treated as edge attributes and
+#'     passed through to \code{@edges}. Standard visual attributes
+#'     (\code{edgeColor}, \code{arrowType}, etc.) are filled from package
+#'     defaults when omitted; analytical attributes such as \code{weight}
+#'     are stored as-is.
+#'   \item \strong{Vertex sequence}: an even number of vertices, taken
+#'     pairwise (1st–2nd, 3rd–4th, ...) as the \code{from}/\code{to}
+#'     endpoints of each edge.
 #' }
-#' If both conventions are present, \code{from}/\code{to} takes priority.
-#' Any additional columns are treated as edge attributes and passed through
-#' to \code{@edges}. Standard visual attributes (\code{edgeColor},
-#' \code{arrowType}, etc.) are filled from package defaults when omitted;
-#' analytical attributes such as \code{weight} are stored as-is.
 #' @param ... Additional arguments (currently unused; reserved for future use).
 #'
 #' @details
@@ -324,7 +332,7 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
 #' library(igraph)
 #'
 #' g <- make_star(6, mode = "out")
-#' gs <- GraphSpace(g)
+#' gs <- GraphSpace(g, simplify = FALSE)
 #' gs <- normalizeGraphSpace(gs)
 #'
 #' # Functional form (pipe-friendly): returns a modified copy
@@ -339,7 +347,11 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
 #'   to     = c("n5", "n6"),
 #'   weight = c(0.8, 0.4)
 #' ))
-#'
+#' 
+#' # Add multiple edges as a vertex sequence
+#' # (pairs: 1-2, 1-3, 1-4)
+#' gs <- gs_add_edges(gs, c(1,2, 1,3, 1,4) )
+#' 
 #' @importFrom igraph get_edge_ids
 #' @name gs_add_edges
 #' @aliases gs_add_edges<-
@@ -357,84 +369,33 @@ setMethod("gs_add_edges", "GraphSpace", function(x, value, ...) {
 #' @export
 setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
 
-  #--- validate and normalize value
-  if (!is.data.frame(value)) {
+  #--- validate and normalize 'value'
+  if (is.vector(value) && is.numeric(value)){
+    value <- .validate_adde_seq(value)
+  } else if (is.data.frame(value)) {
+    value <- .validate_adde_df(value)
+  } else {
     rlang::abort(c(
-      x = "'value' must be a data frame.",
-      i = "Required columns: 'from'/'to' or 'name1'/'name2' (vertex names)."
+      x = "'value' must be a numeric vector or a data frame.",
+      i = "Numeric vector: vertex indices, taken pairwise as edges.",
+      i = "Data frame: columns `from`/`to` or `name1`/`name2` (vertex names)."
     ))
   }
-
-  # Accept name1/name2 as aliases for from/to; from/to takes priority
-  if (!"from" %in% colnames(value) && "name1" %in% colnames(value)) {
-    value$from <- value$name1
-  }
-  if (!"to" %in% colnames(value) && "name2" %in% colnames(value)) {
-    value$to <- value$name2
-  }
-  # Drop name1/name2 to avoid passing them as edge attributes
-  value <- value[, setdiff(colnames(value), c("name1", "name2")), drop = FALSE]
   
-  # Strip protected and derived edge columns that originate from @edges but
-  # are not user-editable attributes: passing them to igraph::add_edges()
-  # would store stale values and corrupt the reconstructed @edges.
-  value <- value[, setdiff(colnames(value), .gs_protected_edge_cols()), 
-    drop = FALSE]
-
-  missing_cols <- setdiff(c("from", "to"), colnames(value))
-  if (length(missing_cols) > 0L) {
-    rlang::abort(c(
-      x = sprintf(
-        "Missing required column(s) in 'value': %s.",
-        paste(paste0("'", missing_cols, "'"), collapse = ", ")
-      ),
-      i = "Provide 'from'/'to' or 'name1'/'name2' columns containing node names."
-    ))
-  }
-
-  # Coerce from/to to character: factor inputs are common from read.csv() or
-  # merge() and would cause spurious mismatches in the endpoint check.
-  value$from <- as.character(value$from)
-  value$to <- as.character(value$to)
-
   # Empty value: return x silently — a legitimate outcome in pipelines
   if (nrow(value) == 0L) return(x)
 
+  g <- gs_graph(x)
+  
   #--- validate endpoints
-  na_endpoints <- is.na(value$from) | is.na(value$to)
-  if (any(na_endpoints)) {
-    rlang::abort(c(
-      x = sprintf(
-        "%d row(s) in 'value' contain NA in 'from' or 'to'.",
-        sum(na_endpoints)
-      ),
-      i = "Both endpoints must be non-NA node names."
-    ))
-  }
-
-  node_names <- igraph::V(x@graph)$name
-  missing_ids <- setdiff(union(value$from, value$to), node_names)
-
-  if (length(missing_ids) > 0L) {
-    rlang::abort(c(
-      x = "All edge endpoints must already exist in the node set.",
-      i = sprintf(
-        "%d unknown name(s): %s",
-        length(missing_ids),
-        .gs_preview(missing_ids)
-      ),
-      "*" = "Modify the underlying igraph object to add nodes before connecting them."
-    ))
-  }
+  value <- .validate_adde_endpoints(g, value)
 
   #--- check simplification constraints
-  # Returns value with inadmissible edges dropped and warnings issued.
-  # If nothing survives, return x unchanged.
-  value <- .check_new_edges(x, value)
+  # Returns value with inadmissible edges dropped and warnings issued
+  value <- .validate_adde_simpl(g, value, .is_simplified(x))
   if (nrow(value) == 0L) return(x)
 
   #--- add edges to the igraph object
-  g <- x@graph
   vp <- as.vector(rbind(value$from, value$to))
 
   #--- synchronise standard edge attributes across old and new edges
@@ -476,19 +437,127 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
 })
 
 ################################################################################
-### Internal helpers
+### Internal validation
 ################################################################################
+
+#-------------------------------------------------------------------------------
+.validate_adde_seq <- function(value){
+  
+  n <- length(value)
+  if (n %% 2 != 0) {
+    rlang::abort("'value' must have an even number of vertices.")
+  }
+  
+  odd  <- seq(1, n, by = 2)
+  even <- seq(2, n, by = 2)
+  
+  data.frame(
+    from = value[odd], 
+    to = value[even], 
+    stringsAsFactors = FALSE)
+}
+
+#-------------------------------------------------------------------------------
+.validate_adde_df <- function(value){
+  
+  # Accept name1/name2 as aliases for from/to; from/to takes priority
+  if (!"from" %in% colnames(value) && "name1" %in% colnames(value)) {
+    value$from <- value$name1
+  }
+  
+  if (!"to" %in% colnames(value) && "name2" %in% colnames(value)) {
+    value$to <- value$name2
+  }
+  
+  # Drop name1/name2 to avoid passing them as edge attributes
+  value <- value[, setdiff(colnames(value), c("name1", "name2")), drop = FALSE]
+  
+  # Strip protected and derived edge columns that originate from @edges but
+  # are not user-editable attributes: passing them to igraph::add_edges()
+  # would store stale values and corrupt the reconstructed @edges.
+  value <- value[, setdiff(colnames(value), .gs_protected_edge_cols()), 
+    drop = FALSE]
+  
+  missing_cols <- setdiff(c("from", "to"), colnames(value))
+  if (length(missing_cols) > 0L) {
+    rlang::abort(c(
+      x = sprintf(
+        "Missing required column(s) in 'value': %s.",
+        paste(paste0("'", missing_cols, "'"), collapse = ", ")),
+      i = "Provide 'from'/'to' or 'name1'/'name2' columns containing node names."
+    ))
+  }
+  
+  value
+  
+}
+
+#-------------------------------------------------------------------------------
+.validate_adde_endpoints <- function(g, value){
+  
+  na_endpoints <- is.na(value$from) | is.na(value$to)
+  if (any(na_endpoints)) {
+    rlang::abort(c(
+      x = sprintf("%d row(s) in 'value' contain NA in 'from' or 'to'.",
+        sum(na_endpoints) ),
+      i = "Both endpoints must be non-NA node names."
+    ))
+  }
+  
+  nn <- igraph::vcount(g)
+  node_names <- igraph::V(g)$name
+  
+  if(is.numeric(value$from)){
+    if(!.is_integerVector(value$from)){
+      rlang::abort(c(x = "Endpoints with non-integer values.",
+        i = "When provided as vertex indices, all endpoints must be integers."))
+    }
+    if(any(value$from < 1) || any(value$from > nn) ){
+      rlang::abort(c(
+        x = sprintf("Endpoints must be between 1 and %d.", nn),
+        i = "Use vcount(g) to check the valid range."
+      ))
+    }
+    value$from <- node_names[value$from]
+  }
+  if(is.numeric(value$to)){
+    if(!.is_integerVector(value$to)){
+      rlang::abort(c(x = "Endpoints with non-integer values.",
+        i = "When provided as vertex indices, all endpoints must be integers."))
+      }
+    if(any(value$to < 1) || any(value$to > nn) ){
+      rlang::abort(c(
+        x = sprintf("Endpoints must be between 1 and %d.", nn),
+        i = "Use vcount(g) to check the valid range."
+      ))
+    }
+    value$to <- node_names[value$to]
+  }
+  
+  missing_ids <- setdiff(union(value$from, value$to), node_names)
+  
+  if (length(missing_ids) > 0L) {
+    rlang::abort(c(
+      x = "All edge endpoints must already exist in the node set.",
+      i = sprintf("%d unknown name(s): %s",
+        length(missing_ids), .gs_preview(missing_ids) ),
+      "*" = "Modify the underlying igraph object to add nodes before connecting them."
+    ))
+  }
+  
+  value
+  
+}
 
 #-------------------------------------------------------------------------------
 # Check new edges against simplification constraints.
 # For simplified objects, loops, parallel edges, and duplicate rows within
 # value are inadmissible. Rather than aborting, inadmissible rows are dropped
 # and a warning is issued. Returns the filtered value (may have 0 rows).
-.check_new_edges <- function(x, value) {
+.validate_adde_simpl <- function(g, value, simplified) {
 
-  if (!.is_simplified(x)) return(value)
+  if (!simplified) return(value)
 
-  g <- x@graph
   is_dir <- igraph::is_directed(g)
 
   #--- loops

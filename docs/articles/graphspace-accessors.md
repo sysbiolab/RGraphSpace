@@ -103,7 +103,7 @@ gs_vertex_attr(gs, "new_node_var") <- NULL
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 3a30e52 UN-- 90 329 -- 
+#> IGRAPH 3a2c756 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/n), edge_var (e/n)
@@ -131,7 +131,7 @@ gs_edge_attr(gs, "new_edge_var") <- NULL
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 3a30e52 UN-- 90 329 -- 
+#> IGRAPH 3a2c756 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
@@ -285,7 +285,7 @@ dimension.
 # Node-induced subgraph: keep named nodes, prune dangling edges
 gs[c("n1", "n2", "n3"), ]
 #> A GraphSpace-class object for:
-#> IGRAPH 7fe8d89 UN-- 3 1 -- 
+#> IGRAPH 596ce47 UN-- 3 1 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
@@ -296,7 +296,7 @@ gs[c("n1", "n2", "n3"), ]
 # Node-induced subgraph by integer position
 gs[1:4, ]
 #> A GraphSpace-class object for:
-#> IGRAPH a9649c5 UN-- 4 3 -- 
+#> IGRAPH 9757f9b UN-- 4 3 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
@@ -307,7 +307,7 @@ gs[1:4, ]
 # Node-induced subgraph by pre-evaluated logical mask
 gs[gs$node_var > 0, ]
 #> A GraphSpace-class object for:
-#> IGRAPH d1b9dd6 UN-- 39 70 -- 
+#> IGRAPH d5d6ec5 UN-- 39 70 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
@@ -316,9 +316,9 @@ gs[gs$node_var > 0, ]
 #> | y: [-9, 7] (rows)
 
 # Edge selection only: keep all nodes
-gs[, gs_edges(gs)$edge_var > 0.5]
+gs[, gs_edges(gs)$edge_var > 0]
 #> A GraphSpace-class object for:
-#> IGRAPH 8204ddf UN-- 96 103 -- 
+#> IGRAPH 3ddc0be UN-- 96 161 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
@@ -329,7 +329,7 @@ gs[, gs_edges(gs)$edge_var > 0.5]
 # Edge selection by endpoint: predicates must be pre-evaluated
 gs[, gs_edges(gs)$name1 == "n1"]
 #> A GraphSpace-class object for:
-#> IGRAPH 750b853 UN-- 96 10 -- 
+#> IGRAPH bfc185b UN-- 96 10 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
@@ -338,11 +338,9 @@ gs[, gs_edges(gs)$name1 == "n1"]
 #> | y: [-10, 8] (rows)
 
 # Alternatively, wrap the predicate in quote()
-gs[, quote(name1 == "n1" & name2 == "n2")]
-#> Warning: No edges matched the filter expression.
-#> ℹ The returned object contains no edges.
+gs[, quote(name1 == "n1" & edge_var > 0)]
 #> A GraphSpace-class object for:
-#> IGRAPH de1a63c UN-- 96 0 -- 
+#> IGRAPH 2b9ed27 UN-- 96 3 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
@@ -351,17 +349,15 @@ gs[, quote(name1 == "n1" & name2 == "n2")]
 #> | y: [-10, 8] (rows)
 
 # Combined: node filter first, then edge intersection
-gs[c("n1", "n2", "n3"), gs_edges(gs)$edge_var > 0]
-#> Warning: No edges matched the filter expression.
-#> ℹ The returned object contains no edges.
+gs[quote(node_group == "A"), gs_edges(gs)$edge_var > 0]
 #> A GraphSpace-class object for:
-#> IGRAPH 91160ac UN-- 3 0 -- 
+#> IGRAPH 39ad18b UN-- 30 49 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
 #> + node spatial boundaries: raw graph
-#> | x: [4, 7] (cols)
-#> | y: [3, 4] (rows)
+#> | x: [3, 11] (cols)
+#> | y: [-2, 5] (rows)
 ```
 
 The `[[` operator, by contrast, is a simple accessor: `x[["nodes"]]`,
@@ -383,8 +379,11 @@ gs[["fdata"]]   # same as getGraphSpace(gs, "fdata")
 The `$` operator provides direct, attribute-style access to a single
 **vertex attribute** of a `GraphSpace` object, similar to how `$` works
 on a data frame or list. A companion `.DollarNames` method enables
-tab-completion after `gs$` in interactive sessions (e.g. RStudio),
-listing the vertex attributes currently defined on the graph.
+tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio
+console), listing the vertex attributes currently defined on the graph.
+Attributes created via `$<-` are stored as **payload**: they are added
+to the node table but not expanded into vertex attributes in the
+underlying `igraph` object (see [geometries](#geometries) for details).
 
 ``` r
 
@@ -392,12 +391,28 @@ listing the vertex attributes currently defined on the graph.
 head(gs$name)
 #> [1] "n1" "n2" "n3" "n4" "n5" "n6"
 
-# Sets the vertex attribute `nodeShape`
-gs$nodeShape <- 21
-gs$nodeShape[1] <- 19
+# Set the vertex attribute `nodeSize`
+gs$nodeSize <- 10
+
+# Create a new attribute
+gs$new_attribute <- 1
+
+gs
+#> A GraphSpace-class object for:
+#> IGRAPH 94f4b78 UN-- 96 333 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
+#> | edgeColor (e/c), arrowType (e/n), edge_var (e/n)
+#> + node payload: 1 (new_attribute)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 11] (cols)
+#> | y: [-10, 8] (rows)
+```
+
+``` r
 
 # Protected attributes cannot be modified this way
-# gs$vertex <- 1  # error: 'vertex' is a read-only node attribute.
+# gs$name <- 1  # error: 'name' is a read-only node attribute.
 ```
 
 **Protected attributes**: those the package relies on internally
@@ -405,11 +420,13 @@ gs$nodeShape[1] <- 19
 attempting to assign to one raises an error rather than silently
 modifying it. Reading via `gs$` is unaffected.
 
-## Other general accessors
+## Other accessors
 
-Here we show typical usage of other general accessors used across the
-tutorials. Output is omitted for brevity; run the calls interactively to
-see each result.
+Here we show typical usage of other accessors used across the tutorials.
+Output is omitted for brevity; run the calls interactively to see each
+result.
+
+### General accessors
 
 ``` r
 
@@ -433,6 +450,11 @@ gs_vcount(gs)
 
 # Number of edges
 gs_ecount(gs)
+```
+
+### Image accessors
+
+``` r
 
 # Images may be provided as raster or numeric matrices;
 # 'SpatRaster' objects are supported when the optional
@@ -442,7 +464,8 @@ gs_image(gs) <- as_colorraster(volcano)
 # Set a pixel budget for image operations
 gs_image_maxpixels(gs) <- 4e+06
 
-# Apply a scaling factor to node coordinates
+# Scale node coordinates into image coordinate space
+# (e.g. when node/image use different units/resolution)
 gs_scale_factor(gs) <- 0.1
 
 # Undo scaling
@@ -450,12 +473,19 @@ gs_scale_factor(gs) <- 1
 
 # Normalize image and node coordinates to graph space
 gs <- normalizeGraphSpace(gs, image.space = FALSE)
+```
 
-# Add a sparse Matrix aligned to nodes
+### Feature-related accessors
+
+``` r
+
+# Make a sparse Matrix aligned to nodes
 library(Matrix)
 mtx <- Matrix::Matrix(0, gs_vcount(gs), 2)
 rownames(mtx) <- names(gs)
 colnames(mtx) <- c("feature1", "feature2")
+
+# Add a sparse matrix
 gs_fdata(gs) <- mtx
 
 # Feature names
@@ -463,11 +493,6 @@ gs_features(gs)
 
 # Feature count
 gs_nfeatures(gs)
-
-# Add an 'sfc' geometry column (requires the optional 'sf' package)
-if (requireNamespace("sf", quietly = TRUE)) {
-  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
-}
 ```
 
 ## Applying *igraph* functions
@@ -555,6 +580,38 @@ gs_t <- transposeGraphSpace(gs)
 
 # Rotate
 gs_rot90 <- rotateGraphSpace(gs, persist = TRUE)
+```
+
+## Geometries
+
+Geometry columns from the `sf` package (class `sfc`) are specialized
+list-columns, where each element contains a spatial object, such as a
+point, line, or polygon. *RGraphSpace* accepts these objects as node
+payloads.
+
+Unlike numeric, character, and logical attributes, geometry list-columns
+add overhead that increases with graph size when stored as vertex
+attributes. Node payload avoids this: geometries stay in the node table
+and are not expanded into vertex attributes, so assigning or updating
+them is a standard data-frame operation.
+
+``` r
+
+# Add an 'sfc' geometry column (requires the optional 'sf' package)
+# 'sf' is optional to avoid introducing a heavy dependency
+if (requireNamespace("sf", quietly = TRUE)) {
+  gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
+}
+
+gs
+#> A GraphSpace-class object for:
+#> IGRAPH dc3406d UN-- 30 435 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
+#> | arrowType (e/n)
+#> + node payload: 1 (geometry)
+#> + node spatial boundaries: normalized to graph space
+#> | x: [-1, 1] -> [0, 1] (cols)
+#> | y: [-1, 1] -> [0, 1] (rows)
 ```
 
 ## Session information

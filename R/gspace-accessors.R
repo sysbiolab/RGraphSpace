@@ -388,6 +388,7 @@ setReplaceMethod("$", "GraphSpace", function(x, name, value) {
     # existing graph attribute: keep graph and @nodes in sync
     gs_vertex_attr(x, name) <- value
   } else if (.is_valid_geometry(value)) {
+    .gs_require_sf()
     x <- .add_node_geometry(x, name, value)
   } else {
     # payloads: new or table-only attribute, write to @nodes only

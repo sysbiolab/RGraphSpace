@@ -103,7 +103,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-09</h4>
+            <h4 data-toc-skip class="date">2026-09-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/graphspace-accessors.Rmd" class="external-link"><code>vignettes/articles/graphspace-accessors.Rmd</code></a></small>
       <div class="d-none name"><code>graphspace-accessors.Rmd</code></div>
@@ -202,7 +202,7 @@ graph representation and propagating the result to all
 <span></span>
 <span><span class="va">gs</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 3a30e52 UN-- 90 329 -- </span></span>
+<span><span class="co">#&gt; IGRAPH a7a1494 UN-- 90 329 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/n), edge_var (e/n)</span></span>
@@ -229,7 +229,7 @@ graph representation and propagating the result to all
 <span></span>
 <span><span class="va">gs</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 3a30e52 UN-- 90 329 -- </span></span>
+<span><span class="co">#&gt; IGRAPH a7a1494 UN-- 90 329 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
@@ -375,7 +375,7 @@ survived node filtering.</li>
 <code class="sourceCode R"><span><span class="co"># Node-induced subgraph: keep named nodes, prune dangling edges</span></span>
 <span><span class="va">gs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n2"</span>, <span class="st">"n3"</span><span class="op">)</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 7fe8d89 UN-- 3 1 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 0613140 UN-- 3 1 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
@@ -386,7 +386,7 @@ survived node filtering.</li>
 <span><span class="co"># Node-induced subgraph by integer position</span></span>
 <span><span class="va">gs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH a9649c5 UN-- 4 3 -- </span></span>
+<span><span class="co">#&gt; IGRAPH ac36a4b UN-- 4 3 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
@@ -397,7 +397,7 @@ survived node filtering.</li>
 <span><span class="co"># Node-induced subgraph by pre-evaluated logical mask</span></span>
 <span><span class="va">gs</span><span class="op">[</span><span class="va">gs</span><span class="op">$</span><span class="va">node_var</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH d1b9dd6 UN-- 39 70 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 35dcc68 UN-- 39 70 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
@@ -406,9 +406,9 @@ survived node filtering.</li>
 <span><span class="co">#&gt; | y: [-9, 7] (rows)</span></span>
 <span></span>
 <span><span class="co"># Edge selection only: keep all nodes</span></span>
-<span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">edge_var</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">]</span></span>
+<span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">edge_var</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 8204ddf UN-- 96 103 -- </span></span>
+<span><span class="co">#&gt; IGRAPH e9c9e04 UN-- 96 161 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
@@ -419,7 +419,7 @@ survived node filtering.</li>
 <span><span class="co"># Edge selection by endpoint: predicates must be pre-evaluated</span></span>
 <span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 750b853 UN-- 96 10 -- </span></span>
+<span><span class="co">#&gt; IGRAPH f02131c UN-- 96 10 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
@@ -428,11 +428,9 @@ survived node filtering.</li>
 <span><span class="co">#&gt; | y: [-10, 8] (rows)</span></span>
 <span></span>
 <span><span class="co"># Alternatively, wrap the predicate in quote()</span></span>
-<span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span> <span class="op">&amp;</span> <span class="va">name2</span> <span class="op">==</span> <span class="st">"n2"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Warning: No edges matched the filter expression.</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> The returned object contains no edges.</span></span>
+<span><span class="va">gs</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="va">name1</span> <span class="op">==</span> <span class="st">"n1"</span> <span class="op">&amp;</span> <span class="va">edge_var</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH de1a63c UN-- 96 0 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 72d5ef6 UN-- 96 3 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
@@ -441,17 +439,15 @@ survived node filtering.</li>
 <span><span class="co">#&gt; | y: [-10, 8] (rows)</span></span>
 <span></span>
 <span><span class="co"># Combined: node filter first, then edge intersection</span></span>
-<span><span class="va">gs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n2"</span>, <span class="st">"n3"</span><span class="op">)</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">edge_var</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Warning: No edges matched the filter expression.</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> The returned object contains no edges.</span></span>
+<span><span class="va">gs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="va">node_group</span> <span class="op">==</span> <span class="st">"A"</span><span class="op">)</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_edges</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">$</span><span class="va">edge_var</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 91160ac UN-- 3 0 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 9c40c78 UN-- 30 49 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
 <span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
-<span><span class="co">#&gt; | x: [4, 7] (cols)</span></span>
-<span><span class="co">#&gt; | y: [3, 4] (rows)</span></span></code></pre></div>
+<span><span class="co">#&gt; | x: [3, 11] (cols)</span></span>
+<span><span class="co">#&gt; | y: [-2, 5] (rows)</span></span></code></pre></div>
 <p>The <code>[[</code> operator, by contrast, is a simple accessor:
 <code>x[["nodes"]]</code>, <code>x[["edges"]]</code>,
 <code>x[["graph"]]</code>, and <code>x[["fdata"]]</code> return the
@@ -472,32 +468,51 @@ to a single <strong>vertex attribute</strong> of a
 <code>GraphSpace</code> object, similar to how <code>$</code> works on a
 data frame or list. A companion <code>.DollarNames</code> method enables
 tab-completion after <code>gs$</code> in interactive sessions
-(e.g. RStudio), listing the vertex attributes currently defined on the
-graph.</p>
+(<em>e.g.</em> via RStudio console), listing the vertex attributes
+currently defined on the graph. Attributes created via
+<code>$&lt;-</code> are stored as <strong>payload</strong>: they are
+added to the node table but not expanded into vertex attributes in the
+underlying <code>igraph</code> object (see <a href="#geometries">geometries</a> for details).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return the vertex attribute `name`</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gs</span><span class="op">$</span><span class="va">name</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "n1" "n2" "n3" "n4" "n5" "n6"</span></span>
 <span></span>
-<span><span class="co"># Sets the vertex attribute `nodeShape`</span></span>
-<span><span class="va">gs</span><span class="op">$</span><span class="va">nodeShape</span> <span class="op">&lt;-</span> <span class="fl">21</span></span>
-<span><span class="va">gs</span><span class="op">$</span><span class="va">nodeShape</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">19</span></span>
+<span><span class="co"># Set the vertex attribute `nodeSize`</span></span>
+<span><span class="va">gs</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span></span>
-<span><span class="co"># Protected attributes cannot be modified this way</span></span>
-<span><span class="co"># gs$vertex &lt;- 1  # error: 'vertex' is a read-only node attribute.</span></span></code></pre></div>
+<span><span class="co"># Create a new attribute</span></span>
+<span><span class="va">gs</span><span class="op">$</span><span class="va">new_attribute</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span></span>
+<span><span class="va">gs</span></span>
+<span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
+<span><span class="co">#&gt; IGRAPH d124dda UN-- 96 333 -- </span></span>
+<span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
+<span><span class="co">#&gt; | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),</span></span>
+<span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/n), edge_var (e/n)</span></span>
+<span><span class="co">#&gt; + node payload: 1 (new_attribute)</span></span>
+<span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
+<span><span class="co">#&gt; | x: [-8, 11] (cols)</span></span>
+<span><span class="co">#&gt; | y: [-10, 8] (rows)</span></span></code></pre></div>
 <p><strong>Protected attributes</strong>: those the package relies on
 internally (e.g. node <code>name</code> and <code>vertex</code>) are not
 editable through <code>$&lt;-</code>; attempting to assign to one raises
 an error rather than silently modifying it. Reading via <code>gs$</code>
 is unaffected.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Protected attributes cannot be modified this way</span></span>
+<span><span class="co"># gs$name &lt;- 1  # error: 'name' is a read-only node attribute.</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="other-general-accessors">Other general accessors<a class="anchor" aria-label="anchor" href="#other-general-accessors"></a>
+<h2 id="other-accessors">Other accessors<a class="anchor" aria-label="anchor" href="#other-accessors"></a>
 </h2>
-<p>Here we show typical usage of other general accessors used across the
+<p>Here we show typical usage of other accessors used across the
 tutorials. Output is omitted for brevity; run the calls interactively to
 see each result.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="general-accessors">General accessors<a class="anchor" aria-label="anchor" href="#general-accessors"></a>
+</h3>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Vertex names</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">names</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
 <span></span>
@@ -517,9 +532,13 @@ see each result.</p>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_vcount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Number of edges</span></span>
-<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_ecount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Images may be provided as raster or numeric matrices;</span></span>
+<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_ecount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="image-accessors">Image accessors<a class="anchor" aria-label="anchor" href="#image-accessors"></a>
+</h3>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Images may be provided as raster or numeric matrices;</span></span>
 <span><span class="co"># 'SpatRaster' objects are supported when the optional</span></span>
 <span><span class="co"># 'terra' package is available</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_image</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_colorraster.html">as_colorraster</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span></span>
@@ -527,32 +546,35 @@ see each result.</p>
 <span><span class="co"># Set a pixel budget for image operations</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_image_maxpixels</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">4e+06</span></span>
 <span></span>
-<span><span class="co"># Apply a scaling factor to node coordinates</span></span>
+<span><span class="co"># Scale node coordinates into image coordinate space</span></span>
+<span><span class="co"># (e.g. when node/image use different units/resolution)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_scale_factor</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
 <span></span>
 <span><span class="co"># Undo scaling</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_scale_factor</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
 <span></span>
 <span><span class="co"># Normalize image and node coordinates to graph space</span></span>
-<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, image.space <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Add a sparse Matrix aligned to nodes</span></span>
+<span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, image.space <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="feature-related-accessors">Feature-related accessors<a class="anchor" aria-label="anchor" href="#feature-related-accessors"></a>
+</h3>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Make a sparse Matrix aligned to nodes</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://codeberg.org/jaganmn/Matrix" class="external-link">Matrix</a></span><span class="op">)</span></span>
 <span><span class="va">mtx</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/Matrix.html" class="external-link">Matrix</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_vcount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-accessors.html">names</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mtx</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"feature1"</span>, <span class="st">"feature2"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add a sparse matrix</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_fdata</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">mtx</span></span>
 <span></span>
 <span><span class="co"># Feature names</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_features</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Feature count</span></span>
-<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_nfeatures</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Add an 'sfc' geometry column (requires the optional 'sf' package)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sf"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sfshape_ngons.html">sfshape_ngons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_vcount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_nfeatures</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="applying-igraph-functions">Applying <em>igraph</em> functions<a class="anchor" aria-label="anchor" href="#applying-igraph-functions"></a>
@@ -565,7 +587,7 @@ and returns the result unchanged. This is the read-only lane onto the
 broader igraph ecosystem: measures such as <code><a href="https://r.igraph.org/reference/degree.html" class="external-link">degree()</a></code>,
 <code><a href="https://r.igraph.org/reference/betweenness.html" class="external-link">betweenness()</a></code>, <code><a href="https://r.igraph.org/reference/coreness.html" class="external-link">coreness()</a></code>, and distances all
 work through this single entry point.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Apply igraph functions</span></span>
 <span><span class="fu"><a href="../reference/gs_compute.html">gs_compute</a></span><span class="op">(</span><span class="va">gs</span>, <span class="fu">igraph</span><span class="fu">::</span><span class="va"><a href="https://r.igraph.org/reference/degree.html" class="external-link">degree</a></span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span><span class="co">#&gt; n1 n2 n3 n4 n5 </span></span>
@@ -610,7 +632,7 @@ raw coordinates permanently. The <code>persist</code> argument controls
 this behavior: <code>persist = TRUE</code> writes the transformation
 into the raw coordinates regardless of normalization state.</li>
 </ul>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a GraphSpace</span></span>
 <span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="fu"><a href="https://r.igraph.org/reference/make_full_graph.html" class="external-link">make_full_graph</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -631,6 +653,35 @@ into the raw coordinates regardless of normalization state.</li>
 <span></span>
 <span><span class="co"># Rotate</span></span>
 <span><span class="va">gs_rot90</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-transform.html">rotateGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, persist <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="geometries">Geometries<a class="anchor" aria-label="anchor" href="#geometries"></a>
+</h2>
+<p>Geometry columns from the <code>sf</code> package (class
+<code>sfc</code>) are specialized list-columns, where each element
+contains a spatial object, such as a point, line, or polygon.
+<em>RGraphSpace</em> accepts these objects as node payloads.</p>
+<p>Unlike numeric, character, and logical attributes, geometry
+list-columns add overhead that increases with graph size when stored as
+vertex attributes. Node payload avoids this: geometries stay in the node
+table and are not expanded into vertex attributes, so assigning or
+updating them is a standard data-frame operation.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Add an 'sfc' geometry column (requires the optional 'sf' package)</span></span>
+<span><span class="co"># 'sf' is optional to avoid introducing a heavy dependency</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sf"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sfshape_ngons.html">sfshape_ngons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_vcount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">gs</span></span>
+<span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
+<span><span class="co">#&gt; IGRAPH e58af84 UN-- 30 435 -- </span></span>
+<span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
+<span><span class="co">#&gt; | arrowType (e/n)</span></span>
+<span><span class="co">#&gt; + node payload: 1 (geometry)</span></span>
+<span><span class="co">#&gt; + node spatial boundaries: normalized to graph space</span></span>
+<span><span class="co">#&gt; | x: [-1, 1] -&gt; [0, 1] (cols)</span></span>
+<span><span class="co">#&gt; | y: [-1, 1] -&gt; [0, 1] (rows)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
