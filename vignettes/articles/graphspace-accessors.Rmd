@@ -255,16 +255,21 @@ gs[["fdata"]]   # same as getGraphSpace(gs, "fdata")
 
 # The `$` accessor
 
-The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio console), listing all columns currently in the node table. Attributes created via `$<-` are stored as **payload**: they are added to the node table but not expanded into vertex attributes in the underlying `igraph` object (see [geometries](#geometries) for an example).
+The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio console), listing all columns currently in the node table (see the [RGraphSpace attributes](building-graphspace.html#rgraphspace-attributes) subsection for a detailed list of vertex attributes).
+
+Arbitrary attributes created via `$<-` are stored as **payload**: they are added to the node table but not expanded into vertex attributes in the underlying `igraph` object (see [geometries](#geometries) for an example).
 
 ```{r , eval=TRUE, message=FALSE}
-# Return the vertex attribute `name`
-head(gs$name)
+# Set an existing vertex attribute
+gs$nodeSize <- 5
 
-# Set the vertex attribute `nodeSize`
-gs$nodeSize <- 10
+# Modify one element
+gs$nodeSize[1] <- 10
 
-# Create a new attribute
+# Add a new RGraphSpace vertex attribute
+gs$nodeLineColor <- "grey"
+
+# Add a new arbitrary attribute (payload)
 gs$new_attribute <- 1
 
 gs
@@ -273,6 +278,9 @@ gs
 **Protected attributes**: those the package relies on internally (e.g. node `name` and `vertex`) are not editable through `$<-`; attempting to assign to one raises an error rather than silently modifying it. Reading via `gs$` is unaffected.
 
 ```{r , eval=TRUE, message=FALSE}
+# Return the vertex attribute `name`
+head(gs$name)
+
 # Protected attributes cannot be modified this way
 # gs$name <- 1  # error: 'name' is a read-only node attribute.
 ```

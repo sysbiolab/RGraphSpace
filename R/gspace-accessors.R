@@ -384,8 +384,10 @@ setReplaceMethod("$", "GraphSpace", function(x, name, value) {
       i = "It is maintained internally and cannot be set directly."
     ))
   }
-  if (name %in% igraph::vertex_attr_names(x@graph)) {
-    # existing graph attribute: keep graph and @nodes in sync
+  is.vatt <- (name %in% igraph::vertex_attr_names(x@graph)) || 
+    (name %in% names(.get_default_vatt()) )
+  if (is.vatt) {
+    # default and existing graph attribute: keep graph and @nodes in sync
     gs_vertex_attr(x, name) <- value
   } else if (.is_valid_geometry(value)) {
     .gs_require_sf()
