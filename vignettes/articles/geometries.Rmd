@@ -69,8 +69,6 @@ gs_star$nodeSize <- seq(1, gs_vcount(gs_star) )
 gs_star <- normalizeGraphSpace(gs_star)
 ```
 
-The default node markers already reflect each node's varying size.
-
 ```{r Geometry - 2, eval=TRUE, message=FALSE}
 # Plot with ggplot2 and RGraphSpace geoms
 ggplot(gs_star) + 
@@ -97,7 +95,7 @@ ggplot(shapes20) + geom_sf() +
 
 # Fit geometries to nodes
 
-We can attach the geometries to the graph through the `gs_geometry()` accessor, and then use `fitGeometry()` to position and size each geometry to match its corresponding node.
+We attach the geometries to the graph through the `gs_geometry()` accessor, and then use `fitGeometry()` to fit each shape to its corresponding node.
 
 ```{r Geometry - 4, eval=TRUE, message=FALSE}
 # Attach the decorative shapes to the graph nodes
@@ -135,12 +133,13 @@ In the previous section, `fitGeometry()` positioned and sized decorative shapes 
 
 Consider a scenario in which a tissue sample is both imaged and sampled: the samples give the node coordinates, the image structures give the geometries. Both map the same tissue, so they share relative positions, but having been mapped independently, they no longer share a common scale.
 
-The following example illustrates this scenario: nodes and geometries correspond in position but differ in scale. Node sizes are reset to a flat value, so we plot them over the geometries, where they stay visible within each shape.
+The following example illustrates this scenario: nodes and geometries correspond in relative position but differ in scale. Node sizes are reset to a flat value and a scale factor is applied to node coordinates, so nodes and shapes no longer match in size or position.
 
 ```{r Geometry - 6, eval=TRUE, message=FALSE, out.width="100%"}
 gs_star2 <- gs_star
 
-# Reset nodeSize, so node-shape sizes no longer relate
+# Reset nodeSize to a flat value, 
+# so node-shape sizes no longer relate.
 gs_star2$nodeSize <- 2
 
 p1 <- ggplot(gs_star2) + 
@@ -162,10 +161,12 @@ p2 <- ggplot(gs_star2) +
   theme_gspace_coords(is_norm = FALSE) +
   ggtitle("Nodes and geometries\nin unrelated spaces")
 
+# Plot the rescaled nodes over the geometries, 
+# so they stay visible within each shape.
 p1 + p2
 ```
 
-Next, we try `fitGeometry()` with `use_node_size = FALSE`, repositioning each shape onto its node without resizing. Since we reset `nodeSize` to a flat value, sizing to it would be meaningless, so only position can be recovered.
+Next, we try `fitGeometry(..., use_node_size = FALSE)`, fitting each shape to its node without resizing. Since we reset `nodeSize` to a flat value, sizing to it would be meaningless, so only position can be recovered.
 
 ```{r Geometry - 7, eval=TRUE, message=FALSE}
 # Fit shapes to node positions, not sizes

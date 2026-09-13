@@ -103,7 +103,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-12</h4>
+            <h4 data-toc-skip class="date">2026-09-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/geometries.Rmd" class="external-link"><code>vignettes/articles/geometries.Rmd</code></a></small>
       <div class="d-none name"><code>geometries.Rmd</code></div>
@@ -155,8 +155,6 @@ coordinates are normalized.</p>
 <span></span>
 <span><span class="co"># Normalize node coordinates</span></span>
 <span><span class="va">gs_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">)</span></span></code></pre></div>
-<p>The default node markers already reflect each node’s varying
-size.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot with ggplot2 and RGraphSpace geoms</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -182,10 +180,10 @@ to the graph, with no inherent size or position of their own.</p>
 <div class="section level2">
 <h2 id="fit-geometries-to-nodes">Fit geometries to nodes<a class="anchor" aria-label="anchor" href="#fit-geometries-to-nodes"></a>
 </h2>
-<p>We can attach the geometries to the graph through the
+<p>We attach the geometries to the graph through the
 <code><a href="../reference/GraphSpace-accessors.html">gs_geometry()</a></code> accessor, and then use
-<code><a href="../reference/geometry-methods.html">fitGeometry()</a></code> to position and size each geometry to match
-its corresponding node.</p>
+<code><a href="../reference/geometry-methods.html">fitGeometry()</a></code> to fit each shape to its corresponding
+node.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Attach the decorative shapes to the graph nodes</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs_star</span>, <span class="st">"geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">shapes20</span></span>
@@ -218,13 +216,14 @@ give the geometries. Both map the same tissue, so they share relative
 positions, but having been mapped independently, they no longer share a
 common scale.</p>
 <p>The following example illustrates this scenario: nodes and geometries
-correspond in position but differ in scale. Node sizes are reset to a
-flat value, so we plot them over the geometries, where they stay visible
-within each shape.</p>
+correspond in relative position but differ in scale. Node sizes are
+reset to a flat value and a scale factor is applied to node coordinates,
+so nodes and shapes no longer match in size or position.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gs_star2</span> <span class="op">&lt;-</span> <span class="va">gs_star</span></span>
 <span></span>
-<span><span class="co"># Reset nodeSize, so node-shape sizes no longer relate</span></span>
+<span><span class="co"># Reset nodeSize to a flat value, </span></span>
+<span><span class="co"># so node-shape sizes no longer relate.</span></span>
 <span><span class="va">gs_star2</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
 <span></span>
 <span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star2</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -246,13 +245,14 @@ within each shape.</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Nodes and geometries\nin unrelated spaces"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Plot the rescaled nodes over the geometries, </span></span>
+<span><span class="co"># so they stay visible within each shape.</span></span>
 <span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
 <p><img src="geometries_files/figure-html/Geometry%20-%206-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
-<p>Next, we try <code><a href="../reference/geometry-methods.html">fitGeometry()</a></code> with
-<code>use_node_size = FALSE</code>, repositioning each shape onto its
-node without resizing. Since we reset <code>nodeSize</code> to a flat
-value, sizing to it would be meaningless, so only position can be
-recovered.</p>
+<p>Next, we try <code>fitGeometry(..., use_node_size = FALSE)</code>,
+fitting each shape to its node without resizing. Since we reset
+<code>nodeSize</code> to a flat value, sizing to it would be
+meaningless, so only position can be recovered.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit shapes to node positions, not sizes</span></span>
 <span><span class="va">gs_star2_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geometry-methods.html">fitGeometry</a></span><span class="op">(</span><span class="va">gs_star2</span>, use_node_size <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
