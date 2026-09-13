@@ -9,7 +9,13 @@
 \usage{
 \S4method{normalizeGeometry}{GraphSpace}(gs, name = "geometry", verbose = TRUE)
 
-\S4method{fitGeometry}{GraphSpace}(gs, name = "geometry", use_node_size = TRUE, verbose = TRUE)
+\S4method{fitGeometry}{GraphSpace}(
+  gs,
+  name = "geometry",
+  use_node_size = TRUE,
+  persist = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{gs}{A \code{GraphSpace} object.}
@@ -22,6 +28,9 @@
 \code{fitGeometry()} also rescales each geometry to match its node's
 \code{nodeSize}. If \code{FALSE}, only repositioning happens, each feature
 keeps its current size.}
+
+\item{persist}{Logical; whether the 'fitGeometry' transformation persists
+through re-normalization. Defaults \code{TRUE}.}
 }
 \value{
 The updated \code{GraphSpace} object.
@@ -50,15 +59,11 @@ Both require \code{gs} to already be normalized (see
 \code{\link{normalizeGraphSpace}}), and both operate on a single named
 geometry column, leaving any other geometry columns untouched.
 }
-\examples{
-\dontrun{
-# Mode 1: geometry already spatially meaningful, just needs realigning
-gs_geometry(gs, "geometry") <- real_cell_boundaries
-gs <- normalizeGeometry(gs)
+\section{Examples}{
 
-# Mode 2: arbitrary shapes, sized and positioned like nodes
-gs_geometry(gs, "geometry") <- arbitrary_shapes
-gs <- fitGeometry(gs, use_node_size = TRUE)
+
+For more information and examples, see the online tutorial:
+
+\url{https://sysbiolab.github.io/RGraphSpace/articles/geometries.html}
 }
 
-}

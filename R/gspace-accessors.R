@@ -352,6 +352,9 @@ setMethod("gs_geometry", "GraphSpace", function(x, name = "geometry") {
 setReplaceMethod("gs_geometry", "GraphSpace", function(x, 
   name = "geometry", value) {
   .gs_require_sf()
+  if(name %in% gs_names(x)){
+    gs_vertex_attr(x, name) <- NULL
+  }
   .add_node_geometry(x, name, value)
 })
 
@@ -389,7 +392,7 @@ setReplaceMethod("$", "GraphSpace", function(x, name, value) {
   if (is.vatt) {
     # default and existing graph attribute: keep graph and @nodes in sync
     gs_vertex_attr(x, name) <- value
-  } else if (.is_valid_geometry(value)) {
+  } else if (.is_geometry(value)) {
     .gs_require_sf()
     x <- .add_node_geometry(x, name, value)
   } else {

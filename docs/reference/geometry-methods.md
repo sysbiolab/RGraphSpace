@@ -11,7 +11,13 @@ two different situations.
 normalizeGeometry(gs, name = "geometry", verbose = TRUE)
 
 # S4 method for class 'GraphSpace'
-fitGeometry(gs, name = "geometry", use_node_size = TRUE, verbose = TRUE)
+fitGeometry(
+  gs,
+  name = "geometry",
+  use_node_size = TRUE,
+  persist = TRUE,
+  verbose = TRUE
+)
 ```
 
 ## Arguments
@@ -33,6 +39,11 @@ fitGeometry(gs, name = "geometry", use_node_size = TRUE, verbose = TRUE)
   Logical. If `TRUE` (the default), `fitGeometry()` also rescales each
   geometry to match its node's `nodeSize`. If `FALSE`, only
   repositioning happens, each feature keeps its current size.
+
+- persist:
+
+  Logical; whether the 'fitGeometry' transformation persists through
+  re-normalization. Defaults `TRUE`.
 
 ## Value
 
@@ -61,14 +72,6 @@ geometry columns untouched.
 
 ## Examples
 
-``` r
-if (FALSE) { # \dontrun{
-# Mode 1: geometry already spatially meaningful, just needs realigning
-gs_geometry(gs, "geometry") <- real_cell_boundaries
-gs <- normalizeGeometry(gs)
+For more information and examples, see the online tutorial:
 
-# Mode 2: arbitrary shapes, sized and positioned like nodes
-gs_geometry(gs, "geometry") <- arbitrary_shapes
-gs <- fitGeometry(gs, use_node_size = TRUE)
-} # }
-```
+<https://sysbiolab.github.io/RGraphSpace/articles/geometries.html>

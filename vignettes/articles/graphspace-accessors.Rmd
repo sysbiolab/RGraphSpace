@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -78,7 +78,7 @@ gs <- GraphSpace(g, simplify = FALSE)
 
 # Manipulating attributes
 
-The `gs_vertex_attr()` and `gs_edge_attr()` functions provide a single interface to access, add, modify, and delete node and edges attributes, respectively. This interface wraps the corresponding *igraph* methods, applying them to the internal graph representation and propagating the result to all `GraphSpace` components.
+The `gs_vertex_attr()` and `gs_edge_attr()` functions provide a single interface to access, add, modify, and delete node and edges attributes, respectively. This interface wraps the corresponding *igraph* methods, applying them to the internal graph representation and propagating the result to all `GraphSpace` components. 
 
 ## Node attributes
 
@@ -121,6 +121,25 @@ gs_edge_attr(gs, "new_edge_var") <- NULL
 
 gs
 ```
+
+## Protected attributes
+
+Some node and edge attributes are protected from certain edits. The `name` and `vertex` attributes are read-only: the package relies on them internally, so they cannot be modified, and attempting to assign to one raises an error. A second group, `x`, `y`, `nodeLabel`, and `nodeSize`, can be modified but not deleted, since they are required for essential operations. Reading any of these is unaffected. For edges, `arrowType` is the only protected attribute exposed to the user; it can be modified but not deleted. The remaining protected edge attributes, `vertex1`, `vertex2`, `name1`, and `name2`, are read-only and hidden from the interface, since they are derived from the node data.
+
+```{r , eval=TRUE, message=FALSE}
+# Return the vertex attribute `name`
+gs_vertex_attr(gs, "name")[1:5]
+
+# Protected attribute that cannot be modified
+# gs_vertex_attr(gs, "name") <- 1  
+#> error: 'name' is a read-only node attribute.
+
+# Protected attribute that cannot be deleted
+# gs_vertex_attr(gs, "x") <- NULL 
+#> error: 'x' is a protected node attribute.
+```
+
+See the [Building a GraphSpace](building-graphspace.html#rgraphspace-attributes) tutorial for a detailed list of *RGraphSpace* attributes.
 
 # Adding nodes
 
@@ -255,9 +274,9 @@ gs[["fdata"]]   # same as getGraphSpace(gs, "fdata")
 
 # The `$` accessor
 
-The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio console), listing all columns currently in the node table (see the [RGraphSpace attributes](building-graphspace.html#rgraphspace-attributes) subsection for a detailed list of vertex attributes).
+The `$` operator provides direct, attribute-style access to a single **vertex attribute** of a `GraphSpace` object, similar to how `$` works on a data frame or list. A companion `.DollarNames` method enables tab-completion after `gs$` in interactive sessions (*e.g.* via RStudio console), listing all columns currently in the node table.
 
-Arbitrary attributes created via `$<-` are stored as **payload**: they are added to the node table but not expanded into vertex attributes in the underlying `igraph` object (see [geometries](#geometries) for an example).
+Arbitrary attributes created via `$<-` are stored as **payload**: they are added to the node table but not expanded into vertex attributes in the underlying `igraph` object. [Geometries](#geometries) use this same storage path to avoid expanding large, complex objects into vertex attributes.
 
 ```{r , eval=TRUE, message=FALSE}
 # Set an existing vertex attribute
@@ -269,23 +288,25 @@ gs$nodeSize[1] <- 10
 # Add a new RGraphSpace vertex attribute
 gs$nodeLineColor <- "grey"
 
-# Add a new arbitrary attribute (payload)
-gs$new_attribute <- 1
+# Add a new node variable (payload)
+gs$new_node_var <- 1
 
 gs
 ```
 
-**Protected attributes**: those the package relies on internally (e.g. node `name` and `vertex`) are not editable through `$<-`; attempting to assign to one raises an error rather than silently modifying it. Reading via `gs$` is unaffected.
+Assigning `NULL` deletes an attribute, whether stored as a vertex attribute or as payload.
 
 ```{r , eval=TRUE, message=FALSE}
-# Return the vertex attribute `name`
-head(gs$name)
+# Delete a vertex attribute
+gs$nodeLineColor <- NULL
 
-# Protected attributes cannot be modified this way
-# gs$name <- 1  # error: 'name' is a read-only node attribute.
+# Delete a payload
+gs$new_node_var <- NULL
+
+gs
 ```
 
-# General accessors
+# Other accessors
 
 Here we show typical usage of other accessors used across the tutorials. Output is omitted for brevity; run the calls interactively to see each result.
 
@@ -351,13 +372,13 @@ gs_scale_factor(gs) <- 0.1
 gs_scale_factor(gs) <- 1
 ```
 
-# Spatial transformations
+# Spatial transformations {#transformations}
 
-Spatial transformation functions are specialized accessors that operate on a reference frame, either graph or image space, rather than on the graph structure alone.
+Spatial transformation functions are specialized accessors that operate on a reference frame, either graph or image space, rather than on the graph structure alone. They transform the spatial representation of a `GraphSpace` object while preserving its underlying graph topology and associated attributes. Combined, these transformations provide an interface for accessing all eight symmetries of a square, including support for cropping and resizing operations.
 
 - `normalizeGraphSpace()` normalizes the graph and, when present, the background image into a common reference frame. The `image.space` argument controls which is used as the reference map.
 - `cropGraphSpace()` subsets a normalized `GraphSpace` to a specific region defined by cropping boundaries. It recalculates node positions and background image boundaries to maintain spatial consistency after cropping, and drops nodes (and edges) that fall outside the cropping window.
-- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no resampling or interpolation and therefore no risk of misaligning nodes against the background image. Applied to a normalized `GraphSpace`, these operations transform the normalized coordinates, leaving the raw coordinates intact so the original orientation can be restored without loss. Applied to a `GraphSpace` that has not been normalized, they transform the raw coordinates permanently. The `persist` argument controls this behavior: `persist = TRUE` writes the transformation into the raw coordinates regardless of normalization state.
+- `rotateGraphSpace()`, `flipGraphSpace()`, and `transposeGraphSpace()` are all exact coordinate/pixel permutations, with no re-sampling or interpolation. Applied to a normalized `GraphSpace`, these operations transform the normalized coordinates, leaving the raw coordinates intact so the original orientation can be restored without loss. Applied to a `GraphSpace` that has not been normalized, they transform the raw coordinates permanently. The `persist` argument controls this behavior: `persist = TRUE` writes the transformation into the raw coordinates regardless of normalization state.
 
 ```{r , eval=TRUE, message=FALSE}
 # Create a GraphSpace

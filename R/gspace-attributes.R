@@ -11,8 +11,6 @@
 #' @param name Name of the attribute.
 #' @param value Replacement value for the selected slot or attribute.
 #' @param ... Additional arguments passed to extraction methods. 
-#' @details
-#' For ...
 #' @examples
 #' library(RGraphSpace)
 #' library(igraph)
@@ -106,6 +104,18 @@ setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
       i = "It is maintained internally and cannot be set directly.",
       "*" = "To change the graph structure, recreate the underlying igraph object."
     ))
+  }
+  
+  # Check geometry
+  if( .is_geometry(value) ){
+    rlang::inform(
+      message = c(
+        "Geometry detected in a vertex-attribute assignment.",
+        'i' = "Redirecting to the `gs_geometry()<-` accessor.",
+        'v' = "Stored as node payload."
+      ) )
+    gs_geometry(x) <- value
+    return(x)
   }
   
   g <- x@graph
@@ -263,6 +273,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   x@coords <- coords
   
   return(x)
+  
 }
 
 ################################################################################

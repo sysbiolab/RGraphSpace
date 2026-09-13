@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -36,9 +36,11 @@ if (packageVersion("RGraphSpace") < "1.5.4"){
 
 # Overview
 
-# Setting basic input data
+This tutorial demonstrates how *sf* geometries can be attached to graph nodes, then either fit to the nodes as markers or normalized into a shared coordinate space, using `GraphSpace` geometry accessors.
 
-Below, we construct a star-like network with varying node sizes to show how the geometries stay synchronized across a wide range values.
+## Setting basic input data
+
+We first construct a star-like network with nodes of different sizes. The graph is converted to a `GraphSpace` object and node coordinates are normalized.
 
 ```{r Load packages, eval=TRUE, message=FALSE}
 #--- Load packages
@@ -49,6 +51,7 @@ library("RGraphSpace")
 library("igraph")
 library("ggplot2")
 library("sf")
+library("patchwork")
 ```
 
 ```{r Geometry - 1, eval=TRUE, message=FALSE}
@@ -66,7 +69,7 @@ gs_star$nodeSize <- seq(1, gs_vcount(gs_star) )
 gs_star <- normalizeGraphSpace(gs_star)
 ```
 
-The default node markers already reflect each node's varying size:
+The default node markers already reflect each node's varying size.
 
 ```{r Geometry - 2, eval=TRUE, message=FALSE}
 # Plot with ggplot2 and RGraphSpace geoms
@@ -78,7 +81,7 @@ ggplot(gs_star) +
 
 </br>
 
-Next, build a set of decorative `sf` shapes, unrelated to the graph, with no inherent size or position of their own:
+Next, we build a set of decorative `sf` shapes, unrelated to the graph, with no inherent size or position of their own.
 
 ```{r Geometry - 3, eval=TRUE, message=FALSE}
 # Make some decorative shapes
@@ -92,7 +95,9 @@ ggplot(shapes20) + geom_sf() +
 
 </br>
 
-Attach the shapes to the nodes, then let `fitGeometry()` position and size each one to match its node exactly:
+# Fit geometries to nodes
+
+We can attach the geometries to the graph through the `gs_geometry()` accessor, and then use `fitGeometry()` to position and size each geometry to match its corresponding node.
 
 ```{r Geometry - 4, eval=TRUE, message=FALSE}
 # Attach the decorative shapes to the graph nodes
@@ -102,7 +107,7 @@ gs_geometry(gs_star, "geometry") <- shapes20
 gs_star <- fitGeometry(gs_star)
 ```
 
-The geometries now track each node's size and position precisely, plotted here alongside the original markers for comparison:
+The geometries are now aligned with their nodes; positions follow the node coordinates, and sizes match the node sizes.
 
 ```{r Geometry - 5, eval=TRUE, message=FALSE}
 # Plot nodes and fitted geometries
@@ -123,6 +128,71 @@ ggplot(gs_star) +
 # ggsave(filename = "./vignettes/articles/cards/geometry.png", height=4, width=4,
 #   units="in", device="png", dpi=200, plot = p)
 ```
+
+# Geometry normalization
+
+In the previous section, `fitGeometry()` positioned and sized decorative shapes to match their nodes. That works because the shapes had no coordinate space of their own. When geometries *do* carry their own coordinates, `fitGeometry()` alone cannot align them.
+
+Consider a scenario in which a tissue sample is both imaged and sampled: the samples give the node coordinates, the image structures give the geometries. Both map the same tissue, so they share relative positions, but having been mapped independently, they no longer share a common scale.
+
+The following example illustrates this scenario: nodes and geometries correspond in position but differ in scale. Node sizes are reset to a flat value, so we plot them over the geometries, where they stay visible within each shape.
+
+```{r Geometry - 6, eval=TRUE, message=FALSE, out.width="100%"}
+gs_star2 <- gs_star
+
+# Reset nodeSize, so node-shape sizes no longer relate
+gs_star2$nodeSize <- 2
+
+p1 <- ggplot(gs_star2) + 
+  geom_sf(aes(geometry = geometry), fill = "blue") +
+  geom_edgespace() +
+  geom_nodespace(fill = "cyan") +
+  theme_gspace_coords(is_norm = TRUE) +
+  ggtitle("Nodes and geometries\nwith unrelated sizes")
+
+# Set a new scale factor to node coordinates, 
+# so node-shape positions also no longer relate.
+# Note: this denormalizes the coordinates.
+gs_scale_factor(gs_star2) <- 0.2
+
+p2 <- ggplot(gs_star2) + 
+  geom_sf(aes(geometry = geometry), fill = "blue") +
+  geom_edgespace() +
+  geom_nodespace(fill = "cyan") +
+  theme_gspace_coords(is_norm = FALSE) +
+  ggtitle("Nodes and geometries\nin unrelated spaces")
+
+p1 + p2
+```
+
+Next, we try `fitGeometry()` with `use_node_size = FALSE`, repositioning each shape onto its node without resizing. Since we reset `nodeSize` to a flat value, sizing to it would be meaningless, so only position can be recovered.
+
+```{r Geometry - 7, eval=TRUE, message=FALSE}
+# Fit shapes to node positions, not sizes
+gs_star2_fit <- fitGeometry(gs_star2, use_node_size = FALSE)
+
+ggplot(gs_star2_fit) + 
+  geom_sf(aes(geometry = geometry), fill = "blue") +
+  geom_edgespace() +
+  geom_nodespace(fill = "cyan") +
+  theme_gspace_coords(is_norm = FALSE) +
+  ggtitle("Nodes and geometries aligned in position only")
+```
+
+Next, we use `normalizeGraphSpace(..., norm.geometry = TRUE)`, which normalizes the nodes and then calls `normalizeGeometry()` on the geometry. Unlike `fitGeometry()`, this recovers scale from the geometry itself: it fits a linear relationship between the geometry's centroids and the node coordinates, bringing both into one common space.
+
+```{r Geometry - 8, eval=TRUE, message=FALSE}
+# Normalize node coordinates and geometries
+gs_star2_norm <- normalizeGraphSpace(gs_star2, norm.geometry = TRUE)
+
+ggplot(gs_star2_norm) + 
+  geom_sf(aes(geometry = geometry), fill = "blue") +
+  geom_edgespace() +
+  geom_nodespace(fill = "cyan") +
+  theme_gspace_coords(is_norm = TRUE) +
+  ggtitle("Nodes and geometries co-normalized")
+```
+
 
 # Session information
 ```{r label='Session information', eval=TRUE, echo=FALSE}

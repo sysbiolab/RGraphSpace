@@ -1,6 +1,6 @@
 # Using RGraphSpace with Spatial Feature Data
 
-**Package**: RGraphSpace 1.5.4  
+**Package**: RGraphSpace 1.5.5\
 
 ## Overview
 
@@ -38,7 +38,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -244,7 +244,7 @@ ggplot(gs) +
 
 ![](figs_dev/ggplot_seurat_4.png)
 
-  
+\
 
 ## Coercing *Seurat* spatial objects
 
@@ -290,7 +290,7 @@ gs <- normalizeGraphSpace(gs)
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -314,7 +314,7 @@ gs <- normalizeGraphSpace(gs)
     #> [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 
     #> [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    
     #> [5] Seurat_5.5.1.9001         SeuratObject_5.4.0       
-    #> [7] sp_2.2-1                  RGraphSpace_1.5.4        
+    #> [7] sp_2.2-1                  RGraphSpace_1.5.5        
     #> [9] ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):
@@ -339,7 +339,7 @@ gs <- normalizeGraphSpace(gs)
     #>  [55] tools_4.6.1            vipor_0.4.7            lmtest_0.9-40         
     #>  [58] otel_0.2.0             beeswarm_0.4.0         httpuv_1.6.17         
     #>  [61] future.apply_1.20.2    goftest_1.2-3          glue_1.8.1            
-    #>  [64] nlme_3.1-170           promises_1.5.0         grid_4.6.1            
+    #>  [64] nlme_3.1-171           promises_1.5.0         grid_4.6.1            
     #>  [67] Rtsne_0.17             cluster_2.1.8.2        reshape2_1.4.5        
     #>  [70] generics_0.1.4         gtable_0.3.6           spatstat.data_3.1-9   
     #>  [73] tidyr_1.3.2            data.table_1.18.4      tidygraph_1.3.1       
@@ -347,7 +347,7 @@ gs <- normalizeGraphSpace(gs)
     #>  [79] RANN_2.6.2             pillar_1.11.1          stringr_1.6.0         
     #>  [82] spam_2.11-4            RcppHNSW_0.7.0         later_1.4.8           
     #>  [85] splines_4.6.1          dplyr_1.2.1            lattice_0.23-1        
-    #>  [88] survival_3.8-9         deldir_2.0-4           tidyselect_1.2.1      
+    #>  [88] survival_3.8-11        deldir_2.0-4           tidyselect_1.2.1      
     #>  [91] miniUI_0.1.2           pbapply_1.7-4          knitr_1.51            
     #>  [94] gridExtra_2.3.1        scattermore_1.2        xfun_0.59             
     #>  [97] matrixStats_1.5.0      stringi_1.8.9          lazyeval_0.2.3        

@@ -24,7 +24,7 @@ the RGraphSpace package from the package list.
 ## References
 
 Sysbiolab Team (2026). *RGraphSpace: Rendering graphs as coherent
-spatial objects in ggplot2*. R package version 1.5.4 (Doi:
+spatial objects in ggplot2*. R package version 1.5.5 (Doi:
 10.32614/CRAN.package.RGraphSpace),
 <https://CRAN.R-project.org/package=RGraphSpace>.
 

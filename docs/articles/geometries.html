@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,7 +103,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-10</h4>
+            <h4 data-toc-skip class="date">2026-09-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/geometries.Rmd" class="external-link"><code>vignettes/articles/geometries.Rmd</code></a></small>
       <div class="d-none name"><code>geometries.Rmd</code></div>
@@ -112,23 +112,26 @@ Team</h4>
     
     
 <p><br></p>
-<p><strong>Package</strong>: RGraphSpace 1.5.4</p>
+<p><strong>Package</strong>: RGraphSpace 1.5.5</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.4"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.5"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-</div>
-<div class="section level2">
-<h2 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
-</h2>
-<p>Below, we construct a star-like network with varying node sizes to
-show how the geometries stay synchronized across a wide range
-values.</p>
+<p>This tutorial demonstrates how <em>sf</em> geometries can be attached
+to graph nodes, then either fit to the nodes as markers or normalized
+into a shared coordinate space, using <code>GraphSpace</code> geometry
+accessors.</p>
+<div class="section level3">
+<h3 id="setting-basic-input-data">Setting basic input data<a class="anchor" aria-label="anchor" href="#setting-basic-input-data"></a>
+</h3>
+<p>We first construct a star-like network with nodes of different sizes.
+The graph is converted to a <code>GraphSpace</code> object and node
+coordinates are normalized.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#--- Load packages</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sf"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -137,7 +140,8 @@ values.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sysbiolab/RGraphSpace" class="external-link">"RGraphSpace"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r.igraph.org/" class="external-link">"igraph"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-spatial.github.io/sf/" class="external-link">"sf"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://patchwork.data-imaginist.com" class="external-link">"patchwork"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make a toy graph</span></span>
 <span><span class="va">gtoy_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/make_star.html" class="external-link">make_star</a></span><span class="op">(</span><span class="fl">20</span>, mode<span class="op">=</span><span class="st">"out"</span><span class="op">)</span></span>
@@ -152,7 +156,7 @@ values.</p>
 <span><span class="co"># Normalize node coordinates</span></span>
 <span><span class="va">gs_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">)</span></span></code></pre></div>
 <p>The default node markers already reflect each node’s varying
-size:</p>
+size.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot with ggplot2 and RGraphSpace geoms</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -161,8 +165,8 @@ size:</p>
 <span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="geometries_files/figure-html/Geometry%20-%202-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p></p>
-<p>Next, build a set of decorative <code>sf</code> shapes, unrelated to
-the graph, with no inherent size or position of their own:</p>
+<p>Next, we build a set of decorative <code>sf</code> shapes, unrelated
+to the graph, with no inherent size or position of their own.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Make some decorative shapes</span></span>
 <span><span class="va">shapes20</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fu"><a href="../reference/sfshape_ngons.html">sfshape_ngons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, sides <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span>, </span>
@@ -173,16 +177,23 @@ the graph, with no inherent size or position of their own:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Decorative 'sf' geometries"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="geometries_files/figure-html/Geometry%20-%203-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p></p>
-<p>Attach the shapes to the nodes, then let <code><a href="../reference/geometry-methods.html">fitGeometry()</a></code>
-position and size each one to match its node exactly:</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="fit-geometries-to-nodes">Fit geometries to nodes<a class="anchor" aria-label="anchor" href="#fit-geometries-to-nodes"></a>
+</h2>
+<p>We can attach the geometries to the graph through the
+<code><a href="../reference/GraphSpace-accessors.html">gs_geometry()</a></code> accessor, and then use
+<code><a href="../reference/geometry-methods.html">fitGeometry()</a></code> to position and size each geometry to match
+its corresponding node.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Attach the decorative shapes to the graph nodes</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs_star</span>, <span class="st">"geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">shapes20</span></span>
 <span></span>
 <span><span class="co"># Fit each shape to its node's size and position</span></span>
 <span><span class="va">gs_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geometry-methods.html">fitGeometry</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">)</span></span></code></pre></div>
-<p>The geometries now track each node’s size and position precisely,
-plotted here alongside the original markers for comparison:</p>
+<p>The geometries are now aligned with their nodes; positions follow the
+node coordinates, and sizes match the node sizes.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot nodes and fitted geometries</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -194,11 +205,90 @@ plotted here alongside the original markers for comparison:</p>
 <p><img src="geometries_files/figure-html/Geometry%20-%205-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
+<h2 id="geometry-normalization">Geometry normalization<a class="anchor" aria-label="anchor" href="#geometry-normalization"></a>
+</h2>
+<p>In the previous section, <code><a href="../reference/geometry-methods.html">fitGeometry()</a></code> positioned and
+sized decorative shapes to match their nodes. That works because the
+shapes had no coordinate space of their own. When geometries <em>do</em>
+carry their own coordinates, <code><a href="../reference/geometry-methods.html">fitGeometry()</a></code> alone cannot
+align them.</p>
+<p>Consider a scenario in which a tissue sample is both imaged and
+sampled: the samples give the node coordinates, the image structures
+give the geometries. Both map the same tissue, so they share relative
+positions, but having been mapped independently, they no longer share a
+common scale.</p>
+<p>The following example illustrates this scenario: nodes and geometries
+correspond in position but differ in scale. Node sizes are reset to a
+flat value, so we plot them over the geometries, where they stay visible
+within each shape.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gs_star2</span> <span class="op">&lt;-</span> <span class="va">gs_star</span></span>
+<span></span>
+<span><span class="co"># Reset nodeSize, so node-shape sizes no longer relate</span></span>
+<span><span class="va">gs_star2</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span></span>
+<span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star2</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">geometry</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"cyan"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Nodes and geometries\nwith unrelated sizes"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set a new scale factor to node coordinates, </span></span>
+<span><span class="co"># so node-shape positions also no longer relate.</span></span>
+<span><span class="co"># Note: this denormalizes the coordinates.</span></span>
+<span><span class="fu"><a href="../reference/GraphSpace-accessors.html">gs_scale_factor</a></span><span class="op">(</span><span class="va">gs_star2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
+<span></span>
+<span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star2</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">geometry</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"cyan"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Nodes and geometries\nin unrelated spaces"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span></span></code></pre></div>
+<p><img src="geometries_files/figure-html/Geometry%20-%206-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
+<p>Next, we try <code><a href="../reference/geometry-methods.html">fitGeometry()</a></code> with
+<code>use_node_size = FALSE</code>, repositioning each shape onto its
+node without resizing. Since we reset <code>nodeSize</code> to a flat
+value, sizing to it would be meaningless, so only position can be
+recovered.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Fit shapes to node positions, not sizes</span></span>
+<span><span class="va">gs_star2_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geometry-methods.html">fitGeometry</a></span><span class="op">(</span><span class="va">gs_star2</span>, use_node_size <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star2_fit</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">geometry</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"cyan"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Nodes and geometries aligned in position only"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="geometries_files/figure-html/Geometry%20-%207-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+<p>Next, we use
+<code>normalizeGraphSpace(..., norm.geometry = TRUE)</code>, which
+normalizes the nodes and then calls <code><a href="../reference/geometry-methods.html">normalizeGeometry()</a></code> on
+the geometry. Unlike <code><a href="../reference/geometry-methods.html">fitGeometry()</a></code>, this recovers scale
+from the geometry itself: it fits a linear relationship between the
+geometry’s centroids and the node coordinates, bringing both into one
+common space.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Normalize node coordinates and geometries</span></span>
+<span><span class="va">gs_star2_norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="va">gs_star2</span>, norm.geometry <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star2_norm</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">geometry</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"cyan"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Nodes and geometries co-normalized"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="geometries_files/figure-html/Geometry%20-%208-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <pre><code><span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -219,7 +309,8 @@ plotted here alongside the original markers for comparison:</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] sf_1.1-2          igraph_2.3.3      RGraphSpace_1.5.4 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] patchwork_1.3.2   sf_1.1-2          igraph_2.3.3      RGraphSpace_1.5.5</span></span>
+<span><span class="co">#&gt; [5] ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] tidyr_1.3.2        sass_0.4.10        generics_0.1.4     class_7.3-24      </span></span>

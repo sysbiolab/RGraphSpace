@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 ```{r Check required version, eval=TRUE, message=FALSE}
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -104,7 +104,7 @@ GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 
 # *RGraphSpace* attributes
 
-*RGraphSpace* provides two interfaces for styling nodes and edges: graph attributes (*camelCase* names such as `nodeColor` and `edgeColor`) and *ggplot2* mappings via `aes()`. The two interfaces coexist without collision; see the *Why camelCase attribute names?* section for details.
+*RGraphSpace* provides two interfaces for styling nodes and edges: graph attributes (*camelCase* names such as `nodeColor` and `edgeColor`) and *ggplot2* mappings via `aes()`. The two interfaces coexist without collision; see the [Why *camelCase* attribute names?](#camelCase) section for details.
 
 Next, we list all vertex and edge attributes that can be passed to *RGraphSpace* methods.
 
@@ -266,7 +266,7 @@ ggplot(gs) +
   geom_nodespace(aes(fill = node_var))
 ```
 
-# Why *camelCase* attribute names?
+# Why *camelCase* attribute names? {#camelCase}
 
 The node and edge attribute names above (`nodeFillColor`, `nodeSize`, etc.) are deliberately distinct from their *ggplot2* counterparts (`fill`, `size`, etc.). This is not a stylistic choice, it is a functional boundary between two different aesthetic interfaces.
 

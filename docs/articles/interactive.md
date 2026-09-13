@@ -1,12 +1,12 @@
 # Interactive visualization
 
-  
-**Package**: RGraphSpace 1.5.4
+\
+**Package**: RGraphSpace 1.5.5
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -116,7 +116,7 @@ plotGraphSpace(gtoy1_2, node.labels = TRUE)
 
 ------------------------------------------------------------------------
 
-  
+\
 
 ## Fine-tuning large graphs
 
@@ -195,7 +195,7 @@ plotGraphSpace(gtoy2_2, node.labels = FALSE)
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -216,7 +216,7 @@ plotGraphSpace(gtoy2_2, node.labels = FALSE)
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RedeR_3.8.1       RGraphSpace_1.5.4 ggplot2_4.0.3    
+    #> [1] igraph_2.3.3      RedeR_3.8.1       RGraphSpace_1.5.5 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    

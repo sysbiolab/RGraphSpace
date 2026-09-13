@@ -46,7 +46,7 @@ This vignette assumes familiarity with [*Seurat*](https://satijalab.org/seurat/)
 
 ```{r Check required versions, eval=TRUE, message=FALSE}
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -92,7 +92,7 @@ unzip Xenium_V1_FF_Mouse_Brain_Coronal_Subset_CTX_HP_outs.zip
 ## Loading the dataset
 
 ```{r , eval=FALSE, message=FALSE, results='hide', include=FALSE}
-# localdir <- "~/Documents/RWork/xPackages/GraphSpace/devel/diversos/spatial_seg/"
+# localdir <- "~/Documents/RWork/xPackages/GraphSpace/devel/diversos/spatial_seg1/"
 ```
 
 We load the Xenium dataset downloaded earlier, including its cell segmentation boundaries.

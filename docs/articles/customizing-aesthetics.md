@@ -1,12 +1,12 @@
 # Customizing Aesthetics
 
-  
-**Package**: RGraphSpace 1.5.4
+\
+**Package**: RGraphSpace 1.5.5
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -97,7 +97,7 @@ gs <- GraphSpace(gtoy2)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 7362c1e UN-- 90 329 -- 
+#> IGRAPH 7234448 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/n), edge_var (e/n)
@@ -196,7 +196,7 @@ ggplot(data = gs) +
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -217,7 +217,7 @@ ggplot(data = gs) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] ggnewscale_0.5.2  igraph_2.3.3      RGraphSpace_1.5.4 ggplot2_4.0.3    
+    #> [1] ggnewscale_0.5.2  igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    

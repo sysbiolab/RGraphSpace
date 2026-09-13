@@ -11,6 +11,8 @@
 #' \code{fitGeometry()} also rescales each geometry to match its node's
 #' \code{nodeSize}. If \code{FALSE}, only repositioning happens, each feature 
 #' keeps its current size.
+#' @param persist Logical; whether the 'fitGeometry' transformation persists 
+#' through re-normalization. Defaults \code{TRUE}.
 #' @param verbose Logical. Whether to report progress messages.
 #'
 #' @return The updated \code{GraphSpace} object.
@@ -34,17 +36,11 @@
 #' \code{\link{normalizeGraphSpace}}), and both operate on a single named
 #' geometry column, leaving any other geometry columns untouched.
 #' 
-#'
-#' @examples
-#' \dontrun{
-#' # Mode 1: geometry already spatially meaningful, just needs realigning
-#' gs_geometry(gs, "geometry") <- real_cell_boundaries
-#' gs <- normalizeGeometry(gs)
-#'
-#' # Mode 2: arbitrary shapes, sized and positioned like nodes
-#' gs_geometry(gs, "geometry") <- arbitrary_shapes
-#' gs <- fitGeometry(gs, use_node_size = TRUE)
-#' }
+#' @section Examples: 
+#' 
+#' For more information and examples, see the online tutorial:
+#' 
+#' \url{https://sysbiolab.github.io/RGraphSpace/articles/geometries.html}
 #' 
 #' @aliases normalizeGeometry
 #' @rdname geometry-methods
@@ -63,9 +59,7 @@ setMethod("normalizeGeometry", "GraphSpace",
       rlang::abort(
         message = c(
           "The 'GraphSpace' object must be normalized before normalizing geometry.",
-          "i" = "Please run 'normalizeGraphSpace(gs)' first."
-        )
-      )
+          "i" = "Please run 'normalizeGraphSpace(gs)' first.") )
     }
     
     valid_names <- .gs_geometry_cols(getGraphSpace(gs, "coords"))
@@ -86,7 +80,8 @@ setMethod("normalizeGeometry", "GraphSpace",
 #' @rdname geometry-methods
 #' @export
 setMethod("fitGeometry", "GraphSpace",
-  function(gs, name = "geometry", use_node_size = TRUE, verbose = TRUE){
+  function(gs, name = "geometry", use_node_size = TRUE, 
+    persist= TRUE, verbose = TRUE){
     
     gs <- updateGraphSpace(gs)
     
@@ -94,12 +89,13 @@ setMethod("fitGeometry", "GraphSpace",
     
     .validate_gs_args("singleString", "name", name)
     .validate_gs_args("singleLogical", "use_node_size", use_node_size)
+    .validate_gs_args("singleLogical", "persist", persist)
     .validate_gs_args("singleLogical", "verbose", verbose)
     
     valid_names <- .gs_geometry_cols(getGraphSpace(gs, "nodes"))
     
     if(name %in% valid_names){
-      gs <- .gs_fit_geometry(gs, name, use_node_size, verbose)
+      gs <- .gs_fit_geometry(gs, name, use_node_size, persist, verbose)
     } else {
       rlang::warn(
         sprintf("Name '%s' not a valid geometry in the `gs` object", name))
@@ -171,13 +167,15 @@ setMethod("fitGeometry", "GraphSpace",
 
 #-------------------------------------------------------------------------------
 .gs_fit_geometry <- function(x, name, use_node_size = TRUE,
-  verbose = TRUE) {
+  persist = TRUE, verbose = TRUE) {
 
   if (use_node_size && anyNA(x$nodeSize)) {
     rlang::abort(
       "nodeSize contains NA; every node needs a size to fit geometry to.")
   }
   
+  slots <- if(persist) "coords&nodes" else "nodes" 
+    
   geom <- x@nodes[[name]]
   
   if (use_node_size) {
@@ -220,7 +218,8 @@ setMethod("fitGeometry", "GraphSpace",
   targets <- sf::st_cast(sf::st_sfc(
     sf::st_multipoint(as.matrix(x@nodes[, c("x","y")]))), "POINT")
   geom_fixed <- (sf::st_geometry(scaled) - centroids) + targets
-  x <- .add_node_geometry(x, name, geom_fixed, slots = "nodes", verbose = FALSE)
+  x <- .add_node_geometry(x, name, geom_fixed, 
+    slots = slots, verbose = FALSE)
 
   x
   
@@ -252,19 +251,20 @@ setMethod("fitGeometry", "GraphSpace",
   
   slots <- match.arg(slots)
   
-  if (inherits(value, "sf")) {
-    value <- sf::st_geometry(value)
-  } else if (is.list(value) && length(value) > 0 ) {
-    bl <- vapply(value, inherits, logical(1), what = "sfg")
-    if(all(bl)){
-      value <- sf::st_sfc(value)
-    }
-  }
-  
-  if (!inherits(value, "sfc")) {
+  if (!.is_valid_geometry(value)){
     rlang::abort(sprintf(
       "'value' must be an 'sfc' geometry column, not '%s'.",
       paste(class(value), collapse = "/")))
+  }
+  
+  if (inherits(value, "sfc")) {
+    # already an sfc geometry column; keep as-is
+  } else if (inherits(value, "sf")) {
+    value <- sf::st_geometry(value)
+    .check_sfc(value)
+  } else {
+    value <- sf::st_sfc(value)
+    .check_sfc(value)
   }
   
   if(length(value) != gs_vcount(x)){
@@ -279,9 +279,11 @@ setMethod("fitGeometry", "GraphSpace",
     rlang::warn(
       message = c(
         sprintf("'%s' contains invalid geometries.", name),
-        "i" = sprintf("%d of %d geometries failed 'sf::st_is_valid()'.", n_bad, length(valid)),
-        "i" = "Downstream operations (plotting, transforms) may error or behave unexpectedly.",
-        "*" = sprintf("Consider 'sf::st_make_valid(%s)' before assigning.", name)
+        "i" = sprintf("%d of %d geometries failed 'sf::st_is_valid()'.", 
+          n_bad, length(valid)),
+        "i" = "Downstream operations may error or behave unexpectedly.",
+        "*" = sprintf("Consider 'sf::st_make_valid(%s)' before assigning.", 
+          name)
       )
     )
   }
@@ -300,11 +302,28 @@ setMethod("fitGeometry", "GraphSpace",
 
 #-------------------------------------------------------------------------------
 #' @keywords internal
-.is_valid_geometry <- function(value){
-  c1 <- inherits(value, "sfc") || inherits(value, "sf")
-  c2 <- (is.list(value) && length(value) > 0 && all(vapply(value,
-    inherits, logical(1), "sfg")))
-  c1 || c2
+.check_sfc <- function(value){
+  if(!inherits(value, "sfc")){
+    rlang::abort("Attempt to convert 'value' to an 'sfc' geometry failed.")
+  }
 }
 
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.is_geometry <- function(value){
+  inherits(value, "sfc") || inherits(value, "sf")
+}
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.is_sfg_list <- function(value) {
+  is.list(value) && length(value) > 0 && 
+    all(vapply(value, inherits, logical(1), "sfg"))
+}
+
+#-------------------------------------------------------------------------------
+#' @keywords internal
+.is_valid_geometry <- function(value){
+  .is_geometry(value) || .is_sfg_list(value)
+}
 

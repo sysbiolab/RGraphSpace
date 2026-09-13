@@ -2,11 +2,18 @@
 \title{RGraphSpace News}
 \encoding{UTF-8}
 
-\section{CHANGES IN VERSION 1.5.4 (2026-09-06)}{
+\section{CHANGES IN VERSION 1.5.5 (2026-09-12)}{
   \itemize{
-    \item Address issues identified during the JOSS review.
-    \item Added a GitHub Actions workflow running 'R CMD check'.
-    \item Improvements to documentation, codebase, and unit tests.
+    \item Improved the geometry accessors and interface.
+    \item Improved documentation and expanded unit tests.
+  }
+}
+
+\section{CHANGES IN VERSION 1.5.4 (2026-09-6)}{
+  \itemize{
+    \item Addressed issues identified during the JOSS review.
+    \item Added a GitHub workflow running 'R CMD check'.
+    \item Improved documentation, codebase, and unit tests.
   }
 }
 
@@ -20,7 +27,7 @@
   \itemize{
     \item Implement support for sf geometry.
     \item Implement rotate, flip, and transpose helpers.
-    \item Improve subset, crop, and coordinate normalization.
+    \item Improved subset, crop, and coordinate normalization.
   }
 }
 

@@ -1,12 +1,12 @@
 # Building a GraphSpace
 
-  
-**Package**: RGraphSpace 1.5.4
+\
+**Package**: RGraphSpace 1.5.5
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH 01f41f6 DN-- 5 4 -- 
+#> IGRAPH b3cc96f DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -141,8 +141,8 @@ GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 attributes (*camelCase* names such as `nodeColor` and `edgeColor`) and
 *ggplot2* mappings via
 [`aes()`](https://ggplot2.tidyverse.org/reference/aes.html). The two
-interfaces coexist without collision; see the *Why camelCase attribute
-names?* section for details.
+interfaces coexist without collision; see the [Why *camelCase* attribute
+names?](#camelCase) section for details.
 
 Next, we list all vertex and edge attributes that can be passed to
 *RGraphSpace* methods.
@@ -399,7 +399,7 @@ sources define the same aesthetic, the following priority applies
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -420,7 +420,7 @@ sources define the same aesthetic, the following priority applies
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.4 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     tidyr_1.3.2       

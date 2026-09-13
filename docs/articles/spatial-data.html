@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,7 +103,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-10</h4>
+            <h4 data-toc-skip class="date">2026-09-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/spatial-data.Rmd" class="external-link"><code>vignettes/articles/spatial-data.Rmd</code></a></small>
       <div class="d-none name"><code>spatial-data.Rmd</code></div>
@@ -111,7 +111,7 @@ Team</h4>
 
     
     
-<p><strong>Package</strong>: RGraphSpace 1.5.4 <br></p>
+<p><strong>Package</strong>: RGraphSpace 1.5.5 <br></p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -144,7 +144,7 @@ Before proceeding, ensure that all packages described in the <a href="install.ht
 installed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check versions</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.4"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.5"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -362,7 +362,7 @@ data</em></a> tutorial.</p>
 </h2>
 <pre><code><span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -386,7 +386,7 @@ data</em></a> tutorial.</p>
 <span><span class="co">#&gt; [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 </span></span>
 <span><span class="co">#&gt; [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    </span></span>
 <span><span class="co">#&gt; [5] Seurat_5.5.1.9001         SeuratObject_5.4.0       </span></span>
-<span><span class="co">#&gt; [7] sp_2.2-1                  RGraphSpace_1.5.4        </span></span>
+<span><span class="co">#&gt; [7] sp_2.2-1                  RGraphSpace_1.5.5        </span></span>
 <span><span class="co">#&gt; [9] ggplot2_4.0.3            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
@@ -411,7 +411,7 @@ data</em></a> tutorial.</p>
 <span><span class="co">#&gt;  [55] tools_4.6.1            vipor_0.4.7            lmtest_0.9-40         </span></span>
 <span><span class="co">#&gt;  [58] otel_0.2.0             beeswarm_0.4.0         httpuv_1.6.17         </span></span>
 <span><span class="co">#&gt;  [61] future.apply_1.20.2    goftest_1.2-3          glue_1.8.1            </span></span>
-<span><span class="co">#&gt;  [64] nlme_3.1-170           promises_1.5.0         grid_4.6.1            </span></span>
+<span><span class="co">#&gt;  [64] nlme_3.1-171           promises_1.5.0         grid_4.6.1            </span></span>
 <span><span class="co">#&gt;  [67] Rtsne_0.17             cluster_2.1.8.2        reshape2_1.4.5        </span></span>
 <span><span class="co">#&gt;  [70] generics_0.1.4         gtable_0.3.6           spatstat.data_3.1-9   </span></span>
 <span><span class="co">#&gt;  [73] tidyr_1.3.2            data.table_1.18.4      tidygraph_1.3.1       </span></span>
@@ -419,7 +419,7 @@ data</em></a> tutorial.</p>
 <span><span class="co">#&gt;  [79] RANN_2.6.2             pillar_1.11.1          stringr_1.6.0         </span></span>
 <span><span class="co">#&gt;  [82] spam_2.11-4            RcppHNSW_0.7.0         later_1.4.8           </span></span>
 <span><span class="co">#&gt;  [85] splines_4.6.1          dplyr_1.2.1            lattice_0.23-1        </span></span>
-<span><span class="co">#&gt;  [88] survival_3.8-9         deldir_2.0-4           tidyselect_1.2.1      </span></span>
+<span><span class="co">#&gt;  [88] survival_3.8-11        deldir_2.0-4           tidyselect_1.2.1      </span></span>
 <span><span class="co">#&gt;  [91] miniUI_0.1.2           pbapply_1.7-4          knitr_1.51            </span></span>
 <span><span class="co">#&gt;  [94] gridExtra_2.3.1        scattermore_1.2        xfun_0.59             </span></span>
 <span><span class="co">#&gt;  [97] matrixStats_1.5.0      stringi_1.8.9          lazyeval_0.2.3        </span></span>

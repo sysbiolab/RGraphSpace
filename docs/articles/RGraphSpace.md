@@ -1,7 +1,7 @@
 # Getting started with RGraphSpace
 
-  
-**Package**: RGraphSpace 1.5.4
+\
+**Package**: RGraphSpace 1.5.5
 
 ## Overview
 
@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH a104c47 DN-- 5 4 -- 
+#> IGRAPH 22d404a DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -363,7 +363,7 @@ If you use *RGraphSpace*, please cite:
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -384,7 +384,7 @@ If you use *RGraphSpace*, please cite:
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.4 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     tidyr_1.3.2       

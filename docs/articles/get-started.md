@@ -1,7 +1,7 @@
 # Getting Started with RGraphSpace
 
-  
-**Package**: RGraphSpace 1.5.4
+\
+**Package**: RGraphSpace 1.5.5
 
 For a self-contained introduction that works offline, run
 **vignette(“RGraphSpace”)** after installing the package.

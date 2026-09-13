@@ -1,6 +1,6 @@
 # Working with nested geometries and high-resolution images
 
-**Package**: RGraphSpace 1.5.4  
+**Package**: RGraphSpace 1.5.5\
 
 ## Overview
 
@@ -47,7 +47,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -463,7 +463,7 @@ for an overview of the available graph transformations).
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -486,7 +486,7 @@ for an overview of the available graph transformations).
     #> other attached packages:
     #> [1] patchwork_1.3.2                 terra_1.9-34                   
     #> [3] sf_1.1-2                        SpatialFeatureExperiment_1.14.0
-    #> [5] RGraphSpace_1.5.4               ggplot2_4.0.3                  
+    #> [5] RGraphSpace_1.5.5               ggplot2_4.0.3                  
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3          rstudioapi_0.19.0          
@@ -524,7 +524,7 @@ for an overview of the available graph transformations).
     #>  [65] units_1.0-1                 vipor_0.4.7                
     #>  [67] otel_0.2.0                  beeswarm_0.4.0             
     #>  [69] R.oo_1.27.1                 glue_1.8.1                 
-    #>  [71] h5mread_1.4.0               nlme_3.1-170               
+    #>  [71] h5mread_1.4.0               nlme_3.1-171               
     #>  [73] EBImage_4.54.0              rhdf5filters_1.24.0        
     #>  [75] grid_4.6.1                  generics_0.1.4             
     #>  [77] gtable_0.3.6                R.methodsS3_1.8.2          
@@ -534,7 +534,7 @@ for an overview of the available graph transformations).
     #>  [85] BiocGenerics_0.58.1         pillar_1.11.1              
     #>  [87] limma_3.68.4                splines_4.6.1              
     #>  [89] dplyr_1.2.1                 lattice_0.23-1             
-    #>  [91] survival_3.8-9              deldir_2.0-4               
+    #>  [91] survival_3.8-11             deldir_2.0-4               
     #>  [93] tidyselect_1.2.1            SingleCellExperiment_1.34.0
     #>  [95] locfit_1.5-9.12             scuttle_1.22.0             
     #>  [97] sfheaders_0.4.5             knitr_1.51                 

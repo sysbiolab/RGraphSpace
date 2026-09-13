@@ -1,6 +1,6 @@
 # Spatial-segmented data with Seurat and RGraphSpace
 
-**Package**: RGraphSpace 1.5.4  
+**Package**: RGraphSpace 1.5.5\
 
 ## Overview
 
@@ -37,7 +37,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.5"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -237,7 +237,7 @@ p1 + p2 +
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -259,7 +259,7 @@ p1 + p2 +
     #> 
     #> other attached packages:
     #> [1] patchwork_1.3.2    sf_1.1-2           Seurat_5.5.1.9001  SeuratObject_5.4.0
-    #> [5] sp_2.2-1           RGraphSpace_1.5.4  ggplot2_4.0.3     
+    #> [5] sp_2.2-1           RGraphSpace_1.5.5  ggplot2_4.0.3     
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.19.0      jsonlite_2.0.0        
@@ -283,7 +283,7 @@ p1 + p2 +
     #>  [55] classInt_0.4-11        units_1.0-1            tools_4.6.1           
     #>  [58] vipor_0.4.7            lmtest_0.9-40          otel_0.2.0            
     #>  [61] beeswarm_0.4.0         httpuv_1.6.17          future.apply_1.20.2   
-    #>  [64] goftest_1.2-3          glue_1.8.1             nlme_3.1-170          
+    #>  [64] goftest_1.2-3          glue_1.8.1             nlme_3.1-171          
     #>  [67] promises_1.5.0         grid_4.6.1             Rtsne_0.17            
     #>  [70] cluster_2.1.8.2        reshape2_1.4.5         generics_0.1.4        
     #>  [73] gtable_0.3.6           spatstat.data_3.1-9    class_7.3-24          
@@ -292,7 +292,7 @@ p1 + p2 +
     #>  [82] RANN_2.6.2             pillar_1.11.1          stringr_1.6.0         
     #>  [85] spam_2.11-4            RcppHNSW_0.7.0         later_1.4.8           
     #>  [88] splines_4.6.1          dplyr_1.2.1            lattice_0.23-1        
-    #>  [91] survival_3.8-9         deldir_2.0-4           tidyselect_1.2.1      
+    #>  [91] survival_3.8-11        deldir_2.0-4           tidyselect_1.2.1      
     #>  [94] miniUI_0.1.2           pbapply_1.7-4          knitr_1.51            
     #>  [97] gridExtra_2.3.1        scattermore_1.2        xfun_0.59             
     #> [100] matrixStats_1.5.0      stringi_1.8.9          lazyeval_0.2.3        

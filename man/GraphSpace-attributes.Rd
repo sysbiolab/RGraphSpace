@@ -35,9 +35,6 @@ Access and modify individual components of a
 applied to the internal graph representation and propagated to
 downstream components.
 }
-\details{
-For ...
-}
 \examples{
 library(RGraphSpace)
 library(igraph)

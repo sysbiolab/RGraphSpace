@@ -34,7 +34,7 @@ coordinates, for two different situations."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +95,13 @@ coordinates, for two different situations.</p>
 <span><span class="fu">normalizeGeometry</span><span class="op">(</span><span class="va">gs</span>, name <span class="op">=</span> <span class="st">"geometry"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'GraphSpace'</span></span>
-<span><span class="fu">fitGeometry</span><span class="op">(</span><span class="va">gs</span>, name <span class="op">=</span> <span class="st">"geometry"</span>, use_node_size <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">fitGeometry</span><span class="op">(</span></span>
+<span>  <span class="va">gs</span>,</span>
+<span>  name <span class="op">=</span> <span class="st">"geometry"</span>,</span>
+<span>  use_node_size <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  persist <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -120,6 +126,11 @@ coordinates, for two different situations.</p>
 <code>nodeSize</code>. If <code>FALSE</code>, only repositioning happens, each feature
 keeps its current size.</p></dd>
 
+
+<dt id="arg-persist">persist<a class="anchor" aria-label="anchor" href="#arg-persist"></a></dt>
+<dd><p>Logical; whether the 'fitGeometry' transformation persists
+through re-normalization. Defaults <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -143,21 +154,15 @@ each shape so its diameter matches <code>nodeSize</code>.</p>
 <code><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></code>), and both operate on a single named
 geometry column, leaving any other geometry columns untouched.</p>
     </div>
-
     <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Mode 1: geometry already spatially meaningful, just needs realigning</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">real_cell_boundaries</span></span></span>
-<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">normalizeGeometry</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Mode 2: arbitrary shapes, sized and positioned like nodes</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"geometry"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">arbitrary_shapes</span></span></span>
-<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">fitGeometry</span><span class="op">(</span><span class="va">gs</span>, use_node_size <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
+    <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h2>
+
+
+
+<p>For more information and examples, see the online tutorial:</p>
+<p><a href="https://sysbiolab.github.io/RGraphSpace/articles/geometries.html">https://sysbiolab.github.io/RGraphSpace/articles/geometries.html</a></p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

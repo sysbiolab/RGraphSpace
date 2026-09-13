@@ -41,10 +41,6 @@ gs_edge_attr(x, name, ...) <- value
 
   Replacement value for the selected slot or attribute.
 
-## Details
-
-For ...
-
 ## Examples
 
 ``` r

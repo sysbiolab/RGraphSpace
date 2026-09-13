@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
-  
-**Package**: RGraphSpace 1.5.4
+\
+**Package**: RGraphSpace 1.5.5
 
 ## Overview
 
@@ -385,7 +385,7 @@ repository.
 
     #> R version 4.6.1 (2026-06-24)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.4 LTS
+    #> Running under: Ubuntu 24.04.5 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -409,7 +409,7 @@ repository.
     #>  [1] airportr_0.1.3      flightsbr_1.1.10999 geometry_0.5.2     
     #>  [4] maps_3.4.3          sf_1.1-2            ggraph_2.2.2       
     #>  [7] dplyr_1.2.1         tidygraph_1.3.1     igraph_2.3.3       
-    #> [10] RGraphSpace_1.5.4   ggplot2_4.0.3      
+    #> [10] RGraphSpace_1.5.5   ggplot2_4.0.3      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] tidyselect_1.2.1   viridisLite_0.4.3  vipor_0.4.7        farver_2.1.2      
