@@ -89,7 +89,7 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 If you use *RGraphSpace*, please cite:
 
 Sysbiolab Team (2026). *RGraphSpace: Rendering graphs as coherent
-spatial objects in ggplot2*. R package version 1.5.4 (Doi:
+spatial objects in ggplot2*. R package version 1.5.5 (Doi:
 10.32614/CRAN.package.RGraphSpace),
 <https://CRAN.R-project.org/package=RGraphSpace>.
 
@@ -97,6 +97,27 @@ spatial objects in ggplot2*. R package version 1.5.4 (Doi:
 
 The *RGraphSpace* package is distributed under
 [Artistic-2.0](https://www.r-project.org/Licenses/Artistic-2.0)
+
+### Community support and contributions
+
+- **Where do I report bugs?** Simply [open an
+  issue](https://github.com/sysbiolab/RGraphSpace/issues) on GitHub.
+
+- **How do I contribute to the package?** If you have an idea (but no
+  code yet), [open an
+  issue](https://github.com/sysbiolab/RGraphSpace/issues) on GitHub. If
+  you want to contribute with a specific feature and have the code
+  ready, fork the repository, add your code, and create a pull request.
+
+- **Do you need support?** The easiest way is to [open an
+  issue](https://github.com/sysbiolab/RGraphSpace/issues). This also
+  makes your question and its answer available to others who may
+  encounter similar problems.
+
+- **Code of Conduct:** Please note that the RGraphSpace project follows
+  the [Contributor Code of
+  Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
+  By contributing to this project, you agree to abide by its terms.
 
 ### References
 
