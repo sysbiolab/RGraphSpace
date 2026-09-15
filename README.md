@@ -114,8 +114,8 @@ The *RGraphSpace* package is distributed under
   makes your question and its answer available to others who may
   encounter similar problems.
 
-- **Code of Conduct:** Please note that the RGraphSpace project follows
-  the [Contributor Code of
+- Please note that the RGraphSpace project follows the [Contributor Code
+  of
   Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
   By contributing to this project, you agree to abide by its terms.
 
