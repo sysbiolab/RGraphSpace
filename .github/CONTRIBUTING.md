@@ -31,7 +31,7 @@ See [how to create a great issue](https://code-review.tidyverse.org/issues/) for
 
 ### Code style
 
-*  We use camelCase S4 generics, 4-space indentation, and base-R idiom throughout.
+* Because RGraphSpace integrates different systems, we use more than one style. The main `GraphSpace` methods are S4 generics and follow [S4 class style](https://adv-r.hadley.nz/s4.html). Whenever possible, S3 accessors follow the tidyverse [style guide](https://style.tidyverse.org/syntax.html); accessors also use the `gs_*` prefix to reduce the risk of name conflicts with other packages, particularly the graph-analysis packages commonly used alongside RGraphSpace. Functions that build on ggplot2 `geoms` follow the [ggplot2 style](https://style.tidyverse.org/ggplot2.html). Graph attributes use camelCase to coexist with ggplot2 aesthetics, serving as a functional boundary between two different aesthetic interfaces (see [Why camelCase attribute names?](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.html#camelCase)).
 
 *  We use [roxygen2](https://cran.r-project.org/package=roxygen2), with [Markdown syntax](https://cran.r-project.org/web/packages/roxygen2/vignettes/rd-formatting.html), for documentation.  
 
