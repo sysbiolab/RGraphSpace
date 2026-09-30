@@ -157,7 +157,8 @@ gs_subset_nodes <- function(x, i) {
   x <- .trim_graph_space(x, nodes_kept)
   
   validObject(x)
-  return(x)
+  
+  x
   
 }
 
@@ -185,7 +186,7 @@ gs_subset_edges <- function(x, i) {
   # Parallel edges share endpoints, so they can only be told apart
   # by identity; .etag carries that identity into edges.
   igraph::E(gg)$.etag <- seq_len(igraph::ecount(gg))
-  edges <- .build_edges(gg, simplify = .is_simplified(x))
+  edges <- .build_edges(gg)
   
   i_quo <- rlang::enquo(i)
   keep_idx <- .resolve_gs_index(i_quo, data = edges, what = "edge")
@@ -225,11 +226,12 @@ gs_subset_edges <- function(x, i) {
   gg <- igraph::delete_edge_attr(gg, ".etag")
   
   # Rebuild @edges from the updated igraph
-  x@edges <- .build_edges(gg, simplify = .is_simplified(x))
+  x@edges <- .build_edges(gg)
   x@graph <- gg
     
   validObject(x)
-  return(x)
+  
+  x
 
 }
 
@@ -344,7 +346,7 @@ gs_subset_edges <- function(x, i) {
     ))
   }
 
-  return(idx)
+  idx
 
 }
 
@@ -364,7 +366,8 @@ gs_subset_edges <- function(x, i) {
     n2 <- edges_df$name2[i]
     fwd <- igraph::get_edge_ids(g, vp = c(n1, n2), error = FALSE)
     # arrowType +/-3 signals a mutual pair: collect the reverse edge too
-    if (isTRUE(abs(edges_df$arrowType[i]) == 3L)) {
+    at <- edges_df$arrowType[i]
+    if (isTRUE(.get_emode(at) == 3L)) {
       bwd <- igraph::get_edge_ids(g, vp = c(n2, n1), error = FALSE)
       res <- c(fwd, bwd)
     } else {
@@ -411,6 +414,6 @@ gs_subset_edges <- function(x, i) {
     gs@fdata <- gs@fdata[keep, , drop = FALSE]
   }
   
-  return(gs)
+  gs
   
 }

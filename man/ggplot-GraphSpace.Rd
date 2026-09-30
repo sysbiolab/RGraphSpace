@@ -52,8 +52,6 @@ V(gtoy1)$my_node_var <- runif(vcount(gtoy1), 1, 20)
 # Create a GraphSpace object
 gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 
-\dontrun{
-
 # Example 1: Using RGraphSpace-native geoms
 # Edge clipping metadata are injected automatically
 ggplot(gs) +
@@ -74,8 +72,6 @@ ggplot(gs) +
   geom_point(aes(x, y, size = my_node_var), 
   fill = "steelblue", stroke = 2, shape = 21) +
   scale_size(range = c(2, 15))
-
-}
 
 }
 \seealso{

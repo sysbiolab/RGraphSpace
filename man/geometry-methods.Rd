@@ -59,7 +59,7 @@ Both require \code{gs} to already be normalized (see
 \code{\link{normalizeGraphSpace}}), and both operate on a single named
 geometry column, leaving any other geometry columns untouched.
 }
-\section{Examples}{
+\section{Online examples}{
 
 
 For more information and examples, see the online tutorial:
@@ -67,3 +67,39 @@ For more information and examples, see the online tutorial:
 \url{https://sysbiolab.github.io/RGraphSpace/articles/geometries.html}
 }
 
+\examples{
+if (requireNamespace("sf", quietly = TRUE)) {
+data('gtoy1', package = 'RGraphSpace')
+gs <- normalizeGraphSpace(GraphSpace(gtoy1))
+
+# Set different node sizes to test the geometry fitting
+gs$nodeShape <- 1
+gs$nodeSize <- seq_len(gs_vcount(gs)) * 5
+
+# fitGeometry(): fit arbitrary shapes to the graph layout,
+# positioning them at the nodes and scaling to nodeSize
+gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
+gs <- fitGeometry(gs)
+  
+ggplot(gs) +
+  geom_edgespace() +
+  geom_nodespace(colour = "red") +
+  geom_sf(aes(geometry = geometry), fill = "lightblue") +
+  theme_gspace_coords(is_norm = TRUE)
+ 
+# normalizeGeometry(): shapes already in raw node coordinates,
+# realigned to the normalized node frame
+raw <- getGraphSpace(gs, "coords")
+outlines <- sf::st_sfc(Map(sfshape_ngon, raw$x, raw$y, radius = 1))
+gs_geometry(gs, name = "outline") <- outlines
+gs <- normalizeGeometry(gs, name = "outline")
+
+ggplot(gs) +
+ geom_edgespace() +
+ geom_sf(aes(geometry = outline), fill = "lightblue") +
+ geom_nodespace(colour = "red", size = 5) +
+ theme_gspace_coords(is_norm = TRUE)
+
+}
+
+}

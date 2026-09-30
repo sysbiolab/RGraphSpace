@@ -1,4 +1,3 @@
-
 #-------------------------------------------------------------------------------
 #' @title Draw edge elements in a 2D graph layout
 #' 
@@ -37,8 +36,8 @@
 #' @param inherit.aes Logical. If \code{FALSE} (default), the layer will use 
 #' aesthetics defined in \code{mapping}.
 #' 
-#' @param arrow_size Numeric scaling factor controlling arrowhead 
-#' geometry (see 'details').
+#' @param arrow_size Numeric scaling factor controlling the size of edge 
+#' glyphs, such as arrowheads (see 'details').
 #' 
 #' @param arrow_offset Numeric value controlling the base offset of arrows  
 #' at edge endpoints (see 'details').
@@ -61,10 +60,12 @@
 #' angle in degrees (see 'details').
 #' 
 #' @param lineend Line end style (\code{'round'}, \code{'butt'}, 
-#' \code{'square'}). Supplied for compatibility with \link[ggplot2]{geom_segment}.
+#' \code{'square'}). Supplied for compatibility with 
+#' \link[ggplot2]{geom_segment}.
 #' 
 #' @param linejoin Line join style (\code{'round'}, \code{'mitre'}, 
-#' \code{'bevel'}). Supplied for compatibility with \link[ggplot2]{geom_segment}.
+#' \code{'bevel'}). Supplied for compatibility with 
+#' \link[ggplot2]{geom_segment}.
 #' 
 #' @param raster Logical. Should node glyphs be rasterized? 
 #' Rasterization support is based on \code{\link[ggrastr]{rasterise}}.
@@ -88,11 +89,16 @@
 #' are automatically retrieved from the \link{GraphSpace} object.
 #'
 #' \tabular{ll}{
-#'   \strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required; automatically supplied.\cr
-#'   \code{colour} \tab Edge colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{linetype} \tab Edge line type (see \link[ggplot2]{aes_linetype_size_shape}).\cr
-#'   \code{linewidth} \tab Edge line width (see \link[ggplot2]{aes_linetype_size_shape}).
+#'   \strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required; 
+#'   automatically supplied.\cr
+#'   \code{colour} \tab Edge colour 
+#'   (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{alpha} \tab Transparency 
+#'   (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{linetype} \tab Edge line type 
+#'   (see \link[ggplot2]{aes_linetype_size_shape}).\cr
+#'   \code{linewidth} \tab Edge line width 
+#'   (see \link[ggplot2]{aes_linetype_size_shape}).
 #' }
 #' 
 #' All required aesthetics are supplied from the \link{GraphSpace} object and  
@@ -102,8 +108,8 @@
 #' both graph attributes and scale training.
 #' For example: `colour = "grey"`, `linetype = 2`, `linewidth = 1`.
 #' 
-#' Arrows can be further adjusted by \code{arrow_size} and \code{arrow_offset} 
-#' arguments (see *details*).
+#' Edge glyphs (arrowheads and other end symbols) can be further adjusted by 
+#' \code{arrow_size} and \code{arrow_offset} arguments (see *details*).
 #' 
 #' @section Two aesthetic interfaces:
 #' 
@@ -130,29 +136,43 @@
 #' 
 #' \tabular{ll}{
 #'   \strong{\code{label}} \tab Required to activate label rendering.\cr
-#'   \code{label_colour}   \tab Label text colour (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_alpha}    \tab Transparency (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_fill}     \tab Background colour (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_size}     \tab Font size (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_angle}    \tab Rotation angle (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_hjust}    \tab Horizontal justification (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_vjust}    \tab Vertical justification (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_lwd}      \tab Border linewidth (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_lty}      \tab Border linetype (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_family}   \tab Font family (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_fontface} \tab Font face (see \code{\link[ggplot2]{geom_label}}).\cr
-#'   \code{label_lineheight} \tab Line height (see \code{\link[ggplot2]{geom_label}}).
+#'   \code{label_colour}   \tab Label text colour 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_alpha}    \tab Transparency 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_fill}     \tab Background colour 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_size}     \tab Font size 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_angle}    \tab Rotation angle 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_hjust}    \tab Horizontal justification 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_vjust}    \tab Vertical justification 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_lwd}      \tab Border linewidth 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_lty}      \tab Border linetype 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_family}   \tab Font family 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_fontface} \tab Font face 
+#'   (see \code{\link[ggplot2]{geom_label}}).\cr
+#'   \code{label_lineheight} \tab Line height 
+#'   (see \code{\link[ggplot2]{geom_label}}).
 #' }
 #' 
 #' @details
 #' 
-#' **arrow_size** is a numeric scaling factor controlling arrowhead geometry. 
-#' The value is interpreted in the same numeric space as line width (`lwd`).
+#' **arrow_size** is a numeric scaling factor controlling the size of edge 
+#' glyphs (arrowheads and other end symbols). The value is interpreted in 
+#' the same numeric space as line width (`lwd`).
 #' 
 #' **arrow_offset** is an additive term that offsets arrow endpoints 
 #' uniformly in graph space and is bounded by the edge length, in NPC units.
 #' 
-#' Arrowhead types are specified in the \link{GraphSpace} constructor.
+#' The glyphs drawn at edge ends are set by the \code{arrowType} edge 
+#' attribute (see \link{GraphSpace} and \code{\link{glyph_list}}).
 #' 
 #' **curve** bows an edge through a control point displaced perpendicular
 #' to the edge, by \code{curve} times the edge length. \code{curve = 0}
@@ -206,20 +226,16 @@
 #' # Create a GraphSpace object
 #' gs <- GraphSpace(gtoy1)
 #' 
-#' \dontrun{
-#' 
 #' ggplot(gs) +
 #'   geom_edgespace() +
 #'   geom_nodespace() +
 #'   theme(aspect.ratio = 1)
 #' 
-#' }
-#' 
 #' @export
 geom_edgespace <- function(mapping = NULL, data = NULL,
   stat = StatEdgeSpace, position = "identity", ..., 
   na.rm = FALSE, show.legend = NA, inherit.aes = FALSE,
-  arrow_size = 0.5, arrow_offset = 0.01, curve = 0, 
+  arrow_size = 1, arrow_offset = 0.01, curve = 0, 
   coord_warp = 1, parallel_spread = 1, 
   loop_direction = "adaptive", 
   lineend = "butt", linejoin = "mitre",
@@ -233,8 +249,8 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
   .validate_gs_args("singlePositiveNumber", "coord_warp", coord_warp)
   .validate_gs_args("singlePositiveNumber", "parallel_spread", parallel_spread)
   if(is.character(loop_direction)){
-    loop_direction <- match.arg(loop_direction, 
-      choices = c("adaptive", "opposite"))
+    loop_direction <- rlang::arg_match(loop_direction,
+      values = c("adaptive", "opposite"))
   } else {
     .validate_gs_args("singleNumber", "loop_direction", loop_direction)
   }
@@ -304,9 +320,10 @@ geom_edgespace <- function(mapping = NULL, data = NULL,
 #' to resolve value priority:
 #' \enumerate{
 #'   \item **Explicit Mapping**: Values defined by the user inside `aes()`.
-#'   \item **Fixed Parameters**: Constant values passed as arguments in the `geom_edgespace()` call.
-#'   \item **Graph Attributes**: Original attributes stored within the GraphSpace 
-#'   object, retrieved from the data columns.
+#'   \item **Fixed Parameters**: Constant values passed as arguments in the 
+#'   `geom_edgespace()` call.
+#'   \item **Graph Attributes**: Original attributes stored within the 
+#'   GraphSpace object, retrieved from the data columns.
 #' }
 #'
 #' @format A \code{ggproto} object.
@@ -318,11 +335,10 @@ StatEdgeSpace <- ggproto(
     "edgeLineType", "edgeAlpha"),
   extra_params = c("na.rm", ".user_aes"),
   finish_layer = function(data, params) {
-    data <- .finish_edgespace(data, params)
-    return(data)
+    .finish_edgespace(data, params)
   },
   compute_panel = function(data, scales){
-    return(data)
+    data
   }
 )
 
@@ -345,8 +361,9 @@ edgespace_handler <- function() {
       } else {
         rlang::warn(
           message = c(
-            "x" = "`edgespace_handler()` found no edges in the input data.",
-            "i" = "Input must be a 'GraphSpace', 'igraph', 'tbl_graph', or 'layout_ggraph'."
+          "x" = "`edgespace_handler()` found no edges in the input data.",
+          "i" = paste0("Input must be a 'GraphSpace', 'igraph', ",
+            "'tbl_graph', or 'layout_ggraph'.")
           )
         )
         data <- NULL
@@ -354,13 +371,14 @@ edgespace_handler <- function() {
     } else if (!inherits(data, "gs_edges")){
       rlang::abort(
         message = c(
-          "x" = "`edgespace_handler()` received an unsupported object type.",
-          "i" = "Input must be a 'GraphSpace', 'igraph', 'tbl_graph', or 'layout_ggraph'."
+        "x" = "`edgespace_handler()` received an unsupported object type.",
+          "i" = paste0("Input must be a 'GraphSpace', 'igraph', ",
+            "'tbl_graph', or 'layout_ggraph'.")
         )
       )
     }
     
-    return(data)
+    data
     
   }
   
@@ -368,7 +386,7 @@ edgespace_handler <- function() {
   
   class(fn) <- c("edgespace_handler", class(fn))
   
-  return(fn)
+  fn
   
 }
 
@@ -377,7 +395,8 @@ edgespace_handler <- function() {
   
   x <- y <- xend <- yend <- vertex1 <- vertex2 <- arrowType <- NULL
   
-  offset_start <- offset_end <- curve_weight <- away_angle <- is_multiple <- is_loop <- NULL
+  offset_start <- offset_end <- curve_weight <- away_angle <- 
+    is_multiple <- is_loop <- NULL
   
   edgeColor <- edgeLineWidth <- edgeLineType <- edgeAlpha <- NULL
   
@@ -406,7 +425,7 @@ edgespace_handler <- function() {
     mapping <- utils::modifyList(utils::modifyList(
       default_mapping, optional_mapping), mapping)
   }
-  return(mapping)
+  mapping
 }
 
 #-------------------------------------------------------------------------------
@@ -449,7 +468,7 @@ edgespace_handler <- function() {
   edges$is_loop <- edges$is_loop %||% FALSE
   edges$away_angle <- edges$away_angle %||% NA_real_
   
-  return(edges)
+  edges
   
 }
 
@@ -499,7 +518,7 @@ GeomEdgeSpace <- ggproto(
   ),
   
   draw_panel = function(self, data, panel_params, coord,   
-    arrow_size = 0.5, arrow_offset = 0.01, curve = 0, coord_warp = 1,
+    arrow_size = 1, arrow_offset = 0.01, curve = 0, coord_warp = 1,
     parallel_spread = 1, loop_direction = "adaptive", lineend = "butt", 
     linejoin = "mitre", na.rm = FALSE, raster = FALSE, 
     dpi = NULL, dev = "cairo", scale = 1, .size_unit = "npc", 
@@ -668,18 +687,18 @@ GeomEdgeSpace <- ggproto(
   
   l_data$colour <- l_data$label_colour %||% l_data$colour %||% "black"
   l_data$alpha <- l_data$label_alpha %||% l_data$alpha %||% NA_real_
-  l_data$fill <- l_data$label_fill %||% "white"
   
-  if (!is.null(l_data$label_size)) l_data$size <- l_data$label_size
-  if (!is.null(l_data$label_angle)) l_data$angle <- l_data$label_angle
-  if (!is.null(l_data$label_hjust)) l_data$hjust <- l_data$label_hjust
-  if (!is.null(l_data$label_vjust)) l_data$vjust <- l_data$label_vjust
-  if (!is.null(l_data$label_lwd)) l_data$linewidth <- l_data$label_lwd
-  if (!is.null(l_data$label_lty)) l_data$linetype <- l_data$label_lty
-  if (!is.null(l_data$label_family)) l_data$family <- l_data$label_family
-  if (!is.null(l_data$label_fontface)) l_data$fontface <- l_data$label_fontface
-  if (!is.null(l_data$label_lineheight)) l_data$lineheight <- l_data$label_lineheight
-  
+  # If NULL, fallback to GeomLabel defaults
+  l_data$fill <- l_data$label_fill
+  l_data$linewidth <- l_data$label_lwd
+  l_data$linetype <- l_data$label_lty
+  l_data$size <- l_data$label_size
+  l_data$angle <- l_data$label_angle
+  l_data$hjust <- l_data$label_hjust
+  l_data$vjust <- l_data$label_vjust
+  l_data$family <- l_data$label_family
+  l_data$fontface <- l_data$label_fontface
+  l_data$lineheight <- l_data$label_lineheight
   l_data <- ggplot2::GeomLabel$use_defaults(l_data)
   
   ggplot2::GeomLabel$draw_panel(l_data, panel_params, coord)
@@ -728,7 +747,7 @@ GeomEdgeSpace <- ggproto(
   edges$x <- I(lx)
   edges$y <- I(ly)
   
-  return(edges)
+  edges
   
 }
 
@@ -755,14 +774,20 @@ GeomEdgeSpace <- ggproto(
     return( zeroGrob() )
   }
   
+  sz2npc <- .size_to_npc(size_unit)
+  
   edges$colour <- scales::alpha(edges$colour, edges$alpha)
   
   grobs <- list()
   
   is_curved <- .is_bezier_edge(edges)
   
+  # Edge lines end where their glyphs say (e.g. at the back of an open
+  # outline); glyphs are still placed at the original ends
+  lines <- .trim_edge_lines(edges, sz2npc)
+  
   if (any(!is_curved & !edges$is_loop)) {
-    straight <- edges[!is_curved & !edges$is_loop, , drop = FALSE]
+    straight <- lines[!is_curved & !edges$is_loop, , drop = FALSE]
     gr <- grid::segmentsGrob(
       x0 = straight$x,
       y0 = straight$y,
@@ -779,40 +804,51 @@ GeomEdgeSpace <- ggproto(
   }
   
   if (any(is_curved)) {
-    curved <- edges[is_curved, , drop = FALSE]
+    curved <- lines[is_curved, , drop = FALSE]
     gr <- .curve_grob(curved, lineend = lineend, linejoin = linejoin)
     gr$name <- grobName(gr, "curvededges")
     grobs[[length(grobs) + 1]] <- gr
   }
   
   if (any(edges$is_loop)) {
-    loopy <- edges[edges$is_loop, , drop = FALSE]
+    loopy <- lines[edges$is_loop, , drop = FALSE]
     gr <- .loop_grob(loopy, lineend = lineend, linejoin = linejoin)
     gr$name <- grobName(gr, "loopedges")
     grobs[[length(grobs) + 1]] <- gr
   }
   
-  arrows <- .get_arrows(edges, size_unit)
-  
-  if (!is.null(arrows)) {
-    gr <- grid::segmentsGrob(
-      x0 = arrows$a_data$x,
-      y0 = arrows$a_data$y,
-      x1 = arrows$a_data$xend,
-      y1 = arrows$a_data$yend,
-      arrow = arrows$a_pars,
-      gp = ggplot2::gg_par(
-        col = arrows$a_data$colour,
-        lwd = arrows$a_data$linewidth, lty = "solid",
-        lineend = lineend, linejoin = linejoin
-      )
-    )
+  arrow_grobs <- .get_glyph_grobs(edges, sz2npc)
+  for (gr in arrow_grobs) {
     gr$name <- grobName(gr, "arrows")
     grobs[[length(grobs) + 1]] <- gr
   }
   
   do.call(grid::gList, grobs)
   
+}
+
+#-------------------------------------------------------------------------------
+# Pull each line end back by the distance its glyph asks for
+# (.glyph_line_trim()), along the same direction the glyph is oriented by.
+# For curved edges and loops, only the end points move; the control points
+# stay, so the curve still leaves along its tangent.
+.trim_edge_lines <- function(edges, sz2npc) {
+  d0 <- .glyph_line_trim(edges, "start", sz2npc)
+  d1 <- .glyph_line_trim(edges, "end", sz2npc)
+  if (!any(d0 != 0 | d1 != 0)) return(edges)
+  # on edges too short for both trims, scale them down to meet in the middle
+  L <- sqrt((edges$xend - edges$x)^2 + (edges$yend - edges$y)^2)
+  over <- (d0 + d1) > L & !edges$is_loop
+  if (any(over)) {
+    f <- ifelse(over, L / (d0 + d1), 1)
+    d0 <- d0 * f
+    d1 <- d1 * f
+  }
+  edges$x <- edges$x + edges$px0 * d0
+  edges$y <- edges$y + edges$py0 * d0
+  edges$xend <- edges$xend - edges$px1 * d1
+  edges$yend <- edges$yend - edges$py1 * d1
+  edges
 }
 
 #-------------------------------------------------------------------------------
@@ -894,7 +930,7 @@ GeomEdgeSpace <- ggproto(
 .geom_remap_edge_offsets <- function(edges, nodes, size_unit){
   
   # size-to-npc conversion factor (1 mm expressed in npc units)
-  sz2npc <- grid::convertWidth(unit(1, "mm"), unitTo = "npc", valueOnly = T)
+  sz2npc <- .size_to_npc("mm")
   
   if(size_unit=="mm"){
     # ggplot2 node 'size' in 'mm', scaled to 'npc'
@@ -910,7 +946,7 @@ GeomEdgeSpace <- ggproto(
   edges$offset_start <- n_offsets[edges[["vertex1"]]] + e_offsets
   edges$offset_end <- n_offsets[edges[["vertex2"]]] + e_offsets
   
-  return(edges)
+  edges
   
 }
 
@@ -921,7 +957,7 @@ GeomEdgeSpace <- ggproto(
 .geom_adj_edge_offsets <- function(edges, size_unit){
   
   # size-to-npc conversion factor (1 mm expressed in npc units)
-  sz2npc <- grid::convertWidth(unit(1, "mm"), unitTo = "npc", valueOnly = T)
+  sz2npc <- .size_to_npc("mm")
   
   if(size_unit=="mm"){
     # ggplot2 node 'size' in 'mm', scaled to 'npc'
@@ -938,7 +974,7 @@ GeomEdgeSpace <- ggproto(
   edges$offset_end <- (edges[["offset_end"]]/2 * n_offsets) + 
     lwd_offset + stroke_offset
   
-  return(edges)
+  edges
   
 }
 
@@ -957,6 +993,11 @@ GeomEdgeSpace <- ggproto(
 # Unlike 'stroke', no half-width correction is required.
 .lwd_offset_estimate <- function(sz2npc){
   0.75 * sz2npc
+}
+
+.size_to_npc <- function(size_unit = "npc") {
+  grid::convertWidth(grid::unit(1, size_unit), unitTo = "npc",
+    valueOnly = TRUE)
 }
 
 ################################################################################
@@ -1007,71 +1048,42 @@ GeomEdgeSpace <- ggproto(
 ################################################################################
 .geom_set_arrows <- function(edges, size_unit, loop_direction = "adaptive"){
   edges <- .adj_arrow_offset(edges)
-  edges <- .add_arrow_angle(edges)
+  edges <- .add_arrow_token(edges)
   edges <- .adj_arrow_size(edges, size_unit)
   edges <- .adj_arrow_position(edges, size_unit, loop_direction)
-  return(edges)
+  edges
 }
 
 #-------------------------------------------------------------------------------
 .adj_arrow_offset <- function(edges){
   edges$offset_start <- edges[["offset_start"]] + edges[["arrow_offset"]]
   edges$offset_end <- edges[["offset_end"]] + edges[["arrow_offset"]]
-  return(edges)
+  edges
 }
 
 #-------------------------------------------------------------------------------
-.add_arrow_angle <- function(edges){
-  .a_start <- function(atype){
-    a_angle <- rep(NA, length(atype))
-    a_angle[atype %in% c(0, 1, -1)] <- 0
-    a_angle[atype %in% c(2, 3, -4)] <- 30
-    a_angle[atype %in% c(-2, -3, 4)] <- 90
-    a_angle
-  }
-  .a_end <- function(atype){
-    a_angle <- rep(NA, length(atype))
-    a_angle[atype %in% c(0, 2, -2)] <- 0
-    a_angle[atype %in% c(1, 3, 4)] <- 30
-    a_angle[atype %in% c(-1, -3, -4)] <- 90
-    a_angle
-  }
-  edges$arrowAngleStart <- .a_start(edges$arrowType)
-  edges$arrowAngleEnd <- .a_end(edges$arrowType)
-  return(edges)
+# Per-end glyph tokens from arrowType;
+# either token codes or integer codes are read straight 
+# from .arrowtype_to_tokens().
+.add_arrow_token <- function(edges){
+  tk <- .arrowtype_to_tokens(edges$arrowType)
+  edges$arrowTokenStart <- tk[, "start"]
+  edges$arrowTokenEnd <- tk[, "end"]
+  edges
 }
 
 #-------------------------------------------------------------------------------
 .adj_arrow_size <- function(edges, size_unit){
   
   if(size_unit == "mm"){
-    # ggplot2 'size' in 'mm', scaled to 'npc'
-    edges$arrow_size <- edges[["arrow_size"]] * ggplot2::.pt
-    lwidth <- edges$linewidth
+    # see .gs_pch() and .gs_asz()
+    edges$arrow_size <- edges[["arrow_size"]] * .gs_pch() * .gs_asz()
   } else {
     # gspace 'size' in [0, 100], transformed to 'npc'
-    edges$arrow_size <- edges[["arrow_size"]] * ggplot2::.pt * 
-      .gs_nsz_to_npc()
-    lwidth  <- edges$linewidth * .gs_nsz_to_npc()
+    edges$arrow_size <- edges[["arrow_size"]] * .gs_pch_to_npc()
   }
-  edges$arrowSize1 <- edges[["arrow_size"]]
-  edges$arrowSize2 <- edges[["arrow_size"]]
-  a_theta <- 60 # default arrowhead opening angle;
-  # grid::arrow() expects the half-angle
-  a_theta <- a_theta / 180 * pi
-  idx <- edges$arrowAngleStart==90
-  if(any(idx, na.rm = TRUE)){
-    l <- edges$arrowSize1[idx]/2
-    b <- sqrt( (l^2 + l^2) - (2 * l^2) * cos(a_theta))
-    edges$arrowSize1[idx] <- b + lwidth[idx]/4
-  }
-  idx <- edges$arrowAngleEnd==90
-  if(any(idx, na.rm = TRUE)){
-    l <- edges$arrowSize2[idx]/2
-    b <- sqrt( (l^2 + l^2) - (2 * l^2) * cos(a_theta))
-    edges$arrowSize2[idx] <- b + lwidth[idx]/4
-  }
-  return(edges)
+  
+  edges
 }
 
 #-------------------------------------------------------------------------------
@@ -1087,15 +1099,15 @@ GeomEdgeSpace <- ggproto(
   edges$cx2 <- NA_real_; edges$cy2 <- NA_real_
   
   if (any(!edges$is_loop)) {
-    edges[!edges$is_loop, ] <- .adjust_arrow_position_chord(edges[!edges$is_loop, , 
-      drop = FALSE])
+    edges[!edges$is_loop, ] <- .adjust_arrow_position_chord(
+      edges[!edges$is_loop, , drop = FALSE])
   }
   if (any(edges$is_loop)) {
-    edges[edges$is_loop, ] <- .adjust_arrow_position_loop(edges[edges$is_loop, , 
-      drop = FALSE], size_unit, loop_direction)
+    edges[edges$is_loop, ] <- .adjust_arrow_position_loop(
+      edges[edges$is_loop, , drop = FALSE], size_unit, loop_direction)
   }
   
-  return(edges)
+  edges
 }
 
 #-------------------------------------------------------------------------------
@@ -1152,7 +1164,7 @@ GeomEdgeSpace <- ggproto(
   edges$px1 <- geo$px1
   edges$py1 <- geo$py1
   
-  return(edges)
+  edges
 }
 
 #-------------------------------------------------------------------------------
@@ -1160,9 +1172,9 @@ GeomEdgeSpace <- ggproto(
 .loop_pars <- list(
   anchor_span = 25 * pi / 180, # half-angle of the node-side "neck"
   size_scale = 3,              # loop bulge size, relative to node radius
-  arrow_curvature_frac = 0.4,  # max fraction of curvature radius the arrowhead may occupy
+  arrow_curvature_frac = 0.4,  # max fraction of curvature the arrow may occupy
   shape_frac = 1,              # min bulge depth, as a multiple of neck width
-  arrow_stagger = 0.4          # extra arrow-floor margin per rank step within a side
+  arrow_stagger = 0.4          # extra arrow-floor margin per step within a side
 )
 
 # Self-loop geometry. `d` (bulge depth) is the largest of three floors:
@@ -1182,7 +1194,8 @@ GeomEdgeSpace <- ggproto(
 # unaffected by the anchor choice -- since center, anchor, and control
 # point are always collinear, this keeps arrowhead orientation exactly
 # radial either way, with no extra logic needed.
-.adjust_arrow_position_loop <- function(loops, size_unit, loop_direction = "adaptive"){
+.adjust_arrow_position_loop <- function(loops, size_unit, 
+  loop_direction = "adaptive"){
   
   r <- pmax(loops$offset_start, loops$offset_end, 1e-6, na.rm = TRUE)
   
@@ -1230,11 +1243,12 @@ GeomEdgeSpace <- ggproto(
   has_end_arrow <- emode %in% c(1, 3)
   
   arrow_len <- pmax(
-    ifelse(has_start_arrow, loops$arrowSize1, 0),
-    ifelse(has_end_arrow, loops$arrowSize2, 0)
+    ifelse(has_start_arrow, loops$arrow_size, 0),
+    ifelse(has_end_arrow, loops$arrow_size, 0)
   )
-  arrow_len <- grid::convertWidth(grid::unit(arrow_len, size_unit),
-    unitTo = "npc", valueOnly = TRUE)
+
+  arrow_len <- arrow_len * .size_to_npc(size_unit)
+  
   sin2s <- sin(2 * .loop_pars$anchor_span)
   Rmin <- arrow_len / .loop_pars$arrow_curvature_frac
   B <- Rmin * sin2s
@@ -1242,7 +1256,8 @@ GeomEdgeSpace <- ggproto(
   
   rank_in_group <- stats::ave(rank_value, rank_key,
     FUN = function(w) rank(w, ties.method = "first"))
-  d_arrow_min <- d_arrow_min * (1 + .loop_pars$arrow_stagger * (rank_in_group - 1))
+  d_arrow_min <- d_arrow_min * (1 + .loop_pars$arrow_stagger * 
+      (rank_in_group - 1))
   
   d <- d_requested + pmax(d_shape_min, d_arrow_min)
   
@@ -1272,7 +1287,7 @@ GeomEdgeSpace <- ggproto(
   loops$cx <- loops$cx1
   loops$cy <- loops$cy1
   
-  return(loops)
+  loops
 }
 
 ################################################################################
@@ -1322,72 +1337,3 @@ GeomEdgeSpace <- ggproto(
   )
   
 }
-
-################################################################################
-### Arrow constructor
-################################################################################
-.get_arrows <- function(edges, size_unit = "mm"){
-  
-  edges$pos <- seq_len(nrow(edges))
-  emode <- .get_emode(edges$arrowType)
-  
-  idx_start <- emode==2 | emode==3
-  idx_end <- emode==1 | emode==3
-  
-  if (!any(idx_start) && !any(idx_end)) {
-    return(NULL)
-  }
-  
-  #--- get arrow starts
-  if(any(idx_start)){
-    starts <- .arrow_starts(edges[idx_start,], size_unit)
-  } else {
-    starts <- NULL
-  }
-  
-  #--- get arrow ends
-  if(any(idx_end)){
-    ends <- .arrow_ends(edges[idx_end,], size_unit)
-  } else {
-    ends <- NULL
-  }
-  
-  #--- merge arrow data
-  a_data <- rbind(starts, ends)
-  a_data <- a_data[order(a_data$pos), ]
-  
-  #--- construct grid's arrow
-  a_pars <- grid::arrow(angle = a_data$arrowAngle,
-    type = "open", ends = a_data$ends,
-    length = grid::unit(a_data$arrowSize, size_unit))
-  
-  list(a_data = a_data, a_pars = a_pars)
-}
-
-.arrow_starts <- function(edges, size_unit){
-  a_data <- edges
-  a_data$ends <- "first"
-  a_data$arrowSize <- a_data$arrowSize1
-  a_data$arrowAngle <- a_data$arrowAngleStart
-  # a tiny segment (0.01 npc) is used to anchor the arrowhead
-  a_data$xend <- a_data$x + (a_data$px0 * 0.01)
-  a_data$yend <- a_data$y + (a_data$py0 * 0.01)
-  a_data <- a_data[,c("x", "y", "xend", "yend", "arrowSize", 
-    "arrowAngle", "colour", "linewidth", "pos", "ends")]
-  return(a_data)
-}
-
-.arrow_ends <- function(edges, size_unit){
-  a_data <- edges
-  a_data$ends <- "last"
-  a_data$arrowSize <- a_data$arrowSize2
-  a_data$arrowAngle <- a_data$arrowAngleEnd
-  # a tiny segment (0.01 npc) is used to anchor the arrowhead
-  a_data$x <- a_data$xend - (edges$px1 * 0.01)
-  a_data$y <- a_data$yend - (edges$py1 * 0.01)
-  a_data <- a_data[,c("x", "y", "xend", "yend", "arrowSize", 
-    "arrowAngle", "colour", "linewidth", "pos", "ends")]
-  return(a_data)
-}
-
-

@@ -73,6 +73,19 @@ Assay data are stored in the \code{data} slot of the resulting
 \code{GraphSpace} object. Node metadata from \code{x@meta.data} are
 appended to the node table.
 }
+\examples{
+data('gtoy1', package = 'RGraphSpace')
+
+# From igraph or tidygraph objects
+gs <- as.GraphSpace(gtoy1)
+gs <- as.GraphSpace(tidygraph::as_tbl_graph(gtoy1))
+
+# From a data.frame of node coordinates (a graph without edges)
+df <- data.frame(x = c(0, 1, 2), y = c(0, 1, 0),
+  row.names = c("a", "b", "c"))
+gs <- as.GraphSpace(df)
+
+}
 \seealso{
 \code{\linkS4class{GraphSpace}}
 }

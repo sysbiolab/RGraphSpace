@@ -104,7 +104,7 @@ NULL
 as_colorraster <- function(x, palette = hcl.colors(30), na.color = "white") {
   
   if(!is.numeric(x)){
-    stop("'x' must be a numeric vector or matrix.", call. = FALSE)
+    rlang::abort("'x' must be a numeric vector or matrix.")
   }
   .validate_gs_colors("allColors", "palette", palette)
   .validate_gs_colors("singleColor", "na.color", na.color)
@@ -169,7 +169,7 @@ as_colorraster <- function(x, palette = hcl.colors(30), na.color = "white") {
 #' @export
 sfshape_ngon <- function(cx = 0, cy = 0, sides = 5, radius = 1) {
   
-  if (sides < 3) stop("A polygon needs at least 3 sides.")
+  if (sides < 3) rlang::abort("A polygon needs at least 3 sides.")
   
   .gs_require_sf("building geometries")
   
@@ -255,7 +255,7 @@ sfshape_ngons <- function(n, sides = c(3, 5, 7), radius = 0.3, spacing = NULL) {
 sfshape_star <- function(cx = 0, cy = 0, points = 5, 
   r_outer = 0.3, r_inner = 0.1) {
   
-  if (points < 2) stop("A star needs at least 2 points.")
+  if (points < 2) rlang::abort("A star needs at least 2 points.")
   
   .gs_require_sf("building geometries")
   

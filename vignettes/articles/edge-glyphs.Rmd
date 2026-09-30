@@ -1,0 +1,317 @@
+---
+title: "Edge glyphs: Drawing symbols at edge ends"
+author: "Sysbiolab Team"
+date: "`r Sys.Date()`"
+bibliography: ../bibliography.bib
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  collapse = TRUE,
+  comment = "#>",
+  fig.align = "center",
+  fig.width = 7,
+  fig.height = 5,
+  out.width = "90%"
+  )
+```
+
+<br/>
+
+**Package**: RGraphSpace `r packageVersion('RGraphSpace')`
+
+```{r Check required version, eval=TRUE, message=FALSE}
+# Check required version
+if (packageVersion("RGraphSpace") < "1.5.6"){
+  message("Need to update 'RGraphSpace' for this vignette")
+  remotes::install_github("sysbiolab/RGraphSpace")
+}
+```
+
+# Overview
+
+Edge glyphs are the symbols drawn at the ends of an edge: arrowheads, bars, and other shapes. In *RGraphSpace*, each edge carries an `arrowType` code that names one glyph for its source end and one for its target end, and `geom_edgespace()` draws them wherever the edge meets a node.
+
+```{r Load packages, eval=TRUE, message=FALSE}
+#--- Load packages
+library("RGraphSpace")
+library("igraph")
+library("ggplot2")
+library("patchwork")
+```
+
+```{r, eval=FALSE, message=FALSE, echo=FALSE, include=FALSE, purl=FALSE}
+png("./vignettes/articles/cards/edge_glyphs.png", width = 3, height = 3,
+  units = "in", res = 200)
+plot(GlyphTriangle1, GlyphTriangle2,
+  GlyphDiamond1, GlyphDiamond2, GlyphChevron1, GlyphChevron2,
+  GlyphDoubleArrow1, GlyphBarredArrow2,
+  GlyphBlock1, GlyphBlock2, GlyphCircle1, GlyphCircle2,
+  GlyphSquare1, GlyphSquare2, GlyphStar1, GlyphStar2,
+  GlyphCross1, GlyphCross2, GlyphArrowBar1, GlyphNotch1,
+  ncol = 4, margin = 0.1, colour = "#abccde")
+dev.off()
+```
+
+# Three levels of glyph codes
+
+Glyphs can be set at three levels, from the simplest to the most expressive:
+
+1. **Integer codes**, such as `1` (arrow) or `-1` (bar), for common edge forms;
+2. **Basic token codes**, such as `"-->"` or `"--|"`, which provide a visual representation of the edge;
+3. **Extended token codes**, such as `"01<->01"`, which add modifiers (two-digit numbers) to select specific glyphs from the package's collection.
+
+Start with integer codes, use basic token codes when you want to see the edge form in the code, and add modifiers when you need the extended vocabulary.
+
+## Set up a graph for demonstration
+
+Here we use an undirected bipartite graph, where glyphs can be placed at either end of an edge. The `arrowType` attribute can be set on the *igraph* object before constructing the `GraphSpace`, or modified afterwards using `gs_edge_attr()`.
+
+```{r , eval=TRUE, message=TRUE}
+# Create a toy undirected bipartite graph with 10 nodes and 5 edges
+g_bip <- make_bipartite_graph(1:10 %% 2, 1:10)
+
+# Make a GraphSpace with a bipartite layout, rotated so that the
+# bipartite connections run from left to right
+gs_bip <- GraphSpace(g_bip, layout = layout_as_bipartite(g_bip))
+gs_bip <- rotateGraphSpace(gs_bip)
+
+# Undirected graphs default to "---" (no glyphs)
+gs_edge_attr(gs_bip, "arrowType")
+```
+
+## Integer codes
+
+Integer codes are the simplest way to set the common edge forms, built from arrows and bars:
+
+* `0`, no glyphs;
+* `1`, arrow at the end, and `-1`, bar at the end;
+* `2`, arrow at the start, and `-2`, bar at the start;
+* `3`, arrows at both ends, and `-3`, bars at both ends;
+* `4`, bar at the start and arrow at the end, and `-4`, arrow at the start and bar at the end.
+
+Directed graphs accept `0`, `1`, and `-1`, since only the end glyph is drawn; undirected graphs accept all nine codes. Integer codes are stored as given, so `gs_edge_attr()` returns the integers rather than their token codes.
+
+```{r , eval=TRUE, message=TRUE}
+# Integer codes, one per edge
+gs_edge_attr(gs_bip, "arrowType") <- c(1, -1, 0, 3, -3)
+gs_edge_attr(gs_bip, "arrowType")
+```
+
+```{r , eval=TRUE, message=TRUE}
+# Plot the graph; each edge is labelled with its integer code
+ggplot(gs_bip) + 
+  geom_edgespace(aes(label = arrowType), 
+    label_size = 3, linewidth = 0.7, 
+    arrow_size = 3, colour = "red") + 
+  geom_nodespace(aes(label = name)) + 
+  theme_void() + theme(aspect.ratio = 1)
+```
+
+## Basic token codes
+
+Each integer code has an equivalent basic token code, which draws the same form as a picture of the edge: `">"` is an arrow, `"|"` a bar, and `"-"` no glyph. A code composes two tokens around a shaft as *start*`-`*end*: the left token is drawn at the source end, the right token at the target end. The start token is written mirrored, so `1` is `"-->"`, `2` is `"<--"`, and `3` is `"<->"` (see `?GraphSpace` for the full table).
+
+```{r , eval=TRUE, message=TRUE}
+# The same forms as basic token codes
+gs_edge_attr(gs_bip, "arrowType") <- c("-->", "--|", "---", "<->", "|-|")
+gs_edge_attr(gs_bip, "arrowType")
+```
+
+## Extended token codes
+
+Extended token codes add a *modifier* to a basic token: a two-digit glyph number that refines the basic glyph into a shape of the same kind. The basic token sets the kind, arrow (`">"`) or terminal (`"|"`), and the modifier selects the glyph within it: `">01"` is a triangle, `">02"` an open triangle, and `"|04"` a ring. Because modifiers are numbered within each kind, the same number selects different glyphs for arrows and terminals (`">07"` is a chevron, `"|07"` a star). At the start of a code the modifier comes first, so `"01<->01"` has triangles at both ends.
+
+The levels can be mixed in the same attribute, so a single edge can be upgraded without rewriting the others:
+
+```{r , eval=TRUE, message=TRUE}
+# Integer and token codes mixed in one attribute; all are stored as
+# token codes
+gs_edge_attr(gs_bip, "arrowType") <- c(1, -1, 0, "01<->01", "04|-|04")
+gs_edge_attr(gs_bip, "arrowType")
+```
+
+The next sections describe the glyph collection behind extended token codes.
+
+# The edge glyph collection
+
+The `glyph_list()` function returns the edge glyphs available for use in `arrowType` codes. The glyphs are organized into three groups: the basic glyphs, arrows, and terminals. Arrows and terminals are numbered within their kind; most shapes come in pairs of consecutive numbers, a filled form (odd) followed by its open form (even), and shapes with a single form follow the pairs.
+
+```{r , eval=TRUE, message=TRUE}
+# List the glyph vocabulary
+glyph_lt <- glyph_list()
+
+glyph_lt
+```
+
+```{r , eval=TRUE, out.width = "100%"}
+# Plot the glyph collection
+plot(glyph_lt, by_group = TRUE)
+```
+
+# Writing token codes
+
+A token starts with `">"` for an arrow or `"|"` for a terminal, optionally followed by a two-digit modifier. Codes combine a start and an end token, for example:
+
+* `"-->"`: arrow at the end;
+* `"<->"`: arrows at both ends;
+* `"01<->01"`: triangles at both ends;
+* `"|->06"`: bar at the start, open diamond at the end;
+* `"|03"`: circle at the end (stored as `"--|03"`).
+
+A few rules apply to all token codes, basic or extended:
+
+* **Standalone tokens** are read as the end token, e.g. `">01"` is stored as `"-->01"`.
+* **Canonical form**: codes are stored with a single-dash shaft, so `"<-->01"` is stored as `"<->01"`.
+* **Directed graphs** draw only the end glyph, so a start glyph is dropped with a warning; their default code is `"-->"`. Undirected graphs draw both ends; their default is `"---"`.
+* **Invalid codes** fall back to the default, with a warning that explains the problem.
+
+# Showing all glyphs on a graph
+
+Next, we build a directed star graph with one edge per token, so that every glyph is drawn at the tip of an edge. Each standalone token is read as the end glyph of its edge.
+
+```{r , eval=TRUE, message=TRUE}
+# Make a directed star graph, pointing outward from a central node
+gtoy_star <- make_star(nrow(glyph_lt)+1, mode="out")
+  
+# Assign glyph tokens to arrow types
+E(gtoy_star)$arrowType <- glyph_lt$token
+
+# Colour edges by glyph group; glyphs take attributes of their edge
+groups <- unique(glyph_lt$group)
+group_cols <- setNames(c("red","orange","green4"), groups)
+E(gtoy_star)$edgeColor <- group_cols[glyph_lt$group]
+
+# Make a GraphSpace, with a star layout
+gs_star <- GraphSpace(gtoy_star, 
+  layout = layout_as_star(gtoy_star))
+
+gs_star
+```
+
+```{r , eval=TRUE, message=TRUE, out.width = "100%"}
+# Plot the graph with glyphs; 'arrow_size' scales all glyphs, 
+# and the 'label' aesthetic labels each edge with its token
+ggplot(gs_star) + 
+  geom_edgespace(aes(label = arrowType), label_size = 3, 
+    linewidth = 0.7, arrow_size = 3) + 
+  geom_nodespace() + 
+  theme_gspace_coords(theme = theme_bw())
+```
+
+
+# Assigning glyphs to edges
+
+Here we reuse the bipartite graph from the first section, now with extended token codes at both ends of its edges.
+
+```{r , eval=TRUE, message=TRUE}
+# Assign one arrowType code per edge: the left token is drawn at the
+# source end, the right token at the target end
+gs_edge_attr(gs_bip, "arrowType") <- 
+  c("->", "-|", "03|-|05", "10|->06", "04|->10")
+
+# Codes are stored in canonical form
+gs_edge_attr(gs_bip, "arrowType")
+```
+
+```{r , eval=TRUE, message=TRUE}
+# Plot the graph with the assigned glyphs
+ggplot(gs_bip) + 
+  geom_edgespace(aes(label = arrowType), 
+    label_size = 3, linewidth = 0.7, 
+    arrow_size = 3, colour = "blue") + 
+  geom_nodespace(aes(label = name)) + 
+  theme_void() + theme(aspect.ratio = 1)
+```
+
+<br/>
+
+# Explaining glyphs with a legend
+
+Glyphs are not mapped to *ggplot2* aesthetics, so they never appear in a *ggplot2* legend. Instead, `glyph_legend()` draws a standalone legend with the same renderer used for edges, which can be shown on its own or added to a plot.
+
+```{r Glyph legend - 1, eval=TRUE, message=TRUE, fig.height=2}
+# Get interaction types
+interactions <- unique(gs_edge_attr(gs_bip, "arrowType"))
+
+# Build the legend; optionally match edge colour and line width
+leg <- glyph_legend(interactions, legend_title = "Interaction", 
+  colour = "blue", linewidth = 0.7, ncol = 1)
+plot(leg)
+```
+
+```{r Glyph legend - 2, eval=TRUE, message=TRUE, fig.height=2}
+# Name each interaction type after its meaning
+names(interactions) <- c('Activation' , 'Inhibition', 'Binding', 
+  'Unknown', 'Transport')
+
+# Build the legend
+leg <- glyph_legend(interactions, legend_title = "Interaction", 
+  colour = "blue", linewidth = 0.7, ncol = 1)
+plot(leg)
+```
+
+The legend is a *grid* object, so it can be combined with a *ggplot* using the *patchwork* package.
+
+```{r Plot with legend, eval=TRUE, message=TRUE, out.width="100%"}
+# Add the legend to the right of the plot (requires patchwork)
+p <- ggplot(gs_bip) + 
+  geom_edgespace(linewidth = 0.7, arrow_size = 3, colour = "blue") + 
+  geom_nodespace(aes(label = name)) + 
+  theme_void() + theme(aspect.ratio = 1)
+p + leg + patchwork::plot_layout(widths = c(1, 0.2))
+```
+
+
+# Building new glyphs
+
+Every glyph is a *prototype*, a small object holding a fixed shape, how it is drawn, and the token that selects it. The built-in prototypes are exported objects (`GlyphArrow1`, `GlyphChevron1`, ...; see `?glyph_collection`).
+
+The `shape` is a two-column matrix of points, described relative to the edge end rather than to the plot. The first column (x) gives the position along the edge, while the second (y) specifies the transverse offset across the edge, with positive and negative values on opposite sides. The origin is where the edge meets the node.
+
+```{r , eval=TRUE, message=TRUE}
+# The arrowhead, with one row per point (arm, tip, arm)
+GlyphArrow$shape
+```
+
+The same kind of matrix can be drawn in different ways, specified by the prototype's drawing primitive. The arrowhead is a `"polyline"`, so its points are joined in order, from arm to tip to arm. The cross is drawn as `"segments"`, which takes points in pairs, each pair forming one stroke.
+
+```{r , eval=TRUE, message=TRUE}
+# The cross, with rows 1-2 forming one stroke 
+# and rows 3-4 the other
+GlyphCross1$shape
+GlyphCross1$draw
+```
+
+Prototypes can be plotted for visual inspection, one or several side by side.
+
+```{r , eval=TRUE, message=TRUE, fig.height=1}
+# Plot three built-in prototypes side by side
+plot(GlyphArrow, GlyphChevron1, GlyphCross1)
+```
+
+New prototypes are built with `glyph_proto()`, from a shape, a drawing primitive, and a token; open outlines can also set an `offset`, so the edge line stops at the outline instead of crossing it.
+
+```{r , eval=TRUE, message=TRUE, fig.height=1}
+# A new glyph (reversed triangle)
+m <- rbind(c(-1, 0), c(0, 0.6), c(0, -0.6))
+new_glyph <- glyph_proto(shape = m, token = ">91", draw = "polygon")
+
+# Compare with the built-in triangle
+plot(GlyphTriangle1, new_glyph)
+```
+
+Glyphs built this way are for previewing only and cannot be used in `arrowType` codes, because the vocabulary is fixed when the package loads. New glyphs are added as package contributions, in the `gspace-glyph-collection.R` source file, which contains the glyph collection; see `?glyph_proto` for details on the available drawing primitives and token rules.
+
+<br/>
+
+# Session information
+```{r label='Session information', eval=TRUE, echo=FALSE}
+sessionInfo()
+```

@@ -115,12 +115,12 @@ gs <- normalizeGraphSpace(gs)
 # Add a raster image
 gs_image(gs) <- as_colorraster(volcano)
 
-if (FALSE) { # \dontrun{
 # Pass a GraphSpace object directly
 ggplot(gs) +
   annotation_gspace_image(gs) +
   geom_edgespace() +
   geom_nodespace()
+
 
 # Extract the image explicitly
 ggplot(gs) +
@@ -128,11 +128,12 @@ ggplot(gs) +
   geom_edgespace() +
   geom_nodespace()
 
+
 # Dim the background and flip vertically
 ggplot(gs) +
   annotation_gspace_image(gs, opacity = 0.5, flip.v = TRUE) +
   geom_edgespace() +
   geom_nodespace()
+
   
-} # }
 ```

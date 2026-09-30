@@ -1,4 +1,3 @@
-
 #-------------------------------------------------------------------------------
 #' @title Accessors for GraphSpace objects
 #' 
@@ -160,7 +159,7 @@ setMethod("gs_nodes", "GraphSpace", function(x, ...) {
     class(nodes) <- c("gs_nodes", class(nodes))
   }
   
-  return(nodes)
+  nodes
   
 })
 
@@ -178,7 +177,7 @@ setMethod("gs_edges", "GraphSpace", function(x, ...) {
   attr(edges, "gs_id") <- x@uuid
   attr(edges, "gs_handler_type") <- "edge"
   class(edges) <- c("gs_edges", class(edges))
-  return(edges)
+  edges
 })
 
 #' @rdname GraphSpace-accessors
@@ -206,7 +205,6 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
     x@image <- value
   } else if(is.matrix(value)){
     .validate_gs_args("numeric_mtx", "value", value)
-    .validate_gs_args("numeric_mtx", "value", value)
     rlang::inform(
       c("i" = "Rasterizing numeric matrix.",
         "*" = "Values outside [0,1] are rescaled before conversion.")
@@ -226,7 +224,7 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
     )
   }
   
-  return(x)
+  x
 })
 
 #' @rdname GraphSpace-accessors
@@ -240,7 +238,7 @@ setMethod("gs_image_maxpixels", "GraphSpace", function(x) {
 setReplaceMethod("gs_image_maxpixels", "GraphSpace", function(x, value) {
   .validate_gs_args("singleNumber", "value", value)
   x@pars$image.maxpixels <- value
-  return(x)
+  x
 })
 
 #' @rdname GraphSpace-accessors
@@ -249,7 +247,7 @@ setMethod("gs_graph", "GraphSpace", function(x) {
   g <- x@graph
   attr(g, "gs_handler_type") <- "graph"
   class(g) <- c("gs_graph", class(g))
-  return(g)
+  g
 })
 
 #' @rdname GraphSpace-accessors
@@ -270,7 +268,7 @@ setReplaceMethod("gs_fdata", "GraphSpace", function(x, value) {
   
   x <- gs_add_features(x, value)
   
-  return(x)
+  x
 })
 
 #' @rdname GraphSpace-accessors
@@ -301,7 +299,7 @@ setMethod("gs_features", "GraphSpace", function(x) {
 #' @method as.igraph GraphSpace
 #' @export
 as.igraph.GraphSpace <- function(x, ...) {
-  return(x@graph)
+  x@graph
 }
 
 #' @rdname GraphSpace-accessors

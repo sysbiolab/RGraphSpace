@@ -20,6 +20,18 @@
 #' @seealso
 #' \code{\linkS4class{GraphSpace}}
 #' 
+#' @examples
+#' data('gtoy1', package = 'RGraphSpace')
+#' 
+#' # From igraph or tidygraph objects
+#' gs <- as.GraphSpace(gtoy1)
+#' gs <- as.GraphSpace(tidygraph::as_tbl_graph(gtoy1))
+#' 
+#' # From a data.frame of node coordinates (a graph without edges)
+#' df <- data.frame(x = c(0, 1, 2), y = c(0, 1, 0),
+#'   row.names = c("a", "b", "c"))
+#' gs <- as.GraphSpace(df)
+#'
 #' @export
 as.GraphSpace <- function(x, ...) {
   UseMethod("as.GraphSpace")
@@ -198,7 +210,7 @@ as.GraphSpace.SpatialExperiment <- function(x, assay = "counts", ...) {
   fdata <- Matrix::t(fdata)
   gs_fdata(gs) <- fdata
   
-  return(gs)
+  gs
   
 }
 
@@ -231,7 +243,7 @@ as.GraphSpace.SpatialExperiment <- function(x, assay = "counts", ...) {
 as.GraphSpace.Seurat <- function(x, layer = NULL,
   space = c("embedding","spatial"), ...) {
   
-  space <- match.arg(space)
+  space <- rlang::arg_match(space)
   
   rlang::inform("Coercing 'Seurat' to 'GraphSpace'...")
   
@@ -340,7 +352,7 @@ as.GraphSpace.Seurat <- function(x, layer = NULL,
   fdata <- Matrix::t(fdata)
   gs_fdata(gs) <- fdata
   
-  return(gs)
+  gs
   
 }
 

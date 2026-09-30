@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,7 @@
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
     <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
+    <li><a class="dropdown-item" href="../articles/edge-glyphs.html">Edge glyphs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -63,6 +64,7 @@
     <li><a class="dropdown-item" href="../articles/nested-geometries.html">Nested geometries and high-resolution images</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sysbiolab/RGraphSpace/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -194,7 +196,7 @@ upper limits of the 'x' and 'y' scales.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>theme_gspace_th*()</code> return a <code>ggplot2</code> theme object.</p>
+    <p><code>theme_gspace_th*()</code> return a <code>ggplot2</code> theme object plus guides.</p>
 <p><code>theme_gspace_coords()</code> returns a list containing scale and theme
 components that can be added to a <span class="pkg">ggplot2</span> plot.</p>
 <p><code>theme_gspace_legend()</code> returns a list of theme and guide components.</p>
@@ -239,12 +241,21 @@ title, and key sizes by a single scaling factor.</p>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu">theme_gspace_coords</span><span class="op">(</span><span class="st">"th2"</span>, is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="theme_gspace-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Theme variants differ in grid lines, borders, and margins</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">+</span> <span class="fu">theme_gspace_th1</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="theme_gspace-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">+</span> <span class="fu">theme_gspace_th2</span><span class="op">(</span>bg_colour <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="theme_gspace-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">+</span> <span class="fu">theme_gspace_th3</span><span class="op">(</span>txt_size <span class="op">=</span> <span class="fl">0.8</span>, leg_size <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="theme_gspace-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Reduce legend element sizes</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">wt</span>, <span class="va">mpg</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">21</span><span class="op">)</span> <span class="op">+</span> </span></span>
 <span class="r-in"><span>  <span class="fu">theme_gspace_legend</span><span class="op">(</span><span class="fl">0.8</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="theme_gspace-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="theme_gspace-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

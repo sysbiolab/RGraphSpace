@@ -1,6 +1,6 @@
 # Spatial-segmented data with SpatialExperiment and RGraphSpace
 
-**Package**: RGraphSpace 1.5.5\
+**Package**: RGraphSpace 1.5.6\
 
 ## Overview
 
@@ -44,7 +44,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -371,7 +371,7 @@ gs_geometry(gs, "cellseg") <- sf::st_make_valid(cellseg)
     #> [11] Seqinfo_1.2.0               IRanges_2.46.0             
     #> [13] S4Vectors_0.50.1            BiocGenerics_0.58.1        
     #> [15] generics_0.1.4              MatrixGenerics_1.24.0      
-    #> [17] matrixStats_1.5.0           RGraphSpace_1.5.5          
+    #> [17] matrixStats_1.5.0           RGraphSpace_1.5.6          
     #> [19] ggplot2_4.0.3              
     #> 
     #> loaded via a namespace (and not attached):

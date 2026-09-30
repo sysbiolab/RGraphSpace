@@ -1,10 +1,12 @@
 # Getting Started with RGraphSpace
 
 \
-**Package**: RGraphSpace 1.5.5
+**Package**: RGraphSpace 1.5.6
 
 For a self-contained introduction that works offline, run
 **vignette(“RGraphSpace”)** after installing the package.
+
+## Introductory vignettes
 
 ## Introductory vignettes
 
@@ -17,10 +19,16 @@ demonstrates how to set up `geoms` to handle graph data types; [*scales
 and
 offsets*](https://sysbiolab.github.io/RGraphSpace/articles/scales-and-offsets.md)
 describes the trade-offs involved in synchronizing node and edge layers;
-[*geometries and
+[*curved edges and
+loops*](https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.md)
+shows how to draw curved, parallel, and self-loop edges; [*geometries
+and
 nodes*](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md)
-demonstrates how to attach `sf` geometries to nodes as custom markers,
-and [*GraphSpace
+demonstrates how to attach `sf` geometries to nodes as custom markers;
+[*edge
+glyphs*](https://sysbiolab.github.io/RGraphSpace/articles/edge-glyphs.md)
+introduces the symbols drawn at edge ends, from simple arrows to an
+extended glyph collection; and [*GraphSpace
 accessors*](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
 covers graph transformation functions, attribute manipulation, and the
 package’s general accessors.
@@ -54,6 +62,12 @@ package’s general accessors.
 [](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md)
 
 ###### Geometries and Nodes
+
+[![](cards/edge_glyphs.png)](https://sysbiolab.github.io/RGraphSpace/articles/edge-glyphs.md)
+
+[](https://sysbiolab.github.io/RGraphSpace/articles/edge-glyphs.md)
+
+###### Edge Glyphs
 
 [![](cards/accessors.png)](https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.md)
 

@@ -105,7 +105,7 @@
     para <- abs(para)
     lg <- abs(para - round(para)) <= .Machine$double.eps
   }
-  return(lg)
+  lg
 }
 .is_singleString <- function(para) {
   is.character(para) && length(para) == 1L && !is.na(para)
@@ -126,19 +126,19 @@
     lg <- all( abs(para - round(para)) <= .Machine$double.eps, na.rm=TRUE)
   }
   if(lg && notNA) lg <- !any(is.na(para))
-  return(lg)
+  lg
 }
 .all_numericValues <- function(para, notNA = TRUE) {
   if (length(para) == 0L) return(FALSE)
   lg <- is.numeric(para) || all(is.na(para))
   if(lg && notNA) lg <- !any(is.na(para))
-  return(lg)
+  lg
 }
 .all_characterValues <- function(para, notNA = TRUE) {
   if (length(para) == 0L) return(FALSE)
   lg <- is.character(para) || all(is.na(para))
   if(lg && notNA) lg <- !any(is.na(para))
-  return(lg)
+  lg
 }
 .is_numericVector <- function(para){
   is.vector(para) && .all_numericValues(para)

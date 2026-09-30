@@ -2,12 +2,12 @@
 
 \
 
-**Package**: RGraphSpace 1.5.5
+**Package**: RGraphSpace 1.5.6
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -54,8 +54,6 @@ gs_star$nodeSize <- seq(1, gs_vcount(gs_star) )
 gs_star <- normalizeGraphSpace(gs_star)
 ```
 
-The default node markers already reflect each node’s varying size.
-
 ``` r
 
 # Plot with ggplot2 and RGraphSpace geoms
@@ -85,11 +83,11 @@ ggplot(shapes20) + geom_sf() +
 
 ## Fit geometries to nodes
 
-We can attach the geometries to the graph through the
+We attach the geometries to the graph through the
 [`gs_geometry()`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.md)
 accessor, and then use
 [`fitGeometry()`](https://sysbiolab.github.io/RGraphSpace/reference/geometry-methods.md)
-to position and size each geometry to match its corresponding node.
+to fit each shape to its corresponding node.
 
 ``` r
 
@@ -133,23 +131,24 @@ but having been mapped independently, they no longer share a common
 scale.
 
 The following example illustrates this scenario: nodes and geometries
-correspond in position but differ in scale. Node sizes are reset to a
-flat value, so we plot them over the geometries, where they stay visible
-within each shape.
+correspond in relative position but differ in scale. Node sizes are
+reset to a flat value and a scale factor is applied to node coordinates,
+so nodes and shapes no longer match in size or position.
 
 ``` r
 
 gs_star2 <- gs_star
 
-# Reset nodeSize, so node-shape sizes no longer relate
+# Reset nodeSize to a flat value, 
+# so node-shape sizes no longer relate.
 gs_star2$nodeSize <- 2
 
 p1 <- ggplot(gs_star2) + 
-  geom_sf(aes(geometry = geometry), fill = "cyan") +
+  geom_sf(aes(geometry = geometry), fill = "blue") +
   geom_edgespace() +
-  geom_nodespace(fill = "red") +
+  geom_nodespace(fill = "cyan") +
   theme_gspace_coords(is_norm = TRUE) +
-  ggtitle("Unrelated\nnode-shape sizes")
+  ggtitle("Nodes and geometries\nwith unrelated sizes")
 
 # Set a new scale factor to node coordinates, 
 # so node-shape positions also no longer relate.
@@ -157,22 +156,23 @@ p1 <- ggplot(gs_star2) +
 gs_scale_factor(gs_star2) <- 0.2
 
 p2 <- ggplot(gs_star2) + 
-  geom_sf(aes(geometry = geometry), fill = "cyan") +
+  geom_sf(aes(geometry = geometry), fill = "blue") +
   geom_edgespace() +
-  geom_nodespace(fill = "red") +
+  geom_nodespace(fill = "cyan") +
   theme_gspace_coords(is_norm = FALSE) +
-  ggtitle("Unrelated\ncoordinate spaces")
+  ggtitle("Nodes and geometries\nin unrelated spaces")
 
+# Plot the rescaled nodes over the geometries, 
+# so they stay visible within each shape.
 p1 + p2
 ```
 
 ![](geometries_files/figure-html/Geometry%20-%206-1.png)
 
-Next, we try
-[`fitGeometry()`](https://sysbiolab.github.io/RGraphSpace/reference/geometry-methods.md)
-with `use_node_size = FALSE`, repositioning each shape onto its node
-without resizing. Since we reset `nodeSize` to a flat value, sizing to
-it would be meaningless, so only position can be recovered.
+Next, we try `fitGeometry(..., use_node_size = FALSE)`, fitting each
+shape to its node without resizing. Since we reset `nodeSize` to a flat
+value, sizing to it would be meaningless, so only position can be
+recovered.
 
 ``` r
 
@@ -180,11 +180,11 @@ it would be meaningless, so only position can be recovered.
 gs_star2_fit <- fitGeometry(gs_star2, use_node_size = FALSE)
 
 ggplot(gs_star2_fit) + 
-  geom_sf(aes(geometry = geometry), fill = "cyan") +
+  geom_sf(aes(geometry = geometry), fill = "blue") +
   geom_edgespace() +
-  geom_nodespace(fill = "red") +
+  geom_nodespace(fill = "cyan") +
   theme_gspace_coords(is_norm = FALSE) +
-  ggtitle("Shapes fit to node positions")
+  ggtitle("Nodes and geometries aligned in position only")
 ```
 
 ![](geometries_files/figure-html/Geometry%20-%207-1.png)
@@ -204,11 +204,11 @@ bringing both into one common space.
 gs_star2_norm <- normalizeGraphSpace(gs_star2, norm.geometry = TRUE)
 
 ggplot(gs_star2_norm) + 
-  geom_sf(aes(geometry = geometry), fill = "cyan") +
+  geom_sf(aes(geometry = geometry), fill = "blue") +
   geom_edgespace() +
-  geom_nodespace(fill = "red") +
+  geom_nodespace(fill = "cyan") +
   theme_gspace_coords(is_norm = TRUE) +
-  ggtitle("Co-normalized shapes and nodes")
+  ggtitle("Nodes and geometries co-normalized")
 ```
 
 ![](geometries_files/figure-html/Geometry%20-%208-1.png)
@@ -238,7 +238,7 @@ ggplot(gs_star2_norm) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] patchwork_1.3.2   sf_1.1-2          igraph_2.3.3      RGraphSpace_1.5.5
+    #> [1] patchwork_1.3.2   sf_1.1-2          igraph_2.3.3      RGraphSpace_1.5.6
     #> [5] ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):

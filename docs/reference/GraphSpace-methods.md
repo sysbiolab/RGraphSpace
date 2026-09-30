@@ -82,10 +82,10 @@ aesthetics. Users can also specify custom variables in the input graph
 to be used as aesthetics within the `ggplot2` grammar.
 
 **Arrowhead Mapping:** The `arrowType` attribute (see *Arrowhead types*
-section) allows for a mapping between symbolic aliases (such as `"-->"`)
-and internal integer codes. This is useful for assigning interaction
-types in directed or undirected graphs (e.g., activation vs.
-inhibition).
+section) sets the glyphs drawn at each edge end, as integer codes (e.g.
+`1`), basic token codes (e.g. `"-->"`), or extended token codes (e.g.
+`"04|->03"`). This is useful for assigning interaction types in directed
+or undirected graphs (e.g., activation vs. inhibition).
 
 ## Vertex attributes
 
@@ -115,8 +115,10 @@ The following attributes in `g` are evaluated by the constructor:
 
 ## Arrowhead types
 
-Arrowheads are controlled via the `arrowType` attribute using integer or
-character codes (see examples in the *RGraphSpace* vignette).
+Arrowheads and other edge glyphs are set by the `arrowType` attribute,
+at three levels, from the simplest to the most expressive: integer
+codes, basic token codes, and extended token codes. The levels can be
+mixed in the same attribute (e.g. `c("1", "-1", "01<->01")`).
 
 In directed graphs, arrows follow the edge list orientation by default,
 representing forward directions (*e.g.*, `A -> B`). While undirected
@@ -124,32 +126,61 @@ graphs do not show arrows by default, specific styles can be manually
 assigned for detailed visualization, including forward, backward, or
 bidirectional arrowheads.
 
-### Directed graphs (A -\> B):
+### Integer codes and basic token codes:
 
-|          |           |                 |
-|----------|-----------|-----------------|
-| **Code** | **Alias** | **Description** |
-| `0`      | `"---"`   | No arrow        |
-| `1`      | `"-->"`   | Forward arrow   |
-| `-1`     | `"--|"`   | Forward bar     |
+Integer codes select the basic forms, built from arrows and bars; each
+has an equivalent basic token code, which draws the same form as a
+picture of the edge. In directed graphs only the end glyph is drawn, so
+only three codes apply.
 
-### Undirected graphs (A – B):
+Directed graphs (A -\> B):
 
-|          |           |                              |
-|----------|-----------|------------------------------|
-| **Code** | **Alias** | **Description**              |
-| `0`      | `"---"`   | No arrow                     |
-| `1`      | `"-->"`   | Forward arrow                |
-| `2`      | `"<--"`   | Backward arrow               |
-| `3`      | `"<->"`   | Bidirectional arrow          |
-| `4`      | `"|->"`   | Forward arrow / backward bar |
-| `-1`     | `"--|"`   | Forward bar                  |
-| `-2`     | `"|--"`   | Backward bar                 |
-| `-3`     | `"|-|"`   | Bidirectional bar            |
-| `-4`     | `"<-|"`   | Backward arrow / forward bar |
+|             |           |                 |
+|-------------|-----------|-----------------|
+| **Integer** | **Token** | **Description** |
+| `0`         | `"---"`   | No arrow        |
+| `1`         | `"-->"`   | Forward arrow   |
+| `-1`        | `"--|"`   | Forward bar     |
+
+Undirected graphs (A – B):
+
+|             |           |                              |
+|-------------|-----------|------------------------------|
+| **Integer** | **Token** | **Description**              |
+| `0`         | `"---"`   | No arrow                     |
+| `1`         | `"-->"`   | Forward arrow                |
+| `2`         | `"<--"`   | Backward arrow               |
+| `3`         | `"<->"`   | Bidirectional arrow          |
+| `4`         | `"|->"`   | Forward arrow / backward bar |
+| `-1`        | `"--|"`   | Forward bar                  |
+| `-2`        | `"|--"`   | Backward bar                 |
+| `-3`        | `"|-|"`   | Bidirectional bar            |
+| `-4`        | `"<-|"`   | Backward arrow / forward bar |
+
+### Token codes:
+
+A token code has the form *start*`-`*end*: the `"-"` shaft separates a
+start token (drawn at the source end) from an end token (drawn at the
+target end). A basic token is `">"` (arrow), `"|"` (bar), or `"-"` (no
+glyph). A start token is written mirrored, so the code reads like the
+edge itself; `"<"` and `">"` are interchangeable, and codes are stored
+in this canonical form. In directed graphs a start glyph is dropped with
+a warning; invalid codes are replaced by the default with a warning.
+
+### Extended token codes:
+
+Adding a modifier, a two-digit glyph number, to a basic token selects an
+extended glyph from the glyph collection, e.g. `">01"` (triangle) or
+`"|04"` (circle). At the start of a code the modifier comes first, so
+`"01<->01"` has triangles at both ends and `"04|->03"` a circle and a
+harpoon. Use
+[`glyph_list`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_list.md)
+to see the available glyphs.
 
 ## See also
 
+[`geom_edgespace`](https://sysbiolab.github.io/RGraphSpace/reference/geom_edgespace.md),
+[`geom_nodespace`](https://sysbiolab.github.io/RGraphSpace/reference/geom_nodespace.md),
 [`geom_graphspace`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md),
 [`plotGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/plotGraphSpace-methods.md)
 

@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
 \
-**Package**: RGraphSpace 1.5.5
+**Package**: RGraphSpace 1.5.6
 
 ## Overview
 
@@ -28,7 +28,7 @@ are installed.
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.4"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -257,21 +257,33 @@ flight_counts <- flight_counts |>
 active_airports$departures <- tapply(flight_counts$counts,
   flight_counts$sg_iata_origem, sum)[active_airports$IATA] |>
   dplyr::coalesce(0L)
+
+# Aggregate flight counts for undirected connections
+flight_counts_undirected <- flight_counts |>
+  dplyr::transmute(
+    airport1 = pmin(sg_iata_origem, sg_iata_destino),
+    airport2 = pmax(sg_iata_origem, sg_iata_destino),
+    counts ) |>
+  dplyr::group_by(airport1, airport2) |>
+  dplyr::summarise(
+    counts = sum(counts),
+    .groups = "drop" ) |>
+  dplyr::arrange(counts)
 ```
 
 ### Building the graph
 
 With the flight and airport tables prepared, we can generate an `igraph`
 object using the flights as edges and the airports as vertices. The
-graph is directed, preserving the direction of each departure-arrival
-pair, and edge counts represent the number of flights on each unique
-route.
+graph is undirected, as departure–arrival pairs were aggregated
+regardless of direction, and edge counts represent the number of flights
+between each airport pair.
 
 ``` r
 
 # Make an igraph with flight records
-igraph_flights <- graph_from_data_frame(flight_counts,
-  directed = TRUE, vertices = active_airports)
+igraph_flights <- graph_from_data_frame(flight_counts_undirected,
+  directed = FALSE, vertices = active_airports)
 ```
 
 Although `GraphSpace` coordinates are normally rescaled to a unit
@@ -286,6 +298,9 @@ gs_flight <- GraphSpace(igraph_flights)
 # Assign latitude and longitude to coordinates
 gs_flight$x <- gs_flight$longitude
 gs_flight$y <- gs_flight$latitude
+
+# Set 'arrowType' glyphs by token values
+gs_edge_attr(gs_flight, "arrowType") <- "<->"
 ```
 
 ### Rendering over the map
@@ -409,7 +424,7 @@ repository.
     #>  [1] airportr_0.1.3      flightsbr_1.1.10999 geometry_0.5.2     
     #>  [4] maps_3.4.3          sf_1.1-2            ggraph_2.2.2       
     #>  [7] dplyr_1.2.1         tidygraph_1.3.1     igraph_2.3.3       
-    #> [10] RGraphSpace_1.5.5   ggplot2_4.0.3      
+    #> [10] RGraphSpace_1.5.6   ggplot2_4.0.3      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] tidyselect_1.2.1   viridisLite_0.4.3  vipor_0.4.7        farver_2.1.2      

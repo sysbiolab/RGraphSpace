@@ -75,7 +75,6 @@ gs <- normalizeGraphSpace(gs)
 # Add a raster image
 gs_image(gs) <- as_colorraster(volcano)
 
-\dontrun{
 # Pass a GraphSpace object directly
 ggplot(gs) +
   annotation_gspace_image(gs) +
@@ -94,7 +93,6 @@ ggplot(gs) +
   geom_edgespace() +
   geom_nodespace()
   
-}
 }
 \seealso{
 \code{\link[ggplot2]{annotation_raster}},

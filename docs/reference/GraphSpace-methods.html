@@ -32,7 +32,7 @@ GraphSpace objects."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,7 @@ GraphSpace objects."><style>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
     <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
+    <li><a class="dropdown-item" href="../articles/edge-glyphs.html">Edge glyphs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -65,6 +66,7 @@ GraphSpace objects."><style>
     <li><a class="dropdown-item" href="../articles/nested-geometries.html">Nested geometries and high-resolution images</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sysbiolab/RGraphSpace/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -113,7 +115,8 @@ vertex attributes. For graphs requiring edge definitions, use the
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
 <dd><p>An optional numeric matrix with two columns for <code>x</code> and
-<code>y</code> vertex coordinates. If provided, it overrides coordinates in <code>g</code>.</p></dd>
+<code>y</code> vertex coordinates. If provided, it overrides coordinates
+in <code>g</code>.</p></dd>
 
 
 <dt id="arg-simplify">simplify<a class="anchor" aria-label="anchor" href="#arg-simplify"></a></dt>
@@ -137,9 +140,9 @@ messages.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>GraphSpace</code> objects are designed to bridge the gap between network
-analysis (via <code>igraph</code>) and high-quality visualization (via <code>ggplot2</code>).
-The constructor ensures that all necessary aesthetics for
-<code><a href="geom_graphspace.html">geom_graphspace</a></code> are pre-processed and validated.</p>
+analysis (via <code>igraph</code>) and high-quality visualization
+(via <code>ggplot2</code>). The constructor ensures that all necessary aesthetics
+for <code><a href="geom_graphspace.html">geom_graphspace</a></code> are pre-processed and validated.</p>
 <p><strong>Coordinate System and Normalization:</strong>
 By default, the constructor expects coordinates in the <code>x</code> and <code>y</code>
 vertex attributes, along with unique IDs in the <code>name</code> vertex
@@ -161,48 +164,77 @@ variables in the input graph to be used as aesthetics within the
 <code>ggplot2</code> grammar.</p>
 <p><strong>Arrowhead Mapping:</strong>
 The <code>arrowType</code> attribute (see <em>Arrowhead types</em> section)
-allows for a mapping between symbolic aliases (such as <code>"--&gt;"</code>)
-and internal integer codes. This is useful for assigning interaction
-types in directed or undirected graphs (e.g., activation vs. inhibition).</p>
+sets the glyphs drawn at each edge end, as integer codes (e.g. <code>1</code>),
+basic token codes (e.g. <code>"--&gt;"</code>), or extended token codes (e.g.
+<code>"04|-&gt;03"</code>). This is useful for assigning interaction types in
+directed or undirected graphs (e.g., activation vs. inhibition).</p>
     </div>
     <div class="section level2">
     <h2 id="vertex-attributes">Vertex attributes<a class="anchor" aria-label="anchor" href="#vertex-attributes"></a></h2>
 
 
 <p>The following attributes in <code>g</code> are evaluated by the constructor:</p>
-<table class="table table"><tr><td><code>nodeSize</code></td><td>Numeric <code>[0, 100]</code>, representing % of the plotting space.</td></tr><tr><td><code>nodeShape</code></td><td>Integer code <code>[0-25]</code>; see <a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a>.</td></tr><tr><td><code>nodeColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>nodeLineWidth</code></td><td>Border thickness; see <a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a>.</td></tr><tr><td><code>nodeLineColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>nodeLabel</code></td><td>Character string (<code>NA</code> will omit labels).</td></tr><tr><td><code>nodeLabelSize</code></td><td>Font size in <code>pts</code>; see <a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a>.</td></tr><tr><td><code>nodeLabelColor</code></td><td>A valid color name or hexadecimal code.</td></tr></table></div>
+<table class="table table"><tr><td><code>nodeSize</code></td><td>Numeric <code>[0, 100]</code>, representing % of the
+plotting space.</td></tr><tr><td><code>nodeShape</code></td><td>Integer code <code>[0-25]</code>;
+see <a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a>.</td></tr><tr><td><code>nodeColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>nodeLineWidth</code></td><td>Border thickness; see <a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a>.</td></tr><tr><td><code>nodeLineColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>nodeLabel</code></td><td>Character string (<code>NA</code> will omit labels).</td></tr><tr><td><code>nodeLabelSize</code></td><td>Font size in <code>pts</code>;
+see <a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a>.</td></tr><tr><td><code>nodeLabelColor</code></td><td>A valid color name or hexadecimal code.</td></tr></table></div>
     <div class="section level2">
     <h2 id="edge-attributes">Edge attributes<a class="anchor" aria-label="anchor" href="#edge-attributes"></a></h2>
 
 
 <p>The following attributes in <code>g</code> are evaluated by the constructor:</p>
-<table class="table table"><tr><td><code>edgeLineWidth</code></td><td>Edge thickness; see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>edgeColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>edgeLineType</code></td><td>Line style (e.g., "solid", "dashed"); see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>arrowType</code></td><td>Arrowhead style (see <em>Arrowhead types</em> section).</td></tr></table></div>
+<table class="table table"><tr><td><code>edgeLineWidth</code></td><td>Edge thickness;
+see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>edgeColor</code></td><td>A valid color name or hexadecimal code.</td></tr><tr><td><code>edgeLineType</code></td><td>Line style (e.g., "solid", "dashed");
+see <code><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></code>.</td></tr><tr><td><code>arrowType</code></td><td>Arrowhead style
+(see <em>Arrowhead types</em> section).</td></tr></table></div>
     <div class="section level2">
     <h2 id="arrowhead-types">Arrowhead types<a class="anchor" aria-label="anchor" href="#arrowhead-types"></a></h2>
 
 
 
-<p>Arrowheads are controlled via the <code>arrowType</code> attribute using
-integer or character codes (see examples in the <em>RGraphSpace</em> vignette).</p>
+<p>Arrowheads and other edge glyphs are set by the <code>arrowType</code> attribute,
+at three levels, from the simplest to the most expressive: integer codes,
+basic token codes, and extended token codes. The levels can be mixed in
+the same attribute (e.g. <code>c("1", "-1", "01&lt;-&gt;01")</code>).</p>
 <p>In directed graphs, arrows follow the edge list orientation by default,
 representing forward directions (<em>e.g.</em>, <code>A -&gt; B</code>).
 While undirected graphs do not show arrows by default, specific styles
 can be manually assigned for detailed visualization, including forward,
 backward, or bidirectional arrowheads.</p>
 <div class="section">
-<h3 id="directed-graphs-a-gt-b-">Directed graphs (A -&gt; B):<a class="anchor" aria-label="anchor" href="#directed-graphs-a-gt-b-"></a></h3>
-
-<table class="table table"><tr><td><strong>Code</strong></td><td><strong>Alias</strong></td><td><strong>Description</strong></td></tr><tr><td><code>0</code></td><td><code>"---"</code></td><td>No arrow</td></tr><tr><td><code>1</code></td><td><code>"--&gt;"</code></td><td>Forward arrow</td></tr><tr><td><code>-1</code></td><td><code>"--|"</code></td><td>Forward bar</td></tr></table></div>
+<h3 id="integer-codes-and-basic-token-codes-">Integer codes and basic token codes:<a class="anchor" aria-label="anchor" href="#integer-codes-and-basic-token-codes-"></a></h3>
+<p>Integer codes select the basic forms, built from arrows and bars; each has
+an equivalent basic token code, which draws the same form as a picture of
+the edge. In directed graphs only the end glyph is drawn, so only three
+codes apply.</p>
+<p>Directed graphs (A -&gt; B):</p><table class="table table"><tr><td><strong>Integer</strong></td><td><strong>Token</strong></td><td><strong>Description</strong></td></tr><tr><td><code>0</code></td><td><code>"---"</code></td><td>No arrow</td></tr><tr><td><code>1</code></td><td><code>"--&gt;"</code></td><td>Forward arrow</td></tr><tr><td><code>-1</code></td><td><code>"--|"</code></td><td>Forward bar</td></tr></table><p>Undirected graphs (A – B):</p><table class="table table"><tr><td><strong>Integer</strong></td><td><strong>Token</strong></td><td><strong>Description</strong></td></tr><tr><td><code>0</code></td><td><code>"---"</code></td><td>No arrow</td></tr><tr><td><code>1</code></td><td><code>"--&gt;"</code></td><td>Forward arrow</td></tr><tr><td><code>2</code></td><td><code>"&lt;--"</code></td><td>Backward arrow</td></tr><tr><td><code>3</code></td><td><code>"&lt;-&gt;"</code></td><td>Bidirectional arrow</td></tr><tr><td><code>4</code></td><td><code>"|-&gt;"</code></td><td>Forward arrow / backward bar</td></tr><tr><td><code>-1</code></td><td><code>"--|"</code></td><td>Forward bar</td></tr><tr><td><code>-2</code></td><td><code>"|--"</code></td><td>Backward bar</td></tr><tr><td><code>-3</code></td><td><code>"|-|"</code></td><td>Bidirectional bar</td></tr><tr><td><code>-4</code></td><td><code>"&lt;-|"</code></td><td>Backward arrow / forward bar</td></tr></table></div>
 
 <div class="section">
-<h3 id="undirected-graphs-a-b-">Undirected graphs (A – B):<a class="anchor" aria-label="anchor" href="#undirected-graphs-a-b-"></a></h3>
+<h3 id="token-codes-">Token codes:<a class="anchor" aria-label="anchor" href="#token-codes-"></a></h3>
+<p>A token code has the form <em>start</em><code>-</code><em>end</em>: the
+<code>"-"</code> shaft separates a start token (drawn at the source end) from
+an end token (drawn at the target end). A basic token is <code>"&gt;"</code>
+(arrow), <code>"|"</code> (bar), or <code>"-"</code> (no glyph). A start token is
+written mirrored, so the code reads like the edge itself; <code>"&lt;"</code> and
+<code>"&gt;"</code> are interchangeable, and codes are stored in this canonical
+form. In directed graphs a start glyph is dropped with a warning; invalid
+codes are replaced by the default with a warning.</p>
+</div>
 
-<table class="table table"><tr><td><strong>Code</strong></td><td><strong>Alias</strong></td><td><strong>Description</strong></td></tr><tr><td><code>0</code></td><td><code>"---"</code></td><td>No arrow</td></tr><tr><td><code>1</code></td><td><code>"--&gt;"</code></td><td>Forward arrow</td></tr><tr><td><code>2</code></td><td><code>"&lt;--"</code></td><td>Backward arrow</td></tr><tr><td><code>3</code></td><td><code>"&lt;-&gt;"</code></td><td>Bidirectional arrow</td></tr><tr><td><code>4</code></td><td><code>"|-&gt;"</code></td><td>Forward arrow / backward bar</td></tr><tr><td><code>-1</code></td><td><code>"--|"</code></td><td>Forward bar</td></tr><tr><td><code>-2</code></td><td><code>"|--"</code></td><td>Backward bar</td></tr><tr><td><code>-3</code></td><td><code>"|-|"</code></td><td>Bidirectional bar</td></tr><tr><td><code>-4</code></td><td><code>"&lt;-|"</code></td><td>Backward arrow / forward bar</td></tr></table></div>
+<div class="section">
+<h3 id="extended-token-codes-">Extended token codes:<a class="anchor" aria-label="anchor" href="#extended-token-codes-"></a></h3>
+<p>Adding a modifier, a two-digit glyph number, to a basic token selects an
+extended glyph from the glyph collection, e.g. <code>"&gt;01"</code> (triangle) or
+<code>"|04"</code> (circle). At the start of a code the modifier comes first, so
+<code>"01&lt;-&gt;01"</code> has triangles at both ends and <code>"04|-&gt;03"</code> a circle
+and a harpoon. Use <code><a href="glyph_list.html">glyph_list</a></code> to see the available glyphs.</p>
+</div>
 
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="geom_graphspace.html">geom_graphspace</a></code>, <code><a href="plotGraphSpace-methods.html">plotGraphSpace</a></code></p></div>
+    <div class="dont-index"><p><code><a href="geom_edgespace.html">geom_edgespace</a></code>,  <code><a href="geom_nodespace.html">geom_nodespace</a></code>,
+<code><a href="geom_graphspace.html">geom_graphspace</a></code>, <code><a href="plotGraphSpace-methods.html">plotGraphSpace</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

@@ -1,4 +1,3 @@
-
 #-------------------------------------------------------------------------------
 #' @title Create a GraphSpace object
 #' 
@@ -15,7 +14,8 @@
 #' vertex attributes. For graphs requiring edge definitions, use the 
 #' \code{igraph} initialization.
 #' @param layout An optional numeric matrix with two columns for \code{x} and
-#' \code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.
+#' \code{y} vertex coordinates. If provided, it overrides coordinates 
+#' in \code{g}.
 #' @param simplify A logical value. If \code{TRUE} (default), removes loops and 
 #' multiple edges (see \link[igraph]{simplify}).
 #' @param verbose A logical value. If \code{TRUE} (default), displays detailed 
@@ -26,9 +26,9 @@
 #' 
 #' @details
 #' \code{GraphSpace} objects are designed to bridge the gap between network 
-#' analysis (via \code{igraph}) and high-quality visualization (via \code{ggplot2}). 
-#' The constructor ensures that all necessary aesthetics for 
-#' \code{\link{geom_graphspace}} are pre-processed and validated.
+#' analysis (via \code{igraph}) and high-quality visualization 
+#' (via \code{ggplot2}). The constructor ensures that all necessary aesthetics 
+#' for \code{\link{geom_graphspace}} are pre-processed and validated.
 #' 
 #' \strong{Coordinate System and Normalization:}
 #' By default, the constructor expects coordinates in the \code{x} and \code{y} 
@@ -53,21 +53,25 @@
 #' 
 #' \strong{Arrowhead Mapping:}
 #' The \code{arrowType} attribute (see \emph{Arrowhead types} section) 
-#' allows for a mapping between symbolic aliases (such as \code{"-->"}) 
-#' and internal integer codes. This is useful for assigning interaction 
-#' types in directed or undirected graphs (e.g., activation vs. inhibition).
+#' sets the glyphs drawn at each edge end, as integer codes (e.g. \code{1}),
+#' basic token codes (e.g. \code{"-->"}), or extended token codes (e.g.
+#' \code{"04|->03"}). This is useful for assigning interaction types in
+#' directed or undirected graphs (e.g., activation vs. inhibition).
 #'  
 #' @section Vertex attributes:
 #' The following attributes in \code{g} are evaluated by the constructor:
 #' 
 #' \tabular{ll}{
-#'   \code{nodeSize} \tab Numeric \code{[0, 100]}, representing % of the plotting space. \cr
-#'   \code{nodeShape} \tab Integer code \code{[0-25]}; see \link[graphics]{points}. \cr
+#'   \code{nodeSize} \tab Numeric \code{[0, 100]}, representing % of the 
+#'   plotting space. \cr
+#'   \code{nodeShape} \tab Integer code \code{[0-25]}; 
+#'   see \link[graphics]{points}. \cr
 #'   \code{nodeColor} \tab A valid color name or hexadecimal code. \cr
 #'   \code{nodeLineWidth} \tab Border thickness; see \link[grid]{gpar}. \cr
 #'   \code{nodeLineColor} \tab A valid color name or hexadecimal code. \cr
 #'   \code{nodeLabel} \tab Character string (\code{NA} will omit labels). \cr
-#'   \code{nodeLabelSize} \tab Font size in \code{pts}; see \link[grid]{gpar}. \cr
+#'   \code{nodeLabelSize} \tab Font size in \code{pts}; 
+#'   see \link[grid]{gpar}. \cr
 #'   \code{nodeLabelColor} \tab A valid color name or hexadecimal code.
 #' }
 #' 
@@ -75,16 +79,21 @@
 #' The following attributes in \code{g} are evaluated by the constructor:
 #' 
 #' \tabular{ll}{
-#'   \code{edgeLineWidth} \tab Edge thickness; see \code{\link[grid]{gpar}}. \cr
+#'   \code{edgeLineWidth} \tab Edge thickness; 
+#'   see \code{\link[grid]{gpar}}. \cr
 #'   \code{edgeColor} \tab A valid color name or hexadecimal code. \cr
-#'   \code{edgeLineType}  \tab Line style (e.g., "solid", "dashed"); see \code{\link[grid]{gpar}}. \cr
-#'   \code{arrowType}     \tab Arrowhead style (see \emph{Arrowhead types} section).
+#'   \code{edgeLineType}  \tab Line style (e.g., "solid", "dashed"); 
+#'   see \code{\link[grid]{gpar}}. \cr
+#'   \code{arrowType} \tab Arrowhead style 
+#'   (see \emph{Arrowhead types} section).
 #' }
 #' 
 #' @section Arrowhead types:
 #' 
-#' Arrowheads are controlled via the \code{arrowType} attribute using 
-#' integer or character codes (see examples in the \emph{RGraphSpace} vignette).
+#' Arrowheads and other edge glyphs are set by the \code{arrowType} attribute,
+#' at three levels, from the simplest to the most expressive: integer codes,
+#' basic token codes, and extended token codes. The levels can be mixed in
+#' the same attribute (e.g. \code{c("1", "-1", "01<->01")}).
 #' 
 #' In directed graphs, arrows follow the edge list orientation by default, 
 #' representing forward directions (\emph{e.g.}, \code{A -> B}). 
@@ -92,18 +101,23 @@
 #' can be manually assigned for detailed visualization, including forward, 
 #' backward, or bidirectional arrowheads.
 #' 
-#' \subsection{Directed graphs (A -> B):}{
+#' \subsection{Integer codes and basic token codes:}{
+#' Integer codes select the basic forms, built from arrows and bars; each has
+#' an equivalent basic token code, which draws the same form as a picture of
+#' the edge. In directed graphs only the end glyph is drawn, so only three
+#' codes apply.
+#' 
+#' Directed graphs (A -> B):
 #' \tabular{lll}{
-#'   \strong{Code} \tab \strong{Alias} \tab \strong{Description} \cr
+#'   \strong{Integer} \tab \strong{Token} \tab \strong{Description} \cr
 #'   \code{0} \tab \code{"---"} \tab No arrow \cr
 #'   \code{1} \tab \code{"-->"} \tab Forward arrow \cr
 #'   \code{-1} \tab \code{"--|"} \tab Forward bar
 #' }
-#' }
 #' 
-#' \subsection{Undirected graphs (A -- B):}{
+#' Undirected graphs (A -- B):
 #' \tabular{lll}{
-#'   \strong{Code} \tab \strong{Alias} \tab \strong{Description} \cr
+#'   \strong{Integer} \tab \strong{Token} \tab \strong{Description} \cr
 #'   \code{0} \tab \code{"---"} \tab No arrow \cr
 #'   \code{1} \tab \code{"-->"} \tab Forward arrow \cr
 #'   \code{2} \tab \code{"<--"} \tab Backward arrow \cr
@@ -116,9 +130,29 @@
 #' }
 #' }
 #' 
+#' \subsection{Token codes:}{
+#' A token code has the form \emph{start}\code{-}\emph{end}: the
+#' \code{"-"} shaft separates a start token (drawn at the source end) from
+#' an end token (drawn at the target end). A basic token is \code{">"}
+#' (arrow), \code{"|"} (bar), or \code{"-"} (no glyph). A start token is
+#' written mirrored, so the code reads like the edge itself; \code{"<"} and
+#' \code{">"} are interchangeable, and codes are stored in this canonical
+#' form. In directed graphs a start glyph is dropped with a warning; invalid
+#' codes are replaced by the default with a warning.
+#' }
+#' 
+#' \subsection{Extended token codes:}{
+#' Adding a modifier, a two-digit glyph number, to a basic token selects an
+#' extended glyph from the glyph collection, e.g. \code{">01"} (triangle) or
+#' \code{"|04"} (circle). At the start of a code the modifier comes first, so
+#' \code{"01<->01"} has triangles at both ends and \code{"04|->03"} a circle 
+#' and a harpoon. Use \code{\link{glyph_list}} to see the available glyphs.
+#' }
+#' 
 #' @author Sysbiolab.
 #' 
-#' @seealso \code{\link{geom_graphspace}}, \code{\link{plotGraphSpace}}
+#' @seealso \code{\link{geom_edgespace}},  \code{\link{geom_nodespace}}, 
+#'  \code{\link{geom_graphspace}}, \code{\link{plotGraphSpace}}
 #' 
 #' @examples
 #' library(RGraphSpace)
@@ -156,13 +190,11 @@ setMethod("GraphSpace", signature(g = "ANY"),
     .validate_gs_args("singleLogical", "verbose", verbose)
     if(inherits(g, "layout_ggraph")){
       if (!inherits(attr(g, "graph"), "igraph")) {
-        rlang::abort(
-          message = c(
-            "x" = "The 'layout_ggraph' object is missing a valid 'graph' attribute.",
-            "i" = "RGraphSpace requires an 'igraph' object to be embedded in the layout.",
-            "*" = "Ensure you are using a standard `ggraph::create_layout()` object."
-          )
-        )
+      message = c(
+      "x" = "The 'layout_ggraph' object is missing a valid 'graph' attribute.",
+      "i" = "RGraphSpace requires an 'igraph' object embedded in the layout.",
+      "*" = "Ensure you are using a standard `ggraph::create_layout()` object.")
+        rlang::abort(message = message)
       }
       layout <- tryCatch(
         as.matrix(g[, c("x", "y")]),
@@ -199,7 +231,7 @@ setMethod("GraphSpace", signature(g = "ANY"),
     #--- validate igraph and build a gs object
     gs <- .buildGraphSpace(g, layout, simplify, verbose)
     
-    return(gs)
+    gs
   }
 )
 
@@ -214,8 +246,8 @@ setMethod("GraphSpace", signature(g = "data.frame"),
     if(!all(c("x", "y") %in% colnames(g))){
       if(verbose){
         rlang::inform(c(
-          "GraphSpace requires 'x'/'y' columns for 'data.frame' initialization.",
-          "*" = "Scanning for coordinate names..."
+        "GraphSpace requires 'x'/'y' columns for 'data.frame' initialization.",
+        "*" = "Scanning for coordinate names..."
         )) 
       }
       g <- .match_column_name(g, "x", verbose)
@@ -227,7 +259,7 @@ setMethod("GraphSpace", signature(g = "data.frame"),
     #--- build GraphSpace-class
     gs <- GraphSpace(g = g, verbose = verbose, ...)
     
-    return(gs)
+    gs
     
   }
 )
@@ -317,7 +349,7 @@ setMethod("GraphSpace", signature(g = "data.frame"),
     }
   }
   
-  return(g)
+  g
   
 }
 
@@ -350,8 +382,6 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' @param dpi Raster resolution, in dots per inch.
 #' @param dev Device used in the \code{\link[ggrastr]{rasterise}} call.
 #' @param add.labels Deprecated. Use \code{node.labels} instead.
-#' @param font.size Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.
-#' @param bg.color Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.
 #' 
 #' @return A ggplot-class object.
 #' @author Sysbiolab.
@@ -365,7 +395,6 @@ setMethod("GraphSpace", signature(g = "data.frame"),
 #' 
 #' # Generate a ggplot for gtoy1
 #' plotGraphSpace(gtoy1, node.labels = TRUE)
-#' 
 #' 
 #' # Create a star graph
 #' gtoy_star <- make_full_graph(15)
@@ -396,21 +425,12 @@ setMethod("plotGraphSpace", "GraphSpace",
   function(gs, theme = "th0", xlab = "Graph coordinates 1", 
     ylab = "Graph coordinates 2", node.labels = FALSE, label.size = 3, 
     label.color = "grey20", add.image = TRUE, raster = FALSE, dpi = 300, 
-    dev = "cairo_png", add.labels = deprecated(), font.size = deprecated(), 
-    bg.color = deprecated()) {
+    dev = "cairo_png", add.labels = deprecated()) {
     
     if (lifecycle::is_present(add.labels)) {
       lifecycle::deprecate_soft("1.4.2", "plotGraphSpace(add.labels)",
         details = "Use `plotGraphSpace(node.labels)` instead.")
       node.labels <- add.labels
-    }
-    if (lifecycle::is_present(font.size)) {
-      lifecycle::deprecate_soft("1.4.2", "plotGraphSpace(font.size)",
-        details = "Use `theme(...)` instead.")
-    }
-    if (lifecycle::is_present(bg.color)) {
-      lifecycle::deprecate_soft("1.4.2", "plotGraphSpace(bg.color)",
-        details = "Use `theme(...)` instead.")
     }
     
     gs <- updateGraphSpace(gs)
@@ -425,7 +445,7 @@ setMethod("plotGraphSpace", "GraphSpace",
     .validate_gs_args("singleInteger", "dpi", dpi)
     .validate_gs_args("singleString", "dev", dev)
     
-    theme <- match.arg(theme, choices = c("th0", "th1", "th2", "th3"))
+    theme <- rlang::arg_match(theme, values = c("th0", "th1", "th2", "th3"))
     
     label_aes <- aes(label = NA_character_)
     if ("nodeLabel" %in% gs_names(gs) && 
@@ -469,19 +489,51 @@ setMethod("plotGraphSpace", "GraphSpace",
     ggp <- ggp + theme_gspace_coords(theme = theme, 
       is_norm = .is_normalized(gs), xlab = xlab, ylab = ylab)
     
-    return(ggp)
+    ggp
     
   }
 )
 
-.plot_graph_wrapper <- function(gs, ...) {
-  gs <- GraphSpace(gs, verbose = FALSE)
-  gs <- normalizeGraphSpace(gs, verbose = FALSE)
-  plotGraphSpace(gs = gs, ...)
+#-------------------------------------------------------------------------------
+# Argument names accepted by an S4 method, looking inside S4's 'local'
+# wrapper when the method adds arguments to the generic
+.method_arg_names <- function(f, signature) {
+  m <- methods::selectMethod(f, signature)
+  b <- body(m)
+  if (is.call(b) && length(b) > 1 && is.call(b[[2]]) &&
+      identical(b[[2]][[2]], as.name(".local"))) {
+    return(names(formals(eval(b[[2]][[3]]))))
+  }
+  names(formals(m))
 }
 
-#' @param ... Additional arguments passed to the 
-#' \code{\link{plotGraphSpace}} function.
+#-------------------------------------------------------------------------------
+.plot_graph_wrapper <- function(gs, ...) {
+  
+  # Route each argument to the function that accepts it
+  args <- list(...)
+  nms <- rlang::names2(args)
+  
+  # Run GraphSpace
+  to_gs <- nms %in% setdiff(.method_arg_names("GraphSpace", class(gs)[1]),
+    c("g", "verbose", "..."))
+  gs <- do.call(GraphSpace, c(list(gs), args[to_gs], verbose = FALSE))
+  
+  # Run normalizeGraphSpace
+  to_nr <- nms %in% setdiff(.method_arg_names("normalizeGraphSpace",
+    "GraphSpace"), c("gs", "verbose", "..."))
+  gs <- do.call(normalizeGraphSpace, c(list(gs), args[to_nr], verbose = FALSE))
+  
+  # Run plotGraphSpace
+  do.call(plotGraphSpace, c(list(gs = gs), args[!to_gs & !to_nr]))
+}
+
+#-------------------------------------------------------------------------------
+#' @param ... Additional arguments passed to the plot. Inputs that are not
+#' \code{GraphSpace} objects (\code{igraph}, \code{tbl_graph},
+#' \code{gs_graph}) are first converted with \code{\link{GraphSpace}} and
+#' normalized with \code{\link{normalizeGraphSpace}}; arguments for these
+#' steps, such as \code{layout} and \code{mar}, can also be given here.
 #' @import methods
 #' @docType methods
 #' @rdname plotGraphSpace-methods
@@ -505,12 +557,18 @@ setMethod("plotGraphSpace", signature(gs = "gs_graph"), .plot_graph_wrapper)
 #' @param x A \linkS4class{GraphSpace} class object.
 #' @param ... Additional arguments passed to the 
 #' \code{\link{plotGraphSpace}} function.
+#' @return A \code{\link[ggplot2]{ggplot}} object.
 #' @seealso \code{\link{plotGraphSpace}}
 #' 
+#' @examples
+#' data('gtoy1', package = 'RGraphSpace')
+#' gs <- GraphSpace(gtoy1)
+#' plot(gs)
+#'
 #' @importFrom graphics plot
 #' @export
 plot.GraphSpace <- function(x, ...) {
-    plotGraphSpace(x, ...)
+  plotGraphSpace(x, ...)
 }
 
 #-------------------------------------------------------------------------------
@@ -544,13 +602,11 @@ plot.GraphSpace <- function(x, ...) {
 #' @aliases getGraphSpace
 #' @export
 setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
+
   .validate_gs_args("singleString", "what", what)
-  opts <- c("graph", "nodes", "edges", "pars", "misc", "image", 
-    "canvas", "fdata", "coords", "uuid")
-  if (!what %in% opts) {
-    opts <- paste0(opts, collapse = ", ")
-    stop("'what' must be one of:\n", opts, call. = FALSE)
-  }
+  what <- rlang::arg_match(what, values = c("graph", "nodes", "edges",
+    "pars", "misc", "image", "canvas", "fdata", "coords", "uuid"))
+  
   if (what == "nodes") {
     obj <- gs@nodes
   } else if (what == "edges") {
@@ -579,7 +635,5 @@ setMethod("getGraphSpace", "GraphSpace", function(gs, what = "graph") {
   } else {
     obj <- gs@graph
   }
-  return(obj)
+  obj
 })
-
-

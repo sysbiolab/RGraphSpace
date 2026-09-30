@@ -1,4 +1,3 @@
-
 #-------------------------------------------------------------------------------
 #' Using ggplot2 with GraphSpace objects
 #' 
@@ -47,8 +46,6 @@
 #' 
 #' # Create a GraphSpace object
 #' gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
-#' 
-#' \dontrun{
 #'
 #' # Example 1: Using RGraphSpace-native geoms
 #' # Edge clipping metadata are injected automatically
@@ -70,8 +67,6 @@
 #'   geom_point(aes(x, y, size = my_node_var), 
 #'   fill = "steelblue", stroke = 2, shape = 21) +
 #'   scale_size(range = c(2, 15))
-#'
-#' }
 #' 
 #' @name ggplot-GraphSpace
 #' @rdname ggplot-GraphSpace
@@ -91,7 +86,7 @@ fortify.GraphSpace <- function(model, data, ...) {
   res <- gs_nodes(model, render = TRUE)
   attr(res, ".gs_graph") <- model
   class(res) <- c("gspace_data", class(res))
-  return(res)
+  res
 }
 
 #-------------------------------------------------------------------------------
@@ -153,7 +148,6 @@ ggplot_build.gspace_plot <- function(plot, ...) {
 #' # Create a GraphSpace object with a circular layout
 #' gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 #'
-#' \dontrun{
 #' # Build the plot
 #' # Note that inject_nodespace() is called at the end to
 #' # synchronize node sizes with edge clipping.
@@ -162,7 +156,6 @@ ggplot_build.gspace_plot <- function(plot, ...) {
 #'   geom_nodespace(aes(size = my_node_var), data = gs) +
 #'   scale_size(range = c(2, 15)) +
 #'   inject_nodespace()
-#' }
 #' 
 #' @importFrom ggplot2 ggplot_add
 #' @rdname inject_nodespace
@@ -288,7 +281,8 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   }
   # Extract params
   if(is.list(p_layers$nodes$aes_params)){
-    p <- p_layers$nodes$aes_params[names(p_layers$nodes$aes_params) %in% c("size", "stroke")]
+    p <- p_layers$nodes$aes_params[names(p_layers$nodes$aes_params) %in% 
+        c("size", "stroke")]
     if (length(p) > 0) p_pars$size_params <- p
   }
   if(is.list(p_layers$nodes$geom_params)){
@@ -380,7 +374,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
     }
   }
   
-  return(plot)
+  plot
   
 }
 
@@ -398,7 +392,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
   if(inherits(data, c("igraph", "layout_ggraph"))){
     data <- GraphSpace(data, verbose = FALSE)
   }
-  return(data)
+  data
 }
 
 #-------------------------------------------------------------------------------
@@ -440,7 +434,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
     )
   }
   
-  return( is_topo_ok )
+  is_topo_ok
   
 }
 
@@ -472,7 +466,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
 #-------------------------------------------------------------------------------
 .was_handled <- function(dt, type = "node") {
   if (!is.data.frame(dt)) return(FALSE)
-  return( identical(attr(dt, "gs_handler_type"), type) )
+  identical(attr(dt, "gs_handler_type"), type)
 }
 
 #-------------------------------------------------------------------------------
@@ -488,7 +482,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
     node_size <- scales::rescale(node_size, to = c(0, 1))
     node_size <- scales::rescale(sqrt(node_size), to = range)
   }
-  return(node_size)
+  node_size
 }
 
 #-------------------------------------------------------------------------------
@@ -515,9 +509,8 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
       nodes[[att]] <- default_att[[size_att[att]]]
     }
   }
-  nodes <- nodes[, intersect(required_clipping, colnames(nodes)), drop = FALSE]
   
-  return(nodes)
+  nodes[, intersect(required_clipping, colnames(nodes)), drop = FALSE]
   
 }
 .is_valid_aes <- function(att, mapping, data_df) {
@@ -542,8 +535,7 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
       nodes[[att]] <- default_att[[size_att[att]]]
     }
   }
-  nodes <- nodes[, intersect(required_clipping, colnames(nodes)), drop = FALSE]
   
-  return(nodes)
+  nodes[, intersect(required_clipping, colnames(nodes)), drop = FALSE]
   
 }

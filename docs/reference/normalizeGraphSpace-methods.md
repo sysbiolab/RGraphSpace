@@ -142,6 +142,6 @@ gs <- GraphSpace(gtoy1)
 gs <- normalizeGraphSpace(gs)
 #> Normalizing node coordinates to graph space...
 
-plotGraphSpace(gs, add.labels = TRUE)
+plotGraphSpace(gs, node.labels = TRUE)
 
 ```

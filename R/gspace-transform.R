@@ -17,11 +17,11 @@
 #' of the plotting area.
 #' @param ymax A single number in \code{[0,1]} specifying the upper y-boundary
 #' of the plotting area.
-#' @param clockwise Logical; if \code{FALSE} (default), the
-#' 90-degree turn is counter-clockwise; if \code{TRUE}, clockwise
+#' @param clockwise Logical; if \code{TRUE} (default), the
+#' 90-degree turn is clockwise; if \code{TRUE}, counter-clockwise
 #' (\code{rotateGraphSpace} only).
-#' @param vertical Logical; if \code{FALSE} (default), the flip is horizontal 
-#' (mirror left-right); if \code{TRUE}, vertical (mirror top-bottom).
+#' @param vertical Logical; if \code{TRUE} (default), the flip is vertical 
+#' (mirror top-bottom); if \code{TRUE}, horizontal (mirror left-right).
 #' (\code{flipGraphSpace} only).
 #' @param persist Logical; whether the transformation persists through
 #' re-normalization. Defaults to \code{TRUE} before normalization,
@@ -65,9 +65,9 @@
 #' gs_flip <- flipGraphSpace(gs)
 #' gs_t <- transposeGraphSpace(gs)
 #' 
-#' plotGraphSpace(gs, add.labels = TRUE)
+#' plotGraphSpace(gs, node.labels = TRUE)
 #' 
-#' plotGraphSpace(gs_crop, add.labels = TRUE)
+#' plotGraphSpace(gs_crop, node.labels = TRUE)
 #' 
 #' @aliases cropGraphSpace
 #' @rdname GraphSpace-transform
@@ -104,7 +104,7 @@ setMethod("cropGraphSpace", "GraphSpace",
     
     gs <- .crop_gspace(gs, crop.box = c(xmin, xmax, ymin, ymax))
     
-    return(gs)
+    gs
     
   })
 
@@ -112,7 +112,7 @@ setMethod("cropGraphSpace", "GraphSpace",
 #' @rdname GraphSpace-transform
 #' @export
 setMethod("flipGraphSpace", "GraphSpace",
-  function(gs, vertical = FALSE, persist = .is_raw(gs), verbose = TRUE){
+  function(gs, vertical = TRUE, persist = .is_raw(gs), verbose = TRUE){
     
     gs <- updateGraphSpace(gs)
     
@@ -134,7 +134,7 @@ setMethod("flipGraphSpace", "GraphSpace",
       gs <- .flip_gspace(gs, vertical)
     }
     
-    return(gs)
+    gs
     
   })
 
@@ -142,11 +142,12 @@ setMethod("flipGraphSpace", "GraphSpace",
 #' @rdname GraphSpace-transform
 #' @export
 setMethod("rotateGraphSpace", "GraphSpace",
-  function(gs, clockwise = FALSE, persist = .is_raw(gs), verbose = TRUE){
+  function(gs, clockwise = TRUE, persist = .is_raw(gs), verbose = TRUE){
     
     gs <- updateGraphSpace(gs)
     
     .validate_gs_args("singleLogical", "clockwise", clockwise)
+    .validate_gs_args("singleLogical", "persist", persist)
     .validate_gs_args("singleLogical", "verbose", verbose)
     
     quarter_turns <- if(clockwise) 3L else 1L
@@ -165,7 +166,7 @@ setMethod("rotateGraphSpace", "GraphSpace",
       gs <- .rotate_gspace(gs, quarter_turns)
     }
     
-    return(gs)
+    gs
     
   })
 
@@ -188,7 +189,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
       gs <- .transpose_gspace(gs)
     }
     
-    return(gs)
+    gs
     
   })
 
@@ -203,7 +204,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   } else {
     gs <- .crop_gspace_graph(gs, crop.box)
   }
-  return(gs)
+  gs
 }
 
 #-------------------------------------------------------------------------------
@@ -221,7 +222,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   
   gs <- .trim_graph_space(gs, nodes)
   
-  return(gs)
+  gs
   
 }
 
@@ -269,7 +270,8 @@ setMethod("transposeGraphSpace", "GraphSpace",
   }
   gs <- .trim_graph_space(gs, nodes)
   gs <- .adjust_box_canvas(gs)
-  return(gs)
+  
+  gs
   
 }
 
@@ -286,7 +288,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
       gs@nodes$y <- scales::rescale(gs@nodes$y, from = c(0,1), to = c(s, 1-s))
     }
   }
-  return(gs)
+  gs
 }
 
 
@@ -302,7 +304,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
     gs <- .rotate_gspace_graph(gs, quarter_turns)
   }
   gs@nodes <- .rotate90_node_geometry(gs@nodes, quarter_turns)
-  return(gs)
+  gs
 }
 
 #-------------------------------------------------------------------------------
@@ -312,7 +314,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   nodes$x <- rot$x
   nodes$y <- rot$y
   gs@nodes <- nodes
-  return(gs)
+  gs
 }
 
 #-------------------------------------------------------------------------------
@@ -323,7 +325,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   nodes$y <- rot$y
   gs@nodes <- nodes
   gs@canvas <- .rotate90_image(gs@canvas, quarter_turns)
-  return(gs)
+  gs
 }
 
 #-------------------------------------------------------------------------------
@@ -368,7 +370,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
     gs <- .flip_gspace_graph(gs, vertical)
   }
   gs@nodes <- .flip_node_geometry(gs@nodes, vertical)
-  return(gs)
+  gs
 }
 
 #-------------------------------------------------------------------------------
@@ -382,7 +384,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   }
   gs@nodes <- nodes
   
-  return(gs)
+  gs
   
 }
 
@@ -398,7 +400,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   gs@nodes <- nodes
   gs@canvas <- .flip_image(gs@canvas, vertical)
   
-  return(gs)
+  gs
   
 }
 
@@ -414,7 +416,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   } else {
     img <- img[, rev(seq_len(ncol(img))), drop = FALSE]
   }
-  return(img)
+  img
 }
 
 ################################################################################
@@ -433,7 +435,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
     gs@canvas <- .transpose_image(gs@canvas)
   }
   
-  return(gs)
+  gs
   
 }
 
@@ -450,7 +452,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
   # for why a plain t() would not match the node swap).
   n <- nrow(img); m <- ncol(img)
   img <- t( img[rev(seq_len(n)), rev(seq_len(m)), drop = FALSE] )
-  return(img)
+  img
 }
 
 ################################################################################

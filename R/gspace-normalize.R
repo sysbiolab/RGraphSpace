@@ -72,7 +72,7 @@
 #' 
 #' gs <- normalizeGraphSpace(gs)
 #' 
-#' plotGraphSpace(gs, add.labels = TRUE)
+#' plotGraphSpace(gs, node.labels = TRUE)
 #' 
 #' @aliases normalizeGraphSpace
 #' @rdname normalizeGraphSpace-methods
@@ -132,7 +132,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
       }
     }
     
-    return(gs)
+    gs
     
   }
 )
@@ -154,7 +154,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   gs@pars$swap.xy <- swap.xy
   gs@pars$mar <- mar
   
-  return(gs)
+  gs
   
 }
 
@@ -190,7 +190,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   gs@pars$swap.xy <- swap.xy
   gs@pars$mar <- mar
   
-  return(gs)
+  gs
 }
 
 ################################################################################
@@ -227,7 +227,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   nodes$x <- coord_xy$x2
   nodes$y <- coord_xy$y2
   
-  return(nodes)
+  nodes
 }
 
 ################################################################################
@@ -258,7 +258,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     
   }
   
-  return(nds)
+  nds
 }
 
 ################################################################################
@@ -299,7 +299,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   nodes$x <- coord_xy$x2
   nodes$y <- coord_xy$y2
   
-  return(nodes)
+  nodes
   
 }
 
@@ -381,7 +381,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   l_temp <- .adjust_aspect_ratio(l_temp)
   l_temp <- .normalize_image_nodes(l_temp)
   
-  return(l_temp)
+  l_temp
 }
 
 #-------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   nodes$x <- nodes$x - x_s + 1
   nodes$y <- nodes$y - y_s + 1
   
-  return(list(nodes = nodes, image = img_res))
+  list(nodes = nodes, image = img_res)
 }
 
 #-------------------------------------------------------------------------------
@@ -510,7 +510,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   img_res <- img_res[seq.int(y_s, y_e), seq.int(x_s, x_e)]
   img_res <- img_res[seq.int(nrow(img_res), 1), ]
   attr(img_res, "orig_dim") <- dim(img_res)
-  return(img_res)
+  img_res
   
 }
 
@@ -532,7 +532,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
     }
   }
   attr(l_temp$image, "orig_dim") <- od
-  return(l_temp)
+  l_temp
 }
 
 #-------------------------------------------------------------------------------
@@ -573,7 +573,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   d <- attr(l_temp$image, "orig_dim")
   l_temp$nodes$x <- .rescale_direct(l_temp$nodes$x, d[2], 0.5 / d[2])
   l_temp$nodes$y <- .rescale_direct(l_temp$nodes$y, d[1], 0.5 / d[1])
-  return(l_temp)
+  l_temp
 }
 
 #-------------------------------------------------------------------------------
@@ -596,7 +596,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   for (col in .gs_geometry_cols(x@coords)) {
     x@nodes[[col]] <- x@coords[[col]]
   }
-  return(x)
+  x
 }
 
 #-------------------------------------------------------------------------------

@@ -14,7 +14,7 @@
   g <- .drop_list_vertex_attrs(g)
   
   gg <- .validate_igraph(g, layout, simplify, verbose)
-  edges <- .build_edges(gg, simplify)
+  edges <- .build_edges(gg)
   nodes <- .build_nodes(gg)
   
   # Reattach captured list columns to @nodes
@@ -46,7 +46,7 @@
     uuid = instance_id
   )
   
-  return(gs)
+  gs
   
 }
 
@@ -139,21 +139,15 @@
   }
   nodes <- cbind(vertex = seq_len(n), nodes)
   rownames(nodes) <- nodes$name
-  return(nodes)
+  nodes
 }
-.build_edges <- function(gg, simplify = TRUE){
+.build_edges <- function(gg){
   
-  if (simplify && igraph::is_simple(gg) && igraph::is_directed(gg)) {
-    # Entry point for simplified directed graphs.
-    # The original edge order is not preserved.
-    edges <- .get_simplified_edgelist(gg)
-  } else {
-    # Entry point for graphs not subject to simplification,
-    # including directed and undirected graphs.
-    # Preserve the original edge order from 
-    # igraph::as_edgelist(gg)
-    edges <- .get_edgelist(gg)
-  }
+  # Entry point for directed and undirected graphs.
+  # Preserve the original edge order from 
+  # igraph::as_edgelist(gg)
+  edges <- .get_edgelist(gg)
+  
   # Post-processing only: curve_weight, is_multiple and is_loop 
   # are derived from graph structure, not real graph attributes,
   # and are never written back to @graph.
@@ -161,7 +155,7 @@
     igraph::is_directed(gg))
   edges$is_multiple <- .get_is_multiple(edges$vertex1, edges$vertex2)
   edges$is_loop <- edges$vertex1 == edges$vertex2
-  return(edges)
+  edges
 }
 
 ################################################################################
@@ -187,8 +181,9 @@
   } else {
     edges <- .get_empty_edgedf()
   }
-  return(edges)
+  edges
 }
+
 .get_eatt <- function(g){
   lt <- igraph::edge_attr(g)
   atts <- data.frame(row.names = seq_along(lt[[1]]))
@@ -198,166 +193,16 @@
   e <- igraph::as_edgelist(g, names = FALSE)
   colnames(e) <- c("vertex1", "vertex2")
   atts <- cbind(e, atts)
-  return(atts)
+  atts
 }
+
 .get_empty_edgedf <- function(){
   n <- numeric(); c <- character()
   edges <- data.frame(n, n, c, c, c, c, n, n, n)
   colnames(edges) <- c("vertex1","vertex2", "name1", "name2", 
     "edgeLineType", "edgeColor", "edgeLineWidth",
     "arrowType", "weight")
-  return(edges)
-}
-
-################################################################################
-### Get directed edge lists in a simplified format
-################################################################################
-.get_simplified_edgelist <- function(g) {
-  if (ecount(g) > 0) {
-    E(g)$.tag_orig_order <- seq_len(igraph::ecount(g))
-    atts <- .extract_directed_att(g)
-    vertex <- igraph::V(g)$name
-    E(g)$emode <- 1
-    E(g)$emode[igraph::which_mutual(g)] <- 3
-    e <- emode <- .adjacency(g, attr = "emode")
-    bl <- lower.tri(emode) & emode == 3
-    emode[bl] <- 0
-    edges <- arrayInd(seq_len(prod(dim(emode))), dim(emode), 
-      useNames = TRUE)
-    edges <- as.data.frame(edges)
-    colnames(edges) <- c("vertex1", "vertex2")
-    edges$emode <- as.numeric(emode)
-    edges$name1 <- vertex[edges$vertex1]
-    edges$name2 <- vertex[edges$vertex2]
-    edges$e <- as.numeric(e > 0)
-    eid <- e; eid[,] <- 0
-    ut <- upper.tri(eid)
-    eid[ut] <- seq_len(sum(ut))
-    eid <- t(eid)
-    eid[ut] <- seq_len(sum(ut))
-    edges$eid <- as.numeric(eid)
-    edges$ut <- as.numeric(upper.tri(e))
-    edges$lt <- as.numeric(lower.tri(e))
-    if (!all(atts[, c(1, 2)] == edges[, c(1, 2)])) {
-      rlang::abort("unexpected indexing during edge attribute combination.")
-    }
-    edges <- cbind(edges, atts[, -c(1, 2), drop=FALSE])
-    eid <- unique(edges$eid[edges$e > 0])
-    edges <- edges[edges$eid %in% eid, ]
-    edges <- edges[order(edges$eid), ]
-    rownames(edges) <- NULL
-    edges <- .set_arrowtype_dir(edges)
-    idx <- colnames(edges) %in% names(.get_empty_edgedf())
-    edges <- edges[, c(which(idx), which(!idx))]
-    rownames(edges) <- NULL
-    # NOTE: for a mutual edge pair, .set_arrowtype_dir() keeps only one of  
-    # the two directed edges ('ut' convention) and discards the other, so
-    # '.tag_orig_order' will NOT necessarily represent the earlier-created 
-    # direction of the pair. This is intentional: simplification is a lossy 
-    # merge by design, and a single representative order value per merged 
-    # edge is sufficient here.
-    edges <- edges[order(edges$.tag_orig_order), , drop=FALSE]
-    edges$.tag_orig_order <- NULL
-  } else {
-    edges <- .get_empty_edgedf()
-  }
-  return(edges)
-}
-.set_arrowtype_dir <- function(edges) {
-  # Flip ut/lt from single-edge arrows; this
-  # for collecting arrows from the same mtx side
-  idx <- which(edges$emode == 1 & edges$lt == 1)
-  if (length(idx) > 0) {
-    for (i in idx) {
-      ii <- which(edges$eid == edges$eid[i])
-      edges[ii, c("ut", "lt")] <- edges[ii, c("lt", "ut")]
-    }
-  }
-  # collect left-side arrows
-  arrow1 <- edges[edges$lt == 1, "arrowType"]
-  arrow1[is.na(arrow1)] <- 0
-  # collect right-side arrows
-  arrow2 <- edges[edges$ut == 1, "arrowType"]
-  arrow2[is.na(arrow2)] <- 0
-  # get single-edge assignments
-  edges <- edges[edges$e == 1, ]
-  eid <- sort(unique(edges$eid))
-  edges <- edges[order(-edges$ut, edges$eid), ]
-  edges <- edges[match(eid, edges$eid), ]
-  # add arrows and remove intermediate columns
-  edges <- .merge_arrowtypes_dir(edges, arrow1, arrow2)
-  edges <- edges[, -which(colnames(edges) %in% 
-      c("e", "eid", "ut", "lt","emode"))]
-  return(edges)
-}
-.merge_arrowtypes_dir <- function(edges, arrow1, arrow2) {
-  ##  0 = "---", 1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->",
-  ## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|",
-  ## arrow1/arrow2 are guaranteed in {-1, 0, 1} (validated upstream),
-  ## so all 9 combinations below are exhaustive by construction.
-  ## No empty edges will reach this point.
-  atypes <- c(0, 1, 2, 3, 4, -1, -2, -3, -4)
-  names(atypes) <- c("00","01","10","11","-11","0-1","-10","-1-1","1-1")
-  
-  ## format(..., digits = 1, trim = TRUE) on -1/0/1 always yields "-1"/"0"/"1"
-  ## (no decimal point, no leading/trailing whitespace), so paste0() produces
-  ## exactly one of the 9 keys in names(atypes) above -- never a partial or
-  ## malformed key.
-  arrowType <- paste0(format(arrow1, digits = 1, trim = TRUE),
-    format(arrow2, digits = 1, trim = TRUE))
-  
-  ## Named-vector lookup: atypes[arrowType] returns NA for any unmatched key.
-  ## Given the guarantees above, this never happens -- see comments at top.
-  edges$arrowType <- as.numeric(atypes[arrowType])
-  return(edges)
-}
-.extract_directed_att <- function(g) {
-  # e <- igraph::as_adjacency_matrix(g, sparse = FALSE)
-  e <- .adjacency(g)
-  atts <- arrayInd(seq_len(prod(dim(e))), dim(e), useNames = TRUE)
-  atts <- as.data.frame(atts)
-  colnames(atts) <- c("vertex1", "vertex2")
-  atts$e <- as.numeric(e)
-  # a_names <- names(.get.default.eatt())
-  a_names <- igraph::edge_attr_names(g)
-  ne <- e == 0
-  for (at in a_names) {
-    x <- .adjacency(g, attr = at)
-    x[ne] <- NA
-    if (is.data.frame(x)){
-      atts[[at]] <- I(unlist(x, recursive=FALSE))
-    } else {
-      if (is.numeric(x)) {
-        atts[[at]] <- as.numeric(x)
-      } else if (is.character(x)) {
-        atts[[at]] <- as.character(x)
-      } else if (is.logical(x)) {
-        atts[[at]] <- as.logical(x)
-      } else {
-        atts[[at]] <- as.vector(x)
-      }
-    }
-  }
-  a_names_present <- a_names[a_names %in% colnames(atts)]
-  atts <- atts[, c("vertex1", "vertex2", a_names_present)]
-  rownames(atts) <- NULL
-  return(atts)
-}
-# ..this is a fix for 'as_adjacency_matrix', when 'attr' is character
-.adjacency <- function(g, attr = NULL) {
-  if(is.null(attr)){
-    exattr <- rep(1, ecount(g))
-    x <- matrix(0, nrow = vcount(g), ncol = vcount(g))
-  } else {
-    exattr <- edge_attr(g, as.character(attr))
-    x <- matrix(NA, nrow = vcount(g), ncol = vcount(g))
-    if(is.list(exattr)) x <- as.data.frame(x)
-  }
-  e <- igraph::ends(g, seq_len(ecount(g)), names = FALSE)
-  x[e] <- exattr
-  if (!is_directed(g)) x[e[,c(2,1)]] <- exattr
-  colnames(x) <- rownames(x) <- V(g)$name
-  return(x)
+  edges
 }
 
 ################################################################################
@@ -365,17 +210,25 @@
 ################################################################################
 
 #-------------------------------------------------------------------------------
+# emode: 0 none, 1 end-only, 2 start-only, 3 both. Reads the canonical token
+# string; the numeric branch remains only for raw integer input at the boundary.
 .get_emode <- function(arrow_type){
-  emode <- abs(arrow_type)
-  emode[emode>3] <- 3
-  return(emode)
+  if(is.numeric(arrow_type)){
+    emode <- abs(arrow_type)
+    emode[emode>3] <- 3
+    return(emode)
+  }
+  tk <- .arrowtype_to_tokens(arrow_type)
+  has_start <- tk[, "start"] != "-"
+  has_end <- tk[, "end"] != "-"
+  as.integer(has_end) + (as.integer(has_start) * 2L)
 }
 
 #-------------------------------------------------------------------------------
 .gs_nodes <- function(gs){
   nodes <- gs@nodes
   nodes$away_angle <- .get_node_away_angle(nodes)
-  return(nodes)
+  nodes
 }
 
 #-------------------------------------------------------------------------------
@@ -395,7 +248,7 @@
   gs_id <- attr(edges, "gs_id")
   edges <- cbind(coord, edges)
   attr(edges, "gs_id") <- gs_id
-  return(edges)
+  edges
 }
 
 #-------------------------------------------------------------------------------
@@ -488,7 +341,7 @@
     }
   }
   
-  return(weight)
+  weight
 }
 
 # i/n for i = 1..n: ascending, NEVER zero. Used for one side of a
@@ -503,5 +356,3 @@
   if (n == 1) return(1)
   seq(-1, 1, length.out = n)
 }
-
-

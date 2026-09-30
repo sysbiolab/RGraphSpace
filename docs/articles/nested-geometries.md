@@ -1,6 +1,6 @@
 # Working with nested geometries and high-resolution images
 
-**Package**: RGraphSpace 1.5.5\
+**Package**: RGraphSpace 1.5.6\
 
 ## Overview
 
@@ -47,7 +47,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -486,7 +486,7 @@ for an overview of the available graph transformations).
     #> other attached packages:
     #> [1] patchwork_1.3.2                 terra_1.9-34                   
     #> [3] sf_1.1-2                        SpatialFeatureExperiment_1.14.0
-    #> [5] RGraphSpace_1.5.5               ggplot2_4.0.3                  
+    #> [5] RGraphSpace_1.5.6               ggplot2_4.0.3                  
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3          rstudioapi_0.19.0          
@@ -534,7 +534,7 @@ for an overview of the available graph transformations).
     #>  [85] BiocGenerics_0.58.1         pillar_1.11.1              
     #>  [87] limma_3.68.4                splines_4.6.1              
     #>  [89] dplyr_1.2.1                 lattice_0.23-1             
-    #>  [91] survival_3.8-11             deldir_2.0-4               
+    #>  [91] survival_3.8-12             deldir_2.0-4               
     #>  [93] tidyselect_1.2.1            SingleCellExperiment_1.34.0
     #>  [95] locfit_1.5-9.12             scuttle_1.22.0             
     #>  [97] sfheaders_0.4.5             knitr_1.51                 

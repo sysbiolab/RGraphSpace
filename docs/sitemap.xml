@@ -7,6 +7,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/articles/edge-glyphs.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/geometries.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/get-started.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/graphspace-accessors.html</loc></url>
@@ -23,6 +24,7 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/articles/spatial-segmentation2.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/authors.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/index.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/news/index.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GeomEdgeSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GeomNodeSpace.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-accessors.html</loc></url>
@@ -46,6 +48,11 @@
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/geometry-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/getGraphSpace-methods.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/ggplot-GraphSpace.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/glyph_legend.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/glyph_list.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/glyph_mode.html</loc></url>
+<url><loc>https://sysbiolab.github.io/RGraphSpace/reference/glyph_proto.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_add_edges.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_add_nodes.html</loc></url>
 <url><loc>https://sysbiolab.github.io/RGraphSpace/reference/gs_compute.html</loc></url>

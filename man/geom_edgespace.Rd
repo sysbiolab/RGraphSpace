@@ -14,7 +14,7 @@ geom_edgespace(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = FALSE,
-  arrow_size = 0.5,
+  arrow_size = 1,
   arrow_offset = 0.01,
   curve = 0,
   coord_warp = 1,
@@ -58,8 +58,8 @@ whether this layer should be included in legends.}
 \item{inherit.aes}{Logical. If \code{FALSE} (default), the layer will use
 aesthetics defined in \code{mapping}.}
 
-\item{arrow_size}{Numeric scaling factor controlling arrowhead
-geometry (see 'details').}
+\item{arrow_size}{Numeric scaling factor controlling the size of edge
+glyphs, such as arrowheads (see 'details').}
 
 \item{arrow_offset}{Numeric value controlling the base offset of arrows
 at edge endpoints (see 'details').}
@@ -82,10 +82,12 @@ node. Options: \code{'adaptive'} (default), \code{'opposite'}, and an
 angle in degrees (see 'details').}
 
 \item{lineend}{Line end style (\code{'round'}, \code{'butt'},
-\code{'square'}). Supplied for compatibility with \link[ggplot2]{geom_segment}.}
+\code{'square'}). Supplied for compatibility with
+\link[ggplot2]{geom_segment}.}
 
 \item{linejoin}{Line join style (\code{'round'}, \code{'mitre'},
-\code{'bevel'}). Supplied for compatibility with \link[ggplot2]{geom_segment}.}
+\code{'bevel'}). Supplied for compatibility with
+\link[ggplot2]{geom_segment}.}
 
 \item{raster}{Logical. Should node glyphs be rasterized?
 Rasterization support is based on \code{\link[ggrastr]{rasterise}}.}
@@ -110,13 +112,15 @@ edge attributes with ggplot2 rendering via two distinct aesthetic interfaces
 that coexist without collision (see \emph{Two aesthetic interfaces} section).
 }
 \details{
-\strong{arrow_size} is a numeric scaling factor controlling arrowhead geometry.
-The value is interpreted in the same numeric space as line width (\code{lwd}).
+\strong{arrow_size} is a numeric scaling factor controlling the size of edge
+glyphs (arrowheads and other end symbols). The value is interpreted in
+the same numeric space as line width (\code{lwd}).
 
 \strong{arrow_offset} is an additive term that offsets arrow endpoints
 uniformly in graph space and is bounded by the edge length, in NPC units.
 
-Arrowhead types are specified in the \link{GraphSpace} constructor.
+The glyphs drawn at edge ends are set by the \code{arrowType} edge
+attribute (see \link{GraphSpace} and \code{\link{glyph_list}}).
 
 \strong{curve} bows an edge through a control point displaced perpendicular
 to the edge, by \code{curve} times the edge length. \code{curve = 0}
@@ -164,11 +168,16 @@ If these aesthetics are not explicitly provided in \code{aes()}, they
 are automatically retrieved from the \link{GraphSpace} object.
 
 \tabular{ll}{
-\strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required; automatically supplied.\cr
-\code{colour} \tab Edge colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{alpha} \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{linetype} \tab Edge line type (see \link[ggplot2]{aes_linetype_size_shape}).\cr
-\code{linewidth} \tab Edge line width (see \link[ggplot2]{aes_linetype_size_shape}).
+\strong{\code{x}, \code{y}, \code{xend}, \code{yend}} \tab Required;
+automatically supplied.\cr
+\code{colour} \tab Edge colour
+(see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{alpha} \tab Transparency
+(see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{linetype} \tab Edge line type
+(see \link[ggplot2]{aes_linetype_size_shape}).\cr
+\code{linewidth} \tab Edge line width
+(see \link[ggplot2]{aes_linetype_size_shape}).
 }
 
 All required aesthetics are supplied from the \link{GraphSpace} object and
@@ -178,8 +187,8 @@ Fixed identity values can also be passed directly as parameters, bypassing
 both graph attributes and scale training.
 For example: \code{colour = "grey"}, \code{linetype = 2}, \code{linewidth = 1}.
 
-Arrows can be further adjusted by \code{arrow_size} and \code{arrow_offset}
-arguments (see \emph{details}).
+Edge glyphs (arrowheads and other end symbols) can be further adjusted by
+\code{arrow_size} and \code{arrow_offset} arguments (see \emph{details}).
 }
 
 \section{Two aesthetic interfaces}{
@@ -210,18 +219,30 @@ when not set.
 
 \tabular{ll}{
 \strong{\code{label}} \tab Required to activate label rendering.\cr
-\code{label_colour}   \tab Label text colour (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_alpha}    \tab Transparency (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_fill}     \tab Background colour (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_size}     \tab Font size (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_angle}    \tab Rotation angle (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_hjust}    \tab Horizontal justification (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_vjust}    \tab Vertical justification (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_lwd}      \tab Border linewidth (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_lty}      \tab Border linetype (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_family}   \tab Font family (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_fontface} \tab Font face (see \code{\link[ggplot2]{geom_label}}).\cr
-\code{label_lineheight} \tab Line height (see \code{\link[ggplot2]{geom_label}}).
+\code{label_colour}   \tab Label text colour
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_alpha}    \tab Transparency
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_fill}     \tab Background colour
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_size}     \tab Font size
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_angle}    \tab Rotation angle
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_hjust}    \tab Horizontal justification
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_vjust}    \tab Vertical justification
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_lwd}      \tab Border linewidth
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_lty}      \tab Border linetype
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_family}   \tab Font family
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_fontface} \tab Font face
+(see \code{\link[ggplot2]{geom_label}}).\cr
+\code{label_lineheight} \tab Line height
+(see \code{\link[ggplot2]{geom_label}}).
 }
 }
 
@@ -236,14 +257,10 @@ data('gtoy1', package = 'RGraphSpace')
 # Create a GraphSpace object
 gs <- GraphSpace(gtoy1)
 
-\dontrun{
-
 ggplot(gs) +
   geom_edgespace() +
   geom_nodespace() +
   theme(aspect.ratio = 1)
-
-}
 
 }
 \seealso{

@@ -36,7 +36,7 @@ that coexist without collision (see Two aesthetic interfaces section)."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@ that coexist without collision (see Two aesthetic interfaces section)."><style>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
     <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
+    <li><a class="dropdown-item" href="../articles/edge-glyphs.html">Edge glyphs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -69,6 +70,7 @@ that coexist without collision (see Two aesthetic interfaces section)."><style>
     <li><a class="dropdown-item" href="../articles/nested-geometries.html">Nested geometries and high-resolution images</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sysbiolab/RGraphSpace/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -103,7 +105,7 @@ that coexist without collision (see <em>Two aesthetic interfaces</em> section).<
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  show.legend <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  inherit.aes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  arrow_size <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  arrow_size <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  arrow_offset <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  curve <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  coord_warp <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -168,8 +170,8 @@ aesthetics defined in <code>mapping</code>.</p></dd>
 
 
 <dt id="arg-arrow-size">arrow_size<a class="anchor" aria-label="anchor" href="#arg-arrow-size"></a></dt>
-<dd><p>Numeric scaling factor controlling arrowhead
-geometry (see 'details').</p></dd>
+<dd><p>Numeric scaling factor controlling the size of edge
+glyphs, such as arrowheads (see 'details').</p></dd>
 
 
 <dt id="arg-arrow-offset">arrow_offset<a class="anchor" aria-label="anchor" href="#arg-arrow-offset"></a></dt>
@@ -204,12 +206,14 @@ angle in degrees (see 'details').</p></dd>
 
 <dt id="arg-lineend">lineend<a class="anchor" aria-label="anchor" href="#arg-lineend"></a></dt>
 <dd><p>Line end style (<code>'round'</code>, <code>'butt'</code>,
-<code>'square'</code>). Supplied for compatibility with <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
+<code>'square'</code>). Supplied for compatibility with
+<a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
 
 
 <dt id="arg-linejoin">linejoin<a class="anchor" aria-label="anchor" href="#arg-linejoin"></a></dt>
 <dd><p>Line join style (<code>'round'</code>, <code>'mitre'</code>,
-<code>'bevel'</code>). Supplied for compatibility with <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
+<code>'bevel'</code>). Supplied for compatibility with
+<a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a>.</p></dd>
 
 
 <dt id="arg-raster">raster<a class="anchor" aria-label="anchor" href="#arg-raster"></a></dt>
@@ -238,11 +242,13 @@ Rasterization support is based on <code><a href="https://rdrr.io/pkg/ggrastr/man
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><strong>arrow_size</strong> is a numeric scaling factor controlling arrowhead geometry.
-The value is interpreted in the same numeric space as line width (<code>lwd</code>).</p>
+    <p><strong>arrow_size</strong> is a numeric scaling factor controlling the size of edge
+glyphs (arrowheads and other end symbols). The value is interpreted in
+the same numeric space as line width (<code>lwd</code>).</p>
 <p><strong>arrow_offset</strong> is an additive term that offsets arrow endpoints
 uniformly in graph space and is bounded by the edge length, in NPC units.</p>
-<p>Arrowhead types are specified in the <a href="GraphSpace-methods.html">GraphSpace</a> constructor.</p>
+<p>The glyphs drawn at edge ends are set by the <code>arrowType</code> edge
+attribute (see <a href="GraphSpace-methods.html">GraphSpace</a> and <code><a href="glyph_list.html">glyph_list</a></code>).</p>
 <p><strong>curve</strong> bows an edge through a control point displaced perpendicular
 to the edge, by <code>curve</code> times the edge length. <code>curve = 0</code>
 (default) renders a straight edge. Typical visible values range from
@@ -285,13 +291,18 @@ is unavailable, <code>"adaptive"</code> silently falls back to <code>"opposite"<
 <p><code>geom_edgespace()</code> understands <a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a> aesthetics.</p>
 <p>If these aesthetics are not explicitly provided in <code><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes()</a></code>, they
 are automatically retrieved from the <a href="GraphSpace-methods.html">GraphSpace</a> object.</p>
-<table class="table table"><tr><td><strong><code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code></strong></td><td>Required; automatically supplied.</td></tr><tr><td><code>colour</code></td><td>Edge colour (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency (see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>linetype</code></td><td>Edge line type (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>linewidth</code></td><td>Edge line width (see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>All required aesthetics are supplied from the <a href="GraphSpace-methods.html">GraphSpace</a> object and
+<table class="table table"><tr><td><strong><code>x</code>, <code>y</code>, <code>xend</code>, <code>yend</code></strong></td><td>Required;
+automatically supplied.</td></tr><tr><td><code>colour</code></td><td>Edge colour
+(see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>alpha</code></td><td>Transparency
+(see <a href="https://ggplot2.tidyverse.org/reference/aes_colour_fill_alpha.html" class="external-link">aes_colour_fill_alpha</a>).</td></tr><tr><td><code>linetype</code></td><td>Edge line type
+(see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr><tr><td><code>linewidth</code></td><td>Edge line width
+(see <a href="https://ggplot2.tidyverse.org/reference/aes_linetype_size_shape.html" class="external-link">aes_linetype_size_shape</a>).</td></tr></table><p>All required aesthetics are supplied from the <a href="GraphSpace-methods.html">GraphSpace</a> object and
 do not need to be manually mapped.</p>
 <p>Fixed identity values can also be passed directly as parameters, bypassing
 both graph attributes and scale training.
 For example: <code>colour = "grey"</code>, <code>linetype = 2</code>, <code>linewidth = 1</code>.</p>
-<p>Arrows can be further adjusted by <code>arrow_size</code> and <code>arrow_offset</code>
-arguments (see <em>details</em>).</p>
+<p>Edge glyphs (arrowheads and other end symbols) can be further adjusted by
+<code>arrow_size</code> and <code>arrow_offset</code> arguments (see <em>details</em>).</p>
     </div>
     <div class="section level2">
     <h2 id="two-aesthetic-interfaces">Two aesthetic interfaces<a class="anchor" aria-label="anchor" href="#two-aesthetic-interfaces"></a></h2>
@@ -319,7 +330,19 @@ skipped.</p>
 <code>label_alpha</code> defaults to the edge <code>alpha</code>. All other
 <code>label_*</code> aesthetics default to <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>
 when not set.</p>
-<table class="table table"><tr><td><strong><code>label</code></strong></td><td>Required to activate label rendering.</td></tr><tr><td><code>label_colour</code></td><td>Label text colour (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_alpha</code></td><td>Transparency (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_fill</code></td><td>Background colour (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_size</code></td><td>Font size (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_angle</code></td><td>Rotation angle (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_hjust</code></td><td>Horizontal justification (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_vjust</code></td><td>Vertical justification (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lwd</code></td><td>Border linewidth (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lty</code></td><td>Border linetype (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_family</code></td><td>Font family (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_fontface</code></td><td>Font face (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lineheight</code></td><td>Line height (see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr></table></div>
+<table class="table table"><tr><td><strong><code>label</code></strong></td><td>Required to activate label rendering.</td></tr><tr><td><code>label_colour</code></td><td>Label text colour
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_alpha</code></td><td>Transparency
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_fill</code></td><td>Background colour
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_size</code></td><td>Font size
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_angle</code></td><td>Rotation angle
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_hjust</code></td><td>Horizontal justification
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_vjust</code></td><td>Vertical justification
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lwd</code></td><td>Border linewidth
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lty</code></td><td>Border linetype
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_family</code></td><td>Font family
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_fontface</code></td><td>Font face
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr><tr><td><code>label_lineheight</code></td><td>Line height
+(see <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code>).</td></tr></table></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="GraphSpace-methods.html">GraphSpace</a>, <a href="geom_nodespace.html">geom_nodespace</a>, <a href="geom_graphspace.html">geom_graphspace</a>,
@@ -341,14 +364,11 @@ when not set.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring graph-level attributes: 'name', 'mode', 'center'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Creating a 'GraphSpace' object...</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu">geom_edgespace</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="geom_edgespace-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

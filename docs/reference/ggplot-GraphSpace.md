@@ -88,8 +88,6 @@ gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 #> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
-if (FALSE) { # \dontrun{
-
 # Example 1: Using RGraphSpace-native geoms
 # Edge clipping metadata are injected automatically
 ggplot(gs) +
@@ -97,6 +95,7 @@ ggplot(gs) +
   geom_nodespace(aes(size = my_node_var), 
   fill = "steelblue", stroke = 2) +
   scale_size(range = c(2, 15))
+
 
 # Example 2: Mixing native and general geoms
 # Note possible clipping mismatch when combining
@@ -111,5 +110,4 @@ ggplot(gs) +
   fill = "steelblue", stroke = 2, shape = 21) +
   scale_size(range = c(2, 15))
 
-} # }
 ```

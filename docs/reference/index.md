@@ -63,7 +63,7 @@
 - [`gs_compute()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_compute.md)
   : Apply igraph functions to the graph inside a GraphSpace
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
-  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
 - [`gs_vertex_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)
   [`` `gs_vertex_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)
@@ -100,6 +100,53 @@
   : Draw edge elements in a 2D graph layout
 - [`geom_graphspace()`](https://sysbiolab.github.io/RGraphSpace/reference/geom_graphspace.md)
   : Convenience wrapper for node and edge geoms
+
+## Edge glyphs
+
+- [`GlyphArrow`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphBar`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphNone`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphTriangle1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphTriangle2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphHarpoon1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphHarpoon2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphDiamond1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphDiamond2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphChevron1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphChevron2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphArrowBar1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphArrowBar2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphDoubleArrow1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphDoubleArrow2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphBarredArrow1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphBarredArrow2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphBlock1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphBlock2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphCircle1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphCircle2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphSquare1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphSquare2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphStar1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphStar2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphCross1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphCross2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphNotch1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphNotch2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphDoubleBar1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphDoubleBar2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphReverseArrow1`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  [`GlyphReverseArrow2`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+  : Edge glyph prototypes
+- [`glyph_list()`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_list.md)
+  [`plot(`*`<gs_glyph_list>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_list.md)
+  : List available edge glyphs
+- [`glyph_legend()`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_legend.md)
+  : Create a standalone legend for edge glyphs
+- [`glyph_proto()`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_proto.md)
+  [`plot(`*`<gs_glyph>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_proto.md)
+  : Build a new glyph prototype
+- [`glyph_mode()`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_mode.md)
+  : Glyph mode of arrowType codes
 
 ## Annotation
 

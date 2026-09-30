@@ -93,13 +93,20 @@ If these aesthetics are not explicitly provided in \code{aes()}, they
 are automatically retrieved from the \link{GraphSpace} object.
 
 \tabular{ll}{
-\strong{\code{x}, \code{y}} \tab Node coordinates (required; automatically supplied).\cr
-\code{fill}    \tab Node interior colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{colour}  \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{alpha}   \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-\code{shape}   \tab Node shape (see \link{points} and \link[ggplot2]{aes_linetype_size_shape}).\cr
-\code{size}    \tab Node size (see \emph{drawing} section and \link[ggplot2]{aes_linetype_size_shape}).\cr
-\code{stroke}  \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
+\strong{\code{x}, \code{y}} \tab Node coordinates
+(required; automatically supplied).\cr
+\code{fill}    \tab Node interior colour
+(see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{colour}  \tab Node border colour
+(see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{alpha}   \tab Transparency
+(see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+\code{shape}   \tab Node shape (see \link{points} and
+\link[ggplot2]{aes_linetype_size_shape}).\cr
+\code{size}    \tab Node size (see \emph{drawing} section and
+\link[ggplot2]{aes_linetype_size_shape}).\cr
+\code{stroke}  \tab Node line width
+(see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
 }
 
 Required aesthetics are supplied from the \link{GraphSpace} object and
@@ -136,15 +143,24 @@ in \code{aes()}. All other \code{label_*} aesthetics default to
 
 \tabular{ll}{
 \strong{\code{label}}   \tab Required to activate label rendering.\cr
-\code{label_size}       \tab Font size (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_colour}     \tab Label colour (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_alpha}      \tab Label transparency (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_angle}      \tab Rotation angle (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_hjust}      \tab Horizontal justification (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_vjust}      \tab Vertical justification (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_family}     \tab Font family (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_fontface}   \tab Font face (see \code{\link[ggplot2]{geom_text}}).\cr
-\code{label_lineheight} \tab Line height (see \code{\link[ggplot2]{geom_text}}).
+\code{label_size}       \tab Font size
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_colour}     \tab Label colour
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_alpha}      \tab Label transparency
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_angle}      \tab Rotation angle
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_hjust}      \tab Horizontal justification
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_vjust}      \tab Vertical justification
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_family}     \tab Font family
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_fontface}   \tab Font face
+(see \code{\link[ggplot2]{geom_text}}).\cr
+\code{label_lineheight} \tab Line height
+(see \code{\link[ggplot2]{geom_text}}).
 }
 }
 
@@ -166,8 +182,6 @@ V(gtoy1)$user_var2 <-  rep(c(1, 2, 3), each = 5)
 
 # Create a GraphSpace object
 gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
-
-\dontrun{
 
 # Example 1: Nodes scaling with the legend
 # When 'size' is mapped inside aes(), it follows
@@ -196,8 +210,6 @@ ggplot(gs) +
   geom_edgespace() +
   geom_nodespace(aes(label = nodeLabel)) +
   theme(aspect.ratio = 1)
-  
-}
 
 }
 \seealso{

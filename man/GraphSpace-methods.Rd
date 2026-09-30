@@ -22,7 +22,8 @@ vertex attributes. For graphs requiring edge definitions, use the
 \code{igraph} initialization.}
 
 \item{layout}{An optional numeric matrix with two columns for \code{x} and
-\code{y} vertex coordinates. If provided, it overrides coordinates in \code{g}.}
+\code{y} vertex coordinates. If provided, it overrides coordinates
+in \code{g}.}
 
 \item{simplify}{A logical value. If \code{TRUE} (default), removes loops and
 multiple edges (see \link[igraph]{simplify}).}
@@ -41,9 +42,9 @@ A \linkS4class{GraphSpace} class object.
 }
 \details{
 \code{GraphSpace} objects are designed to bridge the gap between network
-analysis (via \code{igraph}) and high-quality visualization (via \code{ggplot2}).
-The constructor ensures that all necessary aesthetics for
-\code{\link{geom_graphspace}} are pre-processed and validated.
+analysis (via \code{igraph}) and high-quality visualization
+(via \code{ggplot2}). The constructor ensures that all necessary aesthetics
+for \code{\link{geom_graphspace}} are pre-processed and validated.
 
 \strong{Coordinate System and Normalization:}
 By default, the constructor expects coordinates in the \code{x} and \code{y}
@@ -68,22 +69,26 @@ variables in the input graph to be used as aesthetics within the
 
 \strong{Arrowhead Mapping:}
 The \code{arrowType} attribute (see \emph{Arrowhead types} section)
-allows for a mapping between symbolic aliases (such as \code{"-->"})
-and internal integer codes. This is useful for assigning interaction
-types in directed or undirected graphs (e.g., activation vs. inhibition).
+sets the glyphs drawn at each edge end, as integer codes (e.g. \code{1}),
+basic token codes (e.g. \code{"-->"}), or extended token codes (e.g.
+\code{"04|->03"}). This is useful for assigning interaction types in
+directed or undirected graphs (e.g., activation vs. inhibition).
 }
 \section{Vertex attributes}{
 
 The following attributes in \code{g} are evaluated by the constructor:
 
 \tabular{ll}{
-\code{nodeSize} \tab Numeric \code{[0, 100]}, representing \% of the plotting space. \cr
-\code{nodeShape} \tab Integer code \code{[0-25]}; see \link[graphics]{points}. \cr
+\code{nodeSize} \tab Numeric \code{[0, 100]}, representing \% of the
+plotting space. \cr
+\code{nodeShape} \tab Integer code \code{[0-25]};
+see \link[graphics]{points}. \cr
 \code{nodeColor} \tab A valid color name or hexadecimal code. \cr
 \code{nodeLineWidth} \tab Border thickness; see \link[grid]{gpar}. \cr
 \code{nodeLineColor} \tab A valid color name or hexadecimal code. \cr
 \code{nodeLabel} \tab Character string (\code{NA} will omit labels). \cr
-\code{nodeLabelSize} \tab Font size in \code{pts}; see \link[grid]{gpar}. \cr
+\code{nodeLabelSize} \tab Font size in \code{pts};
+see \link[grid]{gpar}. \cr
 \code{nodeLabelColor} \tab A valid color name or hexadecimal code.
 }
 }
@@ -93,18 +98,23 @@ The following attributes in \code{g} are evaluated by the constructor:
 The following attributes in \code{g} are evaluated by the constructor:
 
 \tabular{ll}{
-\code{edgeLineWidth} \tab Edge thickness; see \code{\link[grid]{gpar}}. \cr
+\code{edgeLineWidth} \tab Edge thickness;
+see \code{\link[grid]{gpar}}. \cr
 \code{edgeColor} \tab A valid color name or hexadecimal code. \cr
-\code{edgeLineType}  \tab Line style (e.g., "solid", "dashed"); see \code{\link[grid]{gpar}}. \cr
-\code{arrowType}     \tab Arrowhead style (see \emph{Arrowhead types} section).
+\code{edgeLineType}  \tab Line style (e.g., "solid", "dashed");
+see \code{\link[grid]{gpar}}. \cr
+\code{arrowType} \tab Arrowhead style
+(see \emph{Arrowhead types} section).
 }
 }
 
 \section{Arrowhead types}{
 
 
-Arrowheads are controlled via the \code{arrowType} attribute using
-integer or character codes (see examples in the \emph{RGraphSpace} vignette).
+Arrowheads and other edge glyphs are set by the \code{arrowType} attribute,
+at three levels, from the simplest to the most expressive: integer codes,
+basic token codes, and extended token codes. The levels can be mixed in
+the same attribute (e.g. \code{c("1", "-1", "01<->01")}).
 
 In directed graphs, arrows follow the edge list orientation by default,
 representing forward directions (\emph{e.g.}, \code{A -> B}).
@@ -112,18 +122,23 @@ While undirected graphs do not show arrows by default, specific styles
 can be manually assigned for detailed visualization, including forward,
 backward, or bidirectional arrowheads.
 
-\subsection{Directed graphs (A -> B):}{
+\subsection{Integer codes and basic token codes:}{
+Integer codes select the basic forms, built from arrows and bars; each has
+an equivalent basic token code, which draws the same form as a picture of
+the edge. In directed graphs only the end glyph is drawn, so only three
+codes apply.
+
+Directed graphs (A -> B):
 \tabular{lll}{
-\strong{Code} \tab \strong{Alias} \tab \strong{Description} \cr
+\strong{Integer} \tab \strong{Token} \tab \strong{Description} \cr
 \code{0} \tab \code{"---"} \tab No arrow \cr
 \code{1} \tab \code{"-->"} \tab Forward arrow \cr
 \code{-1} \tab \code{"--|"} \tab Forward bar
 }
-}
 
-\subsection{Undirected graphs (A -- B):}{
+Undirected graphs (A -- B):
 \tabular{lll}{
-\strong{Code} \tab \strong{Alias} \tab \strong{Description} \cr
+\strong{Integer} \tab \strong{Token} \tab \strong{Description} \cr
 \code{0} \tab \code{"---"} \tab No arrow \cr
 \code{1} \tab \code{"-->"} \tab Forward arrow \cr
 \code{2} \tab \code{"<--"} \tab Backward arrow \cr
@@ -134,6 +149,25 @@ backward, or bidirectional arrowheads.
 \code{-3} \tab \code{"|-|"} \tab Bidirectional bar \cr
 \code{-4} \tab \code{"<-|"} \tab Backward arrow / forward bar
 }
+}
+
+\subsection{Token codes:}{
+A token code has the form \emph{start}\code{-}\emph{end}: the
+\code{"-"} shaft separates a start token (drawn at the source end) from
+an end token (drawn at the target end). A basic token is \code{">"}
+(arrow), \code{"|"} (bar), or \code{"-"} (no glyph). A start token is
+written mirrored, so the code reads like the edge itself; \code{"<"} and
+\code{">"} are interchangeable, and codes are stored in this canonical
+form. In directed graphs a start glyph is dropped with a warning; invalid
+codes are replaced by the default with a warning.
+}
+
+\subsection{Extended token codes:}{
+Adding a modifier, a two-digit glyph number, to a basic token selects an
+extended glyph from the glyph collection, e.g. \code{">01"} (triangle) or
+\code{"|04"} (circle). At the start of a code the modifier comes first, so
+\code{"01<->01"} has triangles at both ends and \code{"04|->03"} a circle
+and a harpoon. Use \code{\link{glyph_list}} to see the available glyphs.
 }
 }
 
@@ -154,6 +188,7 @@ gs <- GraphSpace(gtoy1)
 
 }
 \seealso{
+\code{\link{geom_edgespace}},  \code{\link{geom_nodespace}},
 \code{\link{geom_graphspace}}, \code{\link{plotGraphSpace}}
 }
 \author{

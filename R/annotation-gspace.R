@@ -58,7 +58,6 @@
 #' # Add a raster image
 #' gs_image(gs) <- as_colorraster(volcano)
 #' 
-#' \dontrun{
 #' # Pass a GraphSpace object directly
 #' ggplot(gs) +
 #'   annotation_gspace_image(gs) +
@@ -77,7 +76,6 @@
 #'   geom_edgespace() +
 #'   geom_nodespace()
 #'   
-#' }
 #' @importFrom ggplot2 annotation_raster
 #' @importFrom grDevices col2rgb rgb
 #' @rdname annotation_gspace_image
@@ -97,7 +95,7 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
   .validate_gs_args("integer_vec", "rgb_channels",
     rgb_channels, notNA = FALSE)
   if(!is.null(stretch)){
-    stretch <- match.arg(stretch, c("lin", "hist"))
+    stretch <- rlang::arg_match(stretch)
   }
   
   if(!is.na(na.color)){
@@ -172,13 +170,24 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
   
   nb_src <- terra::nlyr(x)
   rgb_channels <- as.integer(rgb_channels)
-  if (length(rgb_channels) != 3L)
-    stop("'rgb_channels' must have length 3 (R, G, B); use NA for an empty channel")
+  
+  if (length(rgb_channels) != 3L) {
+    rlang::abort(c(
+      "'rgb_channels' must have length 3 (R, G, B).",
+      "i" = "Use NA for an empty channel, e.g. c(3, 2, NA)."
+    ))
+  }
   valid <- rgb_channels[!is.na(rgb_channels)]
-  if (length(valid) == 0L)
-    stop("at least one of the R, G, B channels must be a layer index")
-  if (any(valid < 1L | valid > nb_src))
-    stop("'rgb_channels' index out of range (image has ", nb_src, " layers)")
+  if (length(valid) == 0L) {
+    rlang::abort(
+      "At least one of the R, G, B channels must be a layer index.")
+  }
+  if (any(valid < 1L | valid > nb_src)) {
+    rlang::abort(c(
+      "'rgb_channels' index out of range.",
+      "i" = sprintf("The image has %d layer(s).", nb_src)
+    ))
+  }
   
   if (terra::ncell(x) > maxpixels) {
     s <- sqrt(maxpixels / terra::ncell(x))

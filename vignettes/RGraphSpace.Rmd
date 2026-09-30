@@ -177,8 +177,8 @@ Note: `edgeLineColor` is deprecated as of version 1.4.3 and replaced by `edgeCol
 
 ```{r Edge attributes - 2, eval=TRUE, message=FALSE}
 # Arrowhead types in directed graphs
-## Integer or character code:
-## 0 = "---", 1 = "-->", -1 = "--|"
+## Integer codes or token values:
+## 0 = "--", 1 = "->", -1 = "-|"
 E(gtoy1)$arrowType <- 1
 ``` 
 
@@ -186,18 +186,20 @@ E(gtoy1)$arrowType <- 1
 
 ```{r Edge attributes - 3, eval=TRUE, message=FALSE}
 # Arrowhead types in undirected graphs
-## Integer or character code:
-##  0 = "---"
-##  1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->"
-## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|"
+## Integer codes or token values:
+##  0 = "--"
+##  1 = "->",  2 = "<-",  3 = "<->",  4 = "|->"
+## -1 = "-|", -2 = "|-", -3 = "|-|", -4 = "<-|"
 gtoy1_undir <- igraph::as_undirected(gtoy1, edge.attr.comb = "first")
-E(gtoy1_undir)$arrowType <- 1
+E(gtoy1_undir)$arrowType <- "->"
 # Note: in undirected graphs, this attribute overrides
 # the edge's orientation in the edge list and adds arrowheads
 # to edges that would otherwise be drawn without any
 ```
 
-... and plot the fully attributed `gtoy1` object.
+Integer codes and basic token codes select arrows and bars, the basic edge glyphs. Other glyphs can be assigned with extended token codes in the same attribute, and the levels can be mixed; see `glyph_list()` for the available tokens and `?glyph_collection` for the glyph collection. Extended examples are provided in the online [*edge glyphs*](#tutorials) vignette.
+
+Plot the fully attributed `gtoy1` object.
  
 ```{r A shortcut for RGraphSpace, eval=TRUE, message=FALSE}
 # Plot the fully attributed 'gtoy1'
@@ -255,7 +257,7 @@ Priority | Source | Description
 2 | Aesthetic mapping | Data-driven, scale-trained, shown in legends.
 3 | Graph attribute | Per-node or per-edge identity values from the `GraphSpace` object.
 
-# Online tutorials
+# Online tutorials {#tutorials}
 
 For detailed integration with the *ggplot2* ecosystem, see the online documentation available at:
 

@@ -19,9 +19,7 @@ plotGraphSpace(
   raster = FALSE,
   dpi = 300,
   dev = "cairo_png",
-  add.labels = deprecated(),
-  font.size = deprecated(),
-  bg.color = deprecated()
+  add.labels = deprecated()
 )
 
 # S4 method for class 'igraph'
@@ -102,21 +100,16 @@ plotGraphSpace(gs, ...)
 
   Deprecated. Use `node.labels` instead.
 
-- font.size:
-
-  Deprecated. Use
-  [`theme`](https://ggplot2.tidyverse.org/reference/theme.html)
-  customization instead.
-
-- bg.color:
-
-  Deprecated. Use
-  [`theme`](https://ggplot2.tidyverse.org/reference/theme.html)
-  customization instead.
-
 - ...:
 
-  Additional arguments passed to the `plotGraphSpace` function.
+  Additional arguments passed to the plot. Inputs that are not
+  `GraphSpace` objects (`igraph`, `tbl_graph`, `gs_graph`) are first
+  converted with
+  [`GraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
+  and normalized with
+  [`normalizeGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md);
+  arguments for these steps, such as `layout` and `mar`, can also be
+  given here.
 
 ## Value
 
@@ -141,7 +134,6 @@ data('gtoy1', package = 'RGraphSpace')
 
 # Generate a ggplot for gtoy1
 plotGraphSpace(gtoy1, node.labels = TRUE)
-
 
 
 # Create a star graph

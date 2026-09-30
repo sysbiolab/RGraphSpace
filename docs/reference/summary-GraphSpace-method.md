@@ -36,3 +36,36 @@ pipeline without side effects beyond the printed output.
 
 [`GraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md),
 [`normalizeGraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/normalizeGraphSpace-methods.md)
+
+## Examples
+
+``` r
+data('gtoy1', package = 'RGraphSpace')
+gs <- GraphSpace(gtoy1)
+#> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+summary(gs)
+#> IGRAPH 5fb8aab DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeFillColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c),
+#> | nodeAlpha (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth
+#> | (e/n), arrowType (e/n), edgeAlpha (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 2] (cols)
+#> | y: [-4, 2] (rows)
+
+# Printing the object calls summary() through show()
+gs
+#> A GraphSpace-class object for:
+#> IGRAPH 5fb8aab DN-- 5 4 -- 
+#> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeLabelSize
+#> | (v/n), nodeLabelColor (v/c), nodeShape (v/n), nodeSize (v/n),
+#> | nodeFillColor (v/c), nodeLineWidth (v/n), nodeLineColor (v/c),
+#> | nodeAlpha (v/n), edgeLineType (e/c), edgeColor (e/c), edgeLineWidth
+#> | (e/n), arrowType (e/n), edgeAlpha (e/n)
+#> + node spatial boundaries: raw graph
+#> | x: [-8, 2] (cols)
+#> | y: [-4, 2] (rows)
+```

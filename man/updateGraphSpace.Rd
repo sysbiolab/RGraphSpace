@@ -19,3 +19,11 @@ An updated \code{GraphSpace} object.
 Updates \code{GraphSpace} objects serialized from
 previous package versions, adding any missing slots with default values.
 }
+\examples{
+data('gtoy1', package = 'RGraphSpace')
+gs <- GraphSpace(gtoy1)
+
+# Objects built with the current version are returned unchanged
+gs <- updateGraphSpace(gs)
+
+}

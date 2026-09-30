@@ -1,9 +1,6 @@
 # Contributing to RGraphSpace
 
-This outlines how to propose a change to RGraphSpace. For a detailed
-discussion on contributing to this and other tidyverse packages, please
-see the [development contributing guide](https://rstd.io/tidy-contrib)
-and our [code review principles](https://code-review.tidyverse.org/).
+This outlines how to propose a change to RGraphSpace.
 
 ## Fixing typos
 
@@ -21,9 +18,8 @@ If you want to make a bigger change, it’s a good idea to first file an
 issue and make sure someone from the team agrees that it’s needed. If
 you’ve found a bug, please file an issue that illustrates the bug with a
 minimal [reprex](https://www.tidyverse.org/help/#reprex) (this will also
-help you write a unit test, if needed). See our guide on [how to create
-a great issue](https://code-review.tidyverse.org/issues/) for more
-advice.
+help you write a unit test, if needed). See [how to create a great
+issue](https://code-review.tidyverse.org/issues/) for more advice.
 
 ### Pull request process
 
@@ -53,10 +49,19 @@ advice.
 
 ### Code style
 
-- New code should follow the tidyverse [style
-  guide](https://style.tidyverse.org). You can use
-  [Air](https://posit-dev.github.io/air/) to apply this style, but
-  please don’t restyle code that has nothing to do with your PR.
+- Because RGraphSpace integrates different systems, we use more than one
+  style. The main `GraphSpace` methods are S4 generics and follow [S4
+  class style](https://adv-r.hadley.nz/s4.html). Whenever possible, S3
+  accessors follow the tidyverse [style
+  guide](https://style.tidyverse.org/syntax.html); accessors also use
+  the `gs_*` prefix to reduce the risk of name conflicts with other
+  packages, particularly the graph-analysis packages commonly used
+  alongside RGraphSpace. Functions that build on ggplot2 `geoms` follow
+  the [ggplot2 style](https://style.tidyverse.org/ggplot2.html). Graph
+  attributes use camelCase to coexist with ggplot2 aesthetics, serving
+  as a functional boundary between two different aesthetic interfaces
+  (see [Why camelCase attribute
+  names?](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.html#camelCase)).
 
 - We use [roxygen2](https://cran.r-project.org/package=roxygen2), with
   [Markdown

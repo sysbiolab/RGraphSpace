@@ -51,7 +51,6 @@ E(gtoy1)$my_edge_var <-  runif(ecount(gtoy1), 1, 20)
 # Create a GraphSpace object with a circular layout
 gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 
-\dontrun{
 # Build the plot
 # Note that inject_nodespace() is called at the end to
 # synchronize node sizes with edge clipping.
@@ -60,7 +59,6 @@ ggplot() +
   geom_nodespace(aes(size = my_node_var), data = gs) +
   scale_size(range = c(2, 15)) +
   inject_nodespace()
-}
 
 }
 \seealso{

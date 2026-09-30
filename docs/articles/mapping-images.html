@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,6 +65,7 @@
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
     <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
+    <li><a class="dropdown-item" href="../articles/edge-glyphs.html">Edge glyphs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -80,6 +81,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -103,7 +105,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-12</h4>
+            <h4 data-toc-skip class="date">2026-09-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/mapping-images.Rmd" class="external-link"><code>vignettes/articles/mapping-images.Rmd</code></a></small>
       <div class="d-none name"><code>mapping-images.Rmd</code></div>
@@ -111,10 +113,10 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.5.5</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.5.6</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check required version</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.5"</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"RGraphSpace"</span><span class="op">)</span> <span class="op">&lt;</span> <span class="st">"1.5.6"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Need to update 'RGraphSpace' for this vignette"</span><span class="op">)</span></span>
 <span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sysbiolab/RGraphSpace"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -299,9 +301,9 @@ for <em>RGraphSpace</em>.</p>
 <span></span>
 <span><span class="va">gs</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 2fb2092 DN-- 39 0 -- </span></span>
+<span><span class="co">#&gt; IGRAPH e89a1b1 DN-- 39 0 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
-<span><span class="co">#&gt; | nodeFillColor (v/c), arrowType (e/n)</span></span>
+<span><span class="co">#&gt; | nodeFillColor (v/c), arrowType (e/c)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: normalized to image space</span></span>
 <span><span class="co">#&gt; | x: [16, 50] -&gt; [0, 1] (cols)</span></span>
 <span><span class="co">#&gt; | y: [11, 51] -&gt; [0, 1] (rows)</span></span>
@@ -406,7 +408,7 @@ tutorial for examples using a reference image.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.6 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    </span></span>

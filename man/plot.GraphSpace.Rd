@@ -12,8 +12,17 @@
 \item{...}{Additional arguments passed to the
 \code{\link{plotGraphSpace}} function.}
 }
+\value{
+A \code{\link[ggplot2]{ggplot}} object.
+}
 \description{
 Plot GraphSpace objects
+}
+\examples{
+data('gtoy1', package = 'RGraphSpace')
+gs <- GraphSpace(gtoy1)
+plot(gs)
+
 }
 \seealso{
 \code{\link{plotGraphSpace}}

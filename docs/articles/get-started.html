@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,6 +65,7 @@
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
     <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
+    <li><a class="dropdown-item" href="../articles/edge-glyphs.html">Edge glyphs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -80,6 +81,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -103,7 +105,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-12</h4>
+            <h4 data-toc-skip class="date">2026-09-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/get-started.Rmd" class="external-link"><code>vignettes/articles/get-started.Rmd</code></a></small>
       <div class="d-none name"><code>get-started.Rmd</code></div>
@@ -116,12 +118,16 @@ Team</h4>
   text-align: center !important;
 }
 </style>
-<p><br><strong>Package</strong>: RGraphSpace 1.5.5</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.5.6</p>
 <p>For a self-contained introduction that works offline, run
 <strong>vignette(“RGraphSpace”)</strong> after installing the
 package.</p>
 <div class="section level2">
 <h2 id="introductory-vignettes">Introductory vignettes<a class="anchor" aria-label="anchor" href="#introductory-vignettes"></a>
+</h2>
+</div>
+<div class="section level2">
+<h2 id="introductory-vignettes-1">Introductory vignettes<a class="anchor" aria-label="anchor" href="#introductory-vignettes-1"></a>
 </h2>
 <p>These tutorials introduce <em>RGraphSpace</em> using simple toy
 examples: <a href="building-graphspace.html"><em>building a
@@ -129,11 +135,13 @@ GraphSpace</em></a> walks through basic graph conventions; <a href="customizing-
 demonstrates how to set up <code>geoms</code> to handle graph data
 types; <a href="scales-and-offsets.html"><em>scales and offsets</em></a>
 describes the trade-offs involved in synchronizing node and edge layers;
-<a href="geometries.html"><em>geometries and nodes</em></a> demonstrates
-how to attach <code>sf</code> geometries to nodes as custom markers, and
-<a href="graphspace-accessors.html"><em>GraphSpace accessors</em></a>
-covers graph transformation functions, attribute manipulation, and the
-package’s general accessors.</p>
+<a href="curved-edges.html"><em>curved edges and loops</em></a> shows
+how to draw curved, parallel, and self-loop edges; <a href="geometries.html"><em>geometries and nodes</em></a> demonstrates
+how to attach <code>sf</code> geometries to nodes as custom markers; <a href="edge-glyphs.html"><em>edge glyphs</em></a> introduces the symbols
+drawn at edge ends, from simple arrows to an extended glyph collection;
+and <a href="graphspace-accessors.html"><em>GraphSpace
+accessors</em></a> covers graph transformation functions, attribute
+manipulation, and the package’s general accessors.</p>
 <div>
 <div class="row p-0 row-cols-1 row-cols-md-2 row-cols-lg-3" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 1rem 1rem 1rem 1rem ;">
@@ -178,6 +186,15 @@ package’s general accessors.</p>
 <div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
 <a href="geometries.html">
 <h6 class="card-title my-auto px-3 pt-3 pb-3">Geometries and Nodes</h6>
+</a>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 1rem 1rem 1rem 1rem ;">
+<a href="edge-glyphs.html" style="color: inherit;">
+<img src="cards/edge_glyphs.png" class="card-img-top" style="border-style:solid; border-color:inherits; border-width:1px 1px 0 1px; border-radius: 1rem 1rem 0 0 ;"></a>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: inherits; border-style:solid; border-color:inherits; border-width:1px; border-radius: 0 0 1rem 1rem ;">
+<a href="edge-glyphs.html">
+<h6 class="card-title my-auto px-3 pt-3 pb-3">Edge Glyphs</h6>
 </a>
 </div>
 </div>

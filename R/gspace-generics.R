@@ -49,16 +49,6 @@ setGeneric("fitGeometry", function(gs, ...)
   package = "RGraphSpace"
 )
 
-setGeneric("gs_delete_v_attr", function(x, name)
-  standardGeneric("gs_delete_v_attr"),
-  package = "RGraphSpace"
-)
-
-setGeneric("gs_delete_e_attr", function(x, name)
-  standardGeneric("gs_delete_e_attr"),
-  package = "RGraphSpace"
-)
-
 setGeneric("gs_graph", function(x) 
   standardGeneric("gs_graph"),
   package = "RGraphSpace"

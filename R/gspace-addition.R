@@ -263,7 +263,7 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
   }
   
   validObject(x)
-  return(x)
+  x
   
 })
 
@@ -432,7 +432,7 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
   x <- .updateEdgeSpace(x, g)
 
   validObject(x)
-  return(x)
+  x
 
 })
 
@@ -622,6 +622,6 @@ setReplaceMethod("gs_add_edges", "GraphSpace", function(x, value) {
     rownames(value) <- NULL
   }
 
-  return(value)
+  value
 
 }

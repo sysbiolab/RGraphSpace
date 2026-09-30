@@ -67,7 +67,6 @@ setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ..., value) {
     g <- x@graph
     if(missing(name)){
       att <- igraph::vertex_attr(graph = g, ...=...)
-      return(att)
     } else {
       .validate_gs_args("singleString", "name", name)
       if(name %in% igraph::vertex_attr_names(g)){
@@ -77,10 +76,10 @@ setMethod("gs_vertex_attr", "GraphSpace", function(x, name, ..., value) {
         att <- NULL
       }
     }
-    return(att)
+    att
   } else {
     gs_vertex_attr(x, name, ...) <- value
-    return(x)
+    x
   }
 
 })
@@ -125,7 +124,7 @@ setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
   igraph::vertex_attr(graph = g, name = name, ...=...) <- value
   x <- .updateNodeSpace(x, g)
   
-  return(x)
+  x
   
 })
 
@@ -148,11 +147,11 @@ setMethod("gs_edge_attr", "GraphSpace", function(x, name, ..., value) {
       .validate_gs_args("singleString", "name", name)
       att <- igraph::edge_attr(graph = g, name = name, ...=...)
     }
-    return(att)
+    att
   } else {
     .validate_gs_args("singleString", "name", name)
     gs_edge_attr(x, name, ...) <- value
-    return(x)
+    x
   }
 })
 
@@ -184,7 +183,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   igraph::edge_attr(graph = g, name = name, ...=...) <- value
   x <- .updateEdgeSpace(x, g)
   
-  return(x)
+  x
   
 })
 
@@ -215,7 +214,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   x@coords <- x@coords[ , colnames(x@coords)!=name, drop = FALSE]
   x <- .updateNodeSpace(x, g)
   
-  return(x)
+  x
 }
 
 #' @keywords internal
@@ -242,13 +241,13 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   }
   x@edges <- x@edges[ , colnames(x@edges)!=name, drop = FALSE]
   x <- .updateEdgeSpace(x, g)
-  return(x)
+  x
 }
 
 .updateEdgeSpace <- function(x, g){
   x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
-  x@edges <- .build_edges(x@graph, simplify = .is_simplified(x))
-  return(x)
+  x@edges <- .build_edges(x@graph)
+  x
 }
 
 .updateNodeSpace <- function(x, g) {
@@ -272,7 +271,7 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
   x@nodes <- nodes
   x@coords <- coords
   
-  return(x)
+  x
   
 }
 

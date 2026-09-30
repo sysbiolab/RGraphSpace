@@ -1,6 +1,6 @@
 # Using RGraphSpace with High-Dimensional Data
 
-**Package**: RGraphSpace 1.5.5\
+**Package**: RGraphSpace 1.5.6\
 
 ## Overview
 
@@ -41,7 +41,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -239,7 +239,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [3] ssHippo.SeuratData_3.1.4  pbmc3k.SeuratData_3.1.4  
     #>  [5] SeuratData_0.2.2.9002     Seurat_5.5.1.9001        
     #>  [7] SeuratObject_5.4.0        sp_2.2-1                 
-    #>  [9] RGraphSpace_1.5.5         ggplot2_4.0.3            
+    #>  [9] RGraphSpace_1.5.6         ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.19.0      jsonlite_2.0.0        
@@ -270,7 +270,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [76] RcppAnnoy_0.0.23       ggrepel_0.9.8          RANN_2.6.2            
     #>  [79] pillar_1.11.1          stringr_1.6.0          spam_2.11-4           
     #>  [82] RcppHNSW_0.7.0         later_1.4.8            splines_4.6.1         
-    #>  [85] dplyr_1.2.1            lattice_0.23-1         survival_3.8-11       
+    #>  [85] dplyr_1.2.1            lattice_0.23-1         survival_3.8-12       
     #>  [88] deldir_2.0-4           tidyselect_1.2.1       miniUI_0.1.2          
     #>  [91] pbapply_1.7-4          knitr_1.51             gridExtra_2.3.1       
     #>  [94] scattermore_1.2        xfun_0.59              matrixStats_1.5.0     

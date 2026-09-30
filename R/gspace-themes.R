@@ -33,7 +33,7 @@
 #' to the interval \code{[0, 1]}.
 #' 
 #' @return
-#' \code{theme_gspace_th*()} return a \code{ggplot2} theme object.
+#' \code{theme_gspace_th*()} return a \code{ggplot2} theme object plus guides.
 #' 
 #' \code{theme_gspace_coords()} returns a list containing scale and theme
 #' components that can be added to a \pkg{ggplot2} plot.
@@ -53,7 +53,13 @@
 #'       scales::rescale(mpg))) +
 #'   geom_point() +
 #'   theme_gspace_coords("th2", is_norm = TRUE)
-#'   
+#' 
+#' # Theme variants differ in grid lines, borders, and margins
+#' p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
+#' p + theme_gspace_th1()
+#' p + theme_gspace_th2(bg_colour = "white")
+#' p + theme_gspace_th3(txt_size = 0.8, leg_size = 0.8)
+#' 
 #' @importFrom ggplot2 "%+replace%" 
 #' @name theme_gspace
 #' @export
@@ -71,7 +77,7 @@ theme_gspace_th0 <- function(txt_size = 1, leg_size = 1,
     l_th[[2]] <- do.call(guides, l_args)
   }
   
-  return(l_th)
+  l_th
   
 }
 
@@ -99,7 +105,7 @@ theme_gspace_th1 <- function(txt_size = 1, leg_size = 1,
     l_th[[2]] <- do.call(guides, l_args)
   }
   
-  return(l_th)
+  l_th
   
 }
 
@@ -126,7 +132,7 @@ theme_gspace_th2 <- function(txt_size = 1, leg_size = 1,
     l_th[[2]] <- do.call(guides, l_args)
   }
   
-  return(l_th)
+  l_th
   
 }
 
@@ -157,7 +163,7 @@ theme_gspace_th3 <- function(txt_size = 1, leg_size = 1,
     l_th[[2]] <- do.call(guides, l_args)
   }
   
-  return(l_th)
+  l_th
   
 }
 
@@ -180,10 +186,21 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
   args <- list(...)
   names(args)[names(args) == "bg_color"] <- "bg_colour"
   
-  theme <- match.arg(theme, choices = c("th0", "th1", "th2", "th3"))
-  bks <- .set_theme_bks(theme)
-  bks$expand <- expand %||% bks$expand
   th <- list()
+  
+  if(ggplot2::is_theme(theme)){
+    bks <- .set_theme_bks("th0")
+    bks$expand <- expand %||% bks$expand
+    th[[length(th)+1]] <- theme
+    th[[length(th)+1]] <- ggplot2::theme(aspect.ratio = 1)
+  } else {
+    theme <- rlang::arg_match(theme, values = c("th0", "th1", "th2", "th3"))
+    bks <- .set_theme_bks(theme)
+    bks$expand <- expand %||% bks$expand
+    ftheme <- .get_gspace_theme(theme)
+    th[[length(th)+1]] <- do.call(ftheme, args)
+  }
+  
   if(is_norm){
     th[[length(th)+1]] <- scale_x_continuous(breaks = bks$axis.ticks,
       labels = format(bks$axis.ticks), limits = bks$xylim, 
@@ -196,11 +213,9 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
     th[[length(th)+1]] <- scale_x_continuous(
       guide = ggplot2::guide_axis(position = bks$x.position))
   }
-  ftheme <- .get_gspace_theme(theme)
-  th[[length(th)+1]] <- do.call(ftheme, args)
   th[[length(th)+1]] <- labs(x = xlab, y = ylab)
   attr(th, "gspace_pars") <- bks
-  return(th)
+  th
 }
 .get_gspace_theme <- function(theme) {
   if (theme == "th3") {
@@ -212,7 +227,7 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
   } else {
     ftheme <- theme_gspace_th0
   }
-  return(ftheme)
+  ftheme
 }
 .set_theme_bks <- function(theme){
   bks <- list()
@@ -238,7 +253,7 @@ theme_gspace_coords <- function(theme = "th0", is_norm = FALSE,
     bks$justify <- "right"
     bks$leg.position <- "right"
   }
-  return(bks)
+  bks
 }
 
 #-------------------------------------------------------------------------------
@@ -310,7 +325,7 @@ theme_gspace_legend <- function(leg_size = 1,
     l_th[[length(l_th)+1]] <- do.call(guides, l_args)
   }
   
-  return(l_th)
+  l_th
   
 }
 

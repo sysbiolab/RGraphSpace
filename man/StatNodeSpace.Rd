@@ -25,9 +25,10 @@ During the \code{setup_data} stage, the Stat invokes internal functions
 to resolve value priority:
 \enumerate{
 \item \strong{Explicit Mapping}: Values defined by the user inside \code{aes()}.
-\item \strong{Fixed Parameters}: Constant values passed as arguments in the \code{geom_nodespace()} call.
-\item \strong{Graph Attributes}: Original attributes stored within the GraphSpace
-object, retrieved from the data columns.
+\item \strong{Fixed Parameters}: Constant values passed as arguments
+in the \code{geom_nodespace()} call.
+\item \strong{Graph Attributes}: Original attributes stored within the
+GraphSpace object, retrieved from the data columns.
 }
 }
 

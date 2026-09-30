@@ -89,3 +89,27 @@ object. Node metadata from `x@meta.data` are appended to the node table.
 ## See also
 
 [`GraphSpace`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-class.md)
+
+## Examples
+
+``` r
+data('gtoy1', package = 'RGraphSpace')
+
+# From igraph or tidygraph objects
+gs <- as.GraphSpace(gtoy1)
+#> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+gs <- as.GraphSpace(tidygraph::as_tbl_graph(gtoy1))
+#> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+
+# From a data.frame of node coordinates (a graph without edges)
+df <- data.frame(x = c(0, 1, 2), y = c(0, 1, 0),
+  row.names = c("a", "b", "c"))
+gs <- as.GraphSpace(df)
+#> Converting input data to an 'igraph' object...
+#> Validating the 'igraph' object...
+#> Creating a 'GraphSpace' object...
+```

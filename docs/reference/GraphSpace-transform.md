@@ -14,10 +14,10 @@ region; `rotateGraphSpace()` rotates by a quarter turn;
 cropGraphSpace(gs, xmin = 0, xmax = 1, ymin = 0, ymax = 1, verbose = TRUE)
 
 # S4 method for class 'GraphSpace'
-flipGraphSpace(gs, vertical = FALSE, persist = .is_raw(gs), verbose = TRUE)
+flipGraphSpace(gs, vertical = TRUE, persist = .is_raw(gs), verbose = TRUE)
 
 # S4 method for class 'GraphSpace'
-rotateGraphSpace(gs, clockwise = FALSE, persist = .is_raw(gs), verbose = TRUE)
+rotateGraphSpace(gs, clockwise = TRUE, persist = .is_raw(gs), verbose = TRUE)
 
 # S4 method for class 'GraphSpace'
 transposeGraphSpace(gs, persist = .is_raw(gs), verbose = TRUE)
@@ -56,8 +56,8 @@ transposeGraphSpace(gs, persist = .is_raw(gs), verbose = TRUE)
 
 - vertical:
 
-  Logical; if `FALSE` (default), the flip is horizontal (mirror
-  left-right); if `TRUE`, vertical (mirror top-bottom).
+  Logical; if `TRUE` (default), the flip is vertical (mirror
+  top-bottom); if `TRUE`, horizontal (mirror left-right).
   (`flipGraphSpace` only).
 
 - persist:
@@ -67,8 +67,8 @@ transposeGraphSpace(gs, persist = .is_raw(gs), verbose = TRUE)
 
 - clockwise:
 
-  Logical; if `FALSE` (default), the 90-degree turn is
-  counter-clockwise; if `TRUE`, clockwise (`rotateGraphSpace` only).
+  Logical; if `TRUE` (default), the 90-degree turn is clockwise; if
+  `TRUE`, counter-clockwise (`rotateGraphSpace` only).
 
 ## Value
 
@@ -115,15 +115,15 @@ gs <- normalizeGraphSpace(gs)
 gs_crop <- cropGraphSpace(gs, ymax = 0.5)
 #> Cropping graph space to x in [0, 1], y in [0, 0.5]...
 gs_rot90 <- rotateGraphSpace(gs)
-#> Rotating normalized coordinates 90 degrees counter-clockwise...
+#> Rotating normalized coordinates 90 degrees clockwise...
 gs_flip <- flipGraphSpace(gs)
-#> Flipping normalized coordinates horizontally...
+#> Flipping normalized coordinates vertically...
 gs_t <- transposeGraphSpace(gs)
 #> Transposing normalized coordinates...
 
-plotGraphSpace(gs, add.labels = TRUE)
+plotGraphSpace(gs, node.labels = TRUE)
 
 
-plotGraphSpace(gs_crop, add.labels = TRUE)
+plotGraphSpace(gs_crop, node.labels = TRUE)
 
 ```

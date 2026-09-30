@@ -1,6 +1,6 @@
 # Using RGraphSpace with Spatial Feature Data
 
-**Package**: RGraphSpace 1.5.5\
+**Package**: RGraphSpace 1.5.6\
 
 ## Overview
 
@@ -38,7 +38,7 @@ are installed.
 ``` r
 
 # Check versions
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -314,7 +314,7 @@ gs <- normalizeGraphSpace(gs)
     #> [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 
     #> [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    
     #> [5] Seurat_5.5.1.9001         SeuratObject_5.4.0       
-    #> [7] sp_2.2-1                  RGraphSpace_1.5.5        
+    #> [7] sp_2.2-1                  RGraphSpace_1.5.6        
     #> [9] ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):
@@ -347,7 +347,7 @@ gs <- normalizeGraphSpace(gs)
     #>  [79] RANN_2.6.2             pillar_1.11.1          stringr_1.6.0         
     #>  [82] spam_2.11-4            RcppHNSW_0.7.0         later_1.4.8           
     #>  [85] splines_4.6.1          dplyr_1.2.1            lattice_0.23-1        
-    #>  [88] survival_3.8-11        deldir_2.0-4           tidyselect_1.2.1      
+    #>  [88] survival_3.8-12        deldir_2.0-4           tidyselect_1.2.1      
     #>  [91] miniUI_0.1.2           pbapply_1.7-4          knitr_1.51            
     #>  [94] gridExtra_2.3.1        scattermore_1.2        xfun_0.59             
     #>  [97] matrixStats_1.5.0      stringi_1.8.9          lazyeval_0.2.3        

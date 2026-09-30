@@ -59,13 +59,20 @@
 #' are automatically retrieved from the \link{GraphSpace} object.
 #'
 #' \tabular{ll}{
-#'   \strong{\code{x}, \code{y}} \tab Node coordinates (required; automatically supplied).\cr
-#'   \code{fill}    \tab Node interior colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{colour}  \tab Node border colour (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{alpha}   \tab Transparency (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
-#'   \code{shape}   \tab Node shape (see \link{points} and \link[ggplot2]{aes_linetype_size_shape}).\cr
-#'   \code{size}    \tab Node size (see *drawing* section and \link[ggplot2]{aes_linetype_size_shape}).\cr
-#'   \code{stroke}  \tab Node line width (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
+#'   \strong{\code{x}, \code{y}} \tab Node coordinates 
+#'   (required; automatically supplied).\cr
+#'   \code{fill}    \tab Node interior colour 
+#'   (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{colour}  \tab Node border colour 
+#'   (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{alpha}   \tab Transparency 
+#'   (see \link[ggplot2]{aes_colour_fill_alpha}).\cr
+#'   \code{shape}   \tab Node shape (see \link{points} and
+#'   \link[ggplot2]{aes_linetype_size_shape}).\cr
+#'   \code{size}    \tab Node size (see *drawing* section and
+#'   \link[ggplot2]{aes_linetype_size_shape}).\cr
+#'   \code{stroke}  \tab Node line width 
+#'   (see \link[ggplot2]{gg_par} and \link[ggplot2]{aes_linetype_size_shape}).
 #' }
 #' 
 #' Required aesthetics are supplied from the \link{GraphSpace} object and  
@@ -98,15 +105,24 @@
 #' 
 #' \tabular{ll}{
 #'   \strong{\code{label}}   \tab Required to activate label rendering.\cr
-#'   \code{label_size}       \tab Font size (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_colour}     \tab Label colour (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_alpha}      \tab Label transparency (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_angle}      \tab Rotation angle (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_hjust}      \tab Horizontal justification (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_vjust}      \tab Vertical justification (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_family}     \tab Font family (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_fontface}   \tab Font face (see \code{\link[ggplot2]{geom_text}}).\cr
-#'   \code{label_lineheight} \tab Line height (see \code{\link[ggplot2]{geom_text}}).
+#'   \code{label_size}       \tab Font size 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_colour}     \tab Label colour 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_alpha}      \tab Label transparency 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_angle}      \tab Rotation angle 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_hjust}      \tab Horizontal justification 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_vjust}      \tab Vertical justification 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_family}     \tab Font family 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_fontface}   \tab Font face 
+#'   (see \code{\link[ggplot2]{geom_text}}).\cr
+#'   \code{label_lineheight} \tab Line height 
+#'   (see \code{\link[ggplot2]{geom_text}}).
 #' }
 #' 
 #' @details
@@ -145,8 +161,6 @@
 #' # Create a GraphSpace object
 #' gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 #' 
-#' \dontrun{
-#' 
 #' # Example 1: Nodes scaling with the legend
 #' # When 'size' is mapped inside aes(), it follows
 #' # ggplot2 default behavior: size is translated 
@@ -174,8 +188,6 @@
 #'   geom_edgespace() +
 #'   geom_nodespace(aes(label = nodeLabel)) +
 #'   theme(aspect.ratio = 1)
-#'   
-#' }
 #' 
 #' @export
 geom_nodespace <- function(mapping = NULL, data = NULL, 
@@ -246,9 +258,10 @@ geom_nodespace <- function(mapping = NULL, data = NULL,
 #' to resolve value priority:
 #' \enumerate{
 #'   \item **Explicit Mapping**: Values defined by the user inside `aes()`.
-#'   \item **Fixed Parameters**: Constant values passed as arguments in the `geom_nodespace()` call.
-#'   \item **Graph Attributes**: Original attributes stored within the GraphSpace 
-#'   object, retrieved from the data columns.
+#'   \item **Fixed Parameters**: Constant values passed as arguments 
+#'   in the `geom_nodespace()` call.
+#'   \item **Graph Attributes**: Original attributes stored within the 
+#'   GraphSpace object, retrieved from the data columns.
 #' }
 #'
 #' @format A \code{ggproto} object.
@@ -261,11 +274,10 @@ StatNodeSpace <- ggproto(
     "nodeLabel", "nodeLabelSize", "nodeLabelColor"),
   extra_params = c("na.rm",".user_aes"),
   finish_layer = function(data, params) {
-    data <- .finish_nodespace(data, params)
-    return(data)
+    .finish_nodespace(data, params)
   },
   compute_panel = function(data, scales){
-    return(data)
+    data
   }
 )
 
@@ -290,16 +302,17 @@ nodespace_handler <- function(mapping = NULL) {
       rlang::abort(
         message = c(
           "x" = "`nodespace_handler()` received an unsupported object type.",
-          "i" = "Input must be a 'GraphSpace', 'igraph', 'tbl_graph', or 'layout_ggraph'."
+          "i" = paste("Input must be a 'GraphSpace', 'igraph',", 
+            "'tbl_graph', or 'layout_ggraph'.")
         )
       )
     }
     
-    return(data)
+    data
   }
   attr(fn, "gs_handler_type") <- "node"
   class(fn) <- c("nodespace_handler", class(fn))
-  return(fn)
+  fn
 }
 
 #-------------------------------------------------------------------------------
@@ -312,7 +325,7 @@ nodespace_handler <- function(mapping = NULL) {
       tryCatch(all.vars(x), error = function(e) character())
     })
   ))
-  return(vars)
+  vars
 }
 
 #-------------------------------------------------------------------------------
@@ -344,7 +357,7 @@ nodespace_handler <- function(mapping = NULL) {
       default_mapping, optional_mapping), mapping)
   }
   
-  return(mapping)
+  mapping
   
 }
 
@@ -416,7 +429,7 @@ nodespace_handler <- function(mapping = NULL) {
     }
   }
   
-  return(nodes)
+  nodes
   
 }
 
@@ -526,7 +539,8 @@ GeomNodeSpace <- ggproto(
   if (!is.null(l_data$label_vjust)) l_data$vjust <- l_data$label_vjust
   if (!is.null(l_data$label_family)) l_data$family <- l_data$label_family
   if (!is.null(l_data$label_fontface)) l_data$fontface <- l_data$label_fontface
-  if (!is.null(l_data$label_lineheight)) l_data$lineheight <- l_data$label_lineheight
+  if (!is.null(l_data$label_lineheight)) l_data$lineheight <- 
+      l_data$label_lineheight
   
   # Drop size if not overridden -- let GeomText$use_defaults() fill it
   # from its own default_aes rather than picking up the node size column
@@ -547,7 +561,7 @@ GeomNodeSpace <- ggproto(
     .check_node_size(nodes[["size"]])
     nodes$size <- scales::squish(nodes[["size"]], range = c(0, 100))
   }
-  return(nodes)
+  nodes
 }
 
 .check_node_size <- function(size) {
@@ -597,16 +611,23 @@ GeomNodeSpace <- ggproto(
 }
 
 #-------------------------------------------------------------------------------
-# For gspace, node 'size' is defined on a [0, 100] scale and converted
-# to NPC units using a 0.01 factor.
 # For plotting symbols ('pch') in 0:25, the effective symbol diameter is
 # approximately 75% of the character height (see graphics::points()); 
-# a 1/0.75 correction is applied to recover the intended size.
-.gs_pch_to_npc <- function(){
-  .gs_nsz_to_npc() * (1/0.75)
+# The 1/0.75 correction recovers the intended size and is also applied
+# to glyph symbols via 'arrow_size' for compatibility.
+.gs_pch <- function(){
+  1/0.75
 }
+# gspace node 'size' is on a [0, 100] scale, mapped to NPC by a 0.01 factor.
 .gs_nsz_to_npc <- function(){
   0.01
+}
+.gs_pch_to_npc <- function(){
+  .gs_pch() * .gs_nsz_to_npc()
+}
+# 'arrow_size' scaling factor to correct 'mm' and 'npc' conversion
+.gs_asz <- function(){
+  1.5
 }
 
 #-------------------------------------------------------------------------------

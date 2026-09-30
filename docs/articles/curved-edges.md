@@ -3,7 +3,7 @@
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -69,9 +69,9 @@ gs_toy <- normalizeGraphSpace(gs_toy)
 
 gs_toy
 #> A GraphSpace-class object for:
-#> IGRAPH d8d6bc4 DN-- 10 27 -- 
+#> IGRAPH 32df4e4 DN-- 10 27 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
-#> | nodeColor (v/c), edgeColor (e/c), arrowType (e/n), label (e/n)
+#> | nodeColor (v/c), edgeColor (e/c), arrowType (e/c), label (e/n)
 #> + node spatial boundaries: normalized to graph space
 #> | x: [-1, 1] -> [0, 1] (cols)
 #> | y: [-1, 1] -> [0, 1] (rows)
@@ -191,7 +191,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    
+#> [1] igraph_2.3.3      RGraphSpace_1.5.6 ggplot2_4.0.3    
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] Matrix_1.7-6       gtable_0.3.6       jsonlite_2.0.0     dplyr_1.2.1       

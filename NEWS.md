@@ -1,4 +1,12 @@
 
+# RGraphSpace 1.5.6
+
+* Addressed additional issues identified during the JOSS review
+* Added support for glyph-based arrow types and expanded unit tests
+* Removed unnecessary `\dontrun{}` from examples
+* Added runnable examples for all user-facing functions
+* Argument validation and all errors are signaled through rlang
+
 # RGraphSpace 1.5.5
 
 * Improved the geometry accessors and interface

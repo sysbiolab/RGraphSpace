@@ -25,6 +25,25 @@
 #'   \code{GraphSpace} object.
 #' }
 #'
+#' @examples
+#' library(RGraphSpace)
+#' 
+#' # Load a demo igraph and create a GraphSpace object
+#' data('gtoy1', package = 'RGraphSpace')
+#' gs <- GraphSpace(gtoy1)
+#' 
+#' # A feature matrix with node identifiers as row names
+#' feats <- matrix(as.numeric(seq_len(gs_vcount(gs) * 3)), ncol = 3,
+#'   dimnames = list(names(gs), c("geneA", "geneB", "geneC")))
+#' 
+#' # Add features (rows are matched and reordered to the nodes)
+#' gs <- gs_add_features(gs, feats)
+#' gs_features(gs)
+#' 
+#' # Fetch all features, or a subset as a data.frame
+#' gs_fetch_features(gs)
+#' gs_fetch_features(gs, vars = c("geneA", "geneC"), as_df = TRUE)
+#' 
 #' @aliases gs_fetch_features
 #' @aliases gs_add_features
 #' @name gs_features-utils
@@ -64,7 +83,7 @@ gs_fetch_features <- function(x, vars = NULL, as_df = FALSE) {
     fdata <- as.data.frame(as.matrix(fdata), drop = FALSE)
   }
   
-  return(fdata)
+  fdata
 }
 
 #' @rdname gs_features-utils
@@ -193,7 +212,7 @@ gs_add_features <- function(x, data) {
   
   validObject(x)
   
-  return(x)
+  x
   
 }
 

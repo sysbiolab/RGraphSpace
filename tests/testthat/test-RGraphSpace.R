@@ -1,4 +1,3 @@
-
 #-------------------------------------------------------------------------------
 # Test basic constructor
 test_that("Check RGraphSpace-class constructor", {
@@ -14,7 +13,7 @@ test_that("Check RGraphSpace-class constructor", {
 # LIMITATION: raster arm only -- does NOT exercise the SpatRaster
 make_alignment_case <- function(pad = c("row", "col"), 
   parity = c("even", "odd")) {
-  pad <- match.arg(pad); parity <- match.arg(parity)
+  pad <- rlang::arg_match(pad); parity <- rlang::arg_match(parity)
   vol <- volcano
   vol[which(volcano == quantile(volcano, 0.85), arr.ind = TRUE)] <- 0
   i <- if (parity == "even") 1L else 2L
@@ -275,7 +274,7 @@ test_that("SpatialExperiment coercion (integration)", {
   gs <- suppressMessages(as.GraphSpace(spe))
   expect_s4_class(gs, "GraphSpace")
   expect_equal(nrow(gs_nodes(gs)), 3L)
-  expect_true(RGraphSpace:::.has_fdata(gs))
+  expect_true(.has_fdata(gs))
 })
 
 #-------------------------------------------------------------------------------
@@ -306,7 +305,7 @@ test_that("Seurat coercion, embedding space (integration)", {
   gs  <- suppressMessages(as.GraphSpace(seu, space = "embedding", layer = "counts"))
   expect_s4_class(gs, "GraphSpace")
   expect_equal(nrow(gs_nodes(gs)), 3L)
-  expect_true(RGraphSpace:::.has_fdata(gs))
+  expect_true(.has_fdata(gs))
 })
 
 #-------------------------------------------------------------------------------
@@ -339,3 +338,283 @@ test_that("removing parallel edges", {
   expect_true(all(e$edge_var > 10))
 })
 
+
+#-------------------------------------------------------------------------------
+# Regression tests for gs_add_features() 
+
+make_gs_feat <- function() {
+  g <- igraph::make_ring(4)
+  igraph::V(g)$name <- c("a", "b", "c", "d")
+  suppressMessages(GraphSpace(g, layout = igraph::layout_in_circle(g),
+    verbose = FALSE))
+}
+
+test_that("gs_add_features() stores features aligned to node order", {
+  feats <- matrix(c(1, 2, 3, 4, 10, 20, 30, 40), ncol = 2,
+    dimnames = list(c("d", "b", "a", "c"), c("f1", "f2")))
+  gs <- gs_add_features(make_gs_feat(), feats)
+  fd <- gs_fetch_features(gs)
+  expect_identical(rownames(fd), names(gs))
+  expect_equal(as.vector(fd[, "f1"]), c(3, 2, 4, 1))
+  expect_identical(gs_features(gs), c("f1", "f2"))
+})
+
+test_that("gs_fetch_features() subsets variables and returns data.frames", {
+  feats <- matrix(c(1, 2, 3, 4, 10, 20, 30, 40), ncol = 2,
+    dimnames = list(c("a", "b", "c", "d"), c("f1", "f2")))
+  gs <- gs_add_features(make_gs_feat(), feats)
+  df <- gs_fetch_features(gs, vars = "f2", as_df = TRUE)
+  expect_s3_class(df, "data.frame")
+  expect_equal(df$f2, c(10, 20, 30, 40))
+  expect_null(gs_fetch_features(gs, vars = "unknown"))
+})
+
+#-------------------------------------------------------------------------------
+# Regression tests for annotation_gspace_image()
+
+test_that("annotation_gspace_image() returns a layer for a GraphSpace image", {
+  data("gtoy1", package = "RGraphSpace", envir = environment())
+  gs <- suppressMessages(GraphSpace(gtoy1, verbose = FALSE))
+  gs_image(gs) <- as_colorraster(volcano)
+  expect_true(inherits(annotation_gspace_image(gs), "Layer"))
+  expect_true(inherits(annotation_gspace_image(gs, opacity = 0.5,
+    flip.v = TRUE), "Layer"))
+})
+
+test_that("annotation_gspace_image() warns and returns NULL without an image", {
+  gs <- suppressMessages(GraphSpace(igraph::make_ring(3), verbose = FALSE))
+  expect_warning(res <- annotation_gspace_image(gs))
+  expect_null(res)
+})
+
+#-------------------------------------------------------------------------------
+# Regression tests for theme_*()
+
+test_that("theme_gspace_th*() return a ggplot2 theme", {
+  themes <- list(theme_gspace_th0, theme_gspace_th1,
+    theme_gspace_th2, theme_gspace_th3)
+  for (fn in themes) {
+    expect_true(ggplot2::is_theme(fn()[[1]]))
+  }
+})
+
+test_that("theme_gspace_coords() rejects unknown theme names", {
+  expect_error(theme_gspace_coords("th9"), class = "rlang_error")
+})
+
+#-------------------------------------------------------------------------------
+# Glyph system. Tests go through the public interface (glyph_proto(),
+# glyph_list(), glyph_legend(), GraphSpace() and gs_edge_attr()) where it can
+# express the behaviour, and use internals only for the collection guardrails
+# and the renderer. Expected values are derived from the collection rather
+# than hard-coded, so adding a glyph does not break them.
+
+# All gs_glyph objects in the namespace: the glyph collection
+.ns_glyphs <- function() {
+  ns <- asNamespace("RGraphSpace")
+  objs <- mget(ls(ns, all.names = TRUE), envir = ns)
+  Filter(function(x) inherits(x, "gs_glyph"), objs)
+}
+
+# Assign arrowType codes to an n-edge graph and return what is stored
+.store_codes <- function(codes, directed = FALSE) {
+  g <- igraph::make_ring(length(codes) + 1L, directed = directed,
+    circular = FALSE)
+  igraph::E(g)$arrowType <- codes
+  gs_edge_attr(GraphSpace(g), "arrowType")
+}
+
+#--- Collection guardrails: these turn a broken or clashing contributed glyph
+#--- into a failing test, so the package cannot be released until it is fixed
+
+test_that("the glyph collection is valid, exported, and token-unique", {
+  glyphs <- .ns_glyphs()
+  expect_gt(length(glyphs), 0L)
+  for (nm in names(glyphs)) {
+    expect_no_error(.validate_gs_glyph(glyphs[[nm]]))
+  }
+  tokens <- vapply(glyphs, function(g) g$token, character(1))
+  expect_false(anyDuplicated(tokens) > 0L)
+  expect_true(all(names(glyphs) %in% getNamespaceExports("RGraphSpace")))
+  expect_setequal(names(.glyph_vocab()), tokens)
+  expect_true(all(c("-", ">", "|") %in% tokens))  # the basic glyphs
+})
+
+test_that("token parity matches fill: odd filled, even open", {
+  # a filled glyph takes an odd number and is followed by its open form at
+  # the next (even) number; an open glyph takes an even number
+  df <- glyph_list()
+  df <- df[df$group != "basic", ]
+  num <- as.integer(substring(df$token, 2L))
+  filled <- df$draw %in% c("polygon", "circle")
+  
+  bad <- df$token[filled != (num %% 2L == 1L)]
+  expect_length(bad, 0L)
+  
+  twin <- sprintf("%s%02d", substr(df$token[filled], 1L, 1L), 
+    num[filled] + 1L)
+  orphan <- df$token[filled][!twin %in% df$token[!filled]]
+  expect_length(orphan, 0L)
+})
+
+test_that("glyph offsets end the edge line within the glyph", {
+  # an offset is 0 or a point back along the glyph, within its extent
+  for (g in .ns_glyphs()) {
+    if (nrow(g$shape) == 0L) next
+    expect_true(g$offset <= 0 && g$offset >= min(g$shape[, 1]) - 1e-8,
+      info = g$token)
+  }
+  bar <- rbind(c(0, 1), c(0, -1))
+  expect_error(glyph_proto(bar, token = "|90", draw = "segments",
+    offset = 0.5))                  # not beyond the reference point
+  expect_error(glyph_proto(bar, token = "|90", draw = "segments",
+    offset = c(-1, -2)))            # a single number
+  
+  # the renderer stops the line by the offset, scaled by the glyph size
+  open <- Filter(function(g) g$offset < 0, .ns_glyphs())[[1]]
+  edges <- data.frame(arrowTokenStart = "-", arrowTokenEnd = open$token,
+    arrow_size = 0.05, stringsAsFactors = FALSE)
+  expect_equal(.glyph_line_trim(edges, "end", 1),
+    -open$offset * 0.05)
+  expect_equal(.glyph_line_trim(edges, "start", 1), 0)
+})
+
+test_that("the primitive table covers exactly the accepted draw types", {
+  prim <- names(.glyph_primitives)
+  choices <- eval(formals(glyph_proto)$draw)
+  expect_setequal(prim, choices)
+})
+
+#--- Defining glyphs
+
+test_that("glyph_proto() builds glyphs and derives the group from the token", {
+  bar <- rbind(c(0, 1), c(0, -1))
+  g <- glyph_proto(bar, token = "|90", draw = "segments")
+  expect_s3_class(g, "gs_glyph")
+  expect_equal(g$group, "terminal")
+  expect_equal(g$name, "|90")  # the name defaults to the token
+  expect_equal(glyph_proto(bar, token = ">90", draw = "segments")$group,
+    "arrow")
+  expect_equal(glyph_proto(bar, token = "|", draw = "segments")$group,
+    "basic")
+  # the empty glyph: no points, token "-"
+  expect_s3_class(glyph_proto(matrix(numeric(0), 0, 2), token = "-"),
+    "gs_glyph")
+})
+
+test_that("glyph_proto() rejects malformed geometry, tokens, and names", {
+  bar <- rbind(c(0, 1), c(0, -1))
+  # geometry
+  expect_error(glyph_proto(rbind(c(0, 1), c(0, 0), c(0, -1)),
+    token = "|90", draw = "segments"))     # odd number of points
+  expect_error(glyph_proto(rbind(c(0, 0), c(1, 1)),
+    token = "|91", draw = "circle"))       # a circle takes one point
+  expect_error(glyph_proto(rbind(c(0, 1), c(1, 0)),
+    token = "|91", draw = "polygon"))      # too few points
+  expect_error(glyph_proto("not a matrix", token = "|90"))
+  # token
+  expect_error(glyph_proto(bar, draw = "segments"))  # missing
+  for (tk in c("07", ">1", ">012", ">T", "a-b", "<07", "|00")) {
+    expect_error(glyph_proto(bar, token = tk, draw = "segments"), info = tk)
+  }
+  expect_error(glyph_proto(bar, token = c("|90", "|92"), draw = "segments"))
+  # name
+  expect_error(glyph_proto(bar, token = "|90", draw = "segments",
+    name = c("a", "b")))
+})
+
+test_that("the glyph validator rejects hand-edited objects", {
+  # checks glyph_proto() cannot reach, since discovery validates objects
+  # that could have been edited after construction
+  good <- glyph_proto(rbind(c(0, 1), c(0, -1)), token = "|90",
+    draw = "segments")
+  expect_error(.validate_gs_glyph(unclass(good)))
+  bad <- unclass(good); bad$name <- NULL; class(bad) <- "gs_glyph"
+  expect_error(.validate_gs_glyph(bad))
+  bad <- good; bad$draw <- "spline"
+  expect_error(.validate_gs_glyph(bad))
+  bad <- good; bad$group <- "arrow"  # "|90" is a terminal
+  expect_error(.validate_gs_glyph(bad))
+})
+
+#--- Listing and drawing glyphs
+
+test_that("glyph_list() lists one row per glyph, in group order", {
+  df <- glyph_list()
+  expect_s3_class(df, "gs_glyph_list")
+  expect_true(all(c("token", "name", "group", "draw") %in% names(df)))
+  expect_equal(nrow(df), length(.ns_glyphs()))
+  expect_false(is.unsorted(match(df$group, c("basic", "arrow", "terminal"))))
+})
+
+test_that("glyph plots and legends build", {
+  grDevices::pdf(NULL)
+  on.exit(grDevices::dev.off(), add = TRUE)
+  expect_no_error(plot(GlyphArrow, GlyphTriangle1))
+  glyphs <- glyph_list()
+  expect_no_error(plot(glyphs))
+  expect_s3_class(plot(glyphs, by_group = TRUE), "gspace_legend")
+  # all three levels of codes, mixed
+  leg <- glyph_legend(c(A = "3", B = "-->", C = "01<->01"))
+  expect_s3_class(leg, "gspace_legend")
+  expect_error(glyph_legend(c(A = "-->99")))
+})
+
+#--- Setting glyphs on edges
+
+test_that("token codes are stored in canonical form", {
+  expect_equal(
+    .store_codes(c("01<->01", "<01->01", "->01", ">01", 
+      "04|-|04", "|-|", "00<->00")),
+    c("01<->01", "01<->01", "-->01", "-->01", "04|-|04", 
+      "|-|", "<->"))
+})
+
+test_that("integer codes are kept, or read as token codes when mixed", {
+  expect_equal(.store_codes(c(1, -1, 3)), c(1, -1, 3))
+  expect_equal(.store_codes(c(1, "01<->01", "-4")),
+    c("-->", "01<->01", "<-|"))
+})
+
+test_that("directed graphs keep only the end glyph", {
+  expect_warning(out <- .store_codes("01<->01", directed = TRUE))
+  expect_equal(out, "-->01")
+})
+
+test_that("invalid codes fall back to the default with a warning", {
+  expect_warning(out <- .store_codes(c("-->99", "01", "-->")), "-->99")
+  expect_equal(out, c("---", "---", "-->"))
+  expect_warning(out <- .store_codes(c(7, 1)))
+  expect_equal(out, c(0, 1))
+})
+
+#--- Rendering
+
+test_that("segments colour/width expand to one value per segment", {
+  # a segments glyph with 4 points -> 2 segments per instance. Two edges
+  # with distinct colours must not bleed into each other (the per-segment
+  # expansion bug).
+  seg_glyphs <- Filter(function(g) g$draw == "segments" &&
+      nrow(g$shape) == 4L, .ns_glyphs())
+  skip_if(length(seg_glyphs) == 0L, "no 4-point segments glyph")
+  
+  # This avoids occasional Rplots.pdf after running the test
+  grDevices::pdf(NULL)
+  on.exit(grDevices::dev.off(), add = TRUE)
+  
+  edges <- data.frame(
+    x = c(0.2, 0.6), y = c(0.2, 0.6),
+    xend = c(0.4, 0.8), yend = c(0.4, 0.8),
+    px0 = 1, py0 = 0, px1 = 1, py1 = 0,
+    arrow_size = 0.05, arrowTokenStart = "-", 
+    arrowTokenEnd = seg_glyphs[[1]]$token,
+    colour = c("#0000FF", "#FF00FF"), linewidth = 1,
+    stringsAsFactors = FALSE)
+  
+  grobs <- .get_glyph_grobs(edges, sz2npc = 1)
+  col <- grobs[[1]]$gp$col
+  expect_length(col, 4L)         # 2 instances x 2 segments
+  expect_equal(col[1], col[2])   # instance 1 solid
+  expect_equal(col[3], col[4])   # instance 2 solid
+  expect_false(isTRUE(all.equal(col[1], col[3])))  # instances differ
+})

@@ -34,7 +34,7 @@ coordinates, for two different situations."><style>
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,6 +53,7 @@ coordinates, for two different situations."><style>
     <li><a class="dropdown-item" href="../articles/curved-edges.html">Curved edges and loops</a></li>
     <li><a class="dropdown-item" href="../articles/geometries.html">Using sf geometries</a></li>
     <li><a class="dropdown-item" href="../articles/graphspace-accessors.html">GraphSpace accessors</a></li>
+    <li><a class="dropdown-item" href="../articles/edge-glyphs.html">Edge glyphs</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>General applications</h6></li>
     <li><a class="dropdown-item" href="../articles/mapping-images.html">Mapping graphs to images</a></li>
@@ -67,6 +68,7 @@ coordinates, for two different situations."><style>
     <li><a class="dropdown-item" href="../articles/nested-geometries.html">Nested geometries and high-resolution images</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Index</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sysbiolab/RGraphSpace/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -155,7 +157,7 @@ each shape so its diameter matches <code>nodeSize</code>.</p>
 geometry column, leaving any other geometry columns untouched.</p>
     </div>
     <div class="section level2">
-    <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h2>
+    <h2 id="online-examples">Online examples<a class="anchor" aria-label="anchor" href="#online-examples"></a></h2>
 
 
 
@@ -163,6 +165,52 @@ geometry column, leaving any other geometry columns untouched.</p>
 <p><a href="https://sysbiolab.github.io/RGraphSpace/articles/geometries.html">https://sysbiolab.github.io/RGraphSpace/articles/geometries.html</a></p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"sf"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">'gtoy1'</span>, package <span class="op">=</span> <span class="st">'RGraphSpace'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu"><a href="normalizeGraphSpace-methods.html">normalizeGraphSpace</a></span><span class="op">(</span><span class="fu"><a href="GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Set different node sizes to test the geometry fitting</span></span></span>
+<span class="r-in"><span><span class="va">gs</span><span class="op">$</span><span class="va">nodeShape</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">gs</span><span class="op">$</span><span class="va">nodeSize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="GraphSpace-accessors.html">gs_vcount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># fitGeometry(): fit arbitrary shapes to the graph layout,</span></span></span>
+<span class="r-in"><span><span class="co"># positioning them at the nodes and scaling to nodeSize</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="sfshape_ngons.html">sfshape_ngons</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="GraphSpace-accessors.html">gs_vcount</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">fitGeometry</span><span class="op">(</span><span class="va">gs</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">geometry</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"lightblue"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span><span class="co"># normalizeGeometry(): shapes already in raw node coordinates,</span></span></span>
+<span class="r-in"><span><span class="co"># realigned to the normalized node frame</span></span></span>
+<span class="r-in"><span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="getGraphSpace-methods.html">getGraphSpace</a></span><span class="op">(</span><span class="va">gs</span>, <span class="st">"coords"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">outlines</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Map</a></span><span class="op">(</span><span class="va">sfshape_ngon</span>, <span class="va">raw</span><span class="op">$</span><span class="va">x</span>, <span class="va">raw</span><span class="op">$</span><span class="va">y</span>, radius <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="GraphSpace-accessors.html">gs_geometry</a></span><span class="op">(</span><span class="va">gs</span>, name <span class="op">=</span> <span class="st">"outline"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">outlines</span></span></span>
+<span class="r-in"><span><span class="va">gs</span> <span class="op">&lt;-</span> <span class="fu">normalizeGeometry</span><span class="op">(</span><span class="va">gs</span>, name <span class="op">=</span> <span class="st">"outline"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">outline</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"lightblue"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"red"</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>is_norm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Validating the 'igraph' object...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ignoring graph-level attributes: 'name', 'mode', 'center'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Creating a 'GraphSpace' object...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Normalizing node coordinates to graph space...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fitting 'geometry' geometry to node size...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fitting 'geometry' geometry to node coordinates...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Normalizing 'outline' coordinates...</span>
+<span class="r-plt img"><img src="geometry-methods-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

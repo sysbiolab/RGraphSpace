@@ -23,3 +23,16 @@ updateGraphSpace(x, verbose = TRUE)
 ## Value
 
 An updated `GraphSpace` object.
+
+## Examples
+
+``` r
+data('gtoy1', package = 'RGraphSpace')
+gs <- GraphSpace(gtoy1)
+#> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+
+# Objects built with the current version are returned unchanged
+gs <- updateGraphSpace(gs)
+```

@@ -21,9 +21,7 @@
   raster = FALSE,
   dpi = 300,
   dev = "cairo_png",
-  add.labels = deprecated(),
-  font.size = deprecated(),
-  bg.color = deprecated()
+  add.labels = deprecated()
 )
 
 \S4method{plotGraphSpace}{igraph}(gs, ...)
@@ -67,12 +65,11 @@ See \code{\link[ggrastr]{rasterise}} for further specifications.}
 
 \item{add.labels}{Deprecated. Use \code{node.labels} instead.}
 
-\item{font.size}{Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.}
-
-\item{bg.color}{Deprecated. Use \code{\link[ggplot2]{theme}} customization instead.}
-
-\item{...}{Additional arguments passed to the
-\code{\link{plotGraphSpace}} function.}
+\item{...}{Additional arguments passed to the plot. Inputs that are not
+\code{GraphSpace} objects (\code{igraph}, \code{tbl_graph},
+\code{gs_graph}) are first converted with \code{\link{GraphSpace}} and
+normalized with \code{\link{normalizeGraphSpace}}; arguments for these
+steps, such as \code{layout} and \code{mar}, can also be given here.}
 }
 \value{
 A ggplot-class object.
@@ -90,7 +87,6 @@ data('gtoy1', package = 'RGraphSpace')
 
 # Generate a ggplot for gtoy1
 plotGraphSpace(gtoy1, node.labels = TRUE)
-
 
 # Create a star graph
 gtoy_star <- make_full_graph(15)

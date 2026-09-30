@@ -70,7 +70,6 @@ gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 #> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
-if (FALSE) { # \dontrun{
 # Build the plot
 # Note that inject_nodespace() is called at the end to
 # synchronize node sizes with edge clipping.
@@ -79,5 +78,5 @@ ggplot() +
   geom_nodespace(aes(size = my_node_var), data = gs) +
   scale_size(range = c(2, 15)) +
   inject_nodespace()
-} # }
+
 ```

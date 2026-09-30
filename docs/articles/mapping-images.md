@@ -1,12 +1,12 @@
 # Mapping Graphs to Images
 
 \
-**Package**: RGraphSpace 1.5.5
+**Package**: RGraphSpace 1.5.6
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -214,9 +214,9 @@ gs <- normalizeGraphSpace(gs)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 2fb2092 DN-- 39 0 -- 
+#> IGRAPH e89a1b1 DN-- 39 0 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
-#> | nodeFillColor (v/c), arrowType (e/n)
+#> | nodeFillColor (v/c), arrowType (e/c)
 #> + node spatial boundaries: normalized to image space
 #> | x: [16, 50] -> [0, 1] (cols)
 #> | y: [11, 51] -> [0, 1] (rows)
@@ -333,7 +333,7 @@ tutorial for examples using a reference image.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    
+    #> [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.6 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    

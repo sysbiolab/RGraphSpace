@@ -123,7 +123,7 @@ setValidity("GraphSpace", function(object) {
   }
   
   # graph <-> nodes consistency
-  # Note: do not assume that @nodes rows and @graph vertices share the same order,
+  # Note: do not assume that @nodes and @graph vertices share the same order,
   # as igraph accessors are independent. Downstream code relies on validated
   # index values rather than positional order
   if (!inherits(object@graph, "igraph")) {
@@ -223,7 +223,7 @@ setValidity("GraphSpace", function(object) {
   raw_id <- paste0("gs", pid, time_stmp, sys_id)
   uuid <- gsub("[^a-zA-Z0-9]", "", raw_id)
   
-  return(uuid)
+  uuid
   
 }
 
@@ -238,6 +238,14 @@ setGeneric("updateGraphSpace", function(x, ...)
 #' @param x A \code{GraphSpace} object.
 #' @param verbose Logical; if \code{TRUE}, reports which slots were added.
 #' @return An updated \code{GraphSpace} object.
+#' 
+#' @examples
+#' data('gtoy1', package = 'RGraphSpace')
+#' gs <- GraphSpace(gtoy1)
+#' 
+#' # Objects built with the current version are returned unchanged
+#' gs <- updateGraphSpace(gs)
+#' 
 #' @aliases updateGraphSpace
 #' @rdname updateGraphSpace
 #' @export
@@ -339,7 +347,7 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
   
   if(is.null(slots))  slots <- slotNames(new("GraphSpace"))
   
-  type <- match.arg(type)
+  type <- rlang::arg_match(type)
   
   check <- vapply(slots, function(s) .hasSlot(gs, s), logical(1))
   
@@ -354,7 +362,8 @@ setMethod("updateGraphSpace", "GraphSpace", function(x, verbose = TRUE) {
         "x" = sprintf("Outdated '%s' object, missing slot(s): %s.",
           cname, paste(slots[!check], collapse = ", ")),
         "i" = "Run 'updateGraphSpace(x)' to migrate the base 'GraphSpace' slots.",
-        "!" = sprintf("The '%s' extension will need to be rebuilt afterward.", cname)
+        "!" = sprintf("The '%s' extension will need to be rebuilt afterward.", 
+          cname)
       )
     }
     if (type == "abort") rlang::abort(msg) else rlang::warn(msg)
@@ -386,6 +395,15 @@ setGeneric("summary", function(object, ...) standardGeneric("summary"))
 #' a pipeline without side effects beyond the printed output.
 #'
 #' @seealso \code{\link{GraphSpace}}, \code{\link{normalizeGraphSpace}}
+#' 
+#' @examples
+#' data('gtoy1', package = 'RGraphSpace')
+#' gs <- GraphSpace(gtoy1)
+#' summary(gs)
+#' 
+#' # Printing the object calls summary() through show()
+#' gs
+#'
 #' @importFrom igraph print.igraph
 #' @aliases summary,GraphSpace-method
 #' @exportMethod summary
@@ -494,10 +512,16 @@ setMethod("show", "GraphSpace",
 # display helpers -- write directly to stdout, for show()/summary() only
 #' @keywords internal
 .inform_boundaries <- function(bounds, target = NULL) {
-  suffix_x <- if (!is.null(target)) paste0(" -> [", target$x[1], ", ", target$x[2], "]") else ""
-  suffix_y <- if (!is.null(target)) paste0(" -> [", target$y[1], ", ", target$y[2], "]") else ""
-  cat("| x: [", bounds$x[1], ", ", bounds$x[2], "]", suffix_x, " (cols)\n", sep = "")
-  cat("| y: [", bounds$y[1], ", ", bounds$y[2], "]", suffix_y, " (rows)\n", sep = "")
+  suffix_x <- if (!is.null(target)){
+    paste0(" -> [", target$x[1], ", ", target$x[2], "]")
+    } else {""}
+  suffix_y <- if (!is.null(target)) {
+    paste0(" -> [", target$y[1], ", ", target$y[2], "]")
+    } else {""}
+  cat("| x: [", bounds$x[1], ", ", bounds$x[2], "]", 
+    suffix_x, " (cols)\n", sep = "")
+  cat("| y: [", bounds$y[1], ", ", bounds$y[2], "]", 
+    suffix_y, " (rows)\n", sep = "")
 }
 
 #-------------------------------------------------------------------------------
@@ -505,8 +529,10 @@ setMethod("show", "GraphSpace",
 .node_boundaries <- function(nodes) {
   if(nrow(nodes)>0){
     l <- list(
-      x = c(floor(min(nodes$x, na.rm = TRUE)), ceiling(max(nodes$x, na.rm = TRUE))),
-      y = c(floor(min(nodes$y, na.rm = TRUE)), ceiling(max(nodes$y, na.rm = TRUE)))
+      x = c(floor(min(nodes$x, na.rm = TRUE)), 
+        ceiling(max(nodes$x, na.rm = TRUE))),
+      y = c(floor(min(nodes$y, na.rm = TRUE)), 
+        ceiling(max(nodes$y, na.rm = TRUE)))
     )
   } else {
     l <- list(x = c(NaN,NaN), y = c(NaN,NaN))
@@ -566,9 +592,4 @@ setMethod("show", "GraphSpace",
 #' @keywords internal
 .is_image_space <- function(gs){
   gs@pars$image.space %||% FALSE
-}
-
-#' @keywords internal
-.is_directed <- function(gs){
-  gs@pars$is.directed %||% FALSE
 }

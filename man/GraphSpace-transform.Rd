@@ -13,9 +13,9 @@
 \usage{
 \S4method{cropGraphSpace}{GraphSpace}(gs, xmin = 0, xmax = 1, ymin = 0, ymax = 1, verbose = TRUE)
 
-\S4method{flipGraphSpace}{GraphSpace}(gs, vertical = FALSE, persist = .is_raw(gs), verbose = TRUE)
+\S4method{flipGraphSpace}{GraphSpace}(gs, vertical = TRUE, persist = .is_raw(gs), verbose = TRUE)
 
-\S4method{rotateGraphSpace}{GraphSpace}(gs, clockwise = FALSE, persist = .is_raw(gs), verbose = TRUE)
+\S4method{rotateGraphSpace}{GraphSpace}(gs, clockwise = TRUE, persist = .is_raw(gs), verbose = TRUE)
 
 \S4method{transposeGraphSpace}{GraphSpace}(gs, persist = .is_raw(gs), verbose = TRUE)
 }
@@ -37,16 +37,16 @@ of the plotting area.}
 \item{verbose}{A single logical value specifying to display detailed
 messages (when \code{verbose=TRUE}) or not (when \code{verbose=FALSE}).}
 
-\item{vertical}{Logical; if \code{FALSE} (default), the flip is horizontal
-(mirror left-right); if \code{TRUE}, vertical (mirror top-bottom).
+\item{vertical}{Logical; if \code{TRUE} (default), the flip is vertical
+(mirror top-bottom); if \code{TRUE}, horizontal (mirror left-right).
 (\code{flipGraphSpace} only).}
 
 \item{persist}{Logical; whether the transformation persists through
 re-normalization. Defaults to \code{TRUE} before normalization,
 \code{FALSE} after.}
 
-\item{clockwise}{Logical; if \code{FALSE} (default), the
-90-degree turn is counter-clockwise; if \code{TRUE}, clockwise
+\item{clockwise}{Logical; if \code{TRUE} (default), the
+90-degree turn is clockwise; if \code{TRUE}, counter-clockwise
 (\code{rotateGraphSpace} only).}
 }
 \value{
@@ -91,9 +91,9 @@ gs_rot90 <- rotateGraphSpace(gs)
 gs_flip <- flipGraphSpace(gs)
 gs_t <- transposeGraphSpace(gs)
 
-plotGraphSpace(gs, add.labels = TRUE)
+plotGraphSpace(gs, node.labels = TRUE)
 
-plotGraphSpace(gs_crop, add.labels = TRUE)
+plotGraphSpace(gs_crop, node.labels = TRUE)
 
 }
 \seealso{

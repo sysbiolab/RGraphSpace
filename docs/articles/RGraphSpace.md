@@ -1,7 +1,7 @@
 # Getting started with RGraphSpace
 
 \
-**Package**: RGraphSpace 1.5.5
+**Package**: RGraphSpace 1.5.6
 
 ## Overview
 
@@ -127,9 +127,9 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH 22d404a DN-- 5 4 -- 
+#> IGRAPH 113bd1d DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
-#> | arrowType (e/n)
+#> | arrowType (e/c)
 #> + node spatial boundaries: raw graph
 #> | x: [-2, 2] (cols)
 #> | y: [-1, 2] (rows)
@@ -217,8 +217,8 @@ recode the mutual edges to represent a bidirectional flow.
 ``` r
 
 # Arrowhead types in directed graphs
-## Integer or character code:
-## 0 = "---", 1 = "-->", -1 = "--|"
+## Integer codes or token values:
+## 0 = "--", 1 = "->", -1 = "-|"
 E(gtoy1)$arrowType <- 1
 ```
 
@@ -229,18 +229,27 @@ the coding below.
 ``` r
 
 # Arrowhead types in undirected graphs
-## Integer or character code:
-##  0 = "---"
-##  1 = "-->",  2 = "<--",  3 = "<->",  4 = "|->"
-## -1 = "--|", -2 = "|--", -3 = "|-|", -4 = "<-|"
+## Integer codes or token values:
+##  0 = "--"
+##  1 = "->",  2 = "<-",  3 = "<->",  4 = "|->"
+## -1 = "-|", -2 = "|-", -3 = "|-|", -4 = "<-|"
 gtoy1_undir <- igraph::as_undirected(gtoy1, edge.attr.comb = "first")
-E(gtoy1_undir)$arrowType <- 1
+E(gtoy1_undir)$arrowType <- "->"
 # Note: in undirected graphs, this attribute overrides
 # the edge's orientation in the edge list and adds arrowheads
 # to edges that would otherwise be drawn without any
 ```
 
-… and plot the fully attributed `gtoy1` object.
+Integer codes and basic token codes select arrows and bars, the basic
+edge glyphs. Other glyphs can be assigned with extended token codes in
+the same attribute, and the levels can be mixed; see
+[`glyph_list()`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_list.md)
+for the available tokens and
+[`?glyph_collection`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_collection.md)
+for the glyph collection. Extended examples are provided in the online
+[*edge glyphs*](#tutorials) vignette.
+
+Plot the fully attributed `gtoy1` object.
 
 ``` r
 
@@ -384,7 +393,7 @@ If you use *RGraphSpace*, please cite:
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.6 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     tidyr_1.3.2       

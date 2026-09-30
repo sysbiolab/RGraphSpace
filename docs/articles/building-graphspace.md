@@ -1,12 +1,12 @@
 # Building a GraphSpace
 
 \
-**Package**: RGraphSpace 1.5.5
+**Package**: RGraphSpace 1.5.6
 
 ``` r
 
 # Check required version
-if (packageVersion("RGraphSpace") < "1.5.5"){
+if (packageVersion("RGraphSpace") < "1.5.6"){
   message("Need to update 'RGraphSpace' for this vignette")
   remotes::install_github("sysbiolab/RGraphSpace")
 }
@@ -127,9 +127,9 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH b3cc96f DN-- 5 4 -- 
+#> IGRAPH 6de66e1 DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
-#> | arrowType (e/n)
+#> | arrowType (e/c)
 #> + node spatial boundaries: raw graph
 #> | x: [-2, 2] (cols)
 #> | y: [-1, 2] (rows)
@@ -420,7 +420,7 @@ sources define the same aesthetic, the following priority applies
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.5 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.3      RGraphSpace_1.5.6 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     tidyr_1.3.2       

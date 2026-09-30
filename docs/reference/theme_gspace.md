@@ -111,7 +111,7 @@ theme_gspace_legend(
 
 ## Value
 
-`theme_gspace_th*()` return a `ggplot2` theme object.
+`theme_gspace_th*()` return a `ggplot2` theme object plus guides.
 
 `theme_gspace_coords()` returns a list containing scale and theme
 components that can be added to a ggplot2 plot.
@@ -165,7 +165,16 @@ ggplot(mtcars,
   geom_point() +
   theme_gspace_coords("th2", is_norm = TRUE)
 
-  
+
+# Theme variants differ in grid lines, borders, and margins
+p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
+p + theme_gspace_th1()
+
+p + theme_gspace_th2(bg_colour = "white")
+
+p + theme_gspace_th3(txt_size = 0.8, leg_size = 0.8)
+
+
 # Reduce legend element sizes
 ggplot(mtcars, aes(wt, mpg, fill = factor(cyl))) + 
   geom_point(shape = 21) + 

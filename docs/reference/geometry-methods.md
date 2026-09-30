@@ -70,8 +70,54 @@ Both require `gs` to already be normalized (see
 and both operate on a single named geometry column, leaving any other
 geometry columns untouched.
 
-## Examples
+## Online examples
 
 For more information and examples, see the online tutorial:
 
 <https://sysbiolab.github.io/RGraphSpace/articles/geometries.html>
+
+## Examples
+
+``` r
+if (requireNamespace("sf", quietly = TRUE)) {
+data('gtoy1', package = 'RGraphSpace')
+gs <- normalizeGraphSpace(GraphSpace(gtoy1))
+
+# Set different node sizes to test the geometry fitting
+gs$nodeShape <- 1
+gs$nodeSize <- seq_len(gs_vcount(gs)) * 5
+
+# fitGeometry(): fit arbitrary shapes to the graph layout,
+# positioning them at the nodes and scaling to nodeSize
+gs_geometry(gs) <- sfshape_ngons(n = gs_vcount(gs))
+gs <- fitGeometry(gs)
+  
+ggplot(gs) +
+  geom_edgespace() +
+  geom_nodespace(colour = "red") +
+  geom_sf(aes(geometry = geometry), fill = "lightblue") +
+  theme_gspace_coords(is_norm = TRUE)
+ 
+# normalizeGeometry(): shapes already in raw node coordinates,
+# realigned to the normalized node frame
+raw <- getGraphSpace(gs, "coords")
+outlines <- sf::st_sfc(Map(sfshape_ngon, raw$x, raw$y, radius = 1))
+gs_geometry(gs, name = "outline") <- outlines
+gs <- normalizeGeometry(gs, name = "outline")
+
+ggplot(gs) +
+ geom_edgespace() +
+ geom_sf(aes(geometry = outline), fill = "lightblue") +
+ geom_nodespace(colour = "red", size = 5) +
+ theme_gspace_coords(is_norm = TRUE)
+
+}
+#> Validating the 'igraph' object...
+#> Ignoring graph-level attributes: 'name', 'mode', 'center'
+#> Creating a 'GraphSpace' object...
+#> Normalizing node coordinates to graph space...
+#> Fitting 'geometry' geometry to node size...
+#> Fitting 'geometry' geometry to node coordinates...
+#> Normalizing 'outline' coordinates...
+
+```

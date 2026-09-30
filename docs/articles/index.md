@@ -8,6 +8,8 @@
   Self-Loops](https://sysbiolab.github.io/RGraphSpace/articles/curved-edges.md):
 - [Customizing
   Aesthetics](https://sysbiolab.github.io/RGraphSpace/articles/customizing-aesthetics.md):
+- [Edge glyphs: Drawing symbols at edge
+  ends](https://sysbiolab.github.io/RGraphSpace/articles/edge-glyphs.md):
 - [Using 'sf' geometries with
   RGraphSpace](https://sysbiolab.github.io/RGraphSpace/articles/geometries.md):
 - [Getting Started with

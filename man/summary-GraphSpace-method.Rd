@@ -26,6 +26,15 @@ after normalization with \code{image.space = TRUE}, and \code{@image}
 otherwise. When normalized, both boundary lines show the source range
 and \code{[0,1]} target to make the transformation explicit.
 }
+\examples{
+data('gtoy1', package = 'RGraphSpace')
+gs <- GraphSpace(gtoy1)
+summary(gs)
+
+# Printing the object calls summary() through show()
+gs
+
+}
 \seealso{
 \code{\link{GraphSpace}}, \code{\link{normalizeGraphSpace}}
 }

@@ -101,7 +101,7 @@ gs <- GraphSpace(gtoy1)
 
 gs <- normalizeGraphSpace(gs)
 
-plotGraphSpace(gs, add.labels = TRUE)
+plotGraphSpace(gs, node.labels = TRUE)
 
 }
 \seealso{

@@ -226,8 +226,6 @@ gs <- GraphSpace(gtoy1, layout = layout_in_circle(gtoy1))
 #> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
-if (FALSE) { # \dontrun{
-
 # Example 1: Nodes scaling with the legend
 # When 'size' is mapped inside aes(), it follows
 # ggplot2 default behavior: size is translated 
@@ -238,6 +236,7 @@ geom_edgespace(arrow_offset = 0.01) +
 geom_nodespace(mapping = aes(size = nodeSize, fill = user_var2)) + 
 scale_size(range = c(1, 12)) + 
 theme(aspect.ratio = 1)
+
   
 # Example 2: Nodes scaling with the viewport
 # When 'size' is passed as a node attribute, 
@@ -249,12 +248,12 @@ ggplot(gs) +
 geom_edgespace(arrow_offset = 0.01) +
 geom_nodespace(mapping = aes(fill = user_var2)) +
 theme(aspect.ratio = 1)
+
   
 # Example 3: Node labels
 ggplot(gs) +
   geom_edgespace() +
   geom_nodespace(aes(label = nodeLabel)) +
   theme(aspect.ratio = 1)
-  
-} # }
+
 ```

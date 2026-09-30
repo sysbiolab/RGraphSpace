@@ -24,7 +24,7 @@ geom_edgespace(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = FALSE,
-  arrow_size = 0.5,
+  arrow_size = 1,
   arrow_offset = 0.01,
   curve = 0,
   coord_warp = 1,
@@ -90,7 +90,8 @@ edgespace_handler()
 
 - arrow_size:
 
-  Numeric scaling factor controlling arrowhead geometry (see 'details').
+  Numeric scaling factor controlling the size of edge glyphs, such as
+  arrowheads (see 'details').
 
 - arrow_offset:
 
@@ -160,17 +161,19 @@ A ggplot2 layer that renders edge segments defined by
 
 ## Details
 
-**arrow_size** is a numeric scaling factor controlling arrowhead
-geometry. The value is interpreted in the same numeric space as line
-width (`lwd`).
+**arrow_size** is a numeric scaling factor controlling the size of edge
+glyphs (arrowheads and other end symbols). The value is interpreted in
+the same numeric space as line width (`lwd`).
 
 **arrow_offset** is an additive term that offsets arrow endpoints
 uniformly in graph space and is bounded by the edge length, in NPC
 units.
 
-Arrowhead types are specified in the
+The glyphs drawn at edge ends are set by the `arrowType` edge attribute
+(see
 [GraphSpace](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-methods.md)
-constructor.
+and
+[`glyph_list`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_list.md)).
 
 **curve** bows an edge through a control point displaced perpendicular
 to the edge, by `curve` times the edge length. `curve = 0` (default)
@@ -239,8 +242,8 @@ Fixed identity values can also be passed directly as parameters,
 bypassing both graph attributes and scale training. For example:
 `colour = "grey"`, `linetype = 2`, `linewidth = 1`.
 
-Arrows can be further adjusted by `arrow_size` and `arrow_offset`
-arguments (see *details*).
+Edge glyphs (arrowheads and other end symbols) can be further adjusted
+by `arrow_size` and `arrow_offset` arguments (see *details*).
 
 ## Two aesthetic interfaces
 
@@ -309,12 +312,9 @@ gs <- GraphSpace(gtoy1)
 #> Ignoring graph-level attributes: 'name', 'mode', 'center'
 #> Creating a 'GraphSpace' object...
 
-if (FALSE) { # \dontrun{
-
 ggplot(gs) +
   geom_edgespace() +
   geom_nodespace() +
   theme(aspect.ratio = 1)
 
-} # }
 ```

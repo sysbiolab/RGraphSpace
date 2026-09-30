@@ -172,7 +172,7 @@ setMethod("[", "GraphSpace", function(x, i, j, ..., drop = TRUE) {
 
   }
 
-  return(x)
+  x
 
 })
 
@@ -291,7 +291,7 @@ setMethod("[[", "GraphSpace", function(x, i, j, ...) {
     ))
   }
 
-  return(idx)
+  idx
 
 }
 
