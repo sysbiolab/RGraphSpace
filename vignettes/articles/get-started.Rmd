@@ -26,8 +26,6 @@ For a self-contained introduction that works offline, run **vignette("RGraphSpac
 
 # Introductory vignettes
 
-# Introductory vignettes
-
 These tutorials introduce *RGraphSpace* using simple toy examples: [*building a GraphSpace*](building-graphspace.html) walks through basic graph conventions; [*customizing aesthetics*](customizing-aesthetics.html) demonstrates how to set up `geoms` to handle graph data types; [*scales and offsets*](scales-and-offsets.html) describes the trade-offs involved in synchronizing node and edge layers; [*curved edges and loops*](curved-edges.html) shows how to draw curved, parallel, and self-loop edges; [*geometries and nodes*](geometries.html) demonstrates how to attach `sf` geometries to nodes as custom markers; [*edge glyphs*](edge-glyphs.html) introduces the symbols drawn at edge ends, from simple arrows to an extended glyph collection; and [*GraphSpace accessors*](graphspace-accessors.html) covers graph transformation functions, attribute manipulation, and the package's general accessors.
 
 ```{r, include=FALSE}
