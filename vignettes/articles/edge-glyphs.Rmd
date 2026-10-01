@@ -116,7 +116,7 @@ ggplot(gs_bip) +
 
 ## Basic token codes
 
-Each integer code has an equivalent basic token code, which draws the same form as a picture of the edge: `">"` is an arrow, `"|"` a bar, and `"-"` no glyph. A code composes two tokens around a shaft as *start*`-`*end*: the left token is drawn at the source end, the right token at the target end. The start token is written mirrored, so `1` is `"-->"`, `2` is `"<--"`, and `3` is `"<->"` (see `?GraphSpace` for the full table).
+Each integer code has an equivalent basic token code, which draws the same form as a picture of the edge: `">"` is an arrow, `"|"` a bar, and `"-"` no glyph. The arrow and bar are also the primitives of the *vee-like* and *tee-like* extended glyphs. A code composes two tokens around a shaft as `start - end`: the left token is drawn at the source end, the right token at the target end. The start token is written mirrored, so `1` is `"-->"`, `2` is `"<--"`, and `3` is `"<->"` (see `?GraphSpace` for the full table).
 
 ```{r , eval=TRUE, message=TRUE}
 # The same forms as basic token codes
@@ -126,7 +126,7 @@ gs_edge_attr(gs_bip, "arrowType")
 
 ## Extended token codes
 
-Extended token codes add a *modifier* to a basic token: a two-digit glyph number that refines the basic glyph into a shape of the same kind. The basic token sets the kind, arrow (`">"`) or terminal (`"|"`), and the modifier selects the glyph within it: `">01"` is a triangle, `">02"` an open triangle, and `"|04"` a ring. Because modifiers are numbered within each kind, the same number selects different glyphs for arrows and terminals (`">07"` is a chevron, `"|07"` a star). At the start of a code the modifier comes first, so `"01<->01"` has triangles at both ends.
+Extended token codes add a *modifier* to a basic token: a two-digit glyph number that refines a primitive into a glyph of its kind. Extended glyphs are grouped by the silhouette they form with the edge: `vee-like` glyphs end in a point, and `tee-like` glyphs end in a wider shape. Combined with the `">"` primitive, modifiers select `vee-like` glyphs; combined with the `"|"` primitive, they select `tee-like` glyphs. For example, `">01"` is a triangle, `">02"` an open triangle, and `"|03"` a circle. Because modifiers are numbered within each group, the same number selects different glyphs with each primitive (`">07"` is a chevron, `"|07"` a star). At the start of a code the modifier comes first, so `"01<->01"` has triangles at both ends.
 
 The levels can be mixed in the same attribute, so a single edge can be upgraded without rewriting the others:
 
@@ -141,7 +141,7 @@ The next sections describe the glyph collection behind extended token codes.
 
 # The edge glyph collection
 
-The `glyph_list()` function returns the edge glyphs available for use in `arrowType` codes. The glyphs are organized into three groups: the basic glyphs, arrows, and terminals. Arrows and terminals are numbered within their kind; most shapes come in pairs of consecutive numbers, a filled form (odd) followed by its open form (even), and shapes with a single form follow the pairs.
+The `glyph_list()` function returns the edge glyphs available for use in `arrowType` codes. The glyphs are organized into three groups: `basic`, `vee-like`, and `tee-like`. The `vee-like` and `tee-like` glyphs are numbered within their group; shapes come in pairs of consecutive numbers, a filled form (odd) followed by its open form (even).
 
 ```{r , eval=TRUE, message=TRUE}
 # List the glyph vocabulary
@@ -157,7 +157,7 @@ plot(glyph_lt, by_group = TRUE)
 
 # Writing token codes
 
-A token starts with `">"` for an arrow or `"|"` for a terminal, optionally followed by a two-digit modifier. Codes combine a start and an end token, for example:
+A token starts with the `">"` or `"|"` primitive, optionally followed by a two-digit modifier that selects a `vee-like` or `tee-like` glyph. Codes combine a start and an end token, for example:
 
 * `"-->"`: arrow at the end;
 * `"<->"`: arrows at both ends;
@@ -174,20 +174,18 @@ A few rules apply to all token codes, basic or extended:
 
 # Showing all glyphs on a graph
 
-Next, we build a directed star graph with one edge per token, so that every glyph is drawn at the tip of an edge. Each standalone token is read as the end glyph of its edge.
+Next, we build a directed graph with one edge per token, so that every glyph is drawn at the tip of an edge. Each standalone token is read as the end glyph of its edge.
 
 ```{r , eval=TRUE, message=TRUE}
-# Make a directed star graph, pointing outward from a central node
+# Make a directed graph, pointing outward from a central node
 gtoy_star <- make_star(nrow(glyph_lt)+1, mode="out")
   
 # Assign glyph tokens to arrow types
 E(gtoy_star)$arrowType <- glyph_lt$token
 
-# Colour edges by glyph group; glyphs take attributes of their edge
-groups <- unique(glyph_lt$group)
-group_cols <- setNames(c("red","orange","green4"), groups)
-E(gtoy_star)$edgeColor <- group_cols[glyph_lt$group]
-
+# Assign groups
+E(gtoy_star)$Group <- glyph_lt$group
+  
 # Make a GraphSpace, with a star layout
 gs_star <- GraphSpace(gtoy_star, 
   layout = layout_as_star(gtoy_star))
@@ -199,10 +197,10 @@ gs_star
 # Plot the graph with glyphs; 'arrow_size' scales all glyphs, 
 # and the 'label' aesthetic labels each edge with its token
 ggplot(gs_star) + 
-  geom_edgespace(aes(label = arrowType), label_size = 3, 
-    linewidth = 0.7, arrow_size = 3) + 
+  geom_edgespace(aes(colour = Group, label = arrowType), 
+    label_size = 3, linewidth = 0.7, arrow_size = 3) + 
   geom_nodespace() + 
-  theme_gspace_coords(theme = theme_bw())
+  theme_gspace_coords(theme = theme_minimal())
 ```
 
 
@@ -271,7 +269,7 @@ p + leg + patchwork::plot_layout(widths = c(1, 0.2))
 
 # Building new glyphs
 
-Every glyph is a *prototype*, a small object holding a fixed shape, how it is drawn, and the token that selects it. The built-in prototypes are exported objects (`GlyphArrow1`, `GlyphChevron1`, ...; see `?glyph_collection`).
+Every glyph is a *prototype*, a small object holding a fixed shape, how it is drawn, and the token that selects it. The built-in prototypes are exported objects (`GlyphArrow`, `GlyphChevron1`, ...; see `?glyph_collection`).
 
 The `shape` is a two-column matrix of points, described relative to the edge end rather than to the plot. The first column (x) gives the position along the edge, while the second (y) specifies the transverse offset across the edge, with positive and negative values on opposite sides. The origin is where the edge meets the node.
 
@@ -280,7 +278,7 @@ The `shape` is a two-column matrix of points, described relative to the edge end
 GlyphArrow$shape
 ```
 
-The same kind of matrix can be drawn in different ways, specified by the prototype's drawing primitive. The arrowhead is a `"polyline"`, so its points are joined in order, from arm to tip to arm. The cross is drawn as `"segments"`, which takes points in pairs, each pair forming one stroke.
+The same kind of matrix can be drawn in different ways, specified by the prototype's drawing method. The arrowhead is a `"polyline"`, so its points are joined in order, from arm to tip to arm. The cross is drawn as `"segments"`, which takes points in pairs, each pair forming one stroke.
 
 ```{r , eval=TRUE, message=TRUE}
 # The cross, with rows 1-2 forming one stroke 
@@ -296,7 +294,7 @@ Prototypes can be plotted for visual inspection, one or several side by side.
 plot(GlyphArrow, GlyphChevron1, GlyphCross1)
 ```
 
-New prototypes are built with `glyph_proto()`, from a shape, a drawing primitive, and a token; open outlines can also set an `offset`, so the edge line stops at the outline instead of crossing it.
+New prototypes are built with `glyph_proto()`, from a shape, a drawing method, and a token; open outlines can also set an `offset`, so the edge line stops at the outline instead of crossing it.
 
 ```{r , eval=TRUE, message=TRUE, fig.height=1}
 # A new glyph (reversed triangle)
@@ -307,7 +305,7 @@ new_glyph <- glyph_proto(shape = m, token = ">91", draw = "polygon")
 plot(GlyphTriangle1, new_glyph)
 ```
 
-Glyphs built this way are for previewing only and cannot be used in `arrowType` codes, because the vocabulary is fixed when the package loads. New glyphs are added as package contributions, in the `gspace-glyph-collection.R` source file, which contains the glyph collection; see `?glyph_proto` for details on the available drawing primitives and token rules.
+Glyphs built this way are for previewing only and cannot be used in `arrowType` codes, because the vocabulary is fixed when the package loads. New glyphs are added as package contributions, in the `gspace-glyph-collection.R` source file, which contains the glyph collection; see `?glyph_proto` for details on the available drawing methods and token rules.
 
 <br/>
 

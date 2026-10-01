@@ -64,7 +64,7 @@ gs_star <- GraphSpace(gtoy_star, layout = layout_as_star(gtoy_star))
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH c6909df DN-- 20 19 -- 
+#> IGRAPH 9d11647 DN-- 20 19 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), num_var (v/n), edgeColor (e/c), arrowType (e/n)
 #> + node spatial boundaries: raw graph
@@ -179,7 +179,7 @@ network elements.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] igraph_2.3.3      RGraphSpace_1.5.6 ggplot2_4.0.3    
+    #> [1] igraph_2.3.4      RGraphSpace_1.5.6 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    

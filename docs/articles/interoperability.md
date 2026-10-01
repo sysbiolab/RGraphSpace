@@ -423,7 +423,7 @@ repository.
     #> other attached packages:
     #>  [1] airportr_0.1.3      flightsbr_1.1.10999 geometry_0.5.2     
     #>  [4] maps_3.4.3          sf_1.1-2            ggraph_2.2.2       
-    #>  [7] dplyr_1.2.1         tidygraph_1.3.1     igraph_2.3.3       
+    #>  [7] dplyr_1.2.1         tidygraph_1.3.1     igraph_2.3.4       
     #> [10] RGraphSpace_1.5.6   ggplot2_4.0.3      
     #> 
     #> loaded via a namespace (and not attached):

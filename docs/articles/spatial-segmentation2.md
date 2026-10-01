@@ -387,7 +387,7 @@ gs_geometry(gs, "cellseg") <- sf::st_make_valid(cellseg)
     #> [28] DelayedArray_0.38.2  R6_2.6.1             bslib_0.11.0        
     #> [31] stringi_1.8.9        RColorBrewer_1.1-3   jquerylib_0.1.4     
     #> [34] Rcpp_1.1.2           knitr_1.51           readr_2.2.0         
-    #> [37] BiocBaseUtils_1.14.2 Matrix_1.7-6         igraph_2.3.3        
+    #> [37] BiocBaseUtils_1.14.2 Matrix_1.7-6         igraph_2.3.4        
     #> [40] tidyselect_1.2.1     rstudioapi_0.19.0    dichromat_2.0-1     
     #> [43] abind_1.4-8          yaml_2.3.12          curl_7.1.0          
     #> [46] lattice_0.23-1       tibble_3.3.1         withr_3.0.3         

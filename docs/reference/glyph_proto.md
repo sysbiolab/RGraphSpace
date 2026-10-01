@@ -31,8 +31,9 @@ plot(x, ..., ncol = NULL, margin = 0.05, colour = "black")
 
 - token:
 
-  The `arrowType` token that selects this glyph: `">"` (arrow) or `"|"`
-  (terminal), followed by a two-digit number (e.g. `">90"`, `"|90"`).
+  The `arrowType` token that selects this glyph: `">"` (vee-like) or
+  `"|"` (tee-like), followed by a two-digit number (e.g. `">90"`,
+  `"|90"`).
 
 - name:
 
@@ -98,8 +99,8 @@ at package load.
 ## Examples
 
 ``` r
-# a pair of arrows: a filled triangle (odd number) and its open form, the
-# same outline as a closed polyline (next, even number)
+# a pair of vee-like shapes: a filled triangle (odd number) and its open
+# form, the same outline as a closed polyline (next, even number)
 m <- rbind(c(0, 0), c(-1, 0.6), c(-1, -0.6))
 filled <- glyph_proto(m, token = ">91", draw = "polygon")
 m <- rbind(c(-1, 0), c(-1, 0.6), c(0, 0), c(-1, -0.6), c(-1, 0))
@@ -107,7 +108,7 @@ open <- glyph_proto(m, token = ">92", draw = "polyline")
 plot(filled, open)
 
 
-# a pair of terminals: a filled block across the edge at the reference
+# a pair of tee-like shapes: a filled block across the edge at the reference
 # point, and its open form, the same outline as a closed polyline
 m <- rbind(c(0, 0.65), c(0, -0.65), c(-0.25, -0.65), c(-0.25, 0.65))
 filled <- glyph_proto(m, token = "|91", draw = "polygon")
@@ -117,8 +118,8 @@ open <- glyph_proto(m, token = "|92", draw = "polyline")
 plot(filled, open)
 
 
-# a pair of terminals: a circle (diameter one unit) touching the reference
-# point, and its open form, a ring traced as a polyline
+# a pair of tee-like shapes: a circle (diameter one unit) touching the
+# reference point, and its open form, a ring traced as a polyline
 filled <- glyph_proto(rbind(c(-0.5, 0)), token = "|93", draw = "circle")
 a <- seq(0, 2 * pi, length.out = 49)
 m <- cbind(-0.5 - 0.5 * cos(a), 0.5 * sin(a))

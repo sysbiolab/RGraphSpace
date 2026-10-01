@@ -480,7 +480,7 @@ test_that("glyph offsets end the edge line within the glyph", {
 })
 
 test_that("the primitive table covers exactly the accepted draw types", {
-  prim <- names(.glyph_primitives)
+  prim <- names(.draw_primitives)
   choices <- eval(formals(glyph_proto)$draw)
   expect_setequal(prim, choices)
 })
@@ -491,10 +491,10 @@ test_that("glyph_proto() builds glyphs and derives the group from the token", {
   bar <- rbind(c(0, 1), c(0, -1))
   g <- glyph_proto(bar, token = "|90", draw = "segments")
   expect_s3_class(g, "gs_glyph")
-  expect_equal(g$group, "terminal")
+  expect_equal(g$group, "tee-like")
   expect_equal(g$name, "|90")  # the name defaults to the token
   expect_equal(glyph_proto(bar, token = ">90", draw = "segments")$group,
-    "arrow")
+    "vee-like")
   expect_equal(glyph_proto(bar, token = "|", draw = "segments")$group,
     "basic")
   # the empty glyph: no points, token "-"
@@ -533,7 +533,7 @@ test_that("the glyph validator rejects hand-edited objects", {
   expect_error(.validate_gs_glyph(bad))
   bad <- good; bad$draw <- "spline"
   expect_error(.validate_gs_glyph(bad))
-  bad <- good; bad$group <- "arrow"  # "|90" is a terminal
+  bad <- good; bad$group <- "vee-like"  # "|90" is a tee-like
   expect_error(.validate_gs_glyph(bad))
 })
 
@@ -544,7 +544,7 @@ test_that("glyph_list() lists one row per glyph, in group order", {
   expect_s3_class(df, "gs_glyph_list")
   expect_true(all(c("token", "name", "group", "draw") %in% names(df)))
   expect_equal(nrow(df), length(.ns_glyphs()))
-  expect_false(is.unsorted(match(df$group, c("basic", "arrow", "terminal"))))
+  expect_false(is.unsorted(match(df$group, c("basic", "vee-like", "tee-like"))))
 })
 
 test_that("glyph plots and legends build", {

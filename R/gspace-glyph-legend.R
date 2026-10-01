@@ -228,7 +228,7 @@ glyph_legend <- function(arrowType, legend_title = NULL,
 # One glyph at a key end, pointing outward (ox = 1 right, ox = -1 left). The
 # glyph is drawn in a square viewport of side `glyph_size` mm, centred on its
 # reference point, so one npc unit equals one glyph unit on both axes. The
-# grob is then built at once with the edge builders in .glyph_primitives; no
+# grob is then built at once with the edge builders in .draw_primitives; no
 # draw-time step (and no S3 method) is involved.
 .glyph_legend_end <- function(glyph, x, ox, glyph_size, colour, linewidth) {
   if (is.null(glyph) || nrow(glyph$shape) == 0L) return(grid::nullGrob())
@@ -236,7 +236,7 @@ glyph_legend <- function(arrowType, legend_title = NULL,
     width = grid::unit(glyph_size, "mm"), height = grid::unit(glyph_size, "mm"))
   piece <- list(draw = glyph$draw,
     p = .glyph_legend_place(glyph$shape, ox, colour, linewidth))
-  build <- .glyph_primitives[[glyph$draw]]$build
+  build <- .draw_primitives[[glyph$draw]]$build
   grid::gTree(children = grid::gList(build(list(piece), "round", "mitre")),
     vp = vp)
 }

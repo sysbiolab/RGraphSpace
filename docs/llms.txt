@@ -142,7 +142,7 @@ The *RGraphSpace* package is distributed under
 - [`gs_compute()`](https://sysbiolab.github.io/RGraphSpace/reference/gs_compute.md)
   : Apply igraph functions to the graph inside a GraphSpace
 - [`` `[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
-  [`` `[[`( ``*`<GraphSpace>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
+  [`` `[[`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-subscript.md)
   : Subscript operators for GraphSpace objects
 - [`gs_vertex_attr(`*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)
   [`` `gs_vertex_attr<-`( ``*`<GraphSpace>`*`)`](https://sysbiolab.github.io/RGraphSpace/reference/GraphSpace-attributes.md)

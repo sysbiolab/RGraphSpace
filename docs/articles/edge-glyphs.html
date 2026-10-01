@@ -105,7 +105,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-09-30</h4>
+            <h4 data-toc-skip class="date">2026-10-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/edge-glyphs.Rmd" class="external-link"><code>vignettes/articles/edge-glyphs.Rmd</code></a></small>
       <div class="d-none name"><code>edge-glyphs.Rmd</code></div>
@@ -228,13 +228,14 @@ codes.</p>
 </h3>
 <p>Each integer code has an equivalent basic token code, which draws the
 same form as a picture of the edge: <code>"&gt;"</code> is an arrow,
-<code>"|"</code> a bar, and <code>"-"</code> no glyph. A code composes
-two tokens around a shaft as <em>start</em><code>-</code><em>end</em>:
-the left token is drawn at the source end, the right token at the target
-end. The start token is written mirrored, so <code>1</code> is
-<code>"--&gt;"</code>, <code>2</code> is <code>"&lt;--"</code>, and
-<code>3</code> is <code>"&lt;-&gt;"</code> (see <code><a href="../reference/GraphSpace-methods.html">?GraphSpace</a></code>
-for the full table).</p>
+<code>"|"</code> a bar, and <code>"-"</code> no glyph. The arrow and bar
+are also the primitives of the <em>vee-like</em> and <em>tee-like</em>
+extended glyphs. A code composes two tokens around a shaft as
+<code>start - end</code>: the left token is drawn at the source end, the
+right token at the target end. The start token is written mirrored, so
+<code>1</code> is <code>"--&gt;"</code>, <code>2</code> is
+<code>"&lt;--"</code>, and <code>3</code> is <code>"&lt;-&gt;"</code>
+(see <code><a href="../reference/GraphSpace-methods.html">?GraphSpace</a></code> for the full table).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The same forms as basic token codes</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-attributes.html">gs_edge_attr</a></span><span class="op">(</span><span class="va">gs_bip</span>, <span class="st">"arrowType"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--&gt;"</span>, <span class="st">"--|"</span>, <span class="st">"---"</span>, <span class="st">"&lt;-&gt;"</span>, <span class="st">"|-|"</span><span class="op">)</span></span>
@@ -245,14 +246,18 @@ for the full table).</p>
 <h3 id="extended-token-codes">Extended token codes<a class="anchor" aria-label="anchor" href="#extended-token-codes"></a>
 </h3>
 <p>Extended token codes add a <em>modifier</em> to a basic token: a
-two-digit glyph number that refines the basic glyph into a shape of the
-same kind. The basic token sets the kind, arrow (<code>"&gt;"</code>) or
-terminal (<code>"|"</code>), and the modifier selects the glyph within
-it: <code>"&gt;01"</code> is a triangle, <code>"&gt;02"</code> an open
-triangle, and <code>"|04"</code> a ring. Because modifiers are numbered
-within each kind, the same number selects different glyphs for arrows
-and terminals (<code>"&gt;07"</code> is a chevron, <code>"|07"</code> a
-star). At the start of a code the modifier comes first, so
+two-digit glyph number that refines a primitive into a glyph of its
+kind. Extended glyphs are grouped by the silhouette they form with the
+edge: <code>vee-like</code> glyphs end in a point, and
+<code>tee-like</code> glyphs end in a wider shape. Combined with the
+<code>"&gt;"</code> primitive, modifiers select <code>vee-like</code>
+glyphs; combined with the <code>"|"</code> primitive, they select
+<code>tee-like</code> glyphs. For example, <code>"&gt;01"</code> is a
+triangle, <code>"&gt;02"</code> an open triangle, and <code>"|03"</code>
+a circle. Because modifiers are numbered within each group, the same
+number selects different glyphs with each primitive
+(<code>"&gt;07"</code> is a chevron, <code>"|07"</code> a star). At the
+start of a code the modifier comes first, so
 <code>"01&lt;-&gt;01"</code> has triangles at both ends.</p>
 <p>The levels can be mixed in the same attribute, so a single edge can
 be upgraded without rewriting the others:</p>
@@ -271,10 +276,11 @@ codes.</p>
 </h2>
 <p>The <code><a href="../reference/glyph_list.html">glyph_list()</a></code> function returns the edge glyphs
 available for use in <code>arrowType</code> codes. The glyphs are
-organized into three groups: the basic glyphs, arrows, and terminals.
-Arrows and terminals are numbered within their kind; most shapes come in
-pairs of consecutive numbers, a filled form (odd) followed by its open
-form (even), and shapes with a single form follow the pairs.</p>
+organized into three groups: <code>basic</code>, <code>vee-like</code>,
+and <code>tee-like</code>. The <code>vee-like</code> and
+<code>tee-like</code> glyphs are numbered within their group; shapes
+come in pairs of consecutive numbers, a filled form (odd) followed by
+its open form (even).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># List the glyph vocabulary</span></span>
 <span><span class="va">glyph_lt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/glyph_list.html">glyph_list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -284,36 +290,36 @@ form (even), and shapes with a single form follow the pairs.</p>
 <span><span class="co">#&gt; 1      -          none    basic polyline</span></span>
 <span><span class="co">#&gt; 2      &gt;         arrow    basic polyline</span></span>
 <span><span class="co">#&gt; 3      |           bar    basic segments</span></span>
-<span><span class="co">#&gt; 4    &gt;01      triangle    arrow  polygon</span></span>
-<span><span class="co">#&gt; 5    &gt;02      triangle    arrow polyline</span></span>
-<span><span class="co">#&gt; 6    &gt;03       harpoon    arrow  polygon</span></span>
-<span><span class="co">#&gt; 7    &gt;04       harpoon    arrow polyline</span></span>
-<span><span class="co">#&gt; 8    &gt;05       diamond    arrow  polygon</span></span>
-<span><span class="co">#&gt; 9    &gt;06       diamond    arrow polyline</span></span>
-<span><span class="co">#&gt; 10   &gt;07       chevron    arrow  polygon</span></span>
-<span><span class="co">#&gt; 11   &gt;08       chevron    arrow polyline</span></span>
-<span><span class="co">#&gt; 12   &gt;09     arrow bar    arrow  polygon</span></span>
-<span><span class="co">#&gt; 13   &gt;10     arrow bar    arrow segments</span></span>
-<span><span class="co">#&gt; 14   &gt;11  double arrow    arrow  polygon</span></span>
-<span><span class="co">#&gt; 15   &gt;12  double arrow    arrow segments</span></span>
-<span><span class="co">#&gt; 16   &gt;13  barred arrow    arrow  polygon</span></span>
-<span><span class="co">#&gt; 17   &gt;14  barred arrow    arrow segments</span></span>
-<span><span class="co">#&gt; 18   |01         block terminal  polygon</span></span>
-<span><span class="co">#&gt; 19   |02         block terminal polyline</span></span>
-<span><span class="co">#&gt; 20   |03        circle terminal   circle</span></span>
-<span><span class="co">#&gt; 21   |04        circle terminal polyline</span></span>
-<span><span class="co">#&gt; 22   |05        square terminal  polygon</span></span>
-<span><span class="co">#&gt; 23   |06        square terminal polyline</span></span>
-<span><span class="co">#&gt; 24   |07          star terminal  polygon</span></span>
-<span><span class="co">#&gt; 25   |08          star terminal polyline</span></span>
-<span><span class="co">#&gt; 26   |09         cross terminal  polygon</span></span>
-<span><span class="co">#&gt; 27   |10         cross terminal segments</span></span>
-<span><span class="co">#&gt; 28   |11         notch terminal  polygon</span></span>
-<span><span class="co">#&gt; 29   |12         notch terminal polyline</span></span>
-<span><span class="co">#&gt; 30   |13    double bar terminal  polygon</span></span>
-<span><span class="co">#&gt; 31   |14    double bar terminal segments</span></span>
-<span><span class="co">#&gt; 32   |15 reverse arrow terminal  polygon</span></span>
-<span><span class="co">#&gt; 33   |16 reverse arrow terminal polyline</span></span></code></pre></div>
+<span><span class="co">#&gt; 4    &gt;01      triangle vee-like  polygon</span></span>
+<span><span class="co">#&gt; 5    &gt;02      triangle vee-like polyline</span></span>
+<span><span class="co">#&gt; 6    &gt;03       harpoon vee-like  polygon</span></span>
+<span><span class="co">#&gt; 7    &gt;04       harpoon vee-like polyline</span></span>
+<span><span class="co">#&gt; 8    &gt;05       diamond vee-like  polygon</span></span>
+<span><span class="co">#&gt; 9    &gt;06       diamond vee-like polyline</span></span>
+<span><span class="co">#&gt; 10   &gt;07       chevron vee-like  polygon</span></span>
+<span><span class="co">#&gt; 11   &gt;08       chevron vee-like polyline</span></span>
+<span><span class="co">#&gt; 12   &gt;09     arrow bar vee-like  polygon</span></span>
+<span><span class="co">#&gt; 13   &gt;10     arrow bar vee-like segments</span></span>
+<span><span class="co">#&gt; 14   &gt;11  double arrow vee-like  polygon</span></span>
+<span><span class="co">#&gt; 15   &gt;12  double arrow vee-like segments</span></span>
+<span><span class="co">#&gt; 16   &gt;13  barred arrow vee-like  polygon</span></span>
+<span><span class="co">#&gt; 17   &gt;14  barred arrow vee-like segments</span></span>
+<span><span class="co">#&gt; 18   |01         block tee-like  polygon</span></span>
+<span><span class="co">#&gt; 19   |02         block tee-like polyline</span></span>
+<span><span class="co">#&gt; 20   |03        circle tee-like   circle</span></span>
+<span><span class="co">#&gt; 21   |04        circle tee-like polyline</span></span>
+<span><span class="co">#&gt; 22   |05        square tee-like  polygon</span></span>
+<span><span class="co">#&gt; 23   |06        square tee-like polyline</span></span>
+<span><span class="co">#&gt; 24   |07          star tee-like  polygon</span></span>
+<span><span class="co">#&gt; 25   |08          star tee-like polyline</span></span>
+<span><span class="co">#&gt; 26   |09         cross tee-like  polygon</span></span>
+<span><span class="co">#&gt; 27   |10         cross tee-like segments</span></span>
+<span><span class="co">#&gt; 28   |11         notch tee-like  polygon</span></span>
+<span><span class="co">#&gt; 29   |12         notch tee-like polyline</span></span>
+<span><span class="co">#&gt; 30   |13    double bar tee-like  polygon</span></span>
+<span><span class="co">#&gt; 31   |14    double bar tee-like segments</span></span>
+<span><span class="co">#&gt; 32   |15 reverse arrow tee-like  polygon</span></span>
+<span><span class="co">#&gt; 33   |16 reverse arrow tee-like polyline</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the glyph collection</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">glyph_lt</span>, by_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -322,9 +328,10 @@ form (even), and shapes with a single form follow the pairs.</p>
 <div class="section level2">
 <h2 id="writing-token-codes">Writing token codes<a class="anchor" aria-label="anchor" href="#writing-token-codes"></a>
 </h2>
-<p>A token starts with <code>"&gt;"</code> for an arrow or
-<code>"|"</code> for a terminal, optionally followed by a two-digit
-modifier. Codes combine a start and an end token, for example:</p>
+<p>A token starts with the <code>"&gt;"</code> or <code>"|"</code>
+primitive, optionally followed by a two-digit modifier that selects a
+<code>vee-like</code> or <code>tee-like</code> glyph. Codes combine a
+start and an end token, for example:</p>
 <ul>
 <li>
 <code>"--&gt;"</code>: arrow at the end;</li>
@@ -361,21 +368,19 @@ warning that explains the problem.</li>
 <div class="section level2">
 <h2 id="showing-all-glyphs-on-a-graph">Showing all glyphs on a graph<a class="anchor" aria-label="anchor" href="#showing-all-glyphs-on-a-graph"></a>
 </h2>
-<p>Next, we build a directed star graph with one edge per token, so that
+<p>Next, we build a directed graph with one edge per token, so that
 every glyph is drawn at the tip of an edge. Each standalone token is
 read as the end glyph of its edge.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Make a directed star graph, pointing outward from a central node</span></span>
+<code class="sourceCode R"><span><span class="co"># Make a directed graph, pointing outward from a central node</span></span>
 <span><span class="va">gtoy_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/make_star.html" class="external-link">make_star</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">glyph_lt</span><span class="op">)</span><span class="op">+</span><span class="fl">1</span>, mode<span class="op">=</span><span class="st">"out"</span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="co"># Assign glyph tokens to arrow types</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">$</span><span class="va">arrowType</span> <span class="op">&lt;-</span> <span class="va">glyph_lt</span><span class="op">$</span><span class="va">token</span></span>
 <span></span>
-<span><span class="co"># Colour edges by glyph group; glyphs take attributes of their edge</span></span>
-<span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">glyph_lt</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
-<span><span class="va">group_cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="st">"orange"</span>,<span class="st">"green4"</span><span class="op">)</span>, <span class="va">groups</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">$</span><span class="va">edgeColor</span> <span class="op">&lt;-</span> <span class="va">group_cols</span><span class="op">[</span><span class="va">glyph_lt</span><span class="op">$</span><span class="va">group</span><span class="op">]</span></span>
-<span></span>
+<span><span class="co"># Assign groups</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">$</span><span class="va">Group</span> <span class="op">&lt;-</span> <span class="va">glyph_lt</span><span class="op">$</span><span class="va">group</span></span>
+<span>  </span>
 <span><span class="co"># Make a GraphSpace, with a star layout</span></span>
 <span><span class="va">gs_star</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy_star</span>, </span>
 <span>  layout <span class="op">=</span> <span class="fu"><a href="https://r.igraph.org/reference/layout_as_star.html" class="external-link">layout_as_star</a></span><span class="op">(</span><span class="va">gtoy_star</span><span class="op">)</span><span class="op">)</span></span>
@@ -386,9 +391,9 @@ read as the end glyph of its edge.</p>
 <span></span>
 <span><span class="va">gs_star</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 416752b DN-- 34 33 -- </span></span>
+<span><span class="co">#&gt; IGRAPH cd304ef DN-- 34 33 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
-<span><span class="co">#&gt; | edgeColor (e/c), arrowType (e/c)</span></span>
+<span><span class="co">#&gt; | arrowType (e/c), Group (e/c)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
 <span><span class="co">#&gt; | x: [-1, 1] (cols)</span></span>
 <span><span class="co">#&gt; | y: [-1, 1] (rows)</span></span></code></pre></div>
@@ -396,10 +401,10 @@ read as the end glyph of its edge.</p>
 <code class="sourceCode R"><span><span class="co"># Plot the graph with glyphs; 'arrow_size' scales all glyphs, </span></span>
 <span><span class="co"># and the 'label' aesthetic labels each edge with its token</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gs_star</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">arrowType</span><span class="op">)</span>, label_size <span class="op">=</span> <span class="fl">3</span>, </span>
-<span>    linewidth <span class="op">=</span> <span class="fl">0.7</span>, arrow_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="../reference/geom_edgespace.html">geom_edgespace</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">Group</span>, label <span class="op">=</span> <span class="va">arrowType</span><span class="op">)</span>, </span>
+<span>    label_size <span class="op">=</span> <span class="fl">3</span>, linewidth <span class="op">=</span> <span class="fl">0.7</span>, arrow_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/geom_nodespace.html">geom_nodespace</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/theme_gspace.html">theme_gspace_coords</a></span><span class="op">(</span>theme <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="edge-glyphs_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
@@ -470,7 +475,7 @@ plot.</p>
 </h2>
 <p>Every glyph is a <em>prototype</em>, a small object holding a fixed
 shape, how it is drawn, and the token that selects it. The built-in
-prototypes are exported objects (<code>GlyphArrow1</code>,
+prototypes are exported objects (<code>GlyphArrow</code>,
 <code>GlyphChevron1</code>, …; see <code><a href="../reference/glyph_collection.html">?glyph_collection</a></code>).</p>
 <p>The <code>shape</code> is a two-column matrix of points, described
 relative to the edge end rather than to the plot. The first column (x)
@@ -485,7 +490,7 @@ opposite sides. The origin is where the edge meets the node.</p>
 <span><span class="co">#&gt; [2,]    0  0.0000000</span></span>
 <span><span class="co">#&gt; [3,]   -1 -0.5773503</span></span></code></pre></div>
 <p>The same kind of matrix can be drawn in different ways, specified by
-the prototype’s drawing primitive. The arrowhead is a
+the prototype’s drawing method. The arrowhead is a
 <code>"polyline"</code>, so its points are joined in order, from arm to
 tip to arm. The cross is drawn as <code>"segments"</code>, which takes
 points in pairs, each pair forming one stroke.</p>
@@ -515,7 +520,7 @@ by side.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">GlyphArrow</span>, <span class="va">GlyphChevron1</span>, <span class="va">GlyphCross1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="edge-glyphs_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>New prototypes are built with <code><a href="../reference/glyph_proto.html">glyph_proto()</a></code>, from a
-shape, a drawing primitive, and a token; open outlines can also set an
+shape, a drawing method, and a token; open outlines can also set an
 <code>offset</code>, so the edge line stops at the outline instead of
 crossing it.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -531,7 +536,7 @@ crossing it.</p>
 package loads. New glyphs are added as package contributions, in the
 <code>gspace-glyph-collection.R</code> source file, which contains the
 glyph collection; see <code><a href="../reference/glyph_proto.html">?glyph_proto</a></code> for details on the
-available drawing primitives and token rules.</p>
+available drawing methods and token rules.</p>
 <p><br></p>
 </div>
 <div class="section level2">
@@ -560,7 +565,7 @@ available drawing primitives and token rules.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] patchwork_1.3.2   igraph_2.3.3      RGraphSpace_1.5.6 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] patchwork_1.3.2   igraph_2.3.4      RGraphSpace_1.5.6 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    </span></span>

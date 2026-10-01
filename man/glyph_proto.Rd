@@ -22,7 +22,7 @@ origin, \code{+x} outward), column 2 is the lateral coordinate (\code{+y}
 to the left), at unit size. An empty (0-row) matrix draws nothing.}
 
 \item{token}{The \code{arrowType} token that selects this glyph:
-\code{">"} (arrow) or \code{"|"} (terminal), followed by a
+\code{">"} (vee-like) or \code{"|"} (tee-like), followed by a
 two-digit number (e.g. \code{">90"}, \code{"|90"}).}
 
 \item{name}{A short human-readable name shown by \code{\link{glyph_list}}.
@@ -73,15 +73,15 @@ package load.
 }
 
 \examples{
-# a pair of arrows: a filled triangle (odd number) and its open form, the
-# same outline as a closed polyline (next, even number)
+# a pair of vee-like shapes: a filled triangle (odd number) and its open
+# form, the same outline as a closed polyline (next, even number)
 m <- rbind(c(0, 0), c(-1, 0.6), c(-1, -0.6))
 filled <- glyph_proto(m, token = ">91", draw = "polygon")
 m <- rbind(c(-1, 0), c(-1, 0.6), c(0, 0), c(-1, -0.6), c(-1, 0))
 open <- glyph_proto(m, token = ">92", draw = "polyline")
 plot(filled, open)
 
-# a pair of terminals: a filled block across the edge at the reference
+# a pair of tee-like shapes: a filled block across the edge at the reference
 # point, and its open form, the same outline as a closed polyline
 m <- rbind(c(0, 0.65), c(0, -0.65), c(-0.25, -0.65), c(-0.25, 0.65))
 filled <- glyph_proto(m, token = "|91", draw = "polygon")
@@ -90,8 +90,8 @@ m <- rbind(c(-0.25, 0), c(-0.25, 0.65), c(0, 0.65), c(0, -0.65),
 open <- glyph_proto(m, token = "|92", draw = "polyline")
 plot(filled, open)
 
-# a pair of terminals: a circle (diameter one unit) touching the reference
-# point, and its open form, a ring traced as a polyline
+# a pair of tee-like shapes: a circle (diameter one unit) touching the
+# reference point, and its open form, a ring traced as a polyline
 filled <- glyph_proto(rbind(c(-0.5, 0)), token = "|93", draw = "circle")
 a <- seq(0, 2 * pi, length.out = 49)
 m <- cbind(-0.5 - 0.5 * cos(a), 0.5 * sin(a))

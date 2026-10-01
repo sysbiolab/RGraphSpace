@@ -10,7 +10,7 @@
 # ------
 # Recipe
 # ------
-# Add the object to the section of its kind, arrow or terminal (see the table
+# Add the object to the section of its kind, vee-like or tee-like (see the table
 # below):
 #
 #   #' @rdname glyph_collection
@@ -57,7 +57,7 @@
 #   "circle"    one point, the centre; the diameter is one unit, so a centre
 #               at x = -0.5 makes the circle touch the node
 #
-# token: ">" for an arrow or "|" for a terminal, followed by a two-digit
+# token: ">" for a vee-like or "|" for a tee-like, followed by a two-digit
 #   number. Numbers are permanent: once released, a number is never reused
 #   or reassigned. Filled glyphs take odd numbers and open glyphs even
 #   numbers. A filled glyph takes the next free odd number, and its open
@@ -76,7 +76,7 @@
 #   for an open triangle whose base is at x = -1).
 #
 # group: not declared; glyph_proto() derives it from the token: "basic" for
-#   a single symbol, "arrow" for ">" and a number, "terminal" for "|" and a
+#   a single symbol, "vee-like" for ">" and a number, "tee-like" for "|" and a
 #   number. glyph_list() lists each group in number order.
 #
 # ---------
@@ -107,16 +107,16 @@
 ### The RGraphSpace glyph collection starts here
 ################################################################################
 ################################################################################
-# Tokens: ">" arrow or "|" terminal, then the glyph's number; a filled form
+# Tokens: ">" vee-like or "|" tee-like, then the glyph's number; a filled form
 # (odd) is followed by its open form (even). In codes, a start token is
 # written mirrored, e.g. "01<->01" (triangles at both ends) or "04|-|04"
 # (rings at both ends).
 #
 # Group 'basic':
-#                >      arrow           positive effect
-#                |      bar             negative effect
-#                -      none            no glyph
-# Group 'arrow':
+#                >        arrow           vee-like primitive
+#                |        bar             tee-like primitive
+#                -        none            no glyph
+# Group 'vee-like':
 #                >01 >02  triangles      (filled and open)
 #                >03 >04  harpoons       (filled and open)
 #                >05 >06  diamonds       (filled and open)
@@ -124,7 +124,7 @@
 #                >09 >10  arrow bars     (filled and open)
 #                >11 >12  double arrows  (filled and open)
 #                >13 >14  barred arrows  (filled and open)
-# Group 'terminal':
+# Group 'tee-like':
 #                |01 |02  blocks         (filled and open)
 #                |03 |04  circles        (filled and open)
 #                |05 |06  squares        (filled and open)
@@ -151,7 +151,7 @@
 }
 
 ################################################################################
-### Group 'basic': arrow, bar, and no glyph
+### Group 'basic': 'vee-like' and 'tee-like' primitives, and no glyph
 ################################################################################
 
 #' @rdname glyph_collection
@@ -182,7 +182,7 @@ GlyphNone <- glyph_proto(
 )
 
 ################################################################################
-### Group 'arrow': pairs of filled (odd) and open (even) forms
+### Group 'vee-like': pairs of filled (odd) and open (even) forms
 ################################################################################
 
 #-------------------------------------------------------------------------------
@@ -330,9 +330,9 @@ GlyphArrowBar2 <- glyph_proto(
 GlyphDoubleArrow1 <- glyph_proto(
   shape = rbind(
     c(0, 0), 
-    c(-0.7, .glyph_w), c(-0.7, 0.1),
-    c(-1.3, .glyph_w), c(-1.3, -.glyph_w),
-    c(-0.7, -0.1), c(-0.7, -.glyph_w)),
+    c(-0.7, .glyph_w), c(-0.7, 0),
+    c(-1.4, .glyph_w), c(-1.4, -.glyph_w),
+    c(-0.7, 0), c(-0.7, -.glyph_w)),
   draw  = "polygon",
   token = ">11",
   name = "double arrow"
@@ -342,10 +342,10 @@ GlyphDoubleArrow1 <- glyph_proto(
 #' @export
 GlyphDoubleArrow2 <- glyph_proto(
   shape = rbind(
-    c(0, 0), c(-1, .glyph_w), 
-    c(0, 0), c(-1, -.glyph_w),
-    c(-0.5, 0), c(-1.5, .glyph_w), 
-    c(-0.5, 0), c(-1.5, -.glyph_w)),
+    c(0, 0), c(-0.7, .glyph_w), 
+    c(0, 0), c(-0.7, -.glyph_w),
+    c(-0.5, 0), c(-1.2, .glyph_w), 
+    c(-0.5, 0), c(-1.2, -.glyph_w)),
   draw  = "segments",
   token = ">12",
   name = "double arrow"
@@ -383,7 +383,7 @@ GlyphBarredArrow2 <- glyph_proto(
 )
 
 ################################################################################
-### Group 'terminal': pairs of filled (odd) and open (even) forms
+### Group 'tee-like': pairs of filled (odd) and open (even) forms
 ################################################################################
 
 #-------------------------------------------------------------------------------

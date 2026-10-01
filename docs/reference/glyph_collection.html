@@ -6,21 +6,21 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Edge glyph prototypes — glyph_collection"><meta name="description" content="A collection of prototypes for the symbols drawn at an edge end
-(arrowheads, terminal bars, empty ends, ...). Each is a static,
-self-contained gs_glyph object built with
-glyph_proto: a fixed shape in a canonical local frame
-(reference point at the origin, +x outward along the edge,
-+y to its left, unit size), together with the arrowType
-token(s) that select it. Glyphs carry no positioning, size, or colour;
-those are edge attributes applied at render time (see arrow_size in
+(arrows, bars, empty ends, ...). Each is a static, self-contained
+gs_glyph object built with glyph_proto: a fixed
+shape in a canonical local frame (reference point at the origin,
++x outward along the edge, +y to its left, unit size),
+together with the arrowType token(s) that select it. Glyphs
+carry no positioning, size, or colour; those are edge attributes
+applied at render time (see arrow_size in
 geom_edgespace)."><meta property="og:description" content="A collection of prototypes for the symbols drawn at an edge end
-(arrowheads, terminal bars, empty ends, ...). Each is a static,
-self-contained gs_glyph object built with
-glyph_proto: a fixed shape in a canonical local frame
-(reference point at the origin, +x outward along the edge,
-+y to its left, unit size), together with the arrowType
-token(s) that select it. Glyphs carry no positioning, size, or colour;
-those are edge attributes applied at render time (see arrow_size in
+(arrows, bars, empty ends, ...). Each is a static, self-contained
+gs_glyph object built with glyph_proto: a fixed
+shape in a canonical local frame (reference point at the origin,
++x outward along the edge, +y to its left, unit size),
+together with the arrowType token(s) that select it. Glyphs
+carry no positioning, size, or colour; those are edge attributes
+applied at render time (see arrow_size in
 geom_edgespace)."><style>
   .contents h1, .page-header h1 {
     font-size: 2.2rem !important;
@@ -99,13 +99,13 @@ geom_edgespace)."><style>
 
     <div class="ref-description section level2">
     <p>A collection of prototypes for the symbols drawn at an edge end
-(arrowheads, terminal bars, empty ends, ...). Each is a static,
-self-contained <code>gs_glyph</code> object built with
-<code><a href="glyph_proto.html">glyph_proto</a></code>: a fixed shape in a canonical local frame
-(reference point at the origin, <code>+x</code> outward along the edge,
-<code>+y</code> to its left, unit size), together with the <code>arrowType</code>
-token(s) that select it. Glyphs carry no positioning, size, or colour;
-those are edge attributes applied at render time (see <code>arrow_size</code> in
+(arrows, bars, empty ends, ...). Each is a static, self-contained
+<code>gs_glyph</code> object built with <code><a href="glyph_proto.html">glyph_proto</a></code>: a fixed
+shape in a canonical local frame (reference point at the origin,
+<code>+x</code> outward along the edge, <code>+y</code> to its left, unit size),
+together with the <code>arrowType</code> token(s) that select it. Glyphs
+carry no positioning, size, or colour; those are edge attributes
+applied at render time (see <code>arrow_size</code> in
 <code><a href="geom_edgespace.html">geom_edgespace</a></code>).</p>
     </div>
 
@@ -185,13 +185,15 @@ those are edge attributes applied at render time (see <code>arrow_size</code> in
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The basic glyphs (group <code>"basic"</code>: arrow, bar, and no glyph) follow
-common conventions for positive and negative effects. The other glyphs
-are arrows (<code>"arrow"</code>) or terminals (<code>"terminal"</code>), numbered
-within their kind (e.g. <code>"&gt;01"</code>, <code>"|03"</code>). Most shapes come in
-pairs of consecutive numbers: a filled form (odd) followed by its open
-form (even). The glyphs carry no predefined meaning; explain them with a
-legend (see
-<code><a href="glyph_legend.html">glyph_legend</a></code>).</p>
+common conventions for positive and negative effects. The arrow and bar
+are also the primitives of the <em>vee-like</em> and <em>tee-like</em> extended
+glyphs, grouped by the silhouette they form with the edge: <code>"vee-like"</code>
+glyphs end in a point, and <code>"tee-like"</code> glyphs end in a wider shape.
+The extended glyphs are numbered within their group (e.g. <code>"&gt;01"</code>,
+<code>"|03"</code>). Most shapes come in pairs of consecutive numbers: a filled
+form (odd) followed by its open form (even). The numbered glyphs carry no
+predefined meaning; explain them with a legend
+(see <code><a href="glyph_legend.html">glyph_legend</a></code>).</p>
 <p>These prototypes define RGraphSpace's built-in glyph vocabulary. They
 are discovered automatically at package load: any <code>gs_glyph</code> object
 in the package namespace becomes available through its declared token(s).

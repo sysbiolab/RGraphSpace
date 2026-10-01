@@ -109,24 +109,26 @@ GlyphReverseArrow2
 }
 \description{
 A collection of prototypes for the symbols drawn at an edge end
-(arrowheads, terminal bars, empty ends, ...). Each is a static,
-self-contained \code{gs_glyph} object built with
-\code{\link{glyph_proto}}: a fixed shape in a canonical local frame
-(reference point at the origin, \code{+x} outward along the edge,
-\code{+y} to its left, unit size), together with the \code{arrowType}
-token(s) that select it. Glyphs carry no positioning, size, or colour;
-those are edge attributes applied at render time (see \code{arrow_size} in
+(arrows, bars, empty ends, ...). Each is a static, self-contained
+\code{gs_glyph} object built with \code{\link{glyph_proto}}: a fixed
+shape in a canonical local frame (reference point at the origin,
+\code{+x} outward along the edge, \code{+y} to its left, unit size),
+together with the \code{arrowType} token(s) that select it. Glyphs
+carry no positioning, size, or colour; those are edge attributes
+applied at render time (see \code{arrow_size} in
 \code{\link{geom_edgespace}}).
 }
 \details{
 The basic glyphs (group \code{"basic"}: arrow, bar, and no glyph) follow
-common conventions for positive and negative effects. The other glyphs
-are arrows (\code{"arrow"}) or terminals (\code{"terminal"}), numbered
-within their kind (e.g. \code{">01"}, \code{"|03"}). Most shapes come in
-pairs of consecutive numbers: a filled form (odd) followed by its open
-form (even). The glyphs carry no predefined meaning; explain them with a
-legend (see
-\code{\link{glyph_legend}}).
+common conventions for positive and negative effects. The arrow and bar
+are also the primitives of the \emph{vee-like} and \emph{tee-like} extended
+glyphs, grouped by the silhouette they form with the edge: \code{"vee-like"}
+glyphs end in a point, and \code{"tee-like"} glyphs end in a wider shape.
+The extended glyphs are numbered within their group (e.g. \code{">01"},
+\code{"|03"}). Most shapes come in pairs of consecutive numbers: a filled
+form (odd) followed by its open form (even). The numbered glyphs carry no
+predefined meaning; explain them with a legend
+(see \code{\link{glyph_legend}}).
 
 These prototypes define RGraphSpace's built-in glyph vocabulary. They
 are discovered automatically at package load: any \code{gs_glyph} object

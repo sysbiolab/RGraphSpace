@@ -8,8 +8,6 @@ For a self-contained introduction that works offline, run
 
 ## Introductory vignettes
 
-## Introductory vignettes
-
 These tutorials introduce *RGraphSpace* using simple toy examples:
 [*building a
 GraphSpace*](https://sysbiolab.github.io/RGraphSpace/articles/building-graphspace.md)

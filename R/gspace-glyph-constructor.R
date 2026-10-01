@@ -2,25 +2,27 @@
 #' Edge glyph prototypes
 #' 
 #' A collection of prototypes for the symbols drawn at an edge end 
-#' (arrowheads, terminal bars, empty ends, ...). Each is a static, 
-#' self-contained \code{gs_glyph} object built with 
-#' \code{\link{glyph_proto}}: a fixed shape in a canonical local frame 
-#' (reference point at the origin, \code{+x} outward along the edge, 
-#' \code{+y} to its left, unit size), together with the \code{arrowType} 
-#' token(s) that select it. Glyphs carry no positioning, size, or colour; 
-#' those are edge attributes applied at render time (see \code{arrow_size} in 
+#' (arrows, bars, empty ends, ...). Each is a static, self-contained 
+#' \code{gs_glyph} object built with \code{\link{glyph_proto}}: a fixed 
+#' shape in a canonical local frame (reference point at the origin,
+#' \code{+x} outward along the edge, \code{+y} to its left, unit size), 
+#' together with the \code{arrowType} token(s) that select it. Glyphs 
+#' carry no positioning, size, or colour; those are edge attributes 
+#' applied at render time (see \code{arrow_size} in 
 #' \code{\link{geom_edgespace}}).
 #'
 #' @details
 #' 
 #' The basic glyphs (group \code{"basic"}: arrow, bar, and no glyph) follow
-#' common conventions for positive and negative effects. The other glyphs
-#' are arrows (\code{"arrow"}) or terminals (\code{"terminal"}), numbered
-#' within their kind (e.g. \code{">01"}, \code{"|03"}). Most shapes come in
-#' pairs of consecutive numbers: a filled form (odd) followed by its open
-#' form (even). The glyphs carry no predefined meaning; explain them with a
-#' legend (see
-#' \code{\link{glyph_legend}}).
+#' common conventions for positive and negative effects. The arrow and bar
+#' are also the primitives of the \emph{vee-like} and \emph{tee-like} extended
+#' glyphs, grouped by the silhouette they form with the edge: \code{"vee-like"} 
+#' glyphs end in a point, and \code{"tee-like"} glyphs end in a wider shape. 
+#' The extended glyphs are numbered within their group (e.g. \code{">01"}, 
+#' \code{"|03"}). Most shapes come in pairs of consecutive numbers: a filled 
+#' form (odd) followed by its open form (even). The numbered glyphs carry no 
+#' predefined meaning; explain them with a legend 
+#' (see \code{\link{glyph_legend}}).
 #' 
 #' These prototypes define RGraphSpace's built-in glyph vocabulary. They 
 #' are discovered automatically at package load: any \code{gs_glyph} object
@@ -58,7 +60,7 @@ NULL
 #' origin, \code{+x} outward), column 2 is the lateral coordinate (\code{+y}
 #' to the left), at unit size. An empty (0-row) matrix draws nothing.
 #' @param token The \code{arrowType} token that selects this glyph:
-#' \code{">"} (arrow) or \code{"|"} (terminal), followed by a
+#' \code{">"} (vee-like) or \code{"|"} (tee-like), followed by a
 #' two-digit number (e.g. \code{">90"}, \code{"|90"}).
 #' @param name A short human-readable name shown by \code{\link{glyph_list}}.
 #' Defaults to the token when \code{NULL}.
@@ -85,15 +87,15 @@ NULL
 #' @return A \code{gs_glyph} object.
 #'
 #' @examples
-#' # a pair of arrows: a filled triangle (odd number) and its open form, the
-#' # same outline as a closed polyline (next, even number)
+#' # a pair of vee-like shapes: a filled triangle (odd number) and its open
+#' # form, the same outline as a closed polyline (next, even number)
 #' m <- rbind(c(0, 0), c(-1, 0.6), c(-1, -0.6))
 #' filled <- glyph_proto(m, token = ">91", draw = "polygon")
 #' m <- rbind(c(-1, 0), c(-1, 0.6), c(0, 0), c(-1, -0.6), c(-1, 0))
 #' open <- glyph_proto(m, token = ">92", draw = "polyline")
 #' plot(filled, open)
 #'
-#' # a pair of terminals: a filled block across the edge at the reference
+#' # a pair of tee-like shapes: a filled block across the edge at the reference
 #' # point, and its open form, the same outline as a closed polyline
 #' m <- rbind(c(0, 0.65), c(0, -0.65), c(-0.25, -0.65), c(-0.25, 0.65))
 #' filled <- glyph_proto(m, token = "|91", draw = "polygon")
@@ -102,8 +104,8 @@ NULL
 #' open <- glyph_proto(m, token = "|92", draw = "polyline")
 #' plot(filled, open)
 #'
-#' # a pair of terminals: a circle (diameter one unit) touching the reference
-#' # point, and its open form, a ring traced as a polyline
+#' # a pair of tee-like shapes: a circle (diameter one unit) touching the
+#' # reference point, and its open form, a ring traced as a polyline
 #' filled <- glyph_proto(rbind(c(-0.5, 0)), token = "|93", draw = "circle")
 #' a <- seq(0, 2 * pi, length.out = 49)
 #' m <- cbind(-0.5 - 0.5 * cos(a), 0.5 * sin(a))
@@ -207,7 +209,7 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   piece <- list(draw = draw, p = .place_shape(shape, place, sz2npc = 1))
   
   # Render with the same grob builders the edge renderer uses (table dispatch).
-  build <- .glyph_primitives[[draw]]$build
+  build <- .draw_primitives[[draw]]$build
   grid::grid.draw(build(list(piece), "round", "mitre"))
   invisible(NULL)
 }
@@ -226,9 +228,9 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
       "`group`, and `offset`."))
   }
   if (!is.character(g$draw) || length(g$draw) != 1L ||
-      !g$draw %in% names(.glyph_primitives)) {
+      !g$draw %in% names(.draw_primitives)) {
     rlang::abort(sprintf("`draw` must be one of %s.",
-      paste(sprintf("'%s'", names(.glyph_primitives)), collapse = ", ")))
+      paste(sprintf("'%s'", names(.draw_primitives)), collapse = ", ")))
   }
   .check_glyph_shape(g$shape, g$draw)
   .check_glyph_token(g$token)
@@ -249,18 +251,18 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
 }
 
 # The group a token belongs to: a single symbol is a basic glyph; otherwise
-# the symbol gives the kind ('>' arrow, '|' terminal)
+# the symbol gives the kind ('>' vee-like, '|' tee-like)
 .token_group <- function(token) {
   # an invalid token has no group; .check_glyph_token() reports it
   if (!is.character(token) || length(token) != 1L || is.na(token)) {
     return(NA_character_)
   }
   if (nchar(token) == 1L) return("basic")
-  if (substr(token, 1L, 1L) == ">") "arrow" else "terminal"
+  if (substr(token, 1L, 1L) == ">") "vee-like" else "tee-like"
 }
 
 #-------------------------------------------------------------------------------
-# Validate a shape against its primitive's contract (.glyph_primitives).
+# Validate a shape against its primitive's contract (.draw_primitives).
 .check_glyph_shape <- function(shape, draw) {
   if (!is.matrix(shape) || !is.numeric(shape) || ncol(shape) != 2L) {
     rlang::abort("'shape' must be a two-column numeric matrix.")
@@ -269,7 +271,7 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
     rlang::abort("'shape' must not contain missing values.")
   }
   n <- nrow(shape)
-  spec <- .glyph_primitives[[draw]]
+  spec <- .draw_primitives[[draw]]
   if (!is.na(spec$exact)) {
     if (n != spec$exact) {
       rlang::abort(sprintf(
@@ -298,11 +300,11 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   if (!is.character(token) || length(token) != 1L || is.na(token)) {
     rlang::abort("`token` must be a single string.")
   }
-  # A token is ">" (arrow) or "|" (terminal), optionally followed by a
+  # A token is ">" (vee-like) or "|" (tee-like), optionally followed by a
   # two-digit number, or "-" (no glyph)
   if (!grepl("^(-|[>|]([0-9]{2})?)$", token)) {
     rlang::abort(c(sprintf("Invalid token '%s'.", token),
-      i = paste("A token is '>' (arrow) or '|' (terminal), optionally",
+      i = paste("A token is '>' (vee-like) or '|' (tee-like), optionally",
         "followed by a two-digit number, or '-' for no glyph.")))
   }
   if (grepl("00$", token)) {
@@ -361,11 +363,11 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
 ### glyph grobs
 ################################################################################
 #-------------------------------------------------------------------------------
-# Build arrowhead/terminal glyphs for both ends of every edge. Glyphs are
-# batched by primitive: all polylines render as ONE polylineGrob, all polygons
+# Build vee-like/tee-like glyphs for both ends of every edge. Glyphs are
+# batched by draw primitives: all polylines render as ONE polylineGrob, all polygons
 # as ONE polygonGrob, all segments as ONE segmentsGrob, and all circles as ONE
 # circleGrob, so the grob count is at most four regardless of edge count. The
-# per-primitive builder is looked up in .glyph_primitives.
+# per-primitive builder is looked up in .draw_primitives.
 .get_glyph_grobs <- function(edges, sz2npc, 
   lineend = "round", linejoin = "mitre") {
   
@@ -374,10 +376,10 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   
   if (length(pieces) == 0) return(list())
   
-  grobs <- lapply(names(.glyph_primitives), function(draw) {
+  grobs <- lapply(names(.draw_primitives), function(draw) {
     pcs <- .pieces_with_draw(pieces, draw)
     if (length(pcs) == 0) return(NULL)
-    .glyph_primitives[[draw]]$build(pcs, lineend, linejoin)
+    .draw_primitives[[draw]]$build(pcs, lineend, linejoin)
   })
   grobs[!vapply(grobs, is.null, logical(1))]
 }
@@ -471,7 +473,7 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
 }
 
 #-------------------------------------------------------------------------------
-# Keep the pieces drawn with a given primitive.
+# Keep the pieces drawn with a given draw primitive.
 .pieces_with_draw <- function(pieces, draw) {
   keep <- vapply(pieces, function(pc) pc$draw == draw, logical(1))
   pieces[keep]
@@ -503,7 +505,7 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   
   x <- unlist(lapply(pieces, function(pc) pc$p$x))
   y <- unlist(lapply(pieces, function(pc) pc$p$y))
-  nseg <- .glyph_primitives$segments$parts   # points -> segments per instance
+  nseg <- .draw_primitives$segments$parts   # points -> segments per instance
   col <- unlist(lapply(pieces, function(pc) rep(pc$p$col, each = nseg(pc$p$k))))
   lwd <- unlist(lapply(pieces, function(pc) rep(pc$p$lwd, each = nseg(pc$p$k))))
   
@@ -570,7 +572,7 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
 #   parts      : points -> number of independently styled primitives per glyph
 #   build      : pieces -> a single grob
 # Order here is the grob draw (z) order in .get_glyph_grobs().
-.glyph_primitives <- list(
+.draw_primitives <- list(
   polyline = list(exact = NA_integer_, even = FALSE, min_points = 0L,
     parts = function(k) 1L, build = .polyline_from_pieces),
   polygon  = list(exact = NA_integer_, even = FALSE, min_points = 3L,
@@ -667,14 +669,11 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   unname(tk[, "start"] %in% valid & tk[, "end"] %in% valid)
 }
 
-# Explain why tokens are not in the vocabulary, pointing to what exists:
-#  - a number beyond the kind's range ("|42": terminals go up to |16);
-#  - a number without a kind symbol ("07": did you mean ">07" or "|07"?);
-#  - anything else is not a token.
+# Explain why tokens are not in the vocabulary, pointing to what exists.
 # Returns one message per token (at most `n`), for use in warnings/errors.
 .explain_tokens <- function(tokens, n = 3L) {
   v <- .glyph_vocab()
-  kinds <- c(">" = "arrow", "|" = "terminal")
+  groups <- c(">" = "vee-like", "|" = "tee-like")
   label <- function(tk) sprintf("'%s' (%s)", tk, v[[tk]]$name)
   last <- function(kind) {
     k <- names(v)[substr(names(v), 1L, 1L) == kind & nchar(names(v)) == 3L]
@@ -683,18 +682,21 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   msgs <- vapply(utils::head(unique(tokens), n), function(tk) {
     if (grepl("^[>|][0-9]{2}$", tk)) {
       kind <- substr(tk, 1L, 1L)
-      return(sprintf("'%s' is not defined: %ss go from '%s01' to '%s'.",
-        tk, kinds[[kind]], kind, last(kind)))
+      return(sprintf("'%s' is not defined: %s glyphs go from '%s01' to '%s'.",
+        tk, groups[[kind]], kind, last(kind)))
     }
     if (grepl("^[0-9]{2}$", tk)) {
-      cand <- intersect(paste0(names(kinds), tk), names(v))
+      cand <- intersect(paste0(names(groups), tk), names(v))
       if (length(cand)) {
-        return(sprintf("'%s' needs a kind symbol: did you mean %s?", tk,
+        return(sprintf("'%s' needs a group symbol: did you mean %s?", tk,
           paste(vapply(cand, label, ""), collapse = " or ")))
       }
-      return(sprintf("'%s' needs a kind symbol, '>' or '|'.", tk))
+      return(
+        sprintf(
+          "'%s' needs a group symbol, '>' (vee-like) or '|' (tee-like).", 
+          tk))
     }
-    sprintf(paste("'%s' is not a token: use '>' (arrow) or '|' (terminal),",
+    sprintf(paste("'%s' is not a token: use '>' (arrow) or '|' (bar),",
       "optionally followed by a two-digit number."), tk)
   }, character(1), USE.NAMES = FALSE)
   stats::setNames(msgs, rep("i", length(msgs)))

@@ -506,7 +506,7 @@ for an overview of the available graph transformations).
     #>  [29] htmlwidgets_1.6.4           desc_1.4.3                 
     #>  [31] fontawesome_0.5.3           sandwich_3.1-3             
     #>  [33] zoo_1.8-15                  cachem_1.1.0               
-    #>  [35] igraph_2.3.3                lifecycle_1.0.5            
+    #>  [35] igraph_2.3.4                lifecycle_1.0.5            
     #>  [37] pkgconfig_2.0.3             Matrix_1.7-6               
     #>  [39] R6_2.6.1                    fastmap_1.2.0              
     #>  [41] MatrixGenerics_1.24.0       digest_0.6.39              

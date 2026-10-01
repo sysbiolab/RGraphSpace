@@ -1,8 +1,8 @@
 # Edge glyph prototypes
 
-A collection of prototypes for the symbols drawn at an edge end
-(arrowheads, terminal bars, empty ends, ...). Each is a static,
-self-contained `gs_glyph` object built with
+A collection of prototypes for the symbols drawn at an edge end (arrows,
+bars, empty ends, ...). Each is a static, self-contained `gs_glyph`
+object built with
 [`glyph_proto`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_proto.md):
 a fixed shape in a canonical local frame (reference point at the origin,
 `+x` outward along the edge, `+y` to its left, unit size), together with
@@ -88,12 +88,14 @@ Objects of class `gs_glyph`.
 ## Details
 
 The basic glyphs (group `"basic"`: arrow, bar, and no glyph) follow
-common conventions for positive and negative effects. The other glyphs
-are arrows (`"arrow"`) or terminals (`"terminal"`), numbered within
-their kind (e.g. `">01"`, `"|03"`). Most shapes come in pairs of
-consecutive numbers: a filled form (odd) followed by its open form
-(even). The glyphs carry no predefined meaning; explain them with a
-legend (see
+common conventions for positive and negative effects. The arrow and bar
+are also the primitives of the *vee-like* and *tee-like* extended
+glyphs, grouped by the silhouette they form with the edge: `"vee-like"`
+glyphs end in a point, and `"tee-like"` glyphs end in a wider shape. The
+extended glyphs are numbered within their group (e.g. `">01"`, `"|03"`).
+Most shapes come in pairs of consecutive numbers: a filled form (odd)
+followed by its open form (even). The numbered glyphs carry no
+predefined meaning; explain them with a legend (see
 [`glyph_legend`](https://sysbiolab.github.io/RGraphSpace/reference/glyph_legend.md)).
 
 These prototypes define RGraphSpace's built-in glyph vocabulary. They

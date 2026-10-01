@@ -251,7 +251,7 @@ gs <- normalizeGraphSpace(gs, mar = 0.01)
     #>  [19] bslib_0.11.0           htmlwidgets_1.6.4      desc_1.4.3            
     #>  [22] ica_1.0-3              fontawesome_0.5.3      plyr_1.8.9            
     #>  [25] plotly_4.12.0          zoo_1.8-15             cachem_1.1.0          
-    #>  [28] igraph_2.3.3           mime_0.13              lifecycle_1.0.5       
+    #>  [28] igraph_2.3.4           mime_0.13              lifecycle_1.0.5       
     #>  [31] pkgconfig_2.0.3        Matrix_1.7-6           R6_2.6.1              
     #>  [34] fastmap_1.2.0          fitdistrplus_1.2-6     future_1.70.0         
     #>  [37] shiny_1.14.0           digest_0.6.39          tensor_1.5.1          

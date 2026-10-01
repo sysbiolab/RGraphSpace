@@ -49,10 +49,10 @@ glyph_list <- function() {
     draw  = vapply(v, function(g) g$draw,  character(1)),
     row.names = NULL, stringsAsFactors = FALSE)
   
-  # sort by group (basic, arrow, terminal, then any other), then by number,
+  # sort by group (basic, vee-like, tee-like, then any other), then by number,
   # which keeps each filled (odd) and open (even) pair together; order
   # columns and assign a class
-  group_order <- c("basic", "arrow", "terminal")
+  group_order <- c("basic", "vee-like", "tee-like")
   group_order <- c(group_order, setdiff(unique(df$group), group_order))
   df <- df[order(match(df$group, group_order), df$token, method = "radix"),
     c("token", "name", "group", "draw"), drop = FALSE]
