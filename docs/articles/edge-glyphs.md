@@ -2,7 +2,7 @@
 
 \
 
-**Package**: RGraphSpace 1.5.6
+**Package**: RGraphSpace 1.5.7
 
 ``` r
 
@@ -274,7 +274,7 @@ gs_star <- GraphSpace(gtoy_star,
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH cd304ef DN-- 34 33 -- 
+#> IGRAPH 424bc12 DN-- 34 33 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/c), Group (e/c)
 #> + node spatial boundaries: raw graph
@@ -492,7 +492,7 @@ for details on the available drawing methods and token rules.
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] patchwork_1.3.2   igraph_2.3.4      RGraphSpace_1.5.6 ggplot2_4.0.3    
+    #> [1] patchwork_1.3.2   igraph_2.3.4      RGraphSpace_1.5.7 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    

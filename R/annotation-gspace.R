@@ -171,6 +171,12 @@ annotation_gspace_image <- function(x, interpolate = FALSE,
   nb_src <- terra::nlyr(x)
   rgb_channels <- as.integer(rgb_channels)
   
+  # Single-layer images (e.g. greyscale) with the default channels are
+  # shown in grey, using the one layer for R, G and B
+  if (nb_src == 1L && identical(rgb_channels, 1:3)) {
+    rgb_channels <- c(1L, 1L, 1L)
+  }
+  
   if (length(rgb_channels) != 3L) {
     rlang::abort(c(
       "'rgb_channels' must have length 3 (R, G, B).",

@@ -113,7 +113,7 @@ setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
         'i' = "Redirecting to the `gs_geometry()<-` accessor.",
         'v' = "Stored as node payload."
       ) )
-    gs_geometry(x) <- value
+    gs_geometry(x, name = name) <- value
     return(x)
   }
   
@@ -122,6 +122,12 @@ setMethod("gs_vertex_attr<-", "GraphSpace", function(x, name, ..., value) {
     value <- if(.is_replicable(value)) value else list(value)
   }
   igraph::vertex_attr(graph = g, name = name, ...=...) <- value
+  
+  # New x/y invalidate the normalized coordinates in @nodes
+  if (name %in% c("x", "y") && .is_normalized(x)) {
+    x <- .denormalize_graph_space(x)
+  }
+  
   x <- .updateNodeSpace(x, g)
   
   x
@@ -252,18 +258,27 @@ setMethod("gs_edge_attr<-", "GraphSpace", function(x, name, ..., value) {
 
 .updateNodeSpace <- function(x, g) {
   
+  # Update the reference @graph object
   x@graph <- .validate_igraph(g, simplify = .is_simplified(x))
   
+  # Rebuild @nodes
   nodes <- .build_nodes(x@graph)
   keep <- setdiff(colnames(x@nodes), colnames(nodes))
   for (col in keep) nodes[[col]] <- x@nodes[[col]][match(nodes$name,
     x@nodes$name)]
   
+  # Apply scale_factor
+  nodes[, c("x", "y")] <- nodes[, c("x", "y")] * 
+    gs_scale_factor(x)
+  
+  # Rebuild @coords
   coords <- nodes[ , c("x", "y")]
   keep <- setdiff(colnames(x@coords), colnames(coords))
   for (col in keep) coords[[col]] <- x@coords[[col]][match(rownames(coords), 
     rownames(x@coords))]
   
+  # Use the normalized coordinates if normalized (after building coords,
+  # which must keep the raw scaled values)
   if (.is_normalized(x)) {
     nodes[x@nodes$name, c("x","y")] <- x@nodes[, c("x","y")]
   }

@@ -1,6 +1,6 @@
 # Using RGraphSpace with Spatial Feature Data
 
-**Package**: RGraphSpace 1.5.6\
+**Package**: RGraphSpace 1.5.7\
 
 ## Overview
 
@@ -314,7 +314,7 @@ gs <- normalizeGraphSpace(gs)
     #> [1] stxBrain.SeuratData_0.1.2 ssHippo.SeuratData_3.1.4 
     #> [3] pbmc3k.SeuratData_3.1.4   SeuratData_0.2.2.9002    
     #> [5] Seurat_5.5.1.9001         SeuratObject_5.4.0       
-    #> [7] sp_2.2-1                  RGraphSpace_1.5.6        
+    #> [7] sp_2.2-1                  RGraphSpace_1.5.7        
     #> [9] ggplot2_4.0.3            
     #> 
     #> loaded via a namespace (and not attached):

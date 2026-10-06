@@ -600,8 +600,11 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
     at <- as.character(at)
     idx <- !at %in% names(.int_tokens)
     if(any(idx)) at[idx] <- names(.int_tokens)[1]
-    m <- do.call(rbind, .int_tokens[at])
+    # Resolve the distinct codes only, then expand by match()
+    u <- unique(at)
+    m <- do.call(rbind, .int_tokens[u])
     m[] <- .normalize_token(m)
+    m <- m[match(at, u), , drop = FALSE]
     colnames(m) <- c("start", "end")
     return(m)
   }
@@ -629,8 +632,8 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   # and expand by match()
   u <- unique(at)
   m <- t(vapply(u, parse1, character(2)))
-  m <- m[match(at, u), , drop = FALSE] 
   m[] <- .normalize_token(m)
+  m <- m[match(at, u), , drop = FALSE]
   colnames(m) <- c("start", "end"); rownames(m) <- NULL
   m
 }
@@ -661,6 +664,24 @@ plot.gs_glyph <- function(x, ..., ncol = NULL, margin = 0.05,
   tk[long] <- paste0(substring(tk[long], 2L), substr(tk[long], 1L, 1L))
   chartr(">", "<", tk)
 }
+
+#-------------------------------------------------------------------------------
+# Reverse a full arrowType code end to end (start <-> end), so the same
+# glyphs are drawn when the edge is read in the opposite direction
+# ("02<--" -> "-->02", "|->" -> "<-|", 1 -> 2). Unknown integers are kept.
+.mirror_arrowtype <- function(at) {
+  if (is.numeric(at)) {
+    out <- unname(.int_mirror[as.character(at)])
+    return(ifelse(is.na(out), at, out))
+  }
+  tk <- .arrowtype_to_tokens(at)
+  .tokens_to_arrowtype(tk[, "end"], tk[, "start"])
+}
+
+# Integer code with start and end swapped (see .int_tokens):
+# 1 <-> 2, 4 <-> -4, -1 <-> -2; 0, 3 and -3 are symmetric
+.int_mirror <- c("0" = 0, "1" = 2, "2" = 1, "3" = 3, "4" = -4,
+  "-1" = -2, "-2" = -1, "-3" = -3, "-4" = 4)
 
 #-------------------------------------------------------------------------------
 # Check tokens against the glyph vocabulary

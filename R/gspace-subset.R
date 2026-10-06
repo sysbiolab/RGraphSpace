@@ -136,8 +136,8 @@ gs_subset_nodes <- function(x, i) {
   nodes <- gs_nodes(x, vars = fvars)
   idx <- .resolve_gs_index(i_quo, data = nodes, what = "node")
   
-  # Nothing to do when every node survives
-  if (setequal(idx, seq_len(nrow(nodes)))) {
+  # Nothing to do when every node survives in the same order
+  if (length(idx) == nrow(nodes) && all(idx == seq_len(nrow(nodes)))) {
     return(x)
   }
   
@@ -148,7 +148,10 @@ gs_subset_nodes <- function(x, i) {
     ))
   }
   
-  nodes_kept <- nodes[idx, , drop = FALSE]
+  # Get nodes without vars: 'nodes' may carry feature columns
+  # fetched from @fdata only to evaluate the filter
+  nodes_kept <- gs_nodes(x)
+  nodes_kept <- nodes_kept[idx, , drop = FALSE]
   
   # .trim_graph_space() prunes @edges, remaps vertex indices,
   # updates @graph, and trims @fdata — all in one consistent pass.
@@ -384,23 +387,24 @@ gs_subset_edges <- function(x, i) {
 #-------------------------------------------------------------------------------
 .trim_graph_space <- function(gs, nodes) {
   
-  # Remove edges whose endpoints are no longer in the node set
-  edges <- gs@edges
-  idx <- (edges$name1 %in% nodes$name) &
-    (edges$name2 %in% nodes$name)
-  edges <- edges[idx, ]
-  
   # Re-map vertex index
   nodes$vertex <- seq_len(nrow(nodes))
-  edges$vertex1 <- match(edges$name1, nodes$name)
-  edges$vertex2 <- match(edges$name2, nodes$name)
-  rownames(edges) <- NULL
-  gs@edges <- edges
   gs@nodes <- nodes
   
-  # Update graph vertices
+  # Update graph vertices; incident edges are removed with them
   idx <- V(gs@graph)$name %in% nodes$name
-  gs@graph <- igraph::delete_vertices(gs@graph, which(!idx))
+  gg <- igraph::delete_vertices(gs@graph, which(!idx))
+  
+  # The node index is the igraph vertex order: permute @graph to the
+  # re-mapped @nodes order, then rebuild @edges from it
+  perm <- match(igraph::V(gg)$name, nodes$name)
+  el <- igraph::as_edgelist(gg)
+  gg <- igraph::permute(gg, perm)
+  gg <- .fix_edge_orientation(gg, el)
+  
+  # Update graph and edges
+  gs@graph <- gg
+  gs@edges <- .build_edges(gg)
   
   # Update coords
   if (nrow(gs@coords) > 0) {
@@ -416,4 +420,19 @@ gs_subset_edges <- function(x, i) {
   
   gs
   
+}
+
+#-------------------------------------------------------------------------------
+# Undirected igraph edges are stored lowest vertex index first, so permute()
+# may reverse some of them. 'el' is the edge list (names) before permute();
+# edge order is preserved, so reversed edges are found by name, and their
+# arrowType is mirrored to keep each glyph at the same node.
+.fix_edge_orientation <- function(g, el) {
+  at <- igraph::E(g)$arrowType
+  if (igraph::is_directed(g) || nrow(el) == 0 || is.null(at)) return(g)
+  flip <- igraph::as_edgelist(g)[, 1] != el[, 1]
+  if (!any(flip)) return(g)
+  at[flip] <- .mirror_arrowtype(at[flip])
+  igraph::E(g)$arrowType <- at
+  g
 }

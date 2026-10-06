@@ -586,7 +586,8 @@ GeomNodeSpace <- ggproto(
       x = coords$x,
       y = coords$y,
       pch = coords$shape,
-      size = grid::unit(coords$size, size_unit),
+      # npc sizes follow the smaller panel side ('snpc'), as edge glyphs
+      size = grid::unit(coords$size, "snpc"),
       gp = ggplot2::gg_par(
         fill = scales::alpha(coords$fill, coords$alpha),
         col = scales::alpha(coords$colour, coords$alpha),
@@ -618,6 +619,7 @@ GeomNodeSpace <- ggproto(
 .gs_pch <- function(){
   1/0.75
 }
+
 # gspace node 'size' is on a [0, 100] scale, mapped to NPC by a 0.01 factor.
 .gs_nsz_to_npc <- function(){
   0.01
@@ -625,10 +627,7 @@ GeomNodeSpace <- ggproto(
 .gs_pch_to_npc <- function(){
   .gs_pch() * .gs_nsz_to_npc()
 }
-# 'arrow_size' scaling factor to correct 'mm' and 'npc' conversion
-.gs_asz <- function(){
-  1.5
-}
+
 
 #-------------------------------------------------------------------------------
 # Internal rasterization adapter

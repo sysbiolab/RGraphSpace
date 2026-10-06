@@ -108,7 +108,7 @@ test_that("four 90-degree rotations return the original", {
 # Test edge clipping
 # Edge endpoints are clipped to the node boundary, so a segment stops at each
 # node's edge rather than its center. The clipped geometry is computed in the
-# edge geom's draw_panel (via .geom_remap_edge_offsets / .geom_adj_edge_offsets)
+# edge grob at draw time (via .geom_adj_node_offsets1 / .geom_adj_node_offsets2)
 # and only materializes in the grob, so this test reads endpoints from the
 # rendered edge grob (edges.segments) and compares them to node centers taken
 # from gs@nodes. Node size is set per-vertex (V(g)$nodeSize); larger nodes clip
@@ -309,7 +309,7 @@ test_that("Seurat coercion, embedding space (integration)", {
 })
 
 #-------------------------------------------------------------------------------
-# Regression tests for gs_subset_edges()
+# Regression tests for adding and subsetting edges and nodes
 
 # Helper: a non-simplified graph with four parallel new1/new2
 .make_parallel_gs <- function(simplify = FALSE) {
@@ -338,6 +338,38 @@ test_that("removing parallel edges", {
   expect_true(all(e$edge_var > 10))
 })
 
+test_that("reordered node subsets keep @nodes, @edges and @graph aligned", {
+  for (dir in c(TRUE, FALSE)) {
+    g <- igraph::make_graph(c("a","b", "b","c", "c","d", "c","c"), directed = dir)
+    igraph::V(g)$x <- c(10, 20, 30, 40); igraph::V(g)$y <- c(1, 3, 2, 4)
+    igraph::E(g)$arrowType <- if (dir) "-->" else c("-->", "|->", "-->", "-->")
+    gs <- GraphSpace(g, simplify = FALSE, verbose = FALSE)
+    s <- gs_subset_nodes(gs, c("c", "b", "a"))
+    gs_edge_attr(s, "edgeColor") <- "red"
+    expect_identical(igraph::V(s@graph)$name, c("c", "b", "a"))
+    expect_identical(s@nodes$name, c("c", "b", "a"))
+    expect_true(all(s@nodes$name[s@edges$vertex1] == s@edges$name1))
+    expect_true(all(s@nodes$name[s@edges$vertex2] == s@edges$name2))
+    e <- gs_edges(s, render = TRUE); n <- gs_nodes(s)
+    expect_equal(e$x, n[e$name1, "x"])
+    expect_equal(e$yend, n[e$name2, "y"])
+    expect_equal(nrow(gs[c("c", "b", "a"), 1]@edges), 1L)
+    if (!dir) expect_identical(s@edges$arrowType[1:2], c("<--", "<-|"))
+  }
+})
+
+test_that("gs_subset_nodes() for node ordering and feature subsetting", {
+  g <- igraph::make_graph(c("a","b", "b","c", "c","d"), directed = FALSE)
+  igraph::V(g)$x <- 1:4; igraph::V(g)$y <- c(1, 3, 2, 4)
+  gs <- GraphSpace(g, verbose = FALSE)
+  expect_identical(gs_subset_nodes(gs, c("c", "b", "a"))@nodes$name, 
+    c("c", "b", "a"))
+  expect_identical(gs_subset_nodes(gs, c("d", "c", "b", "a"))@nodes$name, 
+    c("d", "c", "b", "a"))
+  expect_identical(gs_subset_nodes(gs, c("a", "b", "c", "d")), gs)
+  gs <- gs_add_features(gs, matrix(1:4, 4, 1, dimnames = list(letters[1:4], "F1")))
+  expect_identical(colnames(gs_subset_nodes(gs, F1 > 1)@nodes), colnames(gs@nodes))
+})
 
 #-------------------------------------------------------------------------------
 # Regression tests for gs_add_features() 

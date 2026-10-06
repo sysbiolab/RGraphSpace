@@ -1,6 +1,6 @@
 # Spatial-segmented data with Seurat and RGraphSpace
 
-**Package**: RGraphSpace 1.5.6\
+**Package**: RGraphSpace 1.5.7\
 
 ## Overview
 
@@ -259,7 +259,7 @@ p1 + p2 +
     #> 
     #> other attached packages:
     #> [1] patchwork_1.3.2    sf_1.1-2           Seurat_5.5.1.9001  SeuratObject_5.4.0
-    #> [5] sp_2.2-1           RGraphSpace_1.5.6  ggplot2_4.0.3     
+    #> [5] sp_2.2-1           RGraphSpace_1.5.7  ggplot2_4.0.3     
     #> 
     #> loaded via a namespace (and not attached):
     #>   [1] RColorBrewer_1.1-3     rstudioapi_0.19.0      jsonlite_2.0.0        

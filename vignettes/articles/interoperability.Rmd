@@ -309,7 +309,7 @@ gs_hubs <- gs_flight[gs_flight$name %in% hubs, ]
 ```{r Interoperability sf - 8, eval=TRUE, message=FALSE}
 ggplot(data = gs_hubs) +
   geom_sf(data = world_sf, fill = "grey95", color = "grey70") +
-  geom_edgespace(aes(colour = counts), arrow_size = 1) +
+  geom_edgespace(aes(colour = counts), arrow_size = 2) +
   geom_nodespace(aes(label = name), fill = NA, colour = NA) +
   scale_colour_continuous(palette = c("cyan", "blue")) +
   labs(subtitle = "Same network under a south polar projection",

@@ -169,7 +169,8 @@
 #' the same numeric space as line width (`lwd`).
 #' 
 #' **arrow_offset** is an additive term that offsets arrow endpoints 
-#' uniformly in graph space and is bounded by the edge length, in NPC units.
+#' uniformly in graph space and is bounded by the edge length, in NPC units
+#' of the shorter panel side.
 #' 
 #' The glyphs drawn at edge ends are set by the \code{arrowType} edge 
 #' attribute (see \link{GraphSpace} and \code{\link{glyph_list}}).
@@ -524,13 +525,6 @@ GeomEdgeSpace <- ggproto(
     dpi = NULL, dev = "cairo", scale = 1, .size_unit = "npc", 
     .nodes = NULL) {
     
-    required_att <- c("x", "y", "vertex", "size", "stroke")
-    if(!is.null(.nodes) && all(required_att %in% colnames(.nodes))){
-      data <- .geom_remap_edge_offsets(data, .nodes, size_unit = .size_unit)
-    } else {
-      data <- .geom_adj_edge_offsets(data, size_unit = .size_unit)
-    }
-    
     # Edge attributes supplied by the geom
     arrow_size <- arrow_size %||% 1
     arrow_size[is.na(arrow_size)] <- 1
@@ -550,34 +544,113 @@ GeomEdgeSpace <- ggproto(
     
     coords <- .transform_edge_coords(data, coord, panel_params, coord_warp)
     
-    coords <- .geom_set_arrows(coords, .size_unit, loop_direction)
+    # Node offsets, edge and glyph geometry, and edge labels are built at
+    # draw time (see makeContent.gs_edgegrob()), when the panel size is known
+    has_label <- "label" %in% colnames(coords) && !all(is.na(coords$label))
     
-    coords <- .apply_coord_deviation(coords)
-    
-    # Create edge grobs
-    grobs <- .get_edge_grobs(coords, lineend = lineend, 
-      linejoin = linejoin, size_unit = .size_unit)
-    
-    edge_grob <- grid::gTree(children = grobs,
-      name = grid::grobName(prefix = "geom_edgespace")
-    )
-    
-    if (raster) {
-      edge_grob <- .as_rasteriser(edge_grob, dpi = dpi, 
-        dev = dev, scale = scale)
-    }
-    
-    # Create label grob
-    if ("label" %in% colnames(coords) && !all(is.na(coords$label))) {
-      label_grob <- .get_edge_label_grob(coords, coord, panel_params)
-      edge_grob <- grid::gTree(children = grid::gList(edge_grob, label_grob))
-    }
+    edge_grob <- grid::gTree(coords = coords, nodes = .nodes,
+      size_unit = .size_unit, loop_direction = loop_direction,
+      lineend = lineend, linejoin = linejoin, has_label = has_label,
+      raster = raster, dpi = dpi, dev = dev, scale = scale,
+      name = grid::grobName(prefix = "geom_edgespace"), 
+      cl = "gs_edgegrob")
     
     edge_grob
     
   },
   draw_key = draw_key_path
 )
+
+################################################################################
+### Drawing frame for edge geometry
+################################################################################
+# Edge geometry is built here (draw time), not in draw_panel(): glyphs and
+# offsets depend on the panel size, and grid's convertWidth() measures the
+# current viewport. In draw_panel() no panel viewport exists yet, so it
+# measures the whole device (1 mm = 0.00472 npc in a 600x600 px device,
+# 0.00283 in 1000x600, for the same square panel); here it measures the
+# panel itself (0.0051 in both). draw_panel() stores only the data; the
+# geometry is built in the edge frame (see .edge_frame()).
+#' @exportS3Method grid::makeContent
+makeContent.gs_edgegrob <- function(x) {
+  
+  # Nothing to draw in a zero-size panel (grid cannot convert units to
+  # 'npc' there; see .edge_frame())
+  frame <- .edge_frame()
+  if (is.null(frame)) return(x)
+  
+  # Draw-time edge geometry; return node offsets, arrows and 
+  # curves, in frame units
+  coords <- .edge_draw_geometry(x, frame)
+  
+  # Create edge grobs
+  edge_grob <- .get_edge_grobs(coords, lineend = x$lineend, 
+    linejoin = x$linejoin, size_unit = x$size_unit)
+  
+  edge_grob <- grid::gTree(children = edge_grob, vp = frame$vp)
+  
+  if (isTRUE(x$raster)) {
+    edge_grob <- .as_rasteriser(edge_grob, dpi = x$dpi, 
+      dev = x$dev, scale = x$scale)
+  }
+  
+  # Create label grob
+  if (isTRUE(x$has_label)) {
+    label_grob <- .get_edge_label_grob(coords)
+    label_grob <- grid::gTree(children = grid::gList(label_grob), 
+      vp = frame$vp)
+    edge_grob <- grid::gList(edge_grob, label_grob)
+  }
+  
+  grid::setChildren(x, grid::gList(edge_grob))
+  
+}
+
+#-------------------------------------------------------------------------------
+# Glyphs, node offsets and curves are built in npc with one factor for both
+# axes, so they need a frame in which npc is isotropic. The frame is a square
+# viewport of side = panel width, anchored at the panel bottom: the panel width
+# stays the unit for all sizes (as for node sizes and .size_to_npc()), and the
+# panel aspect ratio (H/W) is used only to place y positions in the frame. In
+# a square panel, the frame is the panel itself. Called at draw time (see
+# makeContent.gs_edgegrob()), when the panel size is known.
+.edge_frame <- function() {
+  W <- grid::convertWidth(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
+  H <- grid::convertHeight(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
+  # Zero-size panel (e.g. a collapsed plot pane): no frame, nothing to draw
+  if (!is.finite(W) || !is.finite(H) || W <= 0 || H <= 0) return(NULL)
+  list(
+    aspect = H / W,
+    vp = grid::viewport(y = 0, just = "bottom",
+      height = grid::unit(W, "inches"), clip = "off")
+  )
+}
+
+#-------------------------------------------------------------------------------
+# Draw-time edge geometry: node offsets, arrows and curves, built in the
+# edge frame (mm sizes are converted here, against the panel)
+.edge_draw_geometry <- function(x, frame) {
+  
+  coords <- .to_edge_frame(x$coords, frame)
+  
+  required_att <- c("x", "y", "vertex", "size", "stroke")
+  if (!is.null(x$nodes) && all(required_att %in% colnames(x$nodes))) {
+    coords <- .geom_adj_node_offsets1(coords, x$nodes, x$size_unit)
+  } else {
+    coords <- .geom_adj_node_offsets2(coords, x$size_unit)
+  }
+  
+  coords <- .geom_set_arrows(coords, x$size_unit, x$loop_direction)
+  .apply_coord_deviation(coords)
+}
+
+# Map panel npc positions into the frame (x is unchanged)
+.to_edge_frame <- function(coords, frame) {
+  for (col in intersect(c("y", "yend", ".dev_y"), colnames(coords))) {
+    coords[[col]] <- coords[[col]] * frame$aspect
+  }
+  coords
+}
 
 ################################################################################
 ### Coord-aware edge geometry
@@ -676,7 +749,7 @@ GeomEdgeSpace <- ggproto(
 ################################################################################
 ### GeomLabel
 ################################################################################
-.get_edge_label_grob <- function(coords, coord, panel_params){
+.get_edge_label_grob <- function(coords){
   
   l_data <- coords[!is.na(coords$label), , drop = FALSE]
   if (nrow(l_data) == 0){
@@ -701,7 +774,9 @@ GeomEdgeSpace <- ggproto(
   l_data$lineheight <- l_data$label_lineheight
   l_data <- ggplot2::GeomLabel$use_defaults(l_data)
   
-  ggplot2::GeomLabel$draw_panel(l_data, panel_params, coord)
+  # Positions are AsIs and already final (see .get_edge_label_xy()), so the
+  # coordinate transform is a no-op: no panel parameters are needed
+  ggplot2::GeomLabel$draw_panel(l_data, NULL, ggplot2::coord_cartesian())
   
 }
 
@@ -927,17 +1002,19 @@ GeomEdgeSpace <- ggproto(
 # to 'npc' for alignment with grid coordinates;
 # For stroke, see .stroke_offset_estimate();
 # For linewidth, see .lwd_offset_estimate().
-.geom_remap_edge_offsets <- function(edges, nodes, size_unit){
+.geom_adj_node_offsets1 <- function(edges, nodes, size_unit){
   
   # size-to-npc conversion factor (1 mm expressed in npc units)
   sz2npc <- .size_to_npc("mm")
   
   if(size_unit=="mm"){
-    # ggplot2 node 'size' in 'mm', scaled to 'npc'
-    n_offsets <- nodes[["size"]]/2 * sz2npc
+    # ggplot2 node 'size' in 'mm', scaled to 'npc'; the drawn circle
+    # radius is 0.375 * size (R's symbol radius), i.e. size/2 / .gs_pch()
+    n_offsets <- nodes[["size"]]/2 / .gs_pch() * sz2npc
   } else {
-    # gspace node 'size' in [0, 100], transformed to 'npc'
-    n_offsets <- nodes[["size"]]/2 * .gs_nsz_to_npc()
+    # gspace node 'size' in [0, 100], transformed to 'npc' of the smaller
+    # panel side ('snpc'), as gspace nodes
+    n_offsets <- nodes[["size"]]/2 * .gs_nsz_to_npc() * .size_to_npc("snpc")
   }
   # 'stroke' and 'linewidth' in 'mm', scaled to 'npc'
   n_offsets <- n_offsets + (nodes[["stroke"]] * .stroke_offset_estimate(sz2npc))
@@ -954,7 +1031,7 @@ GeomEdgeSpace <- ggproto(
 # Here, the final node sizes computed by ggplot2 are not available;
 # Pre-computed clipping offsets are therefore adjusted using 
 # 'size_unit', together with linewidth and a default stroke estimate
-.geom_adj_edge_offsets <- function(edges, size_unit){
+.geom_adj_node_offsets2 <- function(edges, size_unit){
   
   # size-to-npc conversion factor (1 mm expressed in npc units)
   sz2npc <- .size_to_npc("mm")
@@ -963,8 +1040,9 @@ GeomEdgeSpace <- ggproto(
     # ggplot2 node 'size' in 'mm', scaled to 'npc'
     n_offsets <- sz2npc
   } else {
-    # gspace node 'size' in [0, 100], transformed to 'npc'
-    n_offsets <- .gs_nsz_to_npc()
+    # gspace node 'size' in [0, 100], transformed to 'npc' of the smaller
+    # panel side ('snpc'), as gspace nodes
+    n_offsets <- .gs_nsz_to_npc() * .size_to_npc("snpc")
   }
   stroke_offset <- .stroke_offset_estimate(sz2npc)
   lwd_offset <- edges[["linewidth"]] * .lwd_offset_estimate(sz2npc)
@@ -995,6 +1073,14 @@ GeomEdgeSpace <- ggproto(
   0.75 * sz2npc
 }
 
+# Absolute size (e.g. mm) in edge-frame units, computed at draw time.
+# grid resolves point sizes as widths: drawDetails.points() passes `size`
+# to grid's C code, which converts it with transformWidthtoINCHES (grid.c,
+# unit.c). npc nodes therefore scale with the panel width, so the edge frame
+# (see .edge_frame()) is a square whose sides both equal the panel width.
+# In that square, a distance of 0.1 is the same physical length
+# horizontally, vertically or diagonally, so a size converted once with
+# convertWidth() is correct in every direction.
 .size_to_npc <- function(size_unit = "npc") {
   grid::convertWidth(grid::unit(1, size_unit), unitTo = "npc",
     valueOnly = TRUE)
@@ -1047,7 +1133,7 @@ GeomEdgeSpace <- ggproto(
 ### Adjust arrows
 ################################################################################
 .geom_set_arrows <- function(edges, size_unit, loop_direction = "adaptive"){
-  edges <- .adj_arrow_offset(edges)
+  edges <- .add_arrow_offset(edges)
   edges <- .add_arrow_token(edges)
   edges <- .adj_arrow_size(edges, size_unit)
   edges <- .adj_arrow_position(edges, size_unit, loop_direction)
@@ -1055,9 +1141,11 @@ GeomEdgeSpace <- ggproto(
 }
 
 #-------------------------------------------------------------------------------
-.adj_arrow_offset <- function(edges){
-  edges$offset_start <- edges[["offset_start"]] + edges[["arrow_offset"]]
-  edges$offset_end <- edges[["offset_end"]] + edges[["arrow_offset"]]
+.add_arrow_offset <- function(edges){
+  # 'arrow_offset' in 'npc' of the smaller panel side ('snpc')
+  arrow_offset <- edges[["arrow_offset"]] * .size_to_npc("snpc")
+  edges$offset_start <- edges[["offset_start"]] + arrow_offset
+  edges$offset_end <- edges[["offset_end"]] + arrow_offset
   edges
 }
 
@@ -1076,11 +1164,13 @@ GeomEdgeSpace <- ggproto(
 .adj_arrow_size <- function(edges, size_unit){
   
   if(size_unit == "mm"){
-    # see .gs_pch() and .gs_asz()
-    edges$arrow_size <- edges[["arrow_size"]] * .gs_pch() * .gs_asz()
+    # see .gs_pch()
+    edges$arrow_size <- edges[["arrow_size"]] * .gs_pch()
   } else {
-    # gspace 'size' in [0, 100], transformed to 'npc'
-    edges$arrow_size <- edges[["arrow_size"]] * .gs_pch_to_npc()
+    # gspace 'size' in [0, 100], transformed to 'npc' of the smaller
+    # panel side ('snpc'), as gspace nodes
+    edges$arrow_size <- edges[["arrow_size"]] * .gs_pch_to_npc() *
+      .size_to_npc("snpc")
   }
   
   edges

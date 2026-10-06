@@ -147,6 +147,7 @@ setMethod("normalizeGraphSpace", "GraphSpace",
   nodes <- .set_raw_coords(gs@nodes, gs@coords)
   nodes <- .setCoordToGraph(nodes, flip.x, flip.y, swap.xy, verbose)
   gs@nodes <- .fit_graph_space(nodes, mar)
+  gs@canvas <- as.raster(matrix())
   gs@pars$image.space <- FALSE
   gs@pars$is.normalized <- TRUE
   gs@pars$flip.x <- flip.x

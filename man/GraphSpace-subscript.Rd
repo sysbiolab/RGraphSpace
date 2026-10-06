@@ -5,11 +5,12 @@
 \alias{[,GraphSpace-method}
 \alias{[[,GraphSpace-method}
 \alias{[,GraphSpace,ANY,ANY,ANY-method}
+\alias{[[,GraphSpace,ANY,ANY-method}
 \title{Subscript operators for GraphSpace objects}
 \usage{
 \S4method{[}{GraphSpace,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
-\S4method{[[}{GraphSpace}(x, i, j, ...)
+\S4method{[[}{GraphSpace,ANY,ANY}(x, i, j, ...)
 }
 \arguments{
 \item{x}{A \code{\link{GraphSpace}} object.}

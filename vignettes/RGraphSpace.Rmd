@@ -153,8 +153,6 @@ V(gtoy1)$nodeLabelColor <- "black"
 
 ## Edge attributes
 
-Given a list of edges, *RGraphSpace* represents only one edge for each pair of connected vertices. If there are multiple edges connecting the same node pair, it will display the attributes of the first occurrence in the data.
-
 ```{r Edge attributes - 1, eval=TRUE, message=FALSE}
 # Edge color (Hexadecimal or color name)
 E(gtoy1)$edgeColor <- c("red","green","blue","black")
@@ -173,7 +171,7 @@ Note: `edgeLineColor` is deprecated as of version 1.4.3 and replaced by `edgeCol
 
 ## Arrowhead attributes
 
-**Arrowhead in directed graphs**: By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`). If there are mutual connections, the package will recode the mutual edges to represent a bidirectional flow.
+**Arrowhead in directed graphs**: By default, an arrow will be drawn for each edge according to its left-to-right orientation in the edge list (*e.g.* `A -> B`).
 
 ```{r Edge attributes - 2, eval=TRUE, message=FALSE}
 # Arrowhead types in directed graphs

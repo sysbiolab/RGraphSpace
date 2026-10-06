@@ -235,18 +235,18 @@
 .gs_edges <- function(gs){
   nodes <- .gs_nodes(gs)
   edges <- gs@edges
-  coord <- data.frame(
+  ecoord <- data.frame(
     x = nodes[edges$vertex1, "x"],
     y = nodes[edges$vertex1, "y"],
     xend = nodes[edges$vertex2, "x"],
     yend = nodes[edges$vertex2, "y"]
   )
   n_offsets <- nodes[["nodeSize"]]
-  coord$offset_start <- n_offsets[edges$vertex1]
-  coord$offset_end <- n_offsets[edges$vertex2]
-  edges$away_angle <- .get_edge_away_angle(coord, nodes)
+  ecoord$offset_start <- n_offsets[edges$vertex1]
+  ecoord$offset_end <- n_offsets[edges$vertex2]
+  edges$away_angle <- .get_edge_away_angle(ecoord, nodes)
   gs_id <- attr(edges, "gs_id")
-  edges <- cbind(coord, edges)
+  edges <- cbind(ecoord, edges)
   attr(edges, "gs_id") <- gs_id
   edges
 }
@@ -273,16 +273,16 @@
 
 #-------------------------------------------------------------------------------
 # Edge-level "away from centroid" angle (degrees). 
-.get_edge_away_angle <- function(coord, nodes){
+.get_edge_away_angle <- function(ecoord, nodes){
   cx <- mean(nodes$x, na.rm = TRUE)
   cy <- mean(nodes$y, na.rm = TRUE)
   layout_scale <- sqrt(stats::var(nodes$x, na.rm = TRUE) +
       stats::var(nodes$y, na.rm = TRUE))
   if (nrow(nodes) < 2 || !is.finite(layout_scale) || layout_scale == 0) {
-    return(rep(90, nrow(nodes)))
+    return(rep(90, nrow(ecoord)))
   }
-  mid_x <- (coord$x + coord$xend) / 2
-  mid_y <- (coord$y + coord$yend) / 2
+  mid_x <- (ecoord$x + ecoord$xend) / 2
+  mid_y <- (ecoord$y + ecoord$yend) / 2
   away_x <- mid_x - cx
   away_y <- mid_y - cy
   away_len <- sqrt(away_x^2 + away_y^2)

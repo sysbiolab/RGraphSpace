@@ -1,5 +1,10 @@
 # Changelog
 
+## RGraphSpace 1.5.7
+
+- Edge glyphs, node offsets and edge labels are computed at draw time
+- Mutual directed edges are drawn as two separate arrows
+
 ## RGraphSpace 1.5.6
 
 - Addressed additional issues identified during the JOSS review

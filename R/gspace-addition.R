@@ -129,7 +129,7 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
   
   if (!"x" %in% colnames(value)){
     if(gs_vcount(x) > 0){
-      rg <- range(x@coords$x, na.rm = TRUE)
+      rg <- range(igraph::V(x@graph)$x, na.rm = TRUE)
     } else {
       rg <- c(0, 1)
     }
@@ -138,7 +138,7 @@ setReplaceMethod("gs_add_nodes", "GraphSpace", function(x, value) {
   
   if (!"y" %in% colnames(value)){
     if(gs_vcount(x) > 0){
-      rg <- range(x@coords$y, na.rm = TRUE)
+      rg <- range(igraph::V(x@graph)$y, na.rm = TRUE)
     } else {
       rg <- c(0, 1)
     }

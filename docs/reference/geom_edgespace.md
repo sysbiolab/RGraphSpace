@@ -166,8 +166,8 @@ glyphs (arrowheads and other end symbols). The value is interpreted in
 the same numeric space as line width (`lwd`).
 
 **arrow_offset** is an additive term that offsets arrow endpoints
-uniformly in graph space and is bounded by the edge length, in NPC
-units.
+uniformly in graph space and is bounded by the edge length, in NPC units
+of the shorter panel side.
 
 The glyphs drawn at edge ends are set by the `arrowType` edge attribute
 (see

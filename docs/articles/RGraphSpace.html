@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">RGraphSpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,7 +105,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-10-01</h4>
+            <h4 data-toc-skip class="date">2026-10-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/RGraphSpace.Rmd" class="external-link"><code>vignettes/RGraphSpace.Rmd</code></a></small>
       <div class="d-none name"><code>RGraphSpace.Rmd</code></div>
@@ -113,7 +113,7 @@ Team</h4>
 
     
     
-<p><br><strong>Package</strong>: RGraphSpace 1.5.6</p>
+<p><br><strong>Package</strong>: RGraphSpace 1.5.7</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -215,7 +215,7 @@ internally.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/GraphSpace-methods.html">GraphSpace</a></span><span class="op">(</span><span class="va">gtoy1</span>, layout <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/layout_with_fr.html" class="external-link">layout_with_fr</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 3db8455 DN-- 5 4 -- </span></span>
+<span><span class="co">#&gt; IGRAPH c718529 DN-- 5 4 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/c)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
@@ -271,10 +271,6 @@ names?</em> section for details.</p>
 <div class="section level3">
 <h3 id="edge-attributes">Edge attributes<a class="anchor" aria-label="anchor" href="#edge-attributes"></a>
 </h3>
-<p>Given a list of edges, <em>RGraphSpace</em> represents only one edge
-for each pair of connected vertices. If there are multiple edges
-connecting the same node pair, it will display the attributes of the
-first occurrence in the data.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Edge color (Hexadecimal or color name)</span></span>
 <span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">gtoy1</span><span class="op">)</span><span class="op">$</span><span class="va">edgeColor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="st">"green"</span>,<span class="st">"blue"</span>,<span class="st">"black"</span><span class="op">)</span></span>
@@ -295,9 +291,7 @@ and replaced by <code>edgeColor</code>.</p>
 </h3>
 <p><strong>Arrowhead in directed graphs</strong>: By default, an arrow
 will be drawn for each edge according to its left-to-right orientation
-in the edge list (<em>e.g.</em> <code>A -&gt; B</code>). If there are
-mutual connections, the package will recode the mutual edges to
-represent a bidirectional flow.</p>
+in the edge list (<em>e.g.</em> <code>A -&gt; B</code>).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Arrowhead types in directed graphs</span></span>
 <span><span class="co">## Integer codes or token values:</span></span>
@@ -488,7 +482,7 @@ and ggplot2 graphics.” R package, 2023. Doi:
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] tidygraph_1.3.1   igraph_2.3.4      RGraphSpace_1.5.6 ggplot2_4.0.3    </span></span>
+<span><span class="co">#&gt; [1] tidygraph_1.3.1   igraph_2.3.4      RGraphSpace_1.5.7 ggplot2_4.0.3    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     tidyr_1.3.2       </span></span>

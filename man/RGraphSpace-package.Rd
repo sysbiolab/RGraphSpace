@@ -18,7 +18,7 @@ from the package list.
 }
 \references{
 Sysbiolab Team (2026). \emph{RGraphSpace: Rendering graphs as coherent
-spatial objects in ggplot2}. R package version 1.5.6 (Doi:
+spatial objects in ggplot2}. R package version 1.5.7 (Doi:
 10.32614/CRAN.package.RGraphSpace),
 \url{https://CRAN.R-project.org/package=RGraphSpace}.
 }

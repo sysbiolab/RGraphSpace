@@ -2,7 +2,7 @@
 
 \
 
-**Package**: RGraphSpace 1.5.6
+**Package**: RGraphSpace 1.5.7
 
 ``` r
 
@@ -238,7 +238,7 @@ ggplot(gs_star2_norm) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] patchwork_1.3.2   sf_1.1-2          igraph_2.3.4      RGraphSpace_1.5.6
+    #> [1] patchwork_1.3.2   sf_1.1-2          igraph_2.3.4      RGraphSpace_1.5.7
     #> [5] ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):

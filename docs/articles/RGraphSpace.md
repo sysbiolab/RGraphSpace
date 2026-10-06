@@ -1,7 +1,7 @@
 # Getting started with RGraphSpace
 
 \
-**Package**: RGraphSpace 1.5.6
+**Package**: RGraphSpace 1.5.7
 
 ## Overview
 
@@ -127,7 +127,7 @@ which assigns coordinates internally.
 set.seed(42)
 GraphSpace(gtoy1, layout = igraph::layout_with_fr(gtoy1))
 #> A GraphSpace-class object for:
-#> IGRAPH 3db8455 DN-- 5 4 -- 
+#> IGRAPH c718529 DN-- 5 4 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/c)
 #> + node spatial boundaries: raw graph
@@ -184,11 +184,6 @@ V(gtoy1)$nodeLabelColor <- "black"
 
 ### Edge attributes
 
-Given a list of edges, *RGraphSpace* represents only one edge for each
-pair of connected vertices. If there are multiple edges connecting the
-same node pair, it will display the attributes of the first occurrence
-in the data.
-
 ``` r
 
 # Edge color (Hexadecimal or color name)
@@ -211,8 +206,7 @@ Note: `edgeLineColor` is deprecated as of version 1.4.3 and replaced by
 
 **Arrowhead in directed graphs**: By default, an arrow will be drawn for
 each edge according to its left-to-right orientation in the edge list
-(*e.g.* `A -> B`). If there are mutual connections, the package will
-recode the mutual edges to represent a bidirectional flow.
+(*e.g.* `A -> B`).
 
 ``` r
 
@@ -393,7 +387,7 @@ If you use *RGraphSpace*, please cite:
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] tidygraph_1.3.1   igraph_2.3.4      RGraphSpace_1.5.6 ggplot2_4.0.3    
+    #> [1] tidygraph_1.3.1   igraph_2.3.4      RGraphSpace_1.5.7 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     tidyr_1.3.2       

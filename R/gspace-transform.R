@@ -199,7 +199,7 @@ setMethod("transposeGraphSpace", "GraphSpace",
 
 #-------------------------------------------------------------------------------
 .crop_gspace <- function(gs, crop.box) {
-  if (.has_image(gs)) {
+  if (.has_canvas(gs)) {
     gs <- .crop_gspace_image(gs, crop.box)
   } else {
     gs <- .crop_gspace_graph(gs, crop.box)

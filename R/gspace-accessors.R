@@ -224,7 +224,13 @@ setReplaceMethod("gs_image", "GraphSpace", function(x, value) {
     )
   }
   
+  # The canvas and image-space coordinates derive from the previous image
+  if (.is_image_space(x)) {
+    x <- .denormalize_graph_space(x)
+  }
+  
   x
+  
 })
 
 #' @rdname GraphSpace-accessors

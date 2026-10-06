@@ -63,7 +63,10 @@
         rlang::inform("Removing loops...")
       if (igraph::any_multiple(g)){
         rlang::inform("Merging duplicate edges...")
-        rlang::inform("Retaining attributes from the first occurrence.")
+        rlang::inform(c(
+          "Combining attributes as set in igraph_opt('edge.attr.comb').",
+          "i" = "Attributes without a specific rule keep the first occurrence."
+        ))
       }
     }
     opts <- igraph::igraph_opt("edge.attr.comb")

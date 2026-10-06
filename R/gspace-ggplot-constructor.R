@@ -258,6 +258,11 @@ ggplot_add.inject_nodespace <- function(object, plot, ...) {
     return(plot)
   }
   
+  # No edges: no node offsets to inject
+  if (nrow(edge_data) == 0) {
+    return(plot)
+  }
+  
   ##--- EXTRACT NODE DATA, AES, AND PARAMS
   
   p_pars <- list(size_unit = "mm")

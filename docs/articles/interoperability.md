@@ -1,7 +1,7 @@
 # Interoperability with 'ggraph' and 'sf'
 
 \
-**Package**: RGraphSpace 1.5.6
+**Package**: RGraphSpace 1.5.7
 
 ## Overview
 
@@ -378,7 +378,7 @@ gs_hubs <- gs_flight[gs_flight$name %in% hubs, ]
 
 ggplot(data = gs_hubs) +
   geom_sf(data = world_sf, fill = "grey95", color = "grey70") +
-  geom_edgespace(aes(colour = counts), arrow_size = 1) +
+  geom_edgespace(aes(colour = counts), arrow_size = 2) +
   geom_nodespace(aes(label = name), fill = NA, colour = NA) +
   scale_colour_continuous(palette = c("cyan", "blue")) +
   labs(subtitle = "Same network under a south polar projection",
@@ -424,7 +424,7 @@ repository.
     #>  [1] airportr_0.1.3      flightsbr_1.1.10999 geometry_0.5.2     
     #>  [4] maps_3.4.3          sf_1.1-2            ggraph_2.2.2       
     #>  [7] dplyr_1.2.1         tidygraph_1.3.1     igraph_2.3.4       
-    #> [10] RGraphSpace_1.5.6   ggplot2_4.0.3      
+    #> [10] RGraphSpace_1.5.7   ggplot2_4.0.3      
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] tidyselect_1.2.1   viridisLite_0.4.3  vipor_0.4.7        farver_2.1.2      

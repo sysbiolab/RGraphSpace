@@ -1,7 +1,7 @@
 # Customizing Aesthetics
 
 \
-**Package**: RGraphSpace 1.5.6
+**Package**: RGraphSpace 1.5.7
 
 ``` r
 
@@ -97,7 +97,7 @@ gs <- GraphSpace(gtoy2)
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 2f42520 UN-- 90 329 -- 
+#> IGRAPH e285d46 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/c), edge_var (e/n)
@@ -217,7 +217,7 @@ ggplot(data = gs) +
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #> [1] ggnewscale_0.5.2  igraph_2.3.4      RGraphSpace_1.5.6 ggplot2_4.0.3    
+    #> [1] ggnewscale_0.5.2  igraph_2.3.4      RGraphSpace_1.5.7 ggplot2_4.0.3    
     #> 
     #> loaded via a namespace (and not attached):
     #>  [1] sass_0.4.10        generics_0.1.4     tidyr_1.3.2        lattice_0.23-1    

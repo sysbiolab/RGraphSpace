@@ -24,7 +24,7 @@ install.packages("remotes")
 remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 ```
 
-#### Other packages used in the tutorials
+### Packages used in the tutorials
 
 ``` r
 

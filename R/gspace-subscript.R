@@ -148,12 +148,13 @@ setMethod("[", "GraphSpace", function(x, i, j, ..., drop = TRUE) {
     j_idx <- .resolve_gs_index_direct(j, data = edges, what = "edge")
 
     # Capture the j-selected pairs from the original table
-    j_keys <- .gs_edge_keys(edges$name1[j_idx], edges$name2[j_idx])
+    is_dir <- igraph::is_directed(x@graph)
+    j_keys <- .gs_edge_keys(edges$name1[j_idx], edges$name2[j_idx], is_dir)
 
     x <- gs_subset_nodes(x, i)
 
     if (nrow(x@edges) > 0L) {
-      cur_keys  <- .gs_edge_keys(x@edges$name1, x@edges$name2)
+      cur_keys  <- .gs_edge_keys(x@edges$name1, x@edges$name2, is_dir)
       keep_mask <- cur_keys %in% j_keys
       if (!all(keep_mask)) {
         x <- gs_subset_edges(x, keep_mask)
@@ -296,17 +297,13 @@ setMethod("[[", "GraphSpace", function(x, i, j, ...) {
 }
 
 #-------------------------------------------------------------------------------
-# Produce a character key for each edge, used to match edges across two
-# versions of @edges (before and after node filtering) during the combined
-# [i, j] operation.
-#
-# Keys are length-prefix encoded: the character counts of name1 and name2 are
-# prepended before concatenation, making the key unambiguous regardless of
-# what characters the node names contain.
-#
-# Example: name1 = "A", name2 = "BC"  ->  "1.2.ABC"
-#          name1 = "AB", name2 = "C"  ->  "2.1.ABC"  (distinct key) 
-#
-.gs_edge_keys <- function(name1, name2) {
+.gs_edge_keys <- function(name1, name2, directed = TRUE) {
+  # Undirected edges have no stable orientation (igraph lists them by vertex
+  # index), so their key must not depend on endpoint order
+  if (!directed) {
+    lo <- pmin(name1, name2); hi <- pmax(name1, name2)
+    name1 <- lo; name2 <- hi
+  }
   paste0(nchar(name1), ".", nchar(name2), ".", name1, name2)
 }
+
