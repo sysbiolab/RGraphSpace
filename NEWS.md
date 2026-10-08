@@ -1,7 +1,9 @@
 
 # RGraphSpace 1.5.7
-* Edge glyphs, node offsets and edge labels are computed at draw time
-* Mutual directed edges are drawn as two separate arrows
+* Edge glyphs, offsets, and labels are computed at draw time
+* Mutual edges are drawn separately
+* Fix edge alignment after reordered node subsets
+* Improved npc node and arrow sizes across panel shapes
 
 # RGraphSpace 1.5.6
 
