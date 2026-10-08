@@ -69,7 +69,7 @@ gs_toy <- normalizeGraphSpace(gs_toy)
 
 gs_toy
 #> A GraphSpace-class object for:
-#> IGRAPH 1989847 DN-- 10 27 -- 
+#> IGRAPH 3559e6c DN-- 10 27 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeColor (v/c), edgeColor (e/c), arrowType (e/c), label (e/n)
 #> + node spatial boundaries: normalized to graph space

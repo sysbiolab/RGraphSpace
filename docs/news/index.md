@@ -2,6 +2,7 @@
 
 ## RGraphSpace 1.5.7
 
+- Archived version following JOSS peer review
 - Edge glyphs, offsets, and labels are computed at draw time
 - Mutual edges are drawn separately
 - Fix edge alignment after reordered node subsets
