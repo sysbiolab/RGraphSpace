@@ -3,11 +3,23 @@ current_year <- format(Sys.Date(), "%Y")
 
 bibentry(
   bibtype = "Manual",
-  author = person("Sysbiolab Team"),
+  author = c(
+    person("Flávio Gabriel", "Carazza-Kessler"),
+    person("Jonathan André", "Back"),
+    person("Lana Bazan Peters", "Querne"),
+    person("Victor Henrique Apolonio", "dos Santos"),
+    person("Mauro Antônio Alves", "Castro")
+  ),
   title = "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2",
   year = current_year,
-  note = paste0("R package version ", pkg_version, " (Doi: 10.32614/CRAN.package.RGraphSpace)"),
+  note = paste0("R package version ", pkg_version),
+  doi = "10.32614/CRAN.package.RGraphSpace",
   url = "https://CRAN.R-project.org/package=RGraphSpace",
-  textVersion = paste0("Sysbiolab Team (", current_year, "). RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2. R package version ", pkg_version, ". Doi: 10.32614/CRAN.package.RGraphSpace")
+    textVersion = paste0(
+    "Carazza-Kessler FG, Back JA, Querne LBP, et al. (", current_year, "). ",
+    "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2. ",
+    "R package version ", pkg_version, ". doi:10.32614/CRAN.package.RGraphSpace"
+  )
 )
+
 

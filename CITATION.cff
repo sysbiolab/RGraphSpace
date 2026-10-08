@@ -8,7 +8,8 @@ message: 'To cite package "RGraphSpace" in publications use:'
 type: software
 license: Artistic-2.0
 title: 'RGraphSpace: Rendering Graphs as Coherent Spatial Objects in ''ggplot2'''
-version: 1.5.4
+version: 1.5.7
+doi: 10.32614/CRAN.package.RGraphSpace
 identifiers:
 - type: doi
   value: 10.32614/CRAN.package.RGraphSpace
@@ -22,32 +23,54 @@ abstract: An interface for rendering 'igraph' objects as 'ggplot2' graphics with
   and maps. Core functionality builds on 'igraph', 'ggplot2', and 'tidygraph'; optional
   geometry and large raster-background images use 'sf' and 'terra' when installed.
 authors:
-- family-names: Kessler
-  given-names: Flávio
+- family-names: Carazza-Kessler
+  given-names: Flávio Gabriel
+  orcid: https://orcid.org/0000-0002-5309-8043
 - family-names: Back
-  given-names: Jonathan
+  given-names: Jonathan André
+  orcid: https://orcid.org/0009-0008-7338-1197
 - family-names: Querne
-  given-names: Lana
-- family-names: Apolonio
-  given-names: Victor
+  given-names: Lana Bazan Peters
+  orcid: https://orcid.org/0000-0001-9967-028X
+- family-names: Santos
+  given-names: Victor Henrique Apolonio
+  name-particle: dos
+  orcid: https://orcid.org/0000-0002-6394-5840
 - family-names: Castro
-  given-names: Mauro
+  given-names: Mauro Antônio Alves
   email: mauro.a.castro@gmail.com
   orcid: https://orcid.org/0000-0003-4942-8131
 preferred-citation:
   type: manual
   title: 'RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2'
   authors:
-  - name: Sysbiolab Team
+  - family-names: Carazza-Kessler
+    given-names: Flávio Gabriel
+    orcid: https://orcid.org/0000-0002-5309-8043
+  - family-names: Back
+    given-names: Jonathan André
+    orcid: https://orcid.org/0009-0008-7338-1197
+  - family-names: Querne
+    given-names: Lana Bazan Peters
+    orcid: https://orcid.org/0000-0001-9967-028X
+  - family-names: Santos
+    given-names: Victor Henrique Apolonio
+    name-particle: dos
+    orcid: https://orcid.org/0000-0002-6394-5840
+  - family-names: Castro
+    given-names: Mauro Antônio Alves
+    email: mauro.a.castro@gmail.com
+    orcid: https://orcid.org/0000-0003-4942-8131
   year: '2026'
-  notes: 'R package version 1.5.4 (Doi: 10.32614/CRAN.package.RGraphSpace)'
+  notes: R package version 1.5.7
+  doi: 10.32614/CRAN.package.RGraphSpace
   url: https://CRAN.R-project.org/package=RGraphSpace
 repository: https://CRAN.R-project.org/package=RGraphSpace
 repository-code: https://github.com/sysbiolab/RGraphSpace
 url: https://sysbiolab.github.io/RGraphSpace/
 contact:
 - family-names: Castro
-  given-names: Mauro
+  given-names: Mauro Antônio Alves
   email: mauro.a.castro@gmail.com
   orcid: https://orcid.org/0000-0003-4942-8131
 references:
@@ -161,6 +184,7 @@ references:
     orcid: https://orcid.org/0000-0002-2815-0399
   year: '2026'
   doi: 10.32614/CRAN.package.igraph
+  version: '>= 2.1.0'
 - type: software
   title: tidygraph
   abstract: 'tidygraph: A Tidy API for Graph Manipulation'
@@ -243,6 +267,21 @@ references:
     email: evan.biederstedt@gmail.com
   year: '2026'
   doi: 10.32614/CRAN.package.ggrastr
+- type: software
+  title: gtable
+  abstract: 'gtable: Arrange ''Grobs'' in Tables'
+  notes: Imports
+  url: https://gtable.r-lib.org
+  repository: https://CRAN.R-project.org/package=gtable
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+  year: '2026'
+  doi: 10.32614/CRAN.package.gtable
 - type: software
   title: grid
   abstract: 'R: A Language and Environment for Statistical Computing'
