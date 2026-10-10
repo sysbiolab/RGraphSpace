@@ -276,22 +276,24 @@ The `shape` is a two-column matrix of points, described relative to the edge end
 ```{r , eval=TRUE, message=TRUE}
 # The arrowhead, with one row per point (arm, tip, arm)
 GlyphArrow$shape
+GlyphArrow$draw
+GlyphArrow$token
 ```
 
-The same kind of matrix can be drawn in different ways, specified by the prototype's drawing method. The arrowhead is a `"polyline"`, so its points are joined in order, from arm to tip to arm. The cross is drawn as `"segments"`, which takes points in pairs, each pair forming one stroke.
+The same kind of matrix can be drawn in different ways, specified by the prototype's drawing method. The basic arrowhead `">"` is a `"polyline"`, so its points are joined in order, from arm to tip to arm, while the cross glyph `"|10"` is drawn as `"segments"`, which takes points in pairs, each pair forming one stroke.
 
 ```{r , eval=TRUE, message=TRUE}
-# The cross, with rows 1-2 forming one stroke 
-# and rows 3-4 the other
-GlyphCross1$shape
-GlyphCross1$draw
+# Rows 1-2 form one stroke, rows 3-4 the other
+GlyphCross2$shape
+GlyphCross2$draw
+GlyphCross2$token
 ```
 
 Prototypes can be plotted for visual inspection, one or several side by side.
 
 ```{r , eval=TRUE, message=TRUE, fig.height=1}
 # Plot three built-in prototypes side by side
-plot(GlyphArrow, GlyphChevron1, GlyphCross1)
+plot(GlyphArrow, GlyphCross1, GlyphCross2, GlyphChevron1, GlyphChevron2)
 ```
 
 New prototypes are built with `glyph_proto()`, from a shape, a drawing method, and a token; open outlines can also set an `offset`, so the edge line stops at the outline instead of crossing it.

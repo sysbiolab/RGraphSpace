@@ -105,7 +105,7 @@
                         <h4 data-toc-skip class="author">Sysbiolab
 Team</h4>
             
-            <h4 data-toc-skip class="date">2026-10-08</h4>
+            <h4 data-toc-skip class="date">2026-10-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sysbiolab/RGraphSpace/blob/HEAD/vignettes/articles/edge-glyphs.Rmd" class="external-link"><code>vignettes/articles/edge-glyphs.Rmd</code></a></small>
       <div class="d-none name"><code>edge-glyphs.Rmd</code></div>
@@ -391,7 +391,7 @@ read as the end glyph of its edge.</p>
 <span></span>
 <span><span class="va">gs_star</span></span>
 <span><span class="co">#&gt; A GraphSpace-class object for:</span></span>
-<span><span class="co">#&gt; IGRAPH 63f424f DN-- 34 33 -- </span></span>
+<span><span class="co">#&gt; IGRAPH 5354575 DN-- 34 33 -- </span></span>
 <span><span class="co">#&gt; + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),</span></span>
 <span><span class="co">#&gt; | arrowType (e/c), Group (e/c)</span></span>
 <span><span class="co">#&gt; + node spatial boundaries: raw graph</span></span>
@@ -488,36 +488,34 @@ opposite sides. The origin is where the edge meets the node.</p>
 <span><span class="co">#&gt;      [,1]       [,2]</span></span>
 <span><span class="co">#&gt; [1,]   -1  0.5773503</span></span>
 <span><span class="co">#&gt; [2,]    0  0.0000000</span></span>
-<span><span class="co">#&gt; [3,]   -1 -0.5773503</span></span></code></pre></div>
+<span><span class="co">#&gt; [3,]   -1 -0.5773503</span></span>
+<span><span class="va">GlyphArrow</span><span class="op">$</span><span class="va">draw</span></span>
+<span><span class="co">#&gt; [1] "polyline"</span></span>
+<span><span class="va">GlyphArrow</span><span class="op">$</span><span class="va">token</span></span>
+<span><span class="co">#&gt; [1] "&gt;"</span></span></code></pre></div>
 <p>The same kind of matrix can be drawn in different ways, specified by
-the prototype’s drawing method. The arrowhead is a
-<code>"polyline"</code>, so its points are joined in order, from arm to
-tip to arm. The cross is drawn as <code>"segments"</code>, which takes
-points in pairs, each pair forming one stroke.</p>
+the prototype’s drawing method. The basic arrowhead <code>"&gt;"</code>
+is a <code>"polyline"</code>, so its points are joined in order, from
+arm to tip to arm, while the cross glyph <code>"|10"</code> is drawn as
+<code>"segments"</code>, which takes points in pairs, each pair forming
+one stroke.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># The cross, with rows 1-2 forming one stroke </span></span>
-<span><span class="co"># and rows 3-4 the other</span></span>
-<span><span class="va">GlyphCross1</span><span class="op">$</span><span class="va">shape</span></span>
-<span><span class="co">#&gt;             [,1]       [,2]</span></span>
-<span><span class="co">#&gt;  [1,] -0.8302944  0.5000000</span></span>
-<span><span class="co">#&gt;  [2,] -0.5000000  0.1697056</span></span>
-<span><span class="co">#&gt;  [3,] -0.1697056  0.5000000</span></span>
-<span><span class="co">#&gt;  [4,]  0.0000000  0.3302944</span></span>
-<span><span class="co">#&gt;  [5,] -0.3302944  0.0000000</span></span>
-<span><span class="co">#&gt;  [6,]  0.0000000 -0.3302944</span></span>
-<span><span class="co">#&gt;  [7,] -0.1697056 -0.5000000</span></span>
-<span><span class="co">#&gt;  [8,] -0.5000000 -0.1697056</span></span>
-<span><span class="co">#&gt;  [9,] -0.8302944 -0.5000000</span></span>
-<span><span class="co">#&gt; [10,] -1.0000000 -0.3302944</span></span>
-<span><span class="co">#&gt; [11,] -0.6697056  0.0000000</span></span>
-<span><span class="co">#&gt; [12,] -1.0000000  0.3302944</span></span>
-<span><span class="va">GlyphCross1</span><span class="op">$</span><span class="va">draw</span></span>
-<span><span class="co">#&gt; [1] "polygon"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Rows 1-2 form one stroke, rows 3-4 the other</span></span>
+<span><span class="va">GlyphCross2</span><span class="op">$</span><span class="va">shape</span></span>
+<span><span class="co">#&gt;      [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,]    0  0.5</span></span>
+<span><span class="co">#&gt; [2,]   -1 -0.5</span></span>
+<span><span class="co">#&gt; [3,]    0 -0.5</span></span>
+<span><span class="co">#&gt; [4,]   -1  0.5</span></span>
+<span><span class="va">GlyphCross2</span><span class="op">$</span><span class="va">draw</span></span>
+<span><span class="co">#&gt; [1] "segments"</span></span>
+<span><span class="va">GlyphCross2</span><span class="op">$</span><span class="va">token</span></span>
+<span><span class="co">#&gt; [1] "|10"</span></span></code></pre></div>
 <p>Prototypes can be plotted for visual inspection, one or several side
 by side.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot three built-in prototypes side by side</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">GlyphArrow</span>, <span class="va">GlyphChevron1</span>, <span class="va">GlyphCross1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">GlyphArrow</span>, <span class="va">GlyphCross1</span>, <span class="va">GlyphCross2</span>, <span class="va">GlyphChevron1</span>, <span class="va">GlyphChevron2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="edge-glyphs_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>New prototypes are built with <code><a href="../reference/glyph_proto.html">glyph_proto()</a></code>, from a
 shape, a drawing method, and a token; open outlines can also set an
