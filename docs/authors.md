@@ -24,15 +24,19 @@
 Source:
 [`inst/CITATION`](https://github.com/sysbiolab/RGraphSpace/blob/HEAD/inst/CITATION)
 
-Carazza-Kessler FG, Back JA, Querne LBP, et al. (2026). RGraphSpace:
-Rendering graphs as coherent spatial objects in ggplot2. R package
-version 1.5.7. doi:10.32614/CRAN.package.RGraphSpace
+Carazza-Kessler et al. RGraphSpace: Rendering graphs as coherent spatial
+objects in ggplot2. Journal of Open Source Software 11(126):11209, 2026.
+doi: 10.21105/joss.11209
 
-    @Manual{,
-      author = {Flávio Gabriel Carazza-Kessler and Jonathan André Back and Lana Bazan Peters Querne and Victor Henrique Apolonio {dos Santos} and Mauro Antônio Alves Castro},
+    @Article{,
       title = {RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2},
+      author = {{Carazza-Kessler} and Flávio Gabriel and {Back} and Jonathan André and {Querne} and Lana Bazan Peters and {Santos} and Victor Henrique Apolonio dos and {Castro} and Mauro Antônio Alves},
+      journal = {Journal of Open Source Software},
+      doi = {10.21105/joss.11209},
+      url = {https://doi.org/10.21105/joss.11209},
       year = {2026},
-      note = {R package version 1.5.7},
-      doi = {10.32614/CRAN.package.RGraphSpace},
-      url = {https://CRAN.R-project.org/package=RGraphSpace},
+      publisher = {The Open Journal},
+      volume = {11},
+      number = {126},
+      pages = {11209},
     }

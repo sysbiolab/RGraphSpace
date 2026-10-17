@@ -1,25 +1,16 @@
-pkg_version <- tryCatch(as.character(packageVersion("RGraphSpace")), error = function(e) "x.x.x")
-current_year <- format(Sys.Date(), "%Y")
 
-bibentry(
-  bibtype = "Manual",
-  author = c(
-    person("Flávio Gabriel", "Carazza-Kessler"),
-    person("Jonathan André", "Back"),
-    person("Lana Bazan Peters", "Querne"),
-    person("Victor Henrique Apolonio", "dos Santos"),
-    person("Mauro Antônio Alves", "Castro")
-  ),
-  title = "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2",
-  year = current_year,
-  note = paste0("R package version ", pkg_version),
-  doi = "10.32614/CRAN.package.RGraphSpace",
-  url = "https://CRAN.R-project.org/package=RGraphSpace",
-    textVersion = paste0(
-    "Carazza-Kessler FG, Back JA, Querne LBP, et al. (", current_year, "). ",
-    "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2. ",
-    "R package version ", pkg_version, ". doi:10.32614/CRAN.package.RGraphSpace"
-  )
+bibentry(bibtype = "Article",
+title = "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2", 
+author = "Carazza-Kessler, Flávio Gabriel and Back, Jonathan André and Querne, Lana Bazan Peters and Santos, Victor Henrique Apolonio dos and Castro, Mauro Antônio Alves", 
+journal = "Journal of Open Source Software",
+doi = "10.21105/joss.11209", 
+url = "https://doi.org/10.21105/joss.11209", 
+year = "2026", 
+publisher = "The Open Journal", 
+volume = 11, 
+number = "126", 
+pages = "11209",
+textVersion = paste("Carazza-Kessler et al.", 
+"RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2.",
+"Journal of Open Source Software 11(126):11209, 2026. doi: 10.21105/joss.11209", sep=" ")
 )
-
-

@@ -274,7 +274,7 @@ gs_star <- GraphSpace(gtoy_star,
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH 63f424f DN-- 34 33 -- 
+#> IGRAPH da65c3f DN-- 34 33 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/c), Group (e/c)
 #> + node spatial boundaries: raw graph
@@ -398,34 +398,31 @@ GlyphArrow$shape
 #> [1,]   -1  0.5773503
 #> [2,]    0  0.0000000
 #> [3,]   -1 -0.5773503
+GlyphArrow$draw
+#> [1] "polyline"
+GlyphArrow$token
+#> [1] ">"
 ```
 
 The same kind of matrix can be drawn in different ways, specified by the
-prototype’s drawing method. The arrowhead is a `"polyline"`, so its
-points are joined in order, from arm to tip to arm. The cross is drawn
-as `"segments"`, which takes points in pairs, each pair forming one
-stroke.
+prototype’s drawing method. The basic arrowhead `">"` is a `"polyline"`,
+so its points are joined in order, from arm to tip to arm, while the
+cross glyph `"|10"` is drawn as `"segments"`, which takes points in
+pairs, each pair forming one stroke.
 
 ``` r
 
-# The cross, with rows 1-2 forming one stroke 
-# and rows 3-4 the other
-GlyphCross1$shape
-#>             [,1]       [,2]
-#>  [1,] -0.8302944  0.5000000
-#>  [2,] -0.5000000  0.1697056
-#>  [3,] -0.1697056  0.5000000
-#>  [4,]  0.0000000  0.3302944
-#>  [5,] -0.3302944  0.0000000
-#>  [6,]  0.0000000 -0.3302944
-#>  [7,] -0.1697056 -0.5000000
-#>  [8,] -0.5000000 -0.1697056
-#>  [9,] -0.8302944 -0.5000000
-#> [10,] -1.0000000 -0.3302944
-#> [11,] -0.6697056  0.0000000
-#> [12,] -1.0000000  0.3302944
-GlyphCross1$draw
-#> [1] "polygon"
+# Rows 1-2 form one stroke, rows 3-4 the other
+GlyphCross2$shape
+#>      [,1] [,2]
+#> [1,]    0  0.5
+#> [2,]   -1 -0.5
+#> [3,]    0 -0.5
+#> [4,]   -1  0.5
+GlyphCross2$draw
+#> [1] "segments"
+GlyphCross2$token
+#> [1] "|10"
 ```
 
 Prototypes can be plotted for visual inspection, one or several side by
@@ -434,7 +431,7 @@ side.
 ``` r
 
 # Plot three built-in prototypes side by side
-plot(GlyphArrow, GlyphChevron1, GlyphCross1)
+plot(GlyphArrow, GlyphCross1, GlyphCross2, GlyphChevron1, GlyphChevron2)
 ```
 
 ![](edge-glyphs_files/figure-html/unnamed-chunk-15-1.png)

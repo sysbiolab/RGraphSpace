@@ -15,7 +15,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 downloads](https://cranlogs.r-pkg.org/badges/RGraphSpace)](https://cran.r-project.org/package=RGraphSpace)
 [![License:
 Artistic-2.0](https://img.shields.io/badge/license-Artistic--2.0-blue.svg)](https://cran.r-project.org/web/licenses/Artistic-2.0)
-[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.RGraphSpace-blue.svg)](https://doi.org/10.32614/CRAN.package.RGraphSpace)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.11209/status.svg)](https://doi.org/10.21105/joss.11209)
 [![R-CMD-check](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sysbiolab/RGraphSpace/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -88,9 +88,9 @@ remotes::install_github("sysbiolab/RGraphSpace", build_vignettes=TRUE)
 
 If you use *RGraphSpace*, please cite:
 
-Carazza-Kessler FG, Back JA, Querne LBP, et al. (2026). RGraphSpace:
-Rendering graphs as coherent spatial objects in ggplot2. R package
-version 1.5.7. <doi:10.32614/CRAN.package.RGraphSpace>
+Carazza-Kessler et al. RGraphSpace: Rendering graphs as coherent spatial
+objects in ggplot2. Journal of Open Source Software 11(126):11209, 2026.
+doi: 10.21105/joss.11209
 
 ### Licenses
 
