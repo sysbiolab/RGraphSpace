@@ -30,7 +30,7 @@ doi: 10.21105/joss.11209
 
     @Article{,
       title = {RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2},
-      author = {{Carazza-Kessler} and Flávio Gabriel and {Back} and Jonathan André and {Querne} and Lana Bazan Peters and {Santos} and Victor Henrique Apolonio dos and {Castro} and Mauro Antônio Alves},
+      author = {Flávio Gabriel Carazza-Kessler and Jonathan André Back and Lana Bazan Peters Querne and Victor Henrique Apolonio {dos Santos} and Mauro Antônio Alves Castro},
       journal = {Journal of Open Source Software},
       doi = {10.21105/joss.11209},
       url = {https://doi.org/10.21105/joss.11209},

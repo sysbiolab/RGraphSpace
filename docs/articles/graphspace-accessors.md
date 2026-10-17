@@ -103,7 +103,7 @@ gs_vertex_attr(gs, "new_node_var") <- NULL
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH a3f6e7e UN-- 90 329 -- 
+#> IGRAPH 18a0b02 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | arrowType (e/c), edge_var (e/n)
@@ -131,7 +131,7 @@ gs_edge_attr(gs, "new_edge_var") <- NULL
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH a3f6e7e UN-- 90 329 -- 
+#> IGRAPH 18a0b02 UN-- 90 329 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -317,7 +317,7 @@ dimension.
 # Node-induced subgraph: keep named nodes, prune dangling edges
 gs[c("n1", "n2", "n3"), ]
 #> A GraphSpace-class object for:
-#> IGRAPH 9b8cb01 UN-- 3 1 -- 
+#> IGRAPH 5d4f342 UN-- 3 1 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -328,7 +328,7 @@ gs[c("n1", "n2", "n3"), ]
 # Node-induced subgraph by integer position
 gs[1:4, ]
 #> A GraphSpace-class object for:
-#> IGRAPH 275fc9a UN-- 4 3 -- 
+#> IGRAPH 119495e UN-- 4 3 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -339,7 +339,7 @@ gs[1:4, ]
 # Node-induced subgraph by pre-evaluated logical mask
 gs[gs$node_var > 0, ]
 #> A GraphSpace-class object for:
-#> IGRAPH a50f72e UN-- 39 70 -- 
+#> IGRAPH d50b084 UN-- 39 70 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -350,7 +350,7 @@ gs[gs$node_var > 0, ]
 # Edge selection only: keep all nodes
 gs[, gs_edges(gs)$edge_var > 0]
 #> A GraphSpace-class object for:
-#> IGRAPH fd96ba8 UN-- 96 161 -- 
+#> IGRAPH bb45505 UN-- 96 161 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -361,7 +361,7 @@ gs[, gs_edges(gs)$edge_var > 0]
 # Edge selection by endpoint: predicates must be pre-evaluated
 gs[, gs_edges(gs)$name1 == "n1"]
 #> A GraphSpace-class object for:
-#> IGRAPH 5b10480 UN-- 96 10 -- 
+#> IGRAPH bbca15a UN-- 96 10 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -372,7 +372,7 @@ gs[, gs_edges(gs)$name1 == "n1"]
 # Alternatively, wrap the predicate in quote()
 gs[, quote(name1 == "n1" & edge_var > 0)]
 #> A GraphSpace-class object for:
-#> IGRAPH 6d4f53f UN-- 96 3 -- 
+#> IGRAPH 5925d08 UN-- 96 3 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -383,7 +383,7 @@ gs[, quote(name1 == "n1" & edge_var > 0)]
 # Combined: node filter first, then edge intersection
 gs[quote(node_group == "A"), gs_edges(gs)$edge_var > 0]
 #> A GraphSpace-class object for:
-#> IGRAPH c03bc2e UN-- 30 49 -- 
+#> IGRAPH 705cb33 UN-- 30 49 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -436,7 +436,7 @@ gs$new_node_var <- 1
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH aabad1e UN-- 96 333 -- 
+#> IGRAPH bf2b662 UN-- 96 333 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), nodeLineColor (v/c), module (v/n), node_group
 #> | (v/c), node_var (v/n), edgeColor (e/c), arrowType (e/c), edge_var
@@ -460,7 +460,7 @@ gs$new_node_var <- NULL
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH aabad1e UN-- 96 333 -- 
+#> IGRAPH bf2b662 UN-- 96 333 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | nodeFillColor (v/c), module (v/n), node_group (v/c), node_var (v/n),
 #> | edgeColor (e/c), arrowType (e/c), edge_var (e/n)
@@ -623,7 +623,7 @@ if (requireNamespace("sf", quietly = TRUE)) {
 
 gs
 #> A GraphSpace-class object for:
-#> IGRAPH 46d2c1f UN-- 30 435 -- 
+#> IGRAPH 12f2bae UN-- 30 435 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/c)
 #> + node payload: 1 (geometry)

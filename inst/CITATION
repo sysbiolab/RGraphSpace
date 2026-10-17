@@ -1,16 +1,22 @@
 
 bibentry(bibtype = "Article",
-title = "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2", 
-author = "Carazza-Kessler, Flávio Gabriel and Back, Jonathan André and Querne, Lana Bazan Peters and Santos, Victor Henrique Apolonio dos and Castro, Mauro Antônio Alves", 
-journal = "Journal of Open Source Software",
-doi = "10.21105/joss.11209", 
-url = "https://doi.org/10.21105/joss.11209", 
-year = "2026", 
-publisher = "The Open Journal", 
-volume = 11, 
-number = "126", 
-pages = "11209",
-textVersion = paste("Carazza-Kessler et al.", 
-"RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2.",
-"Journal of Open Source Software 11(126):11209, 2026. doi: 10.21105/joss.11209", sep=" ")
+  title = "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2",
+  author = c(
+    person(given = "Flávio Gabriel", family = "Carazza-Kessler"),
+    person(given = "Jonathan André", family = "Back"),
+    person(given = "Lana Bazan Peters", family = "Querne"),
+    person(given = "Victor Henrique Apolonio", family = "dos Santos"),
+    person(given = "Mauro Antônio Alves", family = "Castro")
+  ),
+  journal = "Journal of Open Source Software",
+  doi = "10.21105/joss.11209",
+  url = "https://doi.org/10.21105/joss.11209",
+  year = "2026",
+  publisher = "The Open Journal",
+  volume = 11,
+  number = "126",
+  pages = "11209",
+  textVersion = paste("Carazza-Kessler et al.",
+    "RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2.",
+    "Journal of Open Source Software 11(126):11209, 2026. doi: 10.21105/joss.11209")
 )

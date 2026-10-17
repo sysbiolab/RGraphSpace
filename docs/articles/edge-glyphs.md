@@ -274,7 +274,7 @@ gs_star <- GraphSpace(gtoy_star,
 
 gs_star
 #> A GraphSpace-class object for:
-#> IGRAPH da65c3f DN-- 34 33 -- 
+#> IGRAPH 92f7e43 DN-- 34 33 -- 
 #> + attr: x (v/n), y (v/n), name (v/c), nodeLabel (v/c), nodeSize (v/n),
 #> | arrowType (e/c), Group (e/c)
 #> + node spatial boundaries: raw graph
