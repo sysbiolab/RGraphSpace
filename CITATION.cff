@@ -9,7 +9,7 @@ type: software
 license: Artistic-2.0
 title: 'RGraphSpace: Rendering Graphs as Coherent Spatial Objects in ''ggplot2'''
 version: 1.5.7
-doi: 10.32614/CRAN.package.RGraphSpace
+doi: 10.21105/joss.11209
 identifiers:
 - type: doi
   value: 10.32614/CRAN.package.RGraphSpace
@@ -41,7 +41,7 @@ authors:
   email: mauro.a.castro@gmail.com
   orcid: https://orcid.org/0000-0003-4942-8131
 preferred-citation:
-  type: manual
+  type: article
   title: 'RGraphSpace: Rendering graphs as coherent spatial objects in ggplot2'
   authors:
   - family-names: Carazza-Kessler
@@ -61,10 +61,15 @@ preferred-citation:
     given-names: Mauro Antônio Alves
     email: mauro.a.castro@gmail.com
     orcid: https://orcid.org/0000-0003-4942-8131
+  journal: Journal of Open Source Software
+  doi: 10.21105/joss.11209
+  url: https://doi.org/10.21105/joss.11209
   year: '2026'
-  notes: R package version 1.5.7
-  doi: 10.32614/CRAN.package.RGraphSpace
-  url: https://CRAN.R-project.org/package=RGraphSpace
+  publisher:
+    name: The Open Journal
+  volume: '11'
+  issue: '126'
+  start: '11209'
 repository: https://CRAN.R-project.org/package=RGraphSpace
 repository-code: https://github.com/sysbiolab/RGraphSpace
 url: https://sysbiolab.github.io/RGraphSpace/
